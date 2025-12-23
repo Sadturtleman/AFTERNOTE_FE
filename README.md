@@ -4,7 +4,7 @@ AFTERNOTE Android 개발 Repository입니다.
 
 git Flow 전략을 사용하며 commit, PR은 다음 규칙을 사용합니다.
 
-초기에 git clone 후 npm install 해야 정상 작동합니다.
+초기에 git clone 후 npm install 및 .husky 폴더에서 pre-commit, commit-msg 폴더를 github에서 다시 복제해야 정상 작동합니다.
 
 # Commitlint 규칙 가이드
 
