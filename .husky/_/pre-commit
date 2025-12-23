@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Running ktlint..."
+./gradlew ktlintCheck || exit 1
+
+echo "Running detekt..."
+./gradlew detekt || exit 1
+
+echo "Code quality checks passed"
