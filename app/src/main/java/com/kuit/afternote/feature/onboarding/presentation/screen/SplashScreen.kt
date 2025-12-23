@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,9 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.onboarding.presentation.component.ClickButton
+import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun SplashScreen(
@@ -61,7 +63,8 @@ fun SplashScreen(
             Text(
                 text = "나의 만약이, 남겨진 이들의\n막막함이 되지 않도록",
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
+                fontSize = 24.sp,
+                fontFamily = Sansneo
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -70,14 +73,17 @@ fun SplashScreen(
                 text = buildAnnotatedString {
                     withStyle(
                         SpanStyle(
-                            color = Color.Blue
+                            color = B1,
+                            fontFamily = Sansneo
                         )
                     ) {
                         append("애프터노트")
                     }
                     append("는 당신의 디지털 세상을\n 미리 정리해 가장 소중한 사람들에게\n 안전하고 따뜻한 다리를 제공합니다.")
                 },
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                fontFamily = Sansneo,
+                color = Gray5
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -106,7 +112,8 @@ fun SplashScreen(
             ) {
                 Text(
                     text = "이미 가입하셨나요?",
-                    color = Gray6
+                    color = Gray6,
+                    fontFamily = Sansneo
                 )
 
                 Spacer(modifier = Modifier.width(11.dp))
@@ -118,7 +125,9 @@ fun SplashScreen(
                     modifier = Modifier
                         .clickable {
                             onLoginClick()
-                        }
+                        },
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal
                 )
             }
 

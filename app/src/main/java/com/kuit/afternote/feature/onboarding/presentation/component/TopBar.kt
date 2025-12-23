@@ -10,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +28,9 @@ fun TopBar(
             Text(
                 text = title,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold,
+                fontFamily = Sansneo
             )
         },
         navigationIcon = {
