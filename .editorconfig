@@ -1,0 +1,26 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[*.{kt,kts}]
+max_line_length = 140
+ktlint_standard_function-naming = disabled
+ktlint_standard_indentation = disabled
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_parameter-wrapping = disabled
+
+[**/ui/theme/**.kt]
+ktlint_standard_indentation = disabled
+
+[**/test/**.kt]
+ktlint_standard_no-wildcard-imports = disabled
+
+[**/androidTest/**.kt]
+ktlint_standard_no-wildcard-imports = disabled
