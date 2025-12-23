@@ -10,21 +10,21 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "file:///C:/programming/project/afternote/app/src/main/java/com/kuit/afternote/feature/onboarding/presentation/screen/SplashScreen.kt"
+                  "uri": "file:///C:/programming/project/AFTERNOTE_FE/app/src/main/java/com/kuit/afternote/feature/onboarding/presentation/screen/LoginScreen.kt"
                 },
                 "region": {
-                  "endColumn": 17,
-                  "endLine": 36,
-                  "startColumn": 5,
-                  "startLine": 36
+                  "endColumn": 2,
+                  "endLine": 29,
+                  "startColumn": 16,
+                  "startLine": 23
                 }
               }
             }
           ],
           "message": {
-            "text": "The function SplashScreen is too long (74). The maximum length is 60."
+            "text": "The function LoginScreen(modifier: Modifier, onBackClick: () -> Unit, onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onFindIdClick: () -> Unit) has too many parameters. The current threshold is set to 5."
           },
-          "ruleId": "detekt.complexity.LongMethod"
+          "ruleId": "detekt.complexity.LongParameterList"
         }
       ],
       "tool": {

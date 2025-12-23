@@ -45,6 +45,6 @@ fun TopBar(
 
 @Preview(showBackground = true)
 @Composable
-private fun TopBarPreview(){
+private fun TopBarPreview() {
     TopBar("메인 화면") { }
 }
