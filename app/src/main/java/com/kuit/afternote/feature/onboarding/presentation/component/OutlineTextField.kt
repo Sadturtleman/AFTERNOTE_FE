@@ -15,14 +15,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun OutlineTextField(textFieldState: TextFieldState, label: String){
+fun OutlineTextField(
+    textFieldState: TextFieldState,
+    label: String
+) {
     OutlinedTextField(
         state = textFieldState,
         lineLimits = TextFieldLineLimits.SingleLine,
-        label = { Text(
-            text = label,
-            fontSize = 16.sp
-        ) },
+        label = {
+            Text(
+                text = label,
+                fontSize = 16.sp
+            )
+        },
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -32,6 +37,6 @@ fun OutlineTextField(textFieldState: TextFieldState, label: String){
 
 @Preview(showBackground = true)
 @Composable
-private fun OutlineTextFieldPreview(){
+private fun OutlineTextFieldPreview() {
     OutlineTextField(rememberTextFieldState("시작"), "시작")
 }
