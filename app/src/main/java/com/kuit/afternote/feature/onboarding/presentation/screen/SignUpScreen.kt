@@ -22,6 +22,7 @@ import com.kuit.afternote.feature.onboarding.presentation.component.IdentifyInpu
 import com.kuit.afternote.feature.onboarding.presentation.component.PhoneAuthContent
 import com.kuit.afternote.feature.onboarding.presentation.component.PwInputContent
 import com.kuit.afternote.feature.onboarding.presentation.component.SignUpContentButton
+import com.kuit.afternote.feature.onboarding.presentation.component.SignUpEndContent
 import com.kuit.afternote.feature.onboarding.presentation.component.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
 
@@ -30,7 +31,8 @@ fun SignUpScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onAuthClick: () -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    onSettingClick: () -> Unit
 ) {
     val phone = rememberTextFieldState()
     val authCode = rememberTextFieldState()
@@ -45,7 +47,8 @@ fun SignUpScreen(
         topBar = {
             TopBar(
                 title = "회원 가입",
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                step = step
             )
         }
     ) { paddingValues ->
@@ -103,6 +106,12 @@ fun SignUpScreen(
                             )
                         }
                     }
+
+                    SignUpStep.END -> {
+                        SignUpEndContent {
+                            onSettingClick()
+                        }
+                    }
                 }
             }
         }
@@ -112,5 +121,5 @@ fun SignUpScreen(
 @Preview
 @Composable
 private fun SignUpScreenPreview() {
-    SignUpScreen(onNextClick = {}, onAuthClick = {}, onBackClick = {})
+    SignUpScreen(onNextClick = {}, onAuthClick = {}, onBackClick = {}, onSettingClick = {})
 }
