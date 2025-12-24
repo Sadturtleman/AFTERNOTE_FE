@@ -14,3 +14,6 @@
 .cxx
 local.properties
 node_modules
+
+# Agent generated documentation files (not to be merged to main)
+.agent-docs/
