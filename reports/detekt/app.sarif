@@ -4,28 +4,6 @@
   "runs": [
     {
       "results": [
-        {
-          "level": "warning",
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "file:///C:/programming/project/AFTERNOTE_FE/app/src/main/java/com/kuit/afternote/feature/onboarding/presentation/screen/LoginScreen.kt"
-                },
-                "region": {
-                  "endColumn": 2,
-                  "endLine": 29,
-                  "startColumn": 16,
-                  "startLine": 23
-                }
-              }
-            }
-          ],
-          "message": {
-            "text": "The function LoginScreen(modifier: Modifier, onBackClick: () -> Unit, onLoginClick: () -> Unit, onSignUpClick: () -> Unit, onFindIdClick: () -> Unit) has too many parameters. The current threshold is set to 5."
-          },
-          "ruleId": "detekt.complexity.LongParameterList"
-        }
       ],
       "tool": {
         "driver": {
