@@ -32,3 +32,6 @@
 /local.properties
 local.properties
 node_modules
+
+# Temporary gitignore merge files
+.gitignore.*

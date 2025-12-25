@@ -78,9 +78,9 @@ fun AfternoteListItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "등록일 $date",
+                    text = "최종 작성일 $date",
                     color = Gray5,
-                    fontSize = 14.sp
+                    fontSize = 10.sp
                 )
             }
             
