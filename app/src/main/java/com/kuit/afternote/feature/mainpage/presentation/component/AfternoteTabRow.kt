@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.B1
+import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray5
@@ -53,17 +53,17 @@ private fun TabItem(
 ) {
     Box(
         modifier = modifier
-            .height(32.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(if (isSelected) B1 else Gray2)
+            .height(34.dp)
+            .clip(RoundedCornerShape(17.dp))
+            .background(if (isSelected) B3 else Gray2)
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = tab.label,
-            color = if (isSelected) androidx.compose.ui.graphics.Color.White else Black9,
-            fontSize = 14.sp
+            color = Black9,
+            fontSize = 12.sp
         )
     }
 }
@@ -73,8 +73,9 @@ private fun TabItem(
  * 
  * 피그마 디자인 기반:
  * - 가로 스크롤 가능한 탭 바
- * - 선택된 탭은 파란색 배경, 흰색 텍스트
- * - 선택되지 않은 탭은 회색 배경, 검은색 텍스트
+ * - 선택된 탭은 연한 파란색(B3) 배경, 검은색 텍스트
+ * - 선택되지 않은 탭은 회색(Gray2) 배경, 검은색 텍스트
+ * - 탭 높이: 34dp, 모서리: 17dp, 폰트: 12sp
  */
 @Composable
 fun AfternoteTabRow(
