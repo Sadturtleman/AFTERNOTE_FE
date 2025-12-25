@@ -45,12 +45,14 @@ tasks.withType<Detekt>().configureEach {
 
 android {
     namespace = "com.kuit.afternote"
-    compileSdk = 35
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "com.kuit.afternote"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
