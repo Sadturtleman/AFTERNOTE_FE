@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.kuit.afternote" />
-                  <option name="mobileSdkAppId" value="1:123456789012:android:abcdef1234567890" />
-                  <option name="projectId" value="dummy-project-id" />
-                  <option name="projectNumber" value="123456789012" />
+                  <option name="mobileSdkAppId" value="1:196018225234:android:65f9c664b8dd070f2d1f8b" />
+                  <option name="projectId" value="afternote-b4d3c" />
+                  <option name="projectNumber" value="196018225234" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
