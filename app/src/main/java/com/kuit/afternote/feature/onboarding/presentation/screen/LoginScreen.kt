@@ -3,11 +3,13 @@ package com.kuit.afternote.feature.onboarding.presentation.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +43,8 @@ fun LoginScreen(
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.weight(0.15f))
 
@@ -50,10 +53,14 @@ fun LoginScreen(
                 label = "아이디(이메일)"
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             OutlineTextField(
                 textFieldState = pw,
                 label = "비밀번호"
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             ClickButton(
                 title = "로그인",
@@ -69,8 +76,10 @@ fun LoginScreen(
                 color = B3
             )
 
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
-                text = "로그인하기",
+                text = "아이디/비밀번호 찾기",
                 color = Gray6,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
