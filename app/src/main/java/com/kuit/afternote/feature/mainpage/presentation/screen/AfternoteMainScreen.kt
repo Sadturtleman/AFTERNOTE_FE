@@ -10,10 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListItem
+import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
+import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 
@@ -29,6 +35,8 @@ import com.kuit.afternote.ui.theme.Gray1
 fun AfternoteMainScreen(
     modifier: Modifier = Modifier
 ) {
+    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
+    
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -37,7 +45,12 @@ fun AfternoteMainScreen(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // TODO: 상단 탭 추가
+            // 상단 탭
+            AfternoteTabRow(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
+            
             // TODO: 검색바 추가
             
             // 임시 데이터로 리스트 표시

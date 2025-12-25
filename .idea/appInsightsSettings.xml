@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.kuit.afternote" />
+                  <option name="mobileSdkAppId" value="1:123456789012:android:abcdef1234567890" />
+                  <option name="projectId" value="dummy-project-id" />
+                  <option name="projectNumber" value="123456789012" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
