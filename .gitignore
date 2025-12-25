@@ -15,5 +15,8 @@
 local.properties
 node_modules
 
+# Google Services (contains sensitive information)
+**/google-services.json
+
 # Agent generated documentation files (not to be merged to main)
 .agent-docs/
