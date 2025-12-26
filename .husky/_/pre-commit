@@ -1,9 +1,22 @@
 #!/usr/bin/env sh
 
+# Windows에서 Android Studio의 JBR 경로 문제 해결
+# gradle.properties의 org.gradle.java.home 설정이 주석 처리되어 있으므로
+# Gradle이 자동으로 Java를 찾도록 합니다
+
 echo "Running ktlint..."
-./gradlew ktlintCheck || exit 1
+# gradle.properties에서 org.gradle.java.home이 주석 처리되어 있으므로
+# Android Studio가 설정한 Java를 사용합니다
+./gradlew ktlintCheck || {
+    echo "Warning: ktlint check failed. This might be due to Java path configuration."
+    echo "Please ensure Android Studio is configured correctly or use 'git commit --no-verify' to skip."
+    exit 1
+}
 
 echo "Running detekt..."
-./gradlew detekt || exit 1
+./gradlew detekt || {
+    echo "Warning: detekt check failed."
+    exit 1
+}
 
 echo "Code quality checks passed"
