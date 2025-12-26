@@ -1,9 +1,48 @@
 #!/usr/bin/env sh
 
+# gradle.properties의 org.gradle.java.home 설정 사용
+# Java security 파일 경로 문제 해결
+if [ -f "gradle.properties" ]; then
+    OS_TYPE=$(uname -s)
+    case "$OS_TYPE" in
+        MINGW*|MSYS*|CYGWIN*)
+            # org.gradle.java.home 값 추출
+            JAVA_HOME_PROP=$(grep "^org.gradle.java.home=" gradle.properties | awk -F'=' '{print $2}' | tr -d '\r')
+            if [ -n "$JAVA_HOME_PROP" ]; then
+                # Windows 경로를 Git Bash 경로로 변환
+                JAVA_HOME_PROP=$(echo "$JAVA_HOME_PROP" | sed 's|\\\\\\\\|/|g' | sed 's|\\|/|g' | sed 's|^C:|/c|' | sed 's|^c:|/c|' | sed 's|//|/|g')
+                # 기존 JAVA_HOME 제거하고 새로 설정
+                unset JAVA_HOME
+                JAVA_HOME="$JAVA_HOME_PROP"
+                export JAVA_HOME
+                # PATH에서 기존 Java 제거 후 새 Java 추가
+    export PATH="$JAVA_HOME/bin:$PATH"
+                # Java security 파일 경로 명시적 설정
+                if [ -f "$JAVA_HOME/lib/security/java.security" ]; then
+                    export JAVA_TOOL_OPTIONS="-Djava.security.properties=$JAVA_HOME/lib/security/java.security"
+                fi
+            fi
+            ;;
+    esac
+fi
+
+# Windows에서는 cmd.exe를 통해 gradlew.bat 실행
+OS_TYPE=$(uname -s)
+case "$OS_TYPE" in
+    MINGW*|MSYS*|CYGWIN*)
+        echo "Running ktlint..."
+        cmd.exe //c gradlew.bat ktlintCheck || exit 1
+        
+        echo "Running detekt..."
+        cmd.exe //c gradlew.bat detekt || exit 1
+        ;;
+    *)
 echo "Running ktlint..."
-./gradlew ktlintCheck || exit 1
+        ./gradlew ktlintCheck || exit 1
 
 echo "Running detekt..."
-./gradlew detekt || exit 1
+        ./gradlew detekt || exit 1
+        ;;
+esac
 
 echo "Code quality checks passed"
