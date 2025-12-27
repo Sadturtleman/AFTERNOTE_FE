@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,17 +36,18 @@ fun BottomNavigationBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 38.dp, top = 19.dp, end = 38.dp, bottom = 45.dp)
+                .padding(start = 32.dp, top = 19.dp, end = 32.dp, bottom = 23.dp)
         ) {
+            // 4개 아이템을 균등하게 배치 (각 아이템이 동일한 공간 차지)
             BottomNavItem.entries.forEach { item ->
-                Box(modifier = Modifier.weight(1f)) {
-                    BottomNavigationItem(
-                        iconRes = item.iconRes,
-                        label = item.label,
-                        isSelected = item == selectedItem,
-                        onClick = { onItemSelected(item) }
-                    )
-                }
+                BottomNavigationItem(
+                    iconRes = item.iconRes,
+                    label = item.label,
+                    isSelected = item == selectedItem,
+                    onClick = { onItemSelected(item) },
+                    iconTextSpacing = item.iconTextSpacing,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }

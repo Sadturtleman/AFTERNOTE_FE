@@ -36,6 +36,7 @@ fun BottomNavigationItem(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
+    iconTextSpacing: androidx.compose.ui.unit.Dp = 4.dp,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,7 +51,7 @@ fun BottomNavigationItem(
             colorFilter = ColorFilter.tint(if (isSelected) B1 else Gray4),
             modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(iconTextSpacing))
         Text(
             text = label,
             color = if (isSelected) B1 else Gray4,

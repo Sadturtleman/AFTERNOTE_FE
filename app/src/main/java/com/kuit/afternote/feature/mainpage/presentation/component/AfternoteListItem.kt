@@ -104,7 +104,7 @@ fun AfternoteListItem(
                             painter = painterResource(imageRes),
                             contentDescription = null,
                             modifier = Modifier.size(40.dp),
-                            contentScale = ContentScale.Inside
+                            contentScale = ContentScale.FillBounds
                         )
                     }
                 }
