@@ -7,7 +7,7 @@ import com.kuit.afternote.R
  */
 fun getIconResForTitle(title: String): Int =
     when {
-        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.insta_pattern
-        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.gallery
-        else -> R.drawable.logo
+        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.img_insta_pattern
+        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.ic_gallery
+        else -> R.drawable.img_logo
     }
