@@ -65,10 +65,10 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
             val filteredItems = when (selectedTab) {
                 AfternoteTab.ALL -> allItems
                 AfternoteTab.SOCIAL_NETWORK -> allItems.filter { (title, _) ->
-                    title.contains("인스타그램") || title.contains("Instagram")
+                    title.contains("인스타그램")
                 }
                 AfternoteTab.GALLERY_AND_FILES -> allItems.filter { (title, _) ->
-                    title.contains("갤러리") || title.contains("Gallery")
+                    title.contains("갤러리")
                 }
                 else -> emptyList() // 다른 탭들은 아직 데이터가 없음
             }
