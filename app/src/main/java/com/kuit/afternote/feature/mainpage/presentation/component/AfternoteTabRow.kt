@@ -33,7 +33,7 @@ fun AfternoteTabRow(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(scrollState)
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 0.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         AfternoteTab.entries.forEach { tab ->
