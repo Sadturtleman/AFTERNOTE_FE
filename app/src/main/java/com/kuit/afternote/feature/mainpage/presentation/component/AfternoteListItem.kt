@@ -28,15 +28,6 @@ import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
 
-/**
- * 애프터노트 리스트 아이템 컴포넌트
- * 
- * 피그마 디자인:
- * - 흰색 배경, 둥근 모서리 16dp
- * - 왼쪽: 아이콘 (32x32)
- * - 중간: 제목, 날짜
- * - 오른쪽: 화살표 버튼 (24x24, 파란색)
- */
 @Composable
 fun AfternoteListItem(
     title: String,
@@ -64,9 +55,9 @@ fun AfternoteListItem(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.LightGray)
             )
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             // 중간: 텍스트 영역
             Column(
                 modifier = Modifier.weight(1f)
@@ -83,9 +74,9 @@ fun AfternoteListItem(
                     fontSize = 10.sp
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             // 오른쪽: 화살표 버튼
             Box(
                 modifier = Modifier
@@ -113,4 +104,3 @@ private fun AfternoteListItemPreview() {
         date = "2023.11.24"
     )
 }
-
