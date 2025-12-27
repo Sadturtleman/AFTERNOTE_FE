@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.mainpage.presentation.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,12 +22,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
+
+/**
+ * 제목에 따라 적절한 아이콘 리소스를 반환하는 함수
+ */
+fun getIconResForTitle(title: String): Int =
+    when {
+        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.ic_instagram
+        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.ic_gallery
+        else -> R.drawable.logo
+    }
 
 /**
  * 애프터노트 리스트 아이템 컴포넌트
@@ -41,6 +55,8 @@ import com.kuit.afternote.ui.theme.Gray5
 fun AfternoteListItem(
     title: String,
     date: String,
+    imageRes: Int? = null,
+    iconVector: ImageVector? = null,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
@@ -57,13 +73,39 @@ fun AfternoteListItem(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 왼쪽: 아이콘 영역 (임시로 Box로 표시)
+            // 왼쪽: 아이콘/이미지 영역
             Box(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.LightGray)
-            )
+                    .background(
+                        when {
+                            iconVector != null -> Color(0xFFE3F2FD)
+                            imageRes != null -> Color.Transparent
+                            else -> Color(0xFFE3F2FD)
+                        }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                when {
+                    iconVector != null -> {
+                        Icon(
+                            imageVector = iconVector,
+                            contentDescription = null,
+                            tint = B2,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    imageRes != null -> {
+                        Image(
+                            painter = painterResource(imageRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -108,8 +150,17 @@ fun AfternoteListItem(
 @Preview(showBackground = true)
 @Composable
 private fun AfternoteListItemPreview() {
-    AfternoteListItem(
-        title = "인스타그램",
-        date = "2023.11.24"
-    )
+    Column {
+        AfternoteListItem(
+            title = "인스타그램",
+            date = "2023.11.24",
+            imageRes = getIconResForTitle("인스타그램")
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        AfternoteListItem(
+            title = "갤러리",
+            date = "2023.11.25",
+            imageRes = getIconResForTitle("갤러리")
+        )
+    }
 }
