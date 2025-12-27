@@ -22,8 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,14 +33,15 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 제목에 따라 적절한 아이콘 리소스를 반환하는 함수
  */
 fun getIconResForTitle(title: String): Int =
     when {
-        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.ic_instagram
-        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.ic_gallery
+        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.insta
+        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.gallery
         else -> R.drawable.logo
     }
 
@@ -47,7 +50,7 @@ fun getIconResForTitle(title: String): Int =
  *
  * 피그마 디자인:
  * - 흰색 배경, 둥근 모서리 16dp
- * - 왼쪽: 아이콘 (32x32)
+ * - 왼쪽: 아이콘 (40x40)
  * - 중간: 제목, 날짜
  * - 오른쪽: 화살표 버튼 (24x24, 파란색)
  */
@@ -67,16 +70,18 @@ fun AfternoteListItem(
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 21.dp)
+            .padding(horizontal = 20.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 21.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 왼쪽: 아이콘/이미지 영역
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(40.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(
                         when {
@@ -93,14 +98,14 @@ fun AfternoteListItem(
                             imageVector = iconVector,
                             contentDescription = null,
                             tint = B2,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     }
                     imageRes != null -> {
                         Image(
                             painter = painterResource(imageRes),
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(40.dp),
                             contentScale = ContentScale.Fit
                         )
                     }
@@ -116,13 +121,19 @@ fun AfternoteListItem(
                 Text(
                     text = title,
                     color = Black9,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    fontFamily = Sansneo,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "최종 작성일 $date",
                     color = Gray5,
-                    fontSize = 10.sp
+                    fontSize = 10.sp,
+                    fontFamily = Sansneo,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
