@@ -54,14 +54,24 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                 onTabSelected = { selectedTab = it }
             )
 
-            // TODO: 검색바 추가
-
             // 임시 데이터로 리스트 표시
-            val sampleItems = listOf(
+            val allItems = listOf(
                 "인스타그램" to "2023.11.24",
                 "갤러리" to "2023.11.25",
                 "갤러리" to "2023.11.26"
             )
+
+            // 탭에 따라 필터링된 아이템
+            val filteredItems = when (selectedTab) {
+                AfternoteTab.ALL -> allItems
+                AfternoteTab.SOCIAL_NETWORK -> allItems.filter { (title, _) ->
+                    title.contains("인스타그램") || title.contains("Instagram")
+                }
+                AfternoteTab.GALLERY_AND_FILES -> allItems.filter { (title, _) ->
+                    title.contains("갤러리") || title.contains("Gallery")
+                }
+                else -> emptyList() // 다른 탭들은 아직 데이터가 없음
+            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
@@ -73,7 +83,7 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(sampleItems) { (title, date) ->
+                items(filteredItems) { (title, date) ->
                     AfternoteListItem(
                         title = title,
                         date = date,
