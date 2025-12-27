@@ -14,7 +14,6 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
  * 애프터노트 상단 탭 로우 컴포넌트
- * 
  * 피그마 디자인 기반:
  * - 가로 스크롤 가능한 탭 바
  * - 선택된 탭은 연한 파란색(B3) 배경, 검은색 텍스트
@@ -28,7 +27,6 @@ fun AfternoteTabRow(
     onTabSelected: (AfternoteTab) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -56,5 +54,3 @@ private fun AfternoteTabRowPreview() {
         )
     }
 }
-
-
