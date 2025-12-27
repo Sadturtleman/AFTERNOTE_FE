@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
@@ -57,7 +58,14 @@ fun AfternoteListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(74.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .dropShadow(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Black.copy(alpha = 0.05f),
+                blur = 5.dp,
+                offsetY = 2.dp,
+                offsetX = 0.dp,
+                spread = 0.dp
+            ).clip(RoundedCornerShape(16.dp))
             .background(Color.White)
             .clickable(onClick = onClick)
             .padding(horizontal = 20.dp)
@@ -96,7 +104,7 @@ fun AfternoteListItem(
                             painter = painterResource(imageRes),
                             contentDescription = null,
                             modifier = Modifier.size(40.dp),
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.Inside
                         )
                     }
                 }
