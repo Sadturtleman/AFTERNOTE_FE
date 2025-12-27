@@ -10,19 +10,25 @@ git Flow 전략을 사용하며 commit, PR은 다음 규칙을 사용합니다.
 
 프로젝트는 JDK 21을 사용합니다. JDK 25는 Kotlin 컴파일러 호환성 문제로 사용할 수 없습니다.
 
-각 팀원은 자신의 `local.properties` 파일에 JDK 21 경로를 설정해야 합니다:
+### 권장: Eclipse Adoptium JDK 사용
+
+프로젝트는 **Eclipse Adoptium JDK 21**을 사용하도록 설정되어 있습니다. `gradle.properties`에 이미 설정되어 있으므로 추가 설정이 필요 없습니다.
+
+만약 다른 JDK를 사용해야 하는 경우, `gradle.properties`에서 다음 설정을 수정할 수 있습니다:
 
 ```properties
 org.gradle.java.home=C:\\Users\\YourName\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-21.x.x.x-hotspot
 ```
 
-또는 Android Studio JBR을 사용하는 경우:
+### ⚠️ Windows 환경 주의사항
 
-```properties
-org.gradle.java.home=C:\\Program Files\\Android\\Android Studio\\jbr
-```
+Windows에서 Git Bash를 통해 pre-commit hook을 실행할 때, Android Studio JBR을 사용하면 `java.lang.InternalError: Error loading java.security file` 에러가 발생할 수 있습니다.
 
-> **참고**: `local.properties` 파일은 Git에 커밋되지 않으므로 각자 설정해야 합니다.
+**해결 방법:**
+- Eclipse Adoptium JDK를 사용하세요 (이미 프로젝트에 설정되어 있음)
+- 또는 `gradle.properties`에서 `org.gradle.java.home`을 Eclipse Adoptium JDK 경로로 설정하세요
+
+자세한 내용은 [트러블슈팅 문서](docs/troubleshooting-gradle-java-issues.md)를 참고하세요.
 
 # Commitlint 규칙 가이드
 
@@ -127,5 +133,19 @@ revert: 누들 사건에 대해 다시는 언급하지 맙시다
 Refs: 676104e, a215868
 ```
 
+## 트러블슈팅
 
+### Gradle Java 보안 파일 로드 문제
+
+Windows에서 pre-commit hook 실행 시 `java.lang.InternalError: Error loading java.security file` 에러가 발생하는 경우:
+
+1. Eclipse Adoptium JDK 21이 설치되어 있는지 확인
+2. `gradle.properties`의 `org.gradle.java.home` 설정 확인
+3. 자세한 해결 방법은 [트러블슈팅 문서](docs/troubleshooting-gradle-java-issues.md) 참고
+
+### Pre-commit Hook이 작동하지 않는 경우
+
+1. `npm install` 실행하여 Husky 설정 확인
+2. `.husky` 폴더의 hook 파일들이 실행 권한을 가지고 있는지 확인
+3. Git Bash 환경에서 실행 중인 경우, Eclipse Adoptium JDK 사용 확인
 
