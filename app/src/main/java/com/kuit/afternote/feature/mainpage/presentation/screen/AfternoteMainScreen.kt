@@ -43,8 +43,7 @@ import com.kuit.afternote.ui.theme.Gray1
 /**
  * 애프터노트 메인 화면
  *
- * 피그마 디자인 기반으로 구현
- * - 상단 탭 (전체/소셜/기타)
+ * - 상단 탭
  * - 애프터노트 리스트
  * - 하단 FAB 버튼
  */
@@ -129,7 +128,7 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                     start = 20.dp,
                     top = 20.dp,
                     end = 20.dp,
-                    bottom = 104.dp // 피그마 디자인: FAB 하단(740dp) ~ 화면 하단(844dp) = 104dp
+                    bottom = 104.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
