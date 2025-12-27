@@ -40,7 +40,7 @@ import com.kuit.afternote.ui.theme.Sansneo
  */
 fun getIconResForTitle(title: String): Int =
     when {
-        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.insta
+        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.insta_pattern
         title.contains("갤러리") || title.contains("Gallery") -> R.drawable.gallery
         else -> R.drawable.logo
     }
@@ -116,7 +116,9 @@ fun AfternoteListItem(
 
             // 중간: 텍스트 영역
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = title,
@@ -133,11 +135,12 @@ fun AfternoteListItem(
                     fontSize = 10.sp,
                     fontFamily = Sansneo,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             // 오른쪽: 화살표 버튼
             Box(
