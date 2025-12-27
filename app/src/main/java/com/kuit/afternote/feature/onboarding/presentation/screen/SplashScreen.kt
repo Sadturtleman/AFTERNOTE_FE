@@ -83,7 +83,8 @@ fun SplashScreen(
                 },
                 fontSize = 16.sp,
                 fontFamily = Sansneo,
-                color = Gray5
+                color = Gray5,
+                fontWeight = FontWeight.Medium
             )
 
             Spacer(modifier = Modifier.weight(1f))
