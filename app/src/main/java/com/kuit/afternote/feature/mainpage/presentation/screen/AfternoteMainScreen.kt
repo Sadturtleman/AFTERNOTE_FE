@@ -38,6 +38,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListI
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.getIconResForTitle
+import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 
@@ -67,7 +68,15 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                 onClick = { /* TODO: 새 애프터노트 생성 */ },
                 modifier = Modifier
                     .size(56.dp)
-                    .padding(end = 4.dp), // 기본 16dp에서 20dp로 조정 (4dp 추가)
+                    .padding(end = 4.dp) // 기본 16dp에서 20dp로 조정 (4dp 추가)
+                    .dropShadow(
+                        shape = CircleShape,
+                        color = Color.Black.copy(alpha = 0.15f), // 피그마: #000000 15%
+                        blur = 10.dp, // 피그마: Blur 10
+                        offsetY = 2.dp, // 피그마: Y 2
+                        offsetX = 0.dp, // 피그마: X 0
+                        spread = 0.dp // 피그마: Spread 0
+                    ),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
                 shape = CircleShape
