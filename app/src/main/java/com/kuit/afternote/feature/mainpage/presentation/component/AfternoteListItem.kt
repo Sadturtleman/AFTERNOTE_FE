@@ -149,7 +149,7 @@ fun AfternoteListItem(
                     .background(B2)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.listitemarrow),
+                    painter = painterResource(R.drawable.ic_listitemarrow),
                     contentDescription = null,
                     modifier = Modifier
                         .size(6.dp, 12.dp)

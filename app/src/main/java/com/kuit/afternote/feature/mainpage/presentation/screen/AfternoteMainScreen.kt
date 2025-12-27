@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListItem
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
@@ -49,10 +51,17 @@ import com.kuit.afternote.ui.theme.Gray1
 @Composable
 fun AfternoteMainScreen(modifier: Modifier = Modifier) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = selectedBottomNavItem,
+                onItemSelected = { selectedBottomNavItem = it }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { /* TODO: 새 애프터노트 생성 */ },

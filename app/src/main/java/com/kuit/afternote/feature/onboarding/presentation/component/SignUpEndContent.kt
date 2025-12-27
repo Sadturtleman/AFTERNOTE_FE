@@ -74,7 +74,7 @@ fun SignUpEndContent(onSettingCLick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
                 modifier = Modifier.size(width = 140.dp, height = 187.dp)
             )

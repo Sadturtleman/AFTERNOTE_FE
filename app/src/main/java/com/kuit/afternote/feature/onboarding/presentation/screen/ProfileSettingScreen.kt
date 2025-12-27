@@ -50,7 +50,7 @@ fun ProfileSettingScreen(
             Spacer(modifier = Modifier.weight(0.8f))
 
             Image(
-                painter = painterResource(R.drawable.profile),
+                painter = painterResource(R.drawable.img_profile),
                 contentDescription = null,
                 modifier = Modifier
                     .clickable { onAddProfileAvatarClick() }
