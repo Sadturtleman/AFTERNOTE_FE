@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -28,7 +29,15 @@ fun ClickButton(
         onClick = onButtonClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(54.dp),
+            .height(54.dp)
+            .dropShadow(
+                shape = RoundedCornerShape(8.dp),
+                color = Color.Black.copy(alpha = 0.05f),
+                offsetX = 5.dp,
+                offsetY = 0.dp,
+                blur = 5.dp,
+                spread = 0.dp
+            ),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = color
