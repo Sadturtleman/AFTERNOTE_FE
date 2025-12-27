@@ -4,6 +4,7 @@
 **/google-services.json
 *.iml
 .agent-docs/
+.claude/
 .cxx
 .DS_Store
 .externalNativeBuild

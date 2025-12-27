@@ -1,12 +1,13 @@
 package com.kuit.afternote.core
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,29 +28,55 @@ fun BottomNavigationBar(
     selectedItem: BottomNavItem = BottomNavItem.HOME,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .height(88.dp)
             .background(Color.White)
+            .padding(start = 32.dp, top = 19.dp, end = 32.dp, bottom = 23.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 32.dp, top = 19.dp, end = 32.dp, bottom = 23.dp)
-        ) {
-            // 4개 아이템을 균등하게 배치 (각 아이템이 동일한 공간 차지)
-            BottomNavItem.entries.forEach { item ->
-                BottomNavigationItem(
-                    iconRes = item.iconRes,
-                    label = item.label,
-                    isSelected = item == selectedItem,
-                    onClick = { onItemSelected(item) },
-                    iconTextSpacing = item.iconTextSpacing,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
+        // 홈
+        BottomNavigationItem(
+            iconRes = BottomNavItem.HOME.iconRes,
+            label = BottomNavItem.HOME.label,
+            isSelected = BottomNavItem.HOME == selectedItem,
+            onClick = { onItemSelected(BottomNavItem.HOME) },
+            iconTextSpacing = BottomNavItem.HOME.iconTextSpacing
+        )
+
+        Spacer(modifier = Modifier.weight(62f))
+
+        // 기록
+        BottomNavigationItem(
+            iconRes = BottomNavItem.RECORD.iconRes,
+            label = BottomNavItem.RECORD.label,
+            isSelected = BottomNavItem.RECORD == selectedItem,
+            onClick = { onItemSelected(BottomNavItem.RECORD) },
+            iconTextSpacing = BottomNavItem.RECORD.iconTextSpacing
+        )
+
+        Spacer(modifier = Modifier.weight(57f))
+
+        // 타임레터
+        BottomNavigationItem(
+            iconRes = BottomNavItem.TIME_LETTER.iconRes,
+            label = BottomNavItem.TIME_LETTER.label,
+            isSelected = BottomNavItem.TIME_LETTER == selectedItem,
+            onClick = { onItemSelected(BottomNavItem.TIME_LETTER) },
+            iconTextSpacing = BottomNavItem.TIME_LETTER.iconTextSpacing
+        )
+
+        Spacer(modifier = Modifier.weight(46f))
+
+        // 애프터노트
+        BottomNavigationItem(
+            iconRes = BottomNavItem.AFTERNOTE.iconRes,
+            label = BottomNavItem.AFTERNOTE.label,
+            isSelected = BottomNavItem.AFTERNOTE == selectedItem,
+            onClick = { onItemSelected(BottomNavItem.AFTERNOTE) },
+            iconTextSpacing = BottomNavItem.AFTERNOTE.iconTextSpacing
+        )
     }
 }
 
