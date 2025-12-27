@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListItem
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
+import com.kuit.afternote.feature.mainpage.presentation.component.getIconResForTitle
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 
@@ -70,6 +71,7 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                     AfternoteListItem(
                         title = title,
                         date = date,
+                        imageRes = getIconResForTitle(title),
                         onClick = { /* TODO: 상세 화면으로 이동 */ }
                     )
                 }
