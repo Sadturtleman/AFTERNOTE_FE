@@ -1,2 +1,45 @@
 #!/usr/bin/env sh
-. "$(dirname "$0")/h"
+
+# Windows에서 Android Studio의 JBR 경로 문제 해결
+# Git Bash에서 실행될 때 JAVA_HOME을 명시적으로 설정
+
+# OS 감지 및 Gradle 명령어 설정
+if [ "$OS" = "Windows_NT" ] || [ -n "$WINDIR" ]; then
+    # Windows 환경에서는 gradlew.bat 사용
+    GRADLEW_CMD="./gradlew.bat"
+    
+    # Git Bash에서 실행될 때 JBR을 강제로 Eclipse Adoptium JDK로 교체
+    # gradlew.bat이 자동으로 처리하지만, 명시적으로 설정
+    if [ -d "/c/Users/rlfjr/AppData/Local/Programs/Eclipse Adoptium/jdk-21.0.9.10-hotspot" ]; then
+        export JAVA_HOME="/c/Users/rlfjr/AppData/Local/Programs/Eclipse Adoptium/jdk-21.0.9.10-hotspot"
+    elif [ -d "C:/Users/rlfjr/AppData/Local/Programs/Eclipse Adoptium/jdk-21.0.9.10-hotspot" ]; then
+        export JAVA_HOME="C:/Users/rlfjr/AppData/Local/Programs/Eclipse Adoptium/jdk-21.0.9.10-hotspot"
+    fi
+    # JBR 경로가 설정되어 있으면 무시 (gradlew.bat이 자동으로 처리)
+    if [ "$JAVA_HOME" = "C:/Program Files/Android/Android Studio/jbr" ] || [ "$JAVA_HOME" = "/c/Program Files/Android/Android Studio/jbr" ]; then
+        unset JAVA_HOME
+    fi
+else
+    # Unix/Linux/Mac 환경
+    GRADLEW_CMD="./gradlew"
+fi
+
+echo "Running ktlint..."
+if $GRADLEW_CMD ktlintCheck; then
+    echo "ktlint check passed"
+else
+    echo "Error: ktlint check failed."
+    echo "Please fix the issues before committing."
+    exit 1
+fi
+
+echo "Running detekt..."
+if $GRADLEW_CMD detekt; then
+    echo "detekt check passed"
+else
+    echo "Error: detekt check failed."
+    echo "Please fix the issues before committing."
+    exit 1
+fi
+
+echo "Code quality checks passed"

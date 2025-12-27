@@ -6,6 +6,24 @@ git Flow 전략을 사용하며 commit, PR은 다음 규칙을 사용합니다.
 
 초기에 git clone 후 npm install 및 .husky 폴더에서 pre-commit, commit-msg 폴더를 github에서 다시 복제해야 정상 작동합니다.
 
+## Java 설정 (필수)
+
+프로젝트는 JDK 21을 사용합니다. JDK 25는 Kotlin 컴파일러 호환성 문제로 사용할 수 없습니다.
+
+각 팀원은 자신의 `local.properties` 파일에 JDK 21 경로를 설정해야 합니다:
+
+```properties
+org.gradle.java.home=C:\\Users\\YourName\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-21.x.x.x-hotspot
+```
+
+또는 Android Studio JBR을 사용하는 경우:
+
+```properties
+org.gradle.java.home=C:\\Program Files\\Android\\Android Studio\\jbr
+```
+
+> **참고**: `local.properties` 파일은 Git에 커밋되지 않으므로 각자 설정해야 합니다.
+
 # Commitlint 규칙 가이드
 
 ## 커밋 메시지 구조
