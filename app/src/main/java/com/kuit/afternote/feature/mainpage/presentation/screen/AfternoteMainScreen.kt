@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -64,7 +65,9 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { /* TODO: 새 애프터노트 생성 */ },
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier
+                    .size(56.dp)
+                    .padding(end = 4.dp), // 기본 16dp에서 20dp로 조정 (4dp 추가)
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
                 shape = CircleShape
