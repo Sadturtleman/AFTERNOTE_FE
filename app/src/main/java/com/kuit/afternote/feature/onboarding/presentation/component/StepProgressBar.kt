@@ -8,17 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray3
 
 @Composable
 fun StepProgressBar(
     step: Int,
     totalStep: Int,
-    modifier: Modifier = Modifier,
-    height: Dp = 3.dp,
-    progressColor: Color,
-    trackColor: Color
+    progressColor: Color = B3,
+    trackColor: Color = Gray3
 ) {
     Canvas(
         modifier = Modifier

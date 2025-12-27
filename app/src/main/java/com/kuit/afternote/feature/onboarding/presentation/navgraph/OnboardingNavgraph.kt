@@ -36,7 +36,8 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
     composable<OnboardingRoute.ProfileSettingRoute> {
         ProfileSettingScreen(
             onFinishClick = { },
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onAddProfileAvatarClick = { }
         )
     }
 }
