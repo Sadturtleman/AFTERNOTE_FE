@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,16 +33,6 @@ import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
-
-/**
- * 제목에 따라 적절한 아이콘 리소스를 반환하는 함수
- */
-fun getIconResForTitle(title: String): Int =
-    when {
-        title.contains("인스타그램") || title.contains("Instagram") -> R.drawable.insta_pattern
-        title.contains("갤러리") || title.contains("Gallery") -> R.drawable.gallery
-        else -> R.drawable.logo
-    }
 
 /**
  * 애프터노트 리스트 아이템 컴포넌트
@@ -56,11 +45,11 @@ fun getIconResForTitle(title: String): Int =
  */
 @Composable
 fun AfternoteListItem(
+    modifier: Modifier = Modifier,
     title: String,
     date: String,
     imageRes: Int? = null,
     iconVector: ImageVector? = null,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -125,6 +114,7 @@ fun AfternoteListItem(
                     color = Black9,
                     fontSize = 16.sp,
                     fontFamily = Sansneo,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -150,11 +140,10 @@ fun AfternoteListItem(
                     .background(B2),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                Image(
+                    painter = painterResource(R.drawable.listitemarrow),
                     contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(8.dp, 14.dp)
                 )
             }
         }
