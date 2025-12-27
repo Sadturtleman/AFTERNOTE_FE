@@ -26,7 +26,6 @@ import com.kuit.afternote.ui.theme.Gray1
 @Composable
 fun AfternoteMainScreen(modifier: Modifier = Modifier) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
-    
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -41,14 +40,12 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                 onTabSelected = { selectedTab = it }
             )
             // TODO: 검색바 추가
-            
             // 임시 데이터로 리스트 표시
             val sampleItems = listOf(
                 "인스타그램" to "2023.11.24",
                 "갤러리" to "2023.11.25",
                 "갤러리" to "2023.11.26"
             )
-            
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(
