@@ -35,7 +35,6 @@ import com.kuit.afternote.ui.theme.Gray1
 @Composable
 fun AfternoteMainScreen(modifier: Modifier = Modifier) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
-
     Box(
         modifier = modifier
             .fillMaxSize()
