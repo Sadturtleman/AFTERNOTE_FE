@@ -9,15 +9,15 @@ import org.junit.Test
  */
 class GetIconResForTitleTest {
     @Test
-    fun `인스타그램 제목은 insta_pattern을 반환한다`() {
+    fun `인스타그램 제목은 insta를 반환한다`() {
         val result = getIconResForTitle("인스타그램")
-        assertEquals(R.drawable.insta_pattern, result)
+        assertEquals(R.drawable.insta, result)
     }
 
     @Test
-    fun `Instagram 제목은 insta_pattern을 반환한다`() {
+    fun `Instagram 제목은 insta를 반환한다`() {
         val result = getIconResForTitle("Instagram")
-        assertEquals(R.drawable.insta_pattern, result)
+        assertEquals(R.drawable.insta, result)
     }
 
     @Test

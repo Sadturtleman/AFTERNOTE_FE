@@ -1,23 +1,18 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="40dp"
     android:height="40dp"
     android:viewportWidth="40"
     android:viewportHeight="40">
   <path
       android:pathData="M4,4h32v32h-32z"
-      android:fillColor="@android:color/transparent"/>
-  <group>
-    <clip-path android:pathData="M4,4h32v32h-32z"/>
-    <path
-        android:pathData="M4,4h32v32h-32z"
-        android:fillType="evenOdd">
-      <aapt:attr name="android:fillColor" xmlns:aapt="http://schemas.android.com/aapt">
-        <aapt:drawable>
-          <bitmap
-              android:src="@drawable/insta_pattern"
-              android:tileMode="clamp"/>
-        </aapt:drawable>
-      </aapt:attr>
-    </path>
-  </group>
+      android:fillType="evenOdd">
+    <aapt:attr name="android:fillColor">
+      <aapt:drawable>
+        <bitmap
+            android:src="@drawable/insta_pattern"
+            android:tileMode="clamp"/>
+      </aapt:drawable>
+    </aapt:attr>
+  </path>
 </vector>

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -64,7 +65,7 @@ fun AfternoteListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 21.dp),
+                .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 왼쪽: 아이콘/이미지 영역
@@ -101,20 +102,20 @@ fun AfternoteListItem(
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             // 중간: 텍스트 영역
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
+//                    .fillMaxWidth()
             ) {
                 Text(
                     text = title,
                     color = Black9,
                     fontSize = 16.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -137,13 +138,14 @@ fun AfternoteListItem(
                 modifier = Modifier
                     .size(24.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(B2),
-                contentAlignment = Alignment.Center
+                    .background(B2)
             ) {
                 Image(
                     painter = painterResource(R.drawable.listitemarrow),
                     contentDescription = null,
-                    modifier = Modifier.size(8.dp, 14.dp)
+                    modifier = Modifier
+                        .size(6.dp, 12.dp)
+                        .offset(x = 9.9.dp, y = 6.dp)
                 )
             }
         }
