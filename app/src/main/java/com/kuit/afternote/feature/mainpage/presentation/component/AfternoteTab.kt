@@ -3,7 +3,9 @@ package com.kuit.afternote.feature.mainpage.presentation.component
 /**
  * 애프터노트 탭 카테고리
  */
-enum class AfternoteTab(val label: String) {
+enum class AfternoteTab(
+    val label: String
+) {
     ALL("전체"),
     SOCIAL_NETWORK("소셜네트워크"),
     BUSINESS("비즈니스"),
@@ -11,4 +13,3 @@ enum class AfternoteTab(val label: String) {
     ASSET_MANAGEMENT("재산 처리"),
     MEMORIAL("추모 가이드라인")
 }
-

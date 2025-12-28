@@ -38,6 +38,15 @@ for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
 @rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
 
+@rem Force use Eclipse Adoptium JDK to avoid JBR security file loading issues
+@rem Check if JAVA_HOME is set to JBR and override it
+if "%JAVA_HOME%"=="C:\Program Files\Android\Android Studio\jbr" set JAVA_HOME=
+if "%JAVA_HOME%"=="" (
+    if exist "C:\Users\rlfjr\AppData\Local\Programs\Eclipse Adoptium\jdk-21.0.9.10-hotspot\bin\java.exe" (
+        set JAVA_HOME=C:\Users\rlfjr\AppData\Local\Programs\Eclipse Adoptium\jdk-21.0.9.10-hotspot
+    )
+)
+
 @rem Find java.exe
 if defined JAVA_HOME goto findJavaFromJavaHome
 

@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -12,13 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
-import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,10 +82,7 @@ fun TopBar(
         )
         StepProgressBar(
             step = step.value,
-            totalStep = 4,
-            progressColor = B2,
-            trackColor = Gray3,
-            modifier = Modifier.fillMaxWidth()
+            totalStep = 4
         )
     }
 }
