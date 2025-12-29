@@ -5,13 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -37,6 +34,7 @@ import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListItem
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
+import com.kuit.afternote.feature.mainpage.presentation.component.MainHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.getIconResForTitle
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -107,8 +105,9 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
+            // 헤더
+            MainHeader()
             // 상단 탭
             AfternoteTabRow(
                 selectedTab = selectedTab,
