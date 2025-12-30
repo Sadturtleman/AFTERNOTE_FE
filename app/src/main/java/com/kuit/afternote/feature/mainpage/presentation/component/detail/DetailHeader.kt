@@ -30,9 +30,10 @@ import com.kuit.afternote.ui.theme.Gray1
  * 애프터노트 상세 화면 헤더 컴포넌트
  *
  * 피그마 디자인 기반:
- * - 높이: 96dp (StatusBar + 타이틀)
+ * - 높이: 40dp
  * - 배경색: Gray1 (#FAFAFA)
  * - 뒤로가기 버튼, 중앙 타이틀, 편집 버튼
+ * - 상태바는 Scaffold의 paddingValues가 자동으로 처리
  */
 @Composable
 fun DetailHeader(
@@ -44,14 +45,14 @@ fun DetailHeader(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(96.dp)
+            .height(40.dp)
             .background(Gray1)
     ) {
         // 뒤로가기 버튼
         Box(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 20.dp, top = 61.dp)
+                .align(Alignment.CenterStart)
+                .padding(start = 20.dp)
                 .size(24.dp)
                 .clickable(onClick = onBackClick)
         ) {
@@ -75,15 +76,14 @@ fun DetailHeader(
                 letterSpacing = (-0.05).sp
             ),
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 60.dp)
+                .align(Alignment.Center)
         )
 
         // 편집 버튼
         Box(
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 20.dp, top = 61.dp)
+                .align(Alignment.CenterEnd)
+                .padding(end = 20.dp)
                 .size(24.dp)
                 .clickable(onClick = onEditClick)
         ) {

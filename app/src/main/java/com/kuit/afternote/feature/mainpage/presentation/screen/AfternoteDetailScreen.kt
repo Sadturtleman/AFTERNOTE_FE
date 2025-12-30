@@ -3,10 +3,13 @@ package com.kuit.afternote.feature.mainpage.presentation.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -18,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -73,7 +77,8 @@ fun AfternoteDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .windowInsetsPadding(WindowInsets.statusBars)
+//                .padding(paddingValues)
         ) {
             // 헤더
             DetailHeader(
@@ -98,14 +103,14 @@ fun AfternoteDetailScreen(
                         }
                         append("에 대한 ${userName}님의 기록")
                     },
-                    style = androidx.compose.ui.text.TextStyle(
+                    style = TextStyle(
                         fontSize = 18.sp,
                         lineHeight = 24.sp,
                         fontFamily = FontFamily(Font(R.font.sansneobold)),
                         fontWeight = FontWeight(700),
                         color = Black9
                     ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
 
                 // 최종 작성일 및 처리 방법 카드
@@ -145,15 +150,13 @@ fun AfternoteDetailScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 개인 정보 카드
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+                        Column{
                             Text(
                                 text = "기록에 대한 개인 정보",
                                 style = androidx.compose.ui.text.TextStyle(
@@ -163,7 +166,7 @@ fun AfternoteDetailScreen(
                                     fontWeight = FontWeight(500),
                                     color = Black9
                                 ),
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = 7.dp)
                             )
 
                             // 아이디
@@ -183,15 +186,13 @@ fun AfternoteDetailScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 처리 방법 카드
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+                        Column{
                             Text(
                                 text = "처리 방법",
                                 style = androidx.compose.ui.text.TextStyle(
@@ -205,23 +206,21 @@ fun AfternoteDetailScreen(
                             )
 
                             ProcessingMethodItem(text = "게시물 내리기")
-                            Spacer(modifier = Modifier.height(26.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             ProcessingMethodItem(text = "추모 게시물 올리기")
-                            Spacer(modifier = Modifier.height(26.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             ProcessingMethodItem(text = "추모 계정으로 전환하기")
                         }
                     }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 남기신 말씀 카드
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+                        Column{
                             Text(
                                 text = "남기신 말씀",
                                 style = androidx.compose.ui.text.TextStyle(
@@ -246,8 +245,6 @@ fun AfternoteDetailScreen(
                         }
                     }
                 )
-
-                Spacer(modifier = Modifier.height(104.dp)) // 하단 네비게이션 바 공간
             }
         }
     }
