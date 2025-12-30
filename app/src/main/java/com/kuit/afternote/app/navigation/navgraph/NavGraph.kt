@@ -9,6 +9,7 @@ import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
@@ -23,7 +24,8 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
-        ScreenInfo("프로필 설정 화면", "dev_profile_setting")
+        ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
+        ScreenInfo("지문 로그인 화면", "fingerprint_login")
     )
 
     NavHost(
@@ -93,6 +95,13 @@ fun NavGraph(navHostController: NavHostController) {
                 onFinishClick = {},
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}
+            )
+        }
+
+        // 지문 로그인 화면
+        composable("fingerprint_login") {
+            FingerprintLoginScreen(
+                onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
         }
     }
