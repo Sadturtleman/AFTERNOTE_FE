@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
@@ -49,7 +50,17 @@ fun NavGraph(navHostController: NavHostController) {
 
         // 메인 화면 (개발용)
         composable("main") {
-            AfternoteMainScreen()
+            AfternoteMainScreen(
+                onItemClick = { navHostController.navigate("afternote_detail") }
+            )
+        }
+
+        // 애프터노트 상세 화면
+        composable("afternote_detail") {
+            AfternoteDetailScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onEditClick = { /* TODO: 수정 화면으로 이동 */ }
+            )
         }
 
         // 개발자 모드용 화면들

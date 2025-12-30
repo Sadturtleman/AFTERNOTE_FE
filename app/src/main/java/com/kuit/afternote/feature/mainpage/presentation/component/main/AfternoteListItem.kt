@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +34,10 @@ import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
+import com.kuit.afternote.ui.theme.LightBlue
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.ShadowBlack
+import com.kuit.afternote.ui.theme.White
 
 /**
  * 애프터노트 리스트 아이템 컴포넌트
@@ -60,13 +63,13 @@ fun AfternoteListItem(
             .height(74.dp)
             .dropShadow(
                 shape = RoundedCornerShape(16.dp),
-                color = Color.Black.copy(alpha = 0.05f),
+                color = ShadowBlack,
                 blur = 5.dp,
                 offsetY = 2.dp,
                 offsetX = 0.dp,
                 spread = 0.dp
             ).clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
+            .background(White)
             .clickable(onClick = onClick)
             .padding(horizontal = 20.dp)
     ) {
@@ -83,9 +86,9 @@ fun AfternoteListItem(
                     .clip(RoundedCornerShape(8.dp))
                     .background(
                         when {
-                            iconVector != null -> Color(0xFFE3F2FD)
+                            iconVector != null -> LightBlue
                             imageRes != null -> Color.Transparent
-                            else -> Color(0xFFE3F2FD)
+                            else -> LightBlue
                         }
                     ),
                 contentAlignment = Alignment.Center
@@ -116,7 +119,6 @@ fun AfternoteListItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-//                    .fillMaxWidth()
             ) {
                 Text(
                     text = title,

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray1
 
 /**
@@ -49,7 +49,7 @@ fun MainHeader(
                 lineHeight = 26.sp,
                 fontFamily = FontFamily(Font(R.font.sansneobold)),
                 fontWeight = FontWeight(700),
-                color = Color(0xFF212121),
+                color = Black9,
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.05).sp
             ),

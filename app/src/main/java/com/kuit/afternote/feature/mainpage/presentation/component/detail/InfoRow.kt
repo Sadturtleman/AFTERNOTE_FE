@@ -1,0 +1,73 @@
+package com.kuit.afternote.feature.mainpage.presentation.component.detail
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
+import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Black9
+
+/**
+ * 개인 정보 행 컴포넌트 (라벨 + 값)
+ *
+ * 피그마 디자인 기반:
+ * - 라벨: B3 배경의 배지 형태, 12sp, Medium
+ * - 값: 14sp, Regular
+ */
+@Composable
+fun InfoRow(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // 라벨 배지
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(B3)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = label,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                    fontWeight = FontWeight(500),
+                    color = Black9
+                )
+            )
+        }
+
+        // 값
+        Text(
+            text = value,
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                fontWeight = FontWeight(400),
+                color = Black9
+            )
+        )
+    }
+}

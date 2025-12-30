@@ -31,11 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteListItem
-import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
-import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTabRow
-import com.kuit.afternote.feature.mainpage.presentation.component.MainHeader
-import com.kuit.afternote.feature.mainpage.presentation.component.getIconResForTitle
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
+import com.kuit.afternote.feature.mainpage.presentation.component.main.MainHeader
+import com.kuit.afternote.feature.mainpage.presentation.component.main.getIconResForTitle
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
@@ -48,7 +48,10 @@ import com.kuit.afternote.ui.theme.Gray1
  * - 하단 FAB 버튼
  */
 @Composable
-fun AfternoteMainScreen(modifier: Modifier = Modifier) {
+fun AfternoteMainScreen(
+    modifier: Modifier = Modifier,
+    onItemClick: () -> Unit = {}
+) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
 
@@ -148,7 +151,7 @@ fun AfternoteMainScreen(modifier: Modifier = Modifier) {
                         title = title,
                         date = date,
                         imageRes = getIconResForTitle(title),
-                        onClick = { /* TODO: 상세 화면으로 이동 */ }
+                        onClick = onItemClick
                     )
                 }
             }
