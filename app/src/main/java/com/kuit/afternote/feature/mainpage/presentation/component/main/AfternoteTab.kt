@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 /**
  * 애프터노트 탭 카테고리
