@@ -156,7 +156,7 @@ fun AfternoteDetailScreen(
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column{
+                        Column {
                             Text(
                                 text = "기록에 대한 개인 정보",
                                 style = androidx.compose.ui.text.TextStyle(
@@ -192,7 +192,7 @@ fun AfternoteDetailScreen(
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column{
+                        Column {
                             Text(
                                 text = "처리 방법",
                                 style = androidx.compose.ui.text.TextStyle(
@@ -220,7 +220,7 @@ fun AfternoteDetailScreen(
                 InfoCard(
                     modifier = Modifier.fillMaxWidth(),
                     content = {
-                        Column{
+                        Column {
                             Text(
                                 text = "남기신 말씀",
                                 style = androidx.compose.ui.text.TextStyle(
