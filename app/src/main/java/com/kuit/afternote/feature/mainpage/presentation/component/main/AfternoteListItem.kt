@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.LightBlue
 import com.kuit.afternote.ui.theme.Sansneo
@@ -122,7 +122,7 @@ fun AfternoteListItem(
             ) {
                 Text(
                     text = title,
-                    color = Black9,
+                    color = Black,
                     fontSize = 16.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
