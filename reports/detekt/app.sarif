@@ -4,6 +4,28 @@
   "runs": [
     {
       "results": [
+        {
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/rlfjr/AndroidStudioProjects/AFTERNOTE_FE/app/src/main/java/com/kuit/afternote/MainActivity.kt"
+                },
+                "region": {
+                  "endColumn": 30,
+                  "endLine": 25,
+                  "startColumn": 18,
+                  "startLine": 25
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled."
+          },
+          "ruleId": "detekt.exceptions.TooGenericExceptionCaught"
+        }
       ],
       "tool": {
         "driver": {

@@ -157,11 +157,11 @@
 
 <div>
   <ul>
-    <li>68 number of properties</li>
-    <li>66 number of functions</li>
+    <li>73 number of properties</li>
+    <li>77 number of functions</li>
     <li>24 number of classes</li>
-    <li>14 number of packages</li>
-    <li>45 number of kt files</li>
+    <li>15 number of packages</li>
+    <li>50 number of kt files</li>
   </ul>
 </div>
 
@@ -170,25 +170,43 @@
 
 <div>
   <ul>
-    <li>3,144 lines of code (loc)</li>
-    <li>2,697 source lines of code (sloc)</li>
-    <li>1,643 logical lines of code (lloc)</li>
-    <li>172 comment lines of code (cloc)</li>
-    <li>114 cyclomatic complexity (mcc)</li>
-    <li>51 cognitive complexity</li>
-    <li>0 number of total code smells</li>
-    <li>6% comment source ratio</li>
-    <li>69 mcc per 1,000 lloc</li>
+    <li>3,650 lines of code (loc)</li>
+    <li>3,154 source lines of code (sloc)</li>
+    <li>1,915 logical lines of code (lloc)</li>
+    <li>175 comment lines of code (cloc)</li>
+    <li>129 cyclomatic complexity (mcc)</li>
+    <li>61 cognitive complexity</li>
+    <li>1 number of total code smells</li>
+    <li>5% comment source ratio</li>
+    <li>67 mcc per 1,000 lloc</li>
     <li>0 code smells per 1,000 lloc</li>
   </ul>
 </div>
 
 
 <h2>Findings</h2>
-<div>Total: 0</div>
+<div>Total: 1
+  <h3>exceptions: 1</h3>
+  <details id="TooGenericExceptionCaught" open="open">
+    <summary class="rule-container"><span class="rule">TooGenericExceptionCaught: 1 </span><span class="description">The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled.</span></summary>
+<a href="https://detekt.dev/docs/rules/exceptions#toogenericexceptioncaught">Documentation</a>
+    <ul>
+      <li><span class="location">C:/Users/rlfjr/AndroidStudioProjects/AFTERNOTE_FE/app/src/main/java/com/kuit/afternote/MainActivity.kt:25:18</span><span class="message">The caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled.</span>
+        <pre><code><span class="lineno">  22 </span>            // Typeface에서 폰트 패밀리 이름 추출 시도
+<span class="lineno">  23 </span>            val regularTypeface = resources.getFont(R.font.sansneoregular)
+<span class="lineno">  24 </span>            Log.d(&quot;FontCheck&quot;, &quot;sansneoregular.otf - Typeface: ${regularTypeface?.javaClass?.name}&quot;)
+<span class="lineno">  25 </span>        } catch (<span class="error">e: Exception</span>) {
+<span class="lineno">  26 </span>            Log.e(&quot;FontCheck&quot;, &quot;Error: ${e.message}&quot;)
+<span class="lineno">  27 </span>        }
+<span class="lineno">  28 </span>        setContent {
+</code></pre>
+      </li>
+    </ul>
+  </details>
+</div>
 
 
-generated with <a href="https://detekt.dev/">detekt version 1.23.8</a> on 2025-12-30 07:00:52 UTC.
+generated with <a href="https://detekt.dev/">detekt version 1.23.8</a> on 2025-12-31 09:03:58 UTC.
 
 </body>
 </html>
