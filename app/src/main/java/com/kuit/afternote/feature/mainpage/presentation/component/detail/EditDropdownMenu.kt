@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray3
+import com.kuit.afternote.ui.theme.Gray9
 
 @Composable
 fun EditDropdownMenu(
@@ -49,7 +49,7 @@ fun EditDropdownMenu(
                 lineHeight = 20.sp,
                 fontFamily = FontFamily(Font(R.font.sansneomedium)),
                 fontWeight = FontWeight(500),
-                color = Black9,
+                color = Gray9,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier
@@ -69,7 +69,7 @@ fun EditDropdownMenu(
                 lineHeight = 20.sp,
                 fontFamily = FontFamily(Font(R.font.sansneomedium)),
                 fontWeight = FontWeight(500),
-                color = Black9,
+                color = Gray9,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier

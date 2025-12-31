@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
@@ -46,7 +46,7 @@ fun ClickButton(
         Text(
             text = title,
             fontSize = 16.sp,
-            color = Black9,
+            color = Gray9,
             fontFamily = Sansneo,
             fontWeight = FontWeight.Medium
         )

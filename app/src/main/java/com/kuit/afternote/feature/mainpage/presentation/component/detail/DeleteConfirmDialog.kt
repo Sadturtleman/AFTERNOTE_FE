@@ -29,8 +29,8 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray3
+import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.TextPrimary
 
 @Composable
@@ -89,7 +89,7 @@ fun DeleteConfirmDialog(
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                         fontWeight = FontWeight(500),
-                        color = Black9,
+                        color = Gray9,
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier
@@ -115,7 +115,7 @@ fun DeleteConfirmDialog(
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                         fontWeight = FontWeight(500),
-                        color = Black9,
+                        color = Gray9,
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier

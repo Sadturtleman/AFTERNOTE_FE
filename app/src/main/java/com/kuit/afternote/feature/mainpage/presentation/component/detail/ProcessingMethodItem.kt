@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Gray9
 
 /**
  * 처리 방법 아이템 컴포넌트
@@ -67,7 +67,7 @@ fun ProcessingMethodItem(
                 lineHeight = 20.sp,
                 fontFamily = FontFamily(Font(R.font.sansneoregular)),
                 fontWeight = FontWeight(400),
-                color = Black9
+                color = Gray9
             )
         )
     }
