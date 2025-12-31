@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +26,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kuit.afternote.R
+import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray3
+import com.kuit.afternote.ui.theme.TextPrimary
 
 @Composable
 fun DeleteConfirmDialog(
@@ -47,34 +49,33 @@ fun DeleteConfirmDialog(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
+                .dropShadow(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black.copy(alpha = 0.15f),
+                    blur = 10.dp,
+                    offsetX = 0.dp,
+                    offsetY = 2.dp,
+                    spread = 0.dp
+                ).clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
-                .padding(24.dp),
+                .padding(horizontal = 33.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${serviceName}에 대한 기록을 삭제하시겠습니까?",
+                text = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
+                    "\n삭제 시, 되돌릴 수 없습니다.",
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 22.sp,
                     fontFamily = FontFamily(Font(R.font.sansneomedium)),
                     fontWeight = FontWeight(500),
-                    color = Black9,
-                    textAlign = TextAlign.Center
-                )
-            )
-
-            Text(
-                text = "삭제 시, 되돌릴 수 없습니다.",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                    fontWeight = FontWeight(400),
-                    color = Black9,
+                    color = TextPrimary,
                     textAlign = TextAlign.Center
                 ),
-                modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
+                modifier = Modifier
+                    .padding(
+                        bottom = 20.dp
+                    )
             )
 
             Row(
@@ -92,11 +93,19 @@ fun DeleteConfirmDialog(
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .width(136.dp)
+                        .dropShadow(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.Black.copy(alpha = 0.05f),
+                            blur = 5.dp,
+                            offsetX = 0.dp,
+                            offsetY = 2.dp,
+                            spread = 0.dp
+                        ).clip(RoundedCornerShape(8.dp))
                         .background(Gray3)
                         .clickable(onClick = onDismiss)
-                        .padding(vertical = 12.dp)
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .weight(1f)
                 )
 
                 Text(
@@ -106,15 +115,23 @@ fun DeleteConfirmDialog(
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                         fontWeight = FontWeight(500),
-                        color = B1,
+                        color = Black9,
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .width(136.dp)
+                        .dropShadow(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.Black.copy(alpha = 0.05f),
+                            blur = 5.dp,
+                            offsetX = 0.dp,
+                            offsetY = 2.dp,
+                            spread = 0.dp
+                        ).clip(RoundedCornerShape(8.dp))
                         .background(B3)
                         .clickable(onClick = onConfirm)
-                        .padding(vertical = 12.dp)
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .weight(1f)
                 )
             }
         }
