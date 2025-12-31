@@ -46,9 +46,9 @@ import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoRow
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray9
 
 /**
  * 애프터노트 상세 화면
@@ -130,7 +130,7 @@ fun AfternoteDetailScreen(
                             lineHeight = 24.sp,
                             fontFamily = FontFamily(Font(R.font.sansneobold)),
                             fontWeight = FontWeight(700),
-                            color = Black9
+                            color = Gray9
                         ),
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
@@ -164,7 +164,7 @@ fun AfternoteDetailScreen(
                                         lineHeight = 22.sp,
                                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                                         fontWeight = FontWeight(500),
-                                        color = Black9
+                                        color = Gray9
                                     )
                                 )
                             }
@@ -184,7 +184,7 @@ fun AfternoteDetailScreen(
                                         lineHeight = 22.sp,
                                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                                         fontWeight = FontWeight(500),
-                                        color = Black9
+                                        color = Gray9
                                     ),
                                     modifier = Modifier.padding(bottom = 7.dp)
                                 )
@@ -217,7 +217,7 @@ fun AfternoteDetailScreen(
                                         lineHeight = 22.sp,
                                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                                         fontWeight = FontWeight(500),
-                                        color = Black9
+                                        color = Gray9
                                     ),
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
@@ -244,7 +244,7 @@ fun AfternoteDetailScreen(
                                         lineHeight = 22.sp,
                                         fontFamily = FontFamily(Font(R.font.sansneomedium)),
                                         fontWeight = FontWeight(500),
-                                        color = Black9
+                                        color = Gray9
                                     ),
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
@@ -256,7 +256,7 @@ fun AfternoteDetailScreen(
                                         lineHeight = 20.sp,
                                         fontFamily = FontFamily(Font(R.font.sansneoregular)),
                                         fontWeight = FontWeight(400),
-                                        color = Black9
+                                        color = Gray9
                                     )
                                 )
                             }

@@ -23,7 +23,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.feature.onboarding.presentation.component.ClickButton
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Gray9
 
 /**
  * 지문 인증 컨텐츠 컴포넌트
@@ -49,7 +49,7 @@ fun FingerprintAuthContent(
                 lineHeight = 22.sp,
                 fontFamily = FontFamily(Font(R.font.sansneomedium)),
                 fontWeight = FontWeight(500),
-                color = Black9,
+                color = Gray9,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier.padding(bottom = 40.dp)

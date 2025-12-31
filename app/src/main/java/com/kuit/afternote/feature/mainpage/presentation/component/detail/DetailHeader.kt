@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray1
+import com.kuit.afternote.ui.theme.Gray9
 
 /**
  * 애프터노트 상세 화면 헤더 컴포넌트
@@ -71,7 +71,7 @@ fun DetailHeader(
                 lineHeight = 26.sp,
                 fontFamily = FontFamily(Font(R.font.sansneobold)),
                 fontWeight = FontWeight(700),
-                color = Black9,
+                color = Gray9,
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.05).sp
             ),
