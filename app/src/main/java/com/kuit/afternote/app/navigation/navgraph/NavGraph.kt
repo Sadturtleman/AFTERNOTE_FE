@@ -20,7 +20,8 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val devModeScreens = listOf(
-        ScreenInfo("메인 화면", "main"),
+        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
+        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
@@ -50,9 +51,23 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-        // 메인 화면 (개발용)
-        composable("main") {
+        // 메인 화면 - 빈 상태 (개발용)
+        composable("main_empty") {
             AfternoteMainScreen(
+                afternoteItems = emptyList(),
+                onItemClick = { navHostController.navigate("afternote_detail") }
+            )
+        }
+
+        // 메인 화면 - 목록 있음 (개발용)
+        composable("main_with_items") {
+            AfternoteMainScreen(
+                afternoteItems = listOf(
+                    "인스타그램" to "2023.11.24",
+                    "갤러리" to "2023.11.25",
+                    "갤러리" to "2023.11.26",
+                    "인스타그램" to "2023.11.27"
+                ),
                 onItemClick = { navHostController.navigate("afternote_detail") }
             )
         }
