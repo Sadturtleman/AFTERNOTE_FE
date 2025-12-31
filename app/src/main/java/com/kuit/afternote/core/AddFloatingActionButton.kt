@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.main
+package com.kuit.afternote.core
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
