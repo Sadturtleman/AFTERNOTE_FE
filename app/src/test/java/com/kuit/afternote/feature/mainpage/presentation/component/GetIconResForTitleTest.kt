@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.component
 
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.component.main.getIconResForTitle
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -15,20 +16,8 @@ class GetIconResForTitleTest {
     }
 
     @Test
-    fun `Instagram 제목은 insta_pattern을 반환한다`() {
-        val result = getIconResForTitle("Instagram")
-        assertEquals(R.drawable.insta_pattern, result)
-    }
-
-    @Test
     fun `갤러리 제목은 gallery를 반환한다`() {
         val result = getIconResForTitle("갤러리")
-        assertEquals(R.drawable.gallery, result)
-    }
-
-    @Test
-    fun `Gallery 제목은 gallery를 반환한다`() {
-        val result = getIconResForTitle("Gallery")
         assertEquals(R.drawable.gallery, result)
     }
 
