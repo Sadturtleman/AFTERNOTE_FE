@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
