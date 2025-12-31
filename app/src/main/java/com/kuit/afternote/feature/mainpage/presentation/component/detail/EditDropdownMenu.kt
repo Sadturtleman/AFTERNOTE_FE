@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -38,7 +39,8 @@ fun EditDropdownMenu(
             .width(91.dp)
             .shadow(elevation = 4.dp, shape = shape, clip = false)
             .clip(shape)
-            .background(Color.White)
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "수정하기",
