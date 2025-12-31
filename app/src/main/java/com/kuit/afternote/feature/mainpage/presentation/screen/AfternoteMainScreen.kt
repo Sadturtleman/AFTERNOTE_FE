@@ -1,14 +1,13 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,12 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AddFloatingActionButton
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
@@ -61,66 +59,73 @@ fun AfternoteMainScreen(
                 onItemSelected = { selectedBottomNavItem = it }
             )
         },
-        floatingActionButton = {
-            Image(
-                painter = painterResource(R.drawable.add_button),
-                contentDescription = "새 애프터노트 추가",
-                modifier = Modifier
-                    .size(56.dp)
-                    .clickable(onClick = onAddClick)
-            )
-        }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)
+                .fillMaxSize()
+                .padding(
+                    end = 10.dp,
+                    bottom = 94.dp
+                )
         ) {
-            MainHeader()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.statusBars)
+            ) {
+                MainHeader()
 
-            if (afternoteItems.isEmpty()) {
-                EmptyAfternoteContent(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                )
-            } else {
-                AfternoteTabRow(
-                    selectedTab = selectedTab,
-                    onTabSelected = { selectedTab = it }
-                )
+                if (afternoteItems.isEmpty()) {
+                    EmptyAfternoteContent(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+                } else {
+                    AfternoteTabRow(
+                        selectedTab = selectedTab,
+                        onTabSelected = { selectedTab = it }
+                    )
 
-                val filteredItems = when (selectedTab) {
-                    AfternoteTab.ALL -> afternoteItems
-                    AfternoteTab.SOCIAL_NETWORK -> afternoteItems.filter { (title, _) ->
-                        title.contains("인스타그램")
+                    val filteredItems = when (selectedTab) {
+                        AfternoteTab.ALL -> afternoteItems
+                        AfternoteTab.SOCIAL_NETWORK -> afternoteItems.filter { (title, _) ->
+                            title.contains("인스타그램")
+                        }
+
+                        AfternoteTab.GALLERY_AND_FILES -> afternoteItems.filter { (title, _) ->
+                            title.contains("갤러리")
+                        }
+
+                        else -> emptyList()
                     }
-                    AfternoteTab.GALLERY_AND_FILES -> afternoteItems.filter { (title, _) ->
-                        title.contains("갤러리")
-                    }
-                    else -> emptyList()
-                }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        top = 20.dp,
-                        end = 20.dp,
-                        bottom = 104.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(filteredItems) { (title, date) ->
-                        AfternoteListItem(
-                            title = title,
-                            date = date,
-                            imageRes = getIconResForTitle(title),
-                            onClick = onItemClick
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            top = 20.dp,
+                            end = 20.dp,
+                            bottom = 104.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(filteredItems) { (title, date) ->
+                            AfternoteListItem(
+                                title = title,
+                                date = date,
+                                imageRes = getIconResForTitle(title),
+                                onClick = onItemClick
+                            )
+                        }
                     }
                 }
             }
+
+            // FAB 버튼
+            AddFloatingActionButton(
+                onClick = onAddClick
+            )
         }
     }
 }
