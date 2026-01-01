@@ -57,14 +57,12 @@ fun AccountProcessingRadioButton(
                 width = 1.dp,
                 color = B2,
                 shape = RoundedCornerShape(16.dp)
-            )
-            .width(350.dp)
+            ).width(350.dp)
             .height(102.dp)
             .background(
                 color = White,
                 shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(onClick = onClick)
+            ).clickable(onClick = onClick)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {

@@ -58,8 +58,7 @@ fun CustomRadioButton(
                 width = borderWidth,
                 color = if (selected) selectedColor else unselectedColor,
                 shape = CircleShape
-            )
-            .clickable(onClick = onClick),
+            ).clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         if (selected) {

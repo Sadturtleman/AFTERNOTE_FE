@@ -85,8 +85,7 @@ fun SelectionDropdown(
                         end = Offset(size.width, y),
                         strokeWidth = borderWidth
                     )
-                }
-                .clickable { expanded = true }
+                }.clickable { expanded = true }
                 .padding(
                     all = 8.dp
                 )
