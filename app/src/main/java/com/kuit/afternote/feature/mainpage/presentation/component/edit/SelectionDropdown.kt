@@ -19,8 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.ui.expand.bottomBorder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray8
@@ -76,16 +75,8 @@ fun SelectionDropdown(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp)
-                .drawBehind {
-                    val borderWidth = 0.5.dp.toPx()
-                    val y = size.height - borderWidth / 2
-                    drawLine(
-                        color = Gray3,
-                        start = Offset(0f, y),
-                        end = Offset(size.width, y),
-                        strokeWidth = borderWidth
-                    )
-                }.clickable { expanded = true }
+                .bottomBorder(color = Gray3, width = 0.5.dp)
+                .clickable { expanded = true }
                 .padding(
                     all = 8.dp
                 )
