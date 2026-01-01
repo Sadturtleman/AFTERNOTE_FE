@@ -16,6 +16,7 @@ val Gray3 = Color(0xFFE0E0E0)
 val Gray4 = Color(0xFFBDBDBD)
 val Gray5 = Color(0xFF9E9E9E) // gray scale/gray 5
 val Gray6 = Color(0xFF757575)
+val Gray8 = Color(0xFF424242) // gray scale/gray 8
 val Gray9 = Color(0xFF212121) // gray scale/gray 9
 
 val Black = Color(0xFF000000) // 순수 검은색
