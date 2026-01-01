@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.AddFloatingActionButton
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.MainHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
-import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
-import com.kuit.afternote.feature.mainpage.presentation.component.main.MainHeader
-import com.kuit.afternote.feature.mainpage.presentation.component.main.getIconResForTitle
+import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
+import com.kuit.afternote.feature.mainpage.presentation.util.getIconResForTitle
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 

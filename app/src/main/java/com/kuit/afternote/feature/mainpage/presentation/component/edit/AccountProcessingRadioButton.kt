@@ -65,8 +65,7 @@ fun AccountProcessingRadioButton(
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable(onClick = onClick)
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(

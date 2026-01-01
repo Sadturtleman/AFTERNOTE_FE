@@ -3,17 +3,13 @@ package com.kuit.afternote.feature.mainpage.presentation.component.edit
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.CheckCircleIcon
+import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -66,9 +62,7 @@ fun ProcessingMethodCheckbox(
             painter = painterResource(R.drawable.ic_more_horizontal_1),
             contentDescription = "더보기",
             modifier = Modifier
-                .size(16.dp)
-                .clickable(onClick = onMoreClick),
-            colorFilter = ColorFilter.tint(Gray4)
+                .clickable(onClick = onMoreClick)
         )
     }
 }

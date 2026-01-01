@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.DetailHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.DetailHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoRow
@@ -130,9 +130,9 @@ fun AfternoteDetailScreen(
                             fontFamily = Sansneo,
                             fontWeight = FontWeight(700),
                             color = Gray9
-                        ),
-                        modifier = Modifier.padding(bottom = 24.dp)
+                        )
                     )
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     InfoCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -185,8 +185,8 @@ fun AfternoteDetailScreen(
                                         fontWeight = FontWeight(500),
                                         color = Gray9
                                     ),
-                                    modifier = Modifier.padding(bottom = 7.dp)
                                 )
+                                Spacer(modifier = Modifier.height(7.dp))
 
                                 InfoRow(
                                     label = "아이디",
@@ -217,9 +217,9 @@ fun AfternoteDetailScreen(
                                         fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
-                                    ),
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    )
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
 
                                 ProcessingMethodItem(text = "게시물 내리기")
                                 Spacer(modifier = Modifier.height(6.dp))
@@ -244,9 +244,10 @@ fun AfternoteDetailScreen(
                                         fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
-                                    ),
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    )
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
+
                                 Text(
                                     text = "이 계정에는 우리 가족 여행 사진이 많아.\n" +
                                         "계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!",

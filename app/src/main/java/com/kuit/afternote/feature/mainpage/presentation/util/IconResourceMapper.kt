@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.main
+package com.kuit.afternote.feature.mainpage.presentation.util
 
 import com.kuit.afternote.R
 
