@@ -157,7 +157,7 @@ fun AfternoteEditScreen(
                         textFieldState = idState
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     AccountInfoTextField(
                         label = "비밀번호",
@@ -165,7 +165,7 @@ fun AfternoteEditScreen(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     // 계정 처리 방법 섹션
                     Text(
@@ -179,7 +179,7 @@ fun AfternoteEditScreen(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     AccountProcessingRadioButton(
                         method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
@@ -203,7 +203,7 @@ fun AfternoteEditScreen(
                         onClick = { selectedProcessingMethod = AccountProcessingMethod.TRANSFER_TO_RECIPIENT }
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     // 처리 방법 리스트 섹션
                     Text(
@@ -226,14 +226,14 @@ fun AfternoteEditScreen(
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     // 남기실 말씀
                     MessageTextField(
                         textFieldState = messageState
                     )
 
-                    Spacer(modifier = Modifier.height(104.dp))
+                    Spacer(modifier = Modifier.height(169.dp))
                 }
             }
         }
