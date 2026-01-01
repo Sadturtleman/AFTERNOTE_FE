@@ -15,17 +15,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun EditDropdownMenu(
@@ -47,7 +45,7 @@ fun EditDropdownMenu(
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                fontFamily = Sansneo,
                 fontWeight = FontWeight(500),
                 color = Gray9,
                 textAlign = TextAlign.Center
@@ -67,7 +65,7 @@ fun EditDropdownMenu(
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                fontFamily = Sansneo,
                 fontWeight = FontWeight(500),
                 color = Gray9,
                 textAlign = TextAlign.Center

@@ -12,16 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 개인 정보 행 컴포넌트 (라벨 + 값)
@@ -53,7 +51,7 @@ fun InfoRow(
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
-                    fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                    fontFamily = Sansneo,
                     fontWeight = FontWeight(500),
                     color = Gray9
                 )
@@ -66,8 +64,8 @@ fun InfoRow(
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                fontWeight = FontWeight(400),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray9
             )
         )
