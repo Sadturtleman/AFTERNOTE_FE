@@ -2,19 +2,14 @@ package com.kuit.afternote.feature.mainpage.presentation.component.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.CheckCircleIcon
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -31,9 +26,7 @@ fun ProcessingMethodItem(
     text: String
 ) {
     Row(
-        modifier = modifier
-//            .padding(vertical = 2.dp)
-        ,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -56,7 +49,5 @@ fun ProcessingMethodItem(
 @Preview(showBackground = true)
 @Composable
 private fun ProcessingMethodItemPreview() {
-//    AfternoteTheme {
-        ProcessingMethodItem(text = "게시물 내리기")
-//    }
+    ProcessingMethodItem(text = "게시물 내리기")
 }

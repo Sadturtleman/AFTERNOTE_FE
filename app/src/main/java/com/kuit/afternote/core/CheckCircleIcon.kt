@@ -18,9 +18,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
  * - 처리 방법 리스트에서 장식용으로 사용
  */
 @Composable
-fun CheckCircleIcon(
-    modifier: Modifier = Modifier
-) {
+fun CheckCircleIcon(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.ic_check_circle),
         contentDescription = null,
@@ -35,4 +33,3 @@ private fun CheckCircleIconPreview() {
         CheckCircleIcon()
     }
 }
-

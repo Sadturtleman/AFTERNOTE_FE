@@ -43,13 +43,13 @@ fun CustomRadioButton(
 ) {
     // 보더 두께
     val borderWidth = 1.dp
-    
+
     // 체크 표시와 윤곽선 간 간격 = 전체 크기의 1/12
     val spacing = buttonSize / 12f
-    
+
     // 체크 표시 크기 = 전체 크기 - (보더 * 2) - (간격 * 2)
     val indicatorSize = buttonSize - (borderWidth * 2) - (spacing * 2)
-    
+
     Box(
         modifier = modifier
             .size(buttonSize)

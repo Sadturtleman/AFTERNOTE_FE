@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.util.getIconResForTitle
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black

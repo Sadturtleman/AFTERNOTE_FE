@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.MainHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.fingerprint.FingerprintAuthContent
-import com.kuit.afternote.feature.mainpage.presentation.component.main.MainHeader
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 
