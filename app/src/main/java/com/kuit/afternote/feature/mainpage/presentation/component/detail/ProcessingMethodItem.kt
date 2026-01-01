@@ -16,16 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 처리 방법 아이템 컴포넌트
@@ -65,8 +63,8 @@ fun ProcessingMethodItem(
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                fontWeight = FontWeight(400),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray9
             )
         )

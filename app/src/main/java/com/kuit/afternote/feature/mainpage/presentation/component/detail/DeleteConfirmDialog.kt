@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.R
+import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
@@ -67,7 +65,7 @@ fun DeleteConfirmDialog(
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 22.sp,
-                    fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                    fontFamily = Sansneo,
                     fontWeight = FontWeight(500),
                     color = TextPrimary,
                     textAlign = TextAlign.Center
@@ -87,7 +85,7 @@ fun DeleteConfirmDialog(
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                        fontFamily = Sansneo,
                         fontWeight = FontWeight(500),
                         color = Gray9,
                         textAlign = TextAlign.Center
@@ -113,7 +111,7 @@ fun DeleteConfirmDialog(
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                        fontFamily = Sansneo,
                         fontWeight = FontWeight(500),
                         color = Gray9,
                         textAlign = TextAlign.Center

@@ -12,8 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +22,7 @@ import com.kuit.afternote.feature.onboarding.presentation.component.ClickButton
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 지문 인증 컨텐츠 컴포넌트
@@ -47,7 +46,7 @@ fun FingerprintAuthContent(
             style = TextStyle(
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
-                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                fontFamily = Sansneo,
                 fontWeight = FontWeight(500),
                 color = Gray9,
                 textAlign = TextAlign.Center

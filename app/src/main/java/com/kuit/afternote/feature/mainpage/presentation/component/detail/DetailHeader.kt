@@ -14,8 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +23,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 애프터노트 상세 화면 헤더 컴포넌트
@@ -69,8 +68,8 @@ fun DetailHeader(
             style = TextStyle(
                 fontSize = 20.sp,
                 lineHeight = 26.sp,
-                fontFamily = FontFamily(Font(R.font.sansneobold)),
-                fontWeight = FontWeight(700),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
                 color = Gray9,
                 textAlign = TextAlign.Center,
                 letterSpacing = (-0.05).sp

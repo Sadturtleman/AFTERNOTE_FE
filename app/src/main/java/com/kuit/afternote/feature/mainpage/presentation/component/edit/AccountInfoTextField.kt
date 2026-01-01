@@ -18,17 +18,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -55,8 +53,8 @@ fun AccountInfoTextField(
             style = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 18.sp,
-                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                fontWeight = FontWeight(400),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray9
             )
         )
@@ -72,8 +70,8 @@ fun AccountInfoTextField(
                 Text(
                     text = placeholder,
                     fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                    fontWeight = FontWeight(400),
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
                     color = Gray4,
                     lineHeight = 20.sp
                 )

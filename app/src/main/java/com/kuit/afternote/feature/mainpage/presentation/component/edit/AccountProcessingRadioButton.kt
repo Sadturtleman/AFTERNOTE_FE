@@ -17,19 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.CustomRadioButton
-import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -91,8 +89,8 @@ fun AccountProcessingRadioButton(
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
-                        fontWeight = FontWeight(500),
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
                         color = if (selected) B1 else Gray9
                     )
                 )
@@ -102,8 +100,8 @@ fun AccountProcessingRadioButton(
                     style = TextStyle(
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                        fontWeight = FontWeight(400),
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
                         color = Gray6
                     )
                 )

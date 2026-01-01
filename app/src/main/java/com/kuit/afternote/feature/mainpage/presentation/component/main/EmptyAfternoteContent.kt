@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray4
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
@@ -47,8 +46,8 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                fontWeight = FontWeight(400),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray4,
                 textAlign = TextAlign.Center
             )

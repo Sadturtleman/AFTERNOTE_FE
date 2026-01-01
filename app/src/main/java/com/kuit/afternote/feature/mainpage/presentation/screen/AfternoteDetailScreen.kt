@@ -28,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +47,7 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 애프터노트 상세 화면
@@ -128,7 +127,7 @@ fun AfternoteDetailScreen(
                         style = TextStyle(
                             fontSize = 18.sp,
                             lineHeight = 24.sp,
-                            fontFamily = FontFamily(Font(R.font.sansneobold)),
+                            fontFamily = Sansneo,
                             fontWeight = FontWeight(700),
                             color = Gray9
                         ),
@@ -146,7 +145,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 10.sp,
                                         lineHeight = 16.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(400),
                                         color = Gray6
                                     )
@@ -162,7 +161,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
                                     )
@@ -182,7 +181,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
                                     ),
@@ -215,7 +214,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
                                     ),
@@ -242,7 +241,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(500),
                                         color = Gray9
                                     ),
@@ -254,7 +253,7 @@ fun AfternoteDetailScreen(
                                     style = TextStyle(
                                         fontSize = 14.sp,
                                         lineHeight = 20.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                        fontFamily = Sansneo,
                                         fontWeight = FontWeight(400),
                                         color = Gray9
                                     )
