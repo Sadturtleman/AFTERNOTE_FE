@@ -231,7 +231,8 @@ fun ProcessingMethodList(
                 Box(
                     modifier = Modifier
                         .offset(
-                            x = with(density) { position.x.toDp() - 91.dp },
+                            // 카드 오른쪽 경계에서 14dp 패딩: 드롭다운 너비(91.dp) + 패딩(14.dp) = 105.dp
+                            x = with(density) { position.x.toDp() - 91.dp - 14.dp },
                             y = with(density) { position.y.toDp() + 24.dp }
                         )
                 ) {
