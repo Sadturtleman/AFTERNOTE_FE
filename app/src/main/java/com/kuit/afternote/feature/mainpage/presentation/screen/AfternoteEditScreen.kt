@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountPr
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
+import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
@@ -87,6 +89,8 @@ fun AfternoteEditScreen(
     // 남기실 말씀
     val messageState = rememberTextFieldState()
 
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
@@ -101,6 +105,7 @@ fun AfternoteEditScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars)
+                .addFocusCleaner(focusManager)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -223,6 +228,25 @@ fun AfternoteEditScreen(
                         items = processingMethods,
                         onAddClick = {
                             // TODO: 처리 방법 추가 로직
+                        },
+                        onItemMoreClick = {
+                            // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
+                        },
+                        onItemEditClick = { itemId ->
+                            // TODO: 처리 방법 수정 로직
+                        },
+                        onItemDeleteClick = { itemId ->
+                            // TODO: 처리 방법 삭제 로직
+                        },
+                        onItemAdded = { text ->
+                            val newItem = ProcessingMethodItem(
+                                id = (processingMethods.size + 1).toString(),
+                                text = text
+                            )
+                            processingMethods = processingMethods + newItem
+                        },
+                        onTextFieldVisibilityChanged = { isOpen ->
+                            // 텍스트 필드 표시 상태 변경 처리
                         }
                     )
 
