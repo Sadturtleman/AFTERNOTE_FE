@@ -88,7 +88,10 @@ fun AccountInfoTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(White, RoundedCornerShape(8.dp))
+                .background(White, RoundedCornerShape(8.dp)),
+            textStyle = TextStyle(
+                color = Gray9
+            )
         )
     }
 }

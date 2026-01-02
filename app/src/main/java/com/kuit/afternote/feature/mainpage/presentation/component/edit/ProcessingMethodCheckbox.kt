@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,11 +37,16 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ProcessingMethodCheckbox(
     modifier: Modifier = Modifier,
     item: ProcessingMethodItem,
-    onMoreClick: () -> Unit = {}
+    onClick: (() -> Unit)? = null,
+    onMoreClick: () -> Unit = {},
+    onMoreButtonPositioned: ((androidx.compose.ui.geometry.Offset) -> Unit)? = null
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable(enabled = onClick != null) {
+                onClick?.invoke()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -63,6 +70,15 @@ fun ProcessingMethodCheckbox(
             contentDescription = "더보기",
             modifier = Modifier
                 .clickable(onClick = onMoreClick)
+                .then(
+                    if (onMoreButtonPositioned != null) {
+                        Modifier.onGloballyPositioned { coordinates ->
+                            onMoreButtonPositioned(coordinates.positionInRoot())
+                        }
+                    } else {
+                        Modifier
+                    }
+                )
         )
     }
 }
