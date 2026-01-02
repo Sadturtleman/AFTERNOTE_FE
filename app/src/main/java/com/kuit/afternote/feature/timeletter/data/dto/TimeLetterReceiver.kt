@@ -6,6 +6,7 @@ data class TimeLetterReceiver(
     val send_at: String,
     val title: String,
     val content: String,
-    val image_url: String?
+    val image_url: String?,
+    val relation : String
 )
 

@@ -1,6 +1,5 @@
-package com.kuit.afternote.feature.timeletter.presentation.component
+package com.kuit.afternote.feature.timeletter.presentation.screen
 
-import android.R.attr.color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -26,6 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.BottomNavigationBar
+import kotlinx.coroutines.selects.select
 
 val SansNeoRegular = FontFamily(
     Font(R.font.sansneoregular, FontWeight.Normal)
@@ -68,9 +71,7 @@ fun LetterEmptyScreen(
                     )
             )
         }
-
         Spacer(modifier = Modifier.height(287.38.dp))
-
         Column {
             Image(
                 painter = painterResource(id = R.drawable.letter),
@@ -92,11 +93,12 @@ fun LetterEmptyScreen(
                         "소중한 사람에게 마음을 전하세요",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W400,
-                    fontFamily= SansNeoRegular,
-                    color= Color(0xFF9E9E9E)
+                    fontFamily = SansNeoRegular,
+                    color = Color(0xFF9E9E9E),
+                    textAlign = TextAlign.Center
                 )
             }
-
+            Spacer(modifier = Modifier.padding(top = 186.43.dp))
             Image(
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = "add",
@@ -104,12 +106,21 @@ fun LetterEmptyScreen(
                     .padding(start = 302.dp)
                     .size(56.dp)
             )
+            Spacer(modifier = Modifier.padding(top = 21.dp))
+            BottomNavigationBar(
+                modifier = Modifier,
+                selectedItem = BottomNavItem.TIME_LETTER,
+                onItemSelected = { }
+            )
         }
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+)
 @Composable
 fun EmptyPrev() {
     LetterEmptyScreen()
