@@ -236,7 +236,7 @@ fun AfternoteEditScreen(
                             // TODO: 처리 방법 수정 로직
                         },
                         onItemDeleteClick = { itemId ->
-                            // TODO: 처리 방법 삭제 로직
+                            processingMethods = processingMethods.filter { it.id != itemId }
                         },
                         onItemAdded = { text ->
                             val newItem = ProcessingMethodItem(

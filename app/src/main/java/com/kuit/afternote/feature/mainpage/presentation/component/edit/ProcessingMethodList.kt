@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -104,8 +105,12 @@ fun ProcessingMethodList(
 
     // 각 아이템의 expanded 상태를 추적하기 위한 맵
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
-    // 각 아이템의 더보기 버튼 위치를 추적하기 위한 맵
-    val moreButtonPositions = remember { mutableStateMapOf<String, Offset>() }
+    // 각 아이템의 위치를 추적하기 위한 맵
+    val itemPositions = remember { mutableStateMapOf<String, Offset>() }
+    // 각 아이템의 크기를 추적하기 위한 맵
+    val itemSizes = remember { mutableStateMapOf<String, IntSize>() }
+    // 부모 Box의 루트 위치
+    var boxPositionInRoot by remember { mutableStateOf(Offset.Zero) }
     val density = LocalDensity.current
 
     items.forEach { item ->
@@ -115,7 +120,11 @@ fun ProcessingMethodList(
     }
 
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .onGloballyPositioned { coordinates ->
+                boxPositionInRoot = coordinates.positionInRoot()
+            }
     ) {
         Column(
             modifier = Modifier
@@ -133,9 +142,9 @@ fun ProcessingMethodList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coordinates ->
-                            // Box의 오른쪽 끝 위치를 저장 (더보기 버튼이 오른쪽에 있으므로)
-                            val boxRight = coordinates.positionInRoot().x + coordinates.size.width
-                            moreButtonPositions[item.id] = Offset(boxRight, coordinates.positionInRoot().y)
+                            // 각 아이템의 위치와 크기 저장
+                            itemPositions[item.id] = coordinates.positionInRoot()
+                            itemSizes[item.id] = coordinates.size
                         }
                 ) {
                     ProcessingMethodCheckbox(
@@ -222,18 +231,23 @@ fun ProcessingMethodList(
             )
         }
 
-        // 드롭다운 메뉴를 최상위 Box에 배치 (상세 화면과 동일한 방식)
+        // 드롭다운 메뉴를 최상위 Box에 배치 (레이아웃 영향 없음)
         items.forEach { item ->
             val expanded = expandedStates[item.id] ?: false
-            val position = moreButtonPositions[item.id]
+            val position = itemPositions[item.id]
+            val size = itemSizes[item.id]
 
-            if (expanded && position != null) {
+            if (expanded && position != null && size != null) {
                 Box(
                     modifier = Modifier
                         .offset(
-                            // 카드 오른쪽 경계에서 14dp 패딩: 드롭다운 너비(91.dp) + 패딩(14.dp) = 105.dp
-                            x = with(density) { position.x.toDp() - 91.dp - 14.dp },
-                            y = with(density) { position.y.toDp() + 24.dp }
+                            // 체크박스 아랫변 기준: 위로 2dp, 오른쪽으로 2dp
+                            x = with(density) {
+                                (position.x + size.width - boxPositionInRoot.x).toDp() - 91.dp + 2.dp
+                            },
+                            y = with(density) {
+                                (position.y + size.height - boxPositionInRoot.y).toDp() - 2.dp
+                            }
                         )
                 ) {
                     EditDropdownMenu(
