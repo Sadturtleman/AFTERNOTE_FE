@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -31,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -53,6 +56,7 @@ import com.kuit.afternote.ui.theme.White
 /**
  * 처리 방법 리스트 컴포넌트
  */
+@Suppress("LongParameterList", "ComplexMethod")
 @Composable
 fun ProcessingMethodList(
     modifier: Modifier = Modifier,
@@ -63,13 +67,11 @@ fun ProcessingMethodList(
     onItemDeleteClick: (String) -> Unit = {},
     onItemAdded: (String) -> Unit = {},
     onTextFieldVisibilityChanged: (Boolean) -> Unit = {},
-    initialShowTextField: Boolean = false
+    initialShowTextField: Boolean = false,
+    initialExpandedItemId: String? = null
 ) {
     var showTextField by remember { mutableStateOf(initialShowTextField) }
     val textFieldState = rememberTextFieldState()
-    var expandedItemId by remember { mutableStateOf<String?>(null) }
-    var dropdownPosition by remember { mutableStateOf<Offset?>(null) }
-    val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -100,6 +102,18 @@ fun ProcessingMethodList(
         onDispose { }
     }
 
+    // 각 아이템의 expanded 상태를 추적하기 위한 맵
+    val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
+    // 각 아이템의 더보기 버튼 위치를 추적하기 위한 맵
+    val moreButtonPositions = remember { mutableStateMapOf<String, Offset>() }
+    val density = LocalDensity.current
+
+    items.forEach { item ->
+        if (!expandedStates.containsKey(item.id)) {
+            expandedStates[item.id] = initialExpandedItemId == item.id
+        }
+    }
+
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -113,29 +127,31 @@ fun ProcessingMethodList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items.forEachIndexed { index, item ->
-                ProcessingMethodCheckbox(
-                    item = item,
-                    onClick = {
-                        focusManager.clearFocus()
-                        if (showTextField) {
-                            addItemIfNotEmpty()
+                val expanded = expandedStates[item.id] ?: false
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned { coordinates ->
+                            // Box의 오른쪽 끝 위치를 저장 (더보기 버튼이 오른쪽에 있으므로)
+                            val boxRight = coordinates.positionInRoot().x + coordinates.size.width
+                            moreButtonPositions[item.id] = Offset(boxRight, coordinates.positionInRoot().y)
                         }
-                    },
-                    onMoreClick = {
-                        focusManager.clearFocus()
-                        if (expandedItemId == item.id) {
-                            expandedItemId = null
-                            dropdownPosition = null
-                        } else {
-                            expandedItemId = item.id
+                ) {
+                    ProcessingMethodCheckbox(
+                        item = item,
+                        onClick = {
+                            focusManager.clearFocus()
+                            if (showTextField) {
+                                addItemIfNotEmpty()
+                            }
+                        },
+                        onMoreClick = {
+                            focusManager.clearFocus()
+                            expandedStates[item.id] = !expanded
                         }
-                    },
-                    onMoreButtonPositioned = { position ->
-                        if (expandedItemId == item.id) {
-                            dropdownPosition = position
-                        }
-                    }
-                )
+                    )
+                }
                 Spacer(
                     modifier = Modifier.height(6.dp)
                 )
@@ -206,9 +222,36 @@ fun ProcessingMethodList(
             )
         }
 
-        // 드롭다운 메뉴 오버레이
-        if (expandedItemId != null && dropdownPosition != null) {
-            // 외부 클릭 시 닫기
+        // 드롭다운 메뉴를 최상위 Box에 배치 (상세 화면과 동일한 방식)
+        items.forEach { item ->
+            val expanded = expandedStates[item.id] ?: false
+            val position = moreButtonPositions[item.id]
+
+            if (expanded && position != null) {
+                Box(
+                    modifier = Modifier
+                        .offset(
+                            x = with(density) { position.x.toDp() - 91.dp },
+                            y = with(density) { position.y.toDp() + 24.dp }
+                        )
+                ) {
+                    EditDropdownMenu(
+                        onEditClick = {
+                            expandedStates[item.id] = false
+                            onItemEditClick(item.id)
+                        },
+                        onDeleteClick = {
+                            expandedStates[item.id] = false
+                            onItemDeleteClick(item.id)
+                        }
+                    )
+                }
+            }
+        }
+
+        // 드롭다운 메뉴 외부 클릭 시 닫기 (전체 화면 오버레이 - 상세 화면과 동일한 방식)
+        val hasExpandedDropdown = expandedStates.values.any { it }
+        if (hasExpandedDropdown) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -216,43 +259,12 @@ fun ProcessingMethodList(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-                        expandedItemId = null
-                        dropdownPosition = null
+                        // 모든 드롭다운 닫기
+                        expandedStates.keys.forEach { key ->
+                            expandedStates[key] = false
+                        }
                     }
             )
-
-            // 드롭다운 메뉴 표시
-            val currentItemId = expandedItemId
-            if (currentItemId != null && dropdownPosition != null) {
-                // 더보기 버튼의 오른쪽 끝에 드롭다운 메뉴의 오른쪽 끝을 맞춤
-                // 더보기 버튼은 약 16dp 크기
-                Box(
-                    modifier = Modifier
-                        .offset(
-                            x = with(density) {
-                                dropdownPosition!!.x.toDp() + 16.dp - 91.dp
-                            },
-                            y = with(density) {
-                                dropdownPosition!!.y.toDp() + 24.dp
-                            }
-                        )
-                ) {
-                    EditDropdownMenu(
-                        onEditClick = {
-                            val itemId = currentItemId
-                            expandedItemId = null
-                            dropdownPosition = null
-                            onItemEditClick(itemId)
-                        },
-                        onDeleteClick = {
-                            val itemId = currentItemId
-                            expandedItemId = null
-                            dropdownPosition = null
-                            onItemDeleteClick(itemId)
-                        }
-                    )
-                }
-            }
         }
     }
 }
@@ -273,6 +285,28 @@ private fun ProcessingMethodListPreview() {
             onItemAdded = {},
             onTextFieldVisibilityChanged = {},
             initialShowTextField = true
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "드롭다운 펼쳐진 상태")
+@Composable
+private fun ProcessingMethodListWithDropdownPreview() {
+    AfternoteTheme {
+        ProcessingMethodList(
+            items = listOf(
+                ProcessingMethodItem("1", "게시물 내리기"),
+                ProcessingMethodItem("2", "댓글 비활성화"),
+                ProcessingMethodItem("3", "추모 계정으로 전환하기")
+            ),
+            onAddClick = {},
+            onItemMoreClick = {},
+            onItemEditClick = {},
+            onItemDeleteClick = {},
+            onItemAdded = {},
+            onTextFieldVisibilityChanged = {},
+            initialShowTextField = false,
+            initialExpandedItemId = "1"
         )
     }
 }
