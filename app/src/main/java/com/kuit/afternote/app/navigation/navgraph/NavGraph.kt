@@ -34,9 +34,9 @@ fun NavGraph(navHostController: NavHostController) {
 
     NavHost(
         navController = navHostController,
-        startDestination = "mode_selection"
+        startDestination = "dev"
     ) {
-        // 모드 선택 화면
+        // 모드 선택 화면 (사용하지 않음, 개발자 모드에서 직접 사용자 모드로 이동 가능)
         composable("mode_selection") {
             ModeSelectionScreen(
                 onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) },
@@ -46,11 +46,12 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(navHostController)
 
-        // 개발자 모드 화면
+        // 개발자 모드 화면 (기본 시작 화면)
         composable("dev") {
             DevModeScreen(
                 screens = devModeScreens,
-                onScreenClick = { route -> navHostController.navigate(route) }
+                onScreenClick = { route -> navHostController.navigate(route) },
+                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) }
             )
         }
 
