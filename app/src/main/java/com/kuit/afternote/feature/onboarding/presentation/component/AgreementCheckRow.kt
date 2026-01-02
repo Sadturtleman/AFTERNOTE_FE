@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray5
+import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
@@ -44,7 +44,7 @@ fun AgreementCheckRow(
                     text = title,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Bold,
-                    color = Black9
+                    color = Gray9
                 )
             }
         }
@@ -79,12 +79,12 @@ fun AgreementCheckRow(
                     text = title,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
-                    color = Black9
+                    color = Gray9
                 )
                 Text(
                     text = if (required) " (필수)" else " (선택)",
                     fontFamily = Sansneo,
-                    color = Black9
+                    color = Gray9
                 )
             }
 

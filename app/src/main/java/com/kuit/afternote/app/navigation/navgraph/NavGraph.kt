@@ -7,7 +7,10 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
@@ -18,11 +21,15 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val devModeScreens = listOf(
-        ScreenInfo("메인 화면", "main"),
+        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
+        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
+        ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
+        ScreenInfo("애프터노트 수정 화면", "afternote_edit"),
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
-        ScreenInfo("프로필 설정 화면", "dev_profile_setting")
+        ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
+        ScreenInfo("지문 로그인 화면", "fingerprint_login")
     )
 
     NavHost(
@@ -47,9 +54,41 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-        // 메인 화면 (개발용)
-        composable("main") {
-            AfternoteMainScreen()
+        // 메인 화면 - 빈 상태 (개발용)
+        composable("main_empty") {
+            AfternoteMainScreen(
+                afternoteItems = emptyList(),
+                onItemClick = { navHostController.navigate("afternote_detail") }
+            )
+        }
+
+        // 메인 화면 - 목록 있음 (개발용)
+        composable("main_with_items") {
+            AfternoteMainScreen(
+                afternoteItems = listOf(
+                    "인스타그램" to "2023.11.24",
+                    "갤러리" to "2023.11.25",
+                    "갤러리" to "2023.11.26",
+                    "인스타그램" to "2023.11.27"
+                ),
+                onItemClick = { navHostController.navigate("afternote_detail") }
+            )
+        }
+
+        // 애프터노트 상세 화면
+        composable("afternote_detail") {
+            AfternoteDetailScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onEditClick = { navHostController.navigate("afternote_edit") }
+            )
+        }
+
+        // 애프터노트 수정 화면
+        composable("afternote_edit") {
+            AfternoteEditScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onRegisterClick = { /* TODO: 등록 처리 */ }
+            )
         }
 
         // 개발자 모드용 화면들
@@ -82,6 +121,13 @@ fun NavGraph(navHostController: NavHostController) {
                 onFinishClick = {},
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}
+            )
+        }
+
+        // 지문 로그인 화면
+        composable("fingerprint_login") {
+            FingerprintLoginScreen(
+                onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
         }
     }

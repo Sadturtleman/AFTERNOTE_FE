@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,10 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Black9
 import com.kuit.afternote.ui.theme.Gray2
+import com.kuit.afternote.ui.theme.Gray9
 
 /**
  * 개별 탭 아이템 컴포넌트
@@ -42,7 +43,7 @@ internal fun TabItem(
     ) {
         Text(
             text = tab.label,
-            color = Black9,
+            color = Gray9,
             fontSize = 12.sp
         )
     }

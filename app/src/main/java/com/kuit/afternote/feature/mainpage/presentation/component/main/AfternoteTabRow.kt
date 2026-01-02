@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component
+package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**

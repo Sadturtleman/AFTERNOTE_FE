@@ -11,6 +11,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AfternoteTheme {
                 Column {
