@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.CustomRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
@@ -33,11 +33,11 @@ import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 /**
- * 계정 처리 방법 라디오 버튼 컴포넌트
+ * 정보 처리 방법 라디오 버튼 컴포넌트 (갤러리 및 파일용)
  *
  * 피그마 디자인 기반:
  * - 너비: 350.dp
- * - 높이: 102.dp
+ * - 높이: 110.dp (설명이 2줄)
  * - 보더: 1.dp, 선택됨: B2 (#89C2FF), 선택 안 됨: 없음
  * - 배경: 흰색
  * - 패딩: 16.dp (모든 방향)
@@ -47,9 +47,9 @@ import com.kuit.afternote.ui.theme.White
  * - 설명: 14sp, Regular, Gray6
  */
 @Composable
-fun AccountProcessingRadioButton(
+fun InformationProcessingRadioButton(
     modifier: Modifier = Modifier,
-    method: AccountProcessingMethod,
+    method: InformationProcessingMethod,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -66,7 +66,7 @@ fun AccountProcessingRadioButton(
                     Modifier
                 }
             ).width(350.dp)
-            .height(102.dp)
+            .height(110.dp)
             .background(
                 color = White,
                 shape = RoundedCornerShape(16.dp)
@@ -118,23 +118,17 @@ fun AccountProcessingRadioButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun AccountProcessingRadioButtonPreview() {
+private fun InformationProcessingRadioButtonPreview() {
     AfternoteTheme {
         Column {
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
+            InformationProcessingRadioButton(
+                method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
                 selected = true,
                 onClick = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.PERMANENT_DELETE,
-                selected = false,
-                onClick = {}
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
+            InformationProcessingRadioButton(
+                method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
                 selected = false,
                 onClick = {}
             )
