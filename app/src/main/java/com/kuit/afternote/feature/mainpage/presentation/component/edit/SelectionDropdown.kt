@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +34,7 @@ import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.White
 
 /**
  * 선택 드롭다운 컴포넌트
@@ -51,6 +54,7 @@ fun SelectionDropdown(
     onValueSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -71,64 +75,67 @@ fun SelectionDropdown(
         )
 
         // 드롭다운 필드
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(36.dp)
-                .bottomBorder(color = Gray3, width = 0.5.dp)
-                .clickable { expanded = true }
-                .padding(
-                    all = 8.dp
-                )
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+        Box {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(36.dp)
+                    .bottomBorder(color = Gray3, width = 0.5.dp)
+                    .clickable {
+                        focusManager.clearFocus()
+                        expanded = true
+                    }.padding(all = 8.dp)
             ) {
-                Text(
-                    text = selectedValue,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray8
-                    ),
-//                    modifier = Modifier.weight(1f)
-                )
-
-                Image(
-                    painter = painterResource(R.drawable.ic_dropdown_vector),
-                    contentDescription = "드롭다운"
-                )
-            }
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = option,
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 20.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight.Normal,
-                                color = Gray9
-                            )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = selectedValue,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray8
                         )
-                    },
-                    onClick = {
-                        onValueSelected(option)
-                        expanded = false
-                    }
-                )
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.ic_dropdown_vector),
+                        contentDescription = "드롭다운"
+                    )
+                }
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(White)
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 20.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Gray9
+                                )
+                            )
+                        },
+                        onClick = {
+                            onValueSelected(option)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
