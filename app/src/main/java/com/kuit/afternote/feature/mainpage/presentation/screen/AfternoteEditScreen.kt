@@ -89,11 +89,12 @@ fun AfternoteEditScreen(
         ProcessingMethodItem("2", "추모 게시물 올리기"),
         ProcessingMethodItem("3", "추모 계정으로 전환하기")
     )
-    val galleryProcessingMethods = listOf(
+    val initialGalleryProcessingMethods = listOf(
         ProcessingMethodItem("1", "'엽사' 폴더 박선호에게 전송"),
         ProcessingMethodItem("2", "'흑역사' 폴더 삭제")
     )
     var processingMethods by remember { mutableStateOf(defaultProcessingMethods) }
+    var galleryProcessingMethods by remember { mutableStateOf(initialGalleryProcessingMethods) }
 
     // 남기실 말씀
     val messageState = rememberTextFieldState()
@@ -204,14 +205,29 @@ fun AfternoteEditScreen(
                             // TODO: 처리 방법 수정 로직
                         },
                         onItemDeleteClick = { itemId ->
-                            processingMethods = processingMethods.filter { it.id != itemId }
+                            if (selectedCategory == "갤러리 및 파일") {
+                                galleryProcessingMethods = galleryProcessingMethods.filter { it.id != itemId }
+                            } else {
+                                processingMethods = processingMethods.filter { it.id != itemId }
+                            }
                         },
                         onItemAdded = { text ->
-                            val newItem = ProcessingMethodItem(
-                                id = (processingMethods.size + 1).toString(),
-                                text = text
-                            )
-                            processingMethods = processingMethods + newItem
+                            val newItem = if (selectedCategory == "갤러리 및 파일") {
+                                ProcessingMethodItem(
+                                    id = (galleryProcessingMethods.size + 1).toString(),
+                                    text = text
+                                )
+                            } else {
+                                ProcessingMethodItem(
+                                    id = (processingMethods.size + 1).toString(),
+                                    text = text
+                                )
+                            }
+                            if (selectedCategory == "갤러리 및 파일") {
+                                galleryProcessingMethods = galleryProcessingMethods + newItem
+                            } else {
+                                processingMethods = processingMethods + newItem
+                            }
                         },
                         onTextFieldVisibilityChanged = { isOpen ->
                             // 텍스트 필드 표시 상태 변경 처리
