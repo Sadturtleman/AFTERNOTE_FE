@@ -1,15 +1,24 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -31,16 +41,31 @@ fun GalleryAndFileEditContent(
     onInformationProcessingMethodSelected: (InformationProcessingMethod) -> Unit
 ) {
     // 정보 처리 방법 섹션
-    Text(
-        text = "정보 처리 방법",
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight(500),
-            color = Gray9
+    Box {
+        var textWidth by remember { mutableStateOf(0.dp) }
+        val density = LocalDensity.current
+
+        Text(
+            text = "정보 처리 방법",
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight(500),
+                color = Gray9
+            ),
+            modifier = Modifier.onGloballyPositioned { coordinates ->
+                textWidth = with(density) { coordinates.size.width.toDp() }
+            }
         )
-    )
+        // 파란 점: 오른쪽 위 꼭짓점으로부터 오른쪽 8.dp, 아래 4.dp
+        Box(
+            modifier = Modifier
+                .offset(x = textWidth + 8.dp, y = 4.dp)
+                .size(4.dp)
+                .background(color = B2, shape = CircleShape)
+        )
+    }
 
     Spacer(modifier = Modifier.height(16.dp))
 

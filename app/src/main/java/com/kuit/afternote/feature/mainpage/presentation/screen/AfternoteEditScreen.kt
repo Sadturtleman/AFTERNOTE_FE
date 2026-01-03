@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,10 +8,13 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -21,6 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +46,7 @@ import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcess
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -176,16 +183,31 @@ fun AfternoteEditScreen(
                     }
 
                     // 처리 방법 리스트 섹션
-                    Text(
-                        text = "처리 방법 리스트",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight(500),
-                            color = Gray9
+                    Box {
+                        var textWidth by remember { mutableStateOf(0.dp) }
+                        val density = LocalDensity.current
+
+                        Text(
+                            text = "처리 방법 리스트",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight(500),
+                                color = Gray9
+                            ),
+                            modifier = Modifier.onGloballyPositioned { coordinates ->
+                                textWidth = with(density) { coordinates.size.width.toDp() }
+                            }
                         )
-                    )
+                        // 파란 점: 오른쪽 위 꼭짓점으로부터 오른쪽 8.dp, 아래 2.dp
+                        Box(
+                            modifier = Modifier
+                                .offset(x = textWidth + 8.dp, y = 2.dp)
+                                .size(4.dp)
+                                .background(color = B2, shape = CircleShape)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
