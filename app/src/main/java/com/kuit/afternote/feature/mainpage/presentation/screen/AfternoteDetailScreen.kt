@@ -33,7 +33,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.mainpage.presentation.component.common.header.DetailHeader

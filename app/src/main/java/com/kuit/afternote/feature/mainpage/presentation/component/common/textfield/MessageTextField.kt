@@ -79,7 +79,10 @@ fun MessageTextField(
                 .fillMaxWidth()
                 .height(160.dp)
                 .background(White, RoundedCornerShape(16.dp)),
-            contentPadding = PaddingValues(all = 16.dp)
+            contentPadding = PaddingValues(all = 16.dp),
+            textStyle = TextStyle(
+                color = Gray9
+            )
         )
     }
 }
