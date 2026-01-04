@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
+import RecordCustomDateSelector
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,17 +24,14 @@ import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.Black9
-import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDate
@@ -57,6 +53,9 @@ fun RecordDiaryContentItem(
     val today = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     val formattedDate = today.format(formatter)
+
+    //아래로 화살표 누르면 날짜 선택 가능하도록
+    var showSelector by remember { mutableStateOf(false) }
 
     var s = " "
     if(standard.equals("일기 기록하기")) s = "작성 날짜"
@@ -104,7 +103,13 @@ fun RecordDiaryContentItem(
                     painter = painterResource(id = R.drawable.ic_under),
                     contentDescription = "밑 화살표",
                     modifier = Modifier.size(24.dp)
+                        .clickable{ showSelector = true }
                 )
+                //다이얼로그
+                if (showSelector) {
+                    Dialog(onDismissRequest = { showSelector = false })
+                    { RecordCustomDateSelector() }
+                }
             }
         }
         Divider(color = Color.LightGray, thickness = 0.8.dp)
@@ -161,6 +166,7 @@ fun RecordDiaryContentItem(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 private fun RecordDiaryContentItemPrev() {
