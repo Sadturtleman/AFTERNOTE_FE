@@ -33,7 +33,9 @@ fun RecordDeepMindScreen(modifier: Modifier = Modifier) {
             item {
                 RecordDiaryContentItem(
                     standard = "깊은 생각 기록하기",
-                    onTitleChange = {}
+                    onTitleChange = {},
+                    onDateSelected = { _, _, _ -> }
+
                 )
             }
         }
