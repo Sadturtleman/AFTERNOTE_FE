@@ -76,14 +76,15 @@ fun TimeLetterListItem(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
         // 이미지가 있으면 표시
         if (imageResId != null) {
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
+                    .padding(top=20.dp)
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(248.dp)
+                    .width(350.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Image(
@@ -94,6 +95,7 @@ fun TimeLetterListItem(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
         // 제목
         Text(
             text = title,

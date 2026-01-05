@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.timeletter.presentation.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.ViewMode
+import com.kuit.afternote.ui.theme.White
 
 /**
  * 리스트형 / 블록형 토글 버튼
@@ -29,9 +31,17 @@ fun ViewModeToggle(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .background(Color(0xFFEEE), RoundedCornerShape(40.dp))
-            .padding(2.dp)
+        modifier = Modifier
+            .background(
+                color = Color(0xFFEEEEEE),
+                shape = RoundedCornerShape(40.dp)
+            )
+            .padding(
+                vertical = 6.dp,
+                horizontal = 16.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // 리스트 버튼
         ToggleButton(
@@ -40,7 +50,10 @@ fun ViewModeToggle(
             contentDescription = "리스트형",
             onClick = { onModeChange(ViewMode.LIST) }
         )
-
+        Image(
+            painterResource(R.drawable.ic_radio_bar),
+            contentDescription = "라디오 바"
+        )
         // 블록 버튼
         ToggleButton(
             isSelected = currentMode == ViewMode.BLOCK,
@@ -58,20 +71,21 @@ private fun ToggleButton(
     contentDescription: String,
     onClick: () -> Unit
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .background(
-                if (isSelected) Color.White else Color.Transparent,
-                RoundedCornerShape(6.dp)
+                color = Color(0xFFEEEEEE)
             )
-            .clickable(onClick = onClick)
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
-    ) {
+            .size(
+                24.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    )  {
         Image(
             painter = painterResource(id = iconResId),
             contentDescription = contentDescription,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(24.dp),
             colorFilter = ColorFilter.tint(
                 if (isSelected) Color(0xFF6B8FF8) else Color(0xFF9E9E9E)
             )

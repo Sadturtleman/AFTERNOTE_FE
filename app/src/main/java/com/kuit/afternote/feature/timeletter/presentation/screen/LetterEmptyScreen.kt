@@ -30,10 +30,6 @@ import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import kotlinx.coroutines.selects.select
 
-val SansNeoRegular = FontFamily(
-    Font(R.font.sansneoregular, FontWeight.Normal)
-)
-
 @Composable
 fun LetterEmptyScreen(
     modifier: Modifier = Modifier
@@ -93,7 +89,7 @@ fun LetterEmptyScreen(
                         "소중한 사람에게 마음을 전하세요",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W400,
-                    fontFamily = SansNeoRegular,
+                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
                     color = Color(0xFF9E9E9E),
                     textAlign = TextAlign.Center
                 )
@@ -116,10 +112,10 @@ fun LetterEmptyScreen(
     }
 }
 
-
+//844-29.07 = 814.93
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=814.9dp,dpi=420,isRound=false"
 )
 @Composable
 fun EmptyPrev() {

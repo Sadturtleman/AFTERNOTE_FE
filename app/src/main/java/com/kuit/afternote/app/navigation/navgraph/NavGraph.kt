@@ -17,6 +17,7 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -29,7 +30,8 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
         ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
-        ScreenInfo("지문 로그인 화면", "fingerprint_login")
+        ScreenInfo("지문 로그인 화면", "fingerprint_login"),
+        ScreenInfo("타임레터 화면", "time_letter")
     )
 
     NavHost(
@@ -129,6 +131,9 @@ fun NavGraph(navHostController: NavHostController) {
             FingerprintLoginScreen(
                 onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
+        }
+        composable ( "time_letter" ){
+            TimeLetterScreen()
         }
     }
 }
