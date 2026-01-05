@@ -44,7 +44,8 @@ fun RecordDiaryScreen(modifier: Modifier = Modifier) {
             item {
                 RecordDiaryContentItem(
                     standard = "일기 기록하기",
-                    onTitleChange = {}
+                    onTitleChange = {},
+                    onDateSelected = { _, _, _ -> }
                 )
             }
         }

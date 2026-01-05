@@ -1,9 +1,13 @@
 package com.kuit.afternote.app.navigation.navgraph
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -15,10 +19,12 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingS
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val devModeScreens = listOf(
         ScreenInfo("메인 화면", "main"),
+        ScreenInfo("마음의 기록 화면", "recordMain"),
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
@@ -39,6 +45,8 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(navHostController)
 
+        recordNavGraph(navHostController)
+
         // 개발자 모드 화면
         composable("dev") {
             DevModeScreen(
@@ -51,6 +59,14 @@ fun NavGraph(navHostController: NavHostController) {
         composable("main") {
             AfternoteMainScreen()
         }
+
+        //마음의 기록 화면
+        composable("recordMain") {
+            RecordMainScreen(navController = navHostController)
+        }
+
+
+
 
         // 개발자 모드용 화면들
         composable("dev_splash") {

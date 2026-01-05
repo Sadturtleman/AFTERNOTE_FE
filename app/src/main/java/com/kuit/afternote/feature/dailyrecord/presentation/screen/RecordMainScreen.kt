@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem
@@ -48,10 +51,11 @@ import com.kuit.afternote.ui.theme.Gray1
  * - 하단 FAB 버튼
  */
 @Composable
-fun RecordMainScreen(modifier: Modifier = Modifier) {
-    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
-
+fun RecordMainScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
@@ -123,7 +127,15 @@ fun RecordMainScreen(modifier: Modifier = Modifier) {
                 items(allItems){ (title, subtitle) ->
                     RecordItem(
                         title = title,
-                        subtitle = subtitle
+                        subtitle = subtitle,
+                        modifier = Modifier.clickable {
+                            when (title) {
+                                "데일리 질문답변" -> navController.navigate("dailyQuestion")
+                                "일기" -> navController.navigate("diary")
+                                "깊은 생각" -> navController.navigate("deepThought")
+                                "주간 리포트" -> navController.navigate("weeklyReport")
+                            }
+                        }
                     )
                 }
             }
@@ -139,5 +151,5 @@ fun RecordMainScreen(modifier: Modifier = Modifier) {
 )
 @Composable
 private fun RecordMainScreenPrev() {
-    RecordMainScreen()
+    //RecordMainScreen(navController = n)
 }
