@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
+import com.kuit.afternote.core.uimodel.Step
 import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +53,7 @@ fun TopBar(
 @Composable
 fun TopBar(
     title: String,
-    step: SignUpStep,
+    step: Step,
     onBackClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

@@ -28,7 +28,6 @@ import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
 
 @Composable
 fun SignUpScreen(
-    modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit
 ) {
@@ -63,7 +62,7 @@ fun SignUpScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Spacer(modifier = modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(40.dp))
 
                 when (step) {
                     SignUpStep.PHONE_AUTH -> {
