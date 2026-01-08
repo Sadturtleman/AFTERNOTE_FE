@@ -21,9 +21,7 @@ import com.kuit.afternote.feature.receiver.presentation.component.MasterKeyInput
 import com.kuit.afternote.feature.receiver.presentation.uimodel.VerifyStep
 
 @Composable
-fun VerifySelfScreen(
-    onBackClick: () -> Unit
-) {
+fun VerifySelfScreen(onBackClick: () -> Unit) {
     var step by remember { mutableStateOf(VerifyStep.EMAIL_AUTH) }
     val email = rememberTextFieldState()
     val masterKey = rememberTextFieldState()
@@ -59,19 +57,20 @@ fun VerifySelfScreen(
                         )
                     }
                 }
-                VerifyStep.MASTER_KEY_AUTH -> {
 
+                VerifyStep.MASTER_KEY_AUTH -> {
                     SignUpContentButton(
-                        onNextClick = {step = VerifyStep.UPLOAD_PDF_AUTH}
+                        onNextClick = { step = VerifyStep.UPLOAD_PDF_AUTH }
                     ) {
                         MasterKeyInputContent(
                             masterKey = masterKey
                         )
                     }
                 }
-                VerifyStep.UPLOAD_PDF_AUTH -> {
 
+                VerifyStep.UPLOAD_PDF_AUTH -> {
                 }
+
                 VerifyStep.END -> TODO()
             }
         }

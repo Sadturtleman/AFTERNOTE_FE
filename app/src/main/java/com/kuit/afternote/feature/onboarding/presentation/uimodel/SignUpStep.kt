@@ -12,8 +12,7 @@ enum class SignUpStep(
 
     END(4);
 
-    override
-    fun previous(): SignUpStep? =
+    override fun previous(): SignUpStep? =
         when (this) {
             PHONE_AUTH -> null
             IDENTIFY_INPUT -> PHONE_AUTH
