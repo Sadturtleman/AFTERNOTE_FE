@@ -66,7 +66,7 @@ fun SignUpEndContent(onSettingCLick: () -> Unit) {
 
         Text("이제부터 애프터노트에서\n당신의 마지막을 준비하세요.")
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -80,7 +80,7 @@ fun SignUpEndContent(onSettingCLick: () -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.height(56.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Row {
             AgreementCheckRow(
@@ -94,7 +94,7 @@ fun SignUpEndContent(onSettingCLick: () -> Unit) {
 
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         items.forEachIndexed { index, item ->
             AgreementCheckRow(
