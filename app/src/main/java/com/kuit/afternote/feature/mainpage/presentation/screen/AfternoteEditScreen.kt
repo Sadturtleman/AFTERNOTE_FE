@@ -67,7 +67,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onRegisterClick: () -> Unit = {}
+    onRegisterClick: (String) -> Unit = {}
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
 
@@ -129,7 +129,10 @@ fun AfternoteEditScreen(
             ) {
                 EditHeader(
                     onBackClick = onBackClick,
-                    onRegisterClick = onRegisterClick
+                    onRegisterClick = {
+                        // 서비스명을 전달하여 등록
+                        onRegisterClick(selectedService)
+                    }
                 )
 
                 Column(
