@@ -1,0 +1,291 @@
+# Project Context
+- **Project Type**: Android App (Kotlin, Jetpack Compose)
+- **Architecture**: Clean Architecture (Data, Domain, Presentation Layers)
+- **Dependency Injection**: Hilt
+- **Navigation**: Navigation Compose (Type-safe with kotlinx.serialization)
+- **Code Quality**: Detekt
+- **JDK**: JDK 21 (Eclipse Adoptium)
+
+---
+
+# 1. Architecture Rules (아키텍처 규칙)
+
+## Layer Separation (계층 분리)
+모든 Feature 모듈은 아래 3계층을 엄격히 준수해야 합니다.
+
+1. **Domain Layer** (Pure Kotlin)
+   - 외부 의존성(Android Framework, Data Layer 등)을 가지지 않습니다.
+   - `Entity`, `Repository Interface`, `UseCase`가 위치합니다.
+   - 비즈니스 로직의 핵심입니다.
+
+2. **Data Layer**
+   - Domain Layer의 `Repository`를 구현(`Impl`)합니다.
+   - API 호출, DB 접근, DTO 매핑을 담당합니다.
+   - `Mapper`를 통해 DTO를 Domain Entity로 변환하여 반환합니다.
+
+3. **Presentation Layer**
+   - UI (`Screen`, `Component`)와 상태 관리 (`ViewModel`)를 담당합니다.
+   - Domain Layer의 `UseCase`를 주입받아 비즈니스 로직을 수행합니다.
+   - `UiModel`을 정의하여 UI에 필요한 데이터만 가공해 보여줍니다.
+
+## Dependency Flow (의존성 방향)
+- **Correct**: Presentation → Domain ← Data
+- **Incorrect**: Domain → Data (X), Domain → Presentation (X)
+
+---
+
+# 2. Jetpack Compose Rules (Compose 규칙)
+
+## Composable Functions
+1. **State Hoisting**: 상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향).
+2. **Modifier**: 모든 Composable 함수는 `modifier: Modifier = Modifier`를 첫 번째 선택적 파라미터로 받아야 합니다.
+3. **Preview**: 모든 UI 컴포넌트는 `@Preview`를 포함해야 하며, 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등).
+   - 예외: 내부 전용 컴포넌트(`internal` 함수)는 선택적으로 작성 가능
+
+## File Structure
+- **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다.
+   - 예외: 비공개(`private`) 하위 컴포넌트나 data class, enum 등은 같은 파일에 둘 수 있습니다.
+
+## Component Spacing
+- 특정 컴포넌트(예: Text)에만 `padding`을 사용하여 다음 컴포넌트와의 간격을 처리하지 말아야 합니다.
+- 모든 컴포넌트에 일관되게 간격 처리 방법을 적용해야 합니다.
+- 예외: 컴포넌트 내부 여백이 필요한 경우 (예: 배경이 있는 Box 내부의 Text, 버튼 내부의 Text 등)에는 `padding` 사용 가능
+
+## Drawable Resources
+- SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다.
+- drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다.
+- 예외: 특별한 경우에만 크기 조정이 필요할 수 있으나, 일반적으로는 원본 크기를 유지합니다.
+
+## Example
+```kotlin
+@Composable
+fun MyScreen(
+    uiState: MyUiState,
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        // ...
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyScreenPreview() {
+    AfternoteTheme {
+        MyScreen(
+            uiState = MyUiState(),
+            onButtonClick = {}
+        )
+    }
+}
+```
+
+---
+
+# 3. Navigation Rules (네비게이션 규칙)
+
+## Type-Safe Navigation
+1. **Serializable Routes**: 모든 Route는 `kotlinx.serialization`의 `@Serializable` 어노테이션을 사용한 `sealed interface` 또는 `sealed class`로 정의합니다.
+   - 문자열 하드코딩(예: "home/{id}")은 금지합니다.
+   - 타입 안전한 네비게이션을 위해 sealed interface 또는 sealed class를 사용합니다.
+
+2. **Domain Navigation (도메인 간 네비게이션)**
+   - **다른 도메인으로 navigate 할 때는 인터페이스를 사용하세요.**
+   - navgraph 내부에서 다른 도메인을 직접 아는 것은 지양합니다.
+   - 도메인 간 의존성을 줄이고 모듈성을 유지하기 위해 인터페이스를 통해 네비게이션을 처리합니다.
+   - 각 도메인은 자신의 Navigator 인터페이스를 정의하고, 구현체는 app 레벨에서 생성합니다.
+
+## Navigation Example
+
+```kotlin
+// 1. core/navigation에 Navigator 인터페이스 정의 (다른 도메인으로 가는 메서드만)
+interface OnboardingNavigator {
+    fun goToMainPage(route: MainPageRoute)
+}
+
+interface MainPageNavigator {
+    fun goToOnboarding(route: OnboardingRoute)
+}
+
+// 2. app/navigation/navigator에 구현체 생성
+class OnboardingNavigatorImpl(
+    private val navController: NavController
+) : OnboardingNavigator {
+    override fun goToMainPage(route: MainPageRoute) {
+        navController.navigate(route)
+    }
+}
+
+class MainPageNavigatorImpl(
+    private val navController: NavController
+) : MainPageNavigator {
+    override fun goToOnboarding(route: OnboardingRoute) {
+        navController.navigate(route)
+    }
+}
+
+// 3. Route 정의 (@Serializable 필수)
+sealed interface OnboardingRoute {
+    @Serializable
+    data object SplashRoute : OnboardingRoute
+    
+    @Serializable
+    data object LoginRoute : OnboardingRoute
+    // ...
+}
+
+sealed interface MainPageRoute {
+    @Serializable
+    data object MainEmptyRoute : MainPageRoute
+    
+    @Serializable
+    data class DetailRoute(val id: Long) : MainPageRoute
+    // ...
+}
+
+// 4. NavGraph에서 Navigator 구현체 생성 및 전달
+@Composable
+fun NavGraph(navHostController: NavHostController) {
+    val onboardingNavigator = remember {
+        OnboardingNavigatorImpl(navHostController)
+    }
+    val mainPageNavigator = remember {
+        MainPageNavigatorImpl(navHostController)
+    }
+    
+    NavHost(navController = navHostController, startDestination = "...") {
+        onboardingNavGraph(navController, onboardingNavigator)
+        mainPageNavGraph(navController, mainPageNavigator)
+    }
+}
+
+// 5. 각 도메인 navgraph에서 Navigator 인터페이스 사용
+fun NavGraphBuilder.onboardingNavGraph(
+    navController: NavController,
+    onboardingNavigator: OnboardingNavigator
+) {
+    composable<OnboardingRoute.SplashRoute> {
+        // 같은 도메인 내부는 navController 직접 사용
+        SplashScreen(
+            onStartClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
+        )
+    }
+    
+    // 다른 도메인으로 가는 경우 Navigator 인터페이스 사용
+    // onboardingNavigator.goToMainPage(MainPageRoute.SomeRoute)
+}
+```
+
+---
+
+# 4. Dependency Injection Rules (Hilt 규칙)
+
+1. **Constructor Injection**: 가능한 모든 클래스(`RepositoryImpl`, `UseCase`, `ViewModel`)는 생성자 주입(`@Inject constructor`)을 사용합니다.
+2. **ViewModel**: `@HiltViewModel`을 사용하고, `SavedStateHandle`이 필요한 경우 생성자에 포함합니다.
+3. **Modules**:
+   - `Repository` 바인딩은 `@Binds`를 사용하여 추상화와 구현체를 연결합니다.
+   - 외부 라이브러리(Retrofit, Room 등) 인스턴스는 `@Provides`를 사용합니다.
+   - 모듈은 `di` 패키지 하위에 위치시킵니다.
+
+## Example
+```kotlin
+@HiltViewModel
+class MyViewModel @Inject constructor(
+    private val myUseCase: MyUseCase
+) : ViewModel() { ... }
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataModule {
+    @Binds
+    abstract fun bindMyRepository(
+        impl: MyRepositoryImpl
+    ): MyRepository
+}
+```
+
+---
+
+# 5. Code Quality & Formatting (코드 품질)
+
+1. **Detekt**: 프로젝트의 `detekt.yml` 규칙을 준수합니다.
+   - 함수의 매개변수가 5개를 넘으면 data class로 묶거나 리팩토링을 고려합니다.
+   - `Magic Number` 사용을 지양하고 상수로 정의합니다.
+   - 함수 복잡도 제한을 준수합니다.
+
+2. **Naming Convention**:
+   - Composable: `PascalCase` (예: `LoginScreen`)
+   - ViewModel: `PascalCase` + `ViewModel` (예: `LoginViewModel`)
+   - Repository/UseCase: `PascalCase` + `Repository`/`UseCase` (예: `LoginRepository`, `LoginUseCase`)
+   - Route: `PascalCase` + `Route` (예: `LoginRoute`)
+
+---
+
+# 6. Resource Management (리소스 관리)
+
+1. **Drawable**:
+   - 아이콘은 `Icon` 컴포저블을 사용하고, `contentDescription`을 반드시 지정합니다.
+   - 이미지 리소스 사용 시 `painterResource(R.drawable.name)`을 사용합니다.
+   - Modifier로 사이즈를 강제하기보다, 벡터 리소스 자체의 크기를 유지하거나 `ContentScale`을 활용합니다.
+
+2. **Strings**:
+   - 모든 UI 텍스트는 `strings.xml`에 정의하여 사용합니다 (`stringResource(R.string.key)`).
+   - 하드코딩된 문자열은 금지합니다.
+
+---
+
+# 7. Testing Rules (테스트 규칙)
+
+1. **Unit Test**:
+   - `Domain Layer`(`UseCase`)와 `ViewModel`은 100%에 가까운 테스트 커버리지를 지향합니다.
+   - `MockK`를 사용하여 의존성을 모킹합니다.
+
+2. **Naming**:
+   - 테스트 함수명은 행위를 명확히 기술합니다 (예: `fetchUser_whenSuccess_returnsUser`).
+
+---
+
+# 8. Git & Commit Rules (커밋 규칙)
+
+## Conventional Commits
+커밋 메시지는 아래 형식을 따릅니다:
+`type(scope): subject`
+
+- **Types**:
+  - `feat`: 새로운 기능 추가
+  - `fix`: 버그 수정
+  - `refactor`: 코드 리팩토링 (기능 변경 없음)
+  - `style`: 포맷팅, 세미콜론 누락 등 (코드 변경 없음)
+  - `docs`: 문서 수정
+  - `test`: 테스트 추가/수정
+  - `chore`: 빌드 태스크, 패키지 매니저 설정 등
+  - `build`: 빌드 시스템 또는 외부 종속성 변경
+  - `ci`: CI 설정 파일 및 스크립트 변경
+  - `perf`: 성능 개선
+
+## Example
+- `feat(auth): add login usecase`
+- `fix(ui): correct padding in home screen`
+- `refactor(navigation): apply navigator pattern`
+
+---
+
+# 9. Documentation (문서화)
+
+1. **Public API**: `public` 함수나 클래스(특히 `UseCase`, `Repository` 인터페이스)에는 KDoc을 작성하여 역할과 파라미터를 설명합니다.
+
+2. **Complex Logic**: 복잡한 비즈니스 로직이 들어가는 곳에는 주석을 통해 '왜(Why)' 이렇게 구현했는지 설명합니다.
+
+3. **README 업데이트**: 파일을 변경할 때마다 README 변경이 필요한지 체크하고, 필요하면 반드시 변경해야 합니다.
+
+## Example
+```kotlin
+/**
+ * 사용자의 로그인 상태를 확인하고, 토큰을 갱신합니다.
+ *
+ * @param forceRefresh 강제로 토큰을 갱신할지 여부
+ * @return 갱신된 토큰 정보
+ */
+suspend fun checkAuth(forceRefresh: Boolean): AuthToken
+```
