@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White
@@ -124,16 +125,18 @@ fun RecipientList(
 
         // 드롭다운 메뉴 오버레이
         DropdownMenuOverlay(
-            itemIds = recipients.map { it.id },
-            expandedStates = expandedStates,
-            itemPositions = itemPositions,
-            itemSizes = itemSizes,
-            boxPositionInRoot = boxPositionInRoot,
-            onItemEditClick = onItemEditClick,
-            onItemDeleteClick = onItemDeleteClick,
-            onExpandedStateChanged = { id, isExpanded ->
-                expandedStates[id] = isExpanded
-            }
+            params = DropdownMenuOverlayParams(
+                itemIds = recipients.map { it.id },
+                expandedStates = expandedStates,
+                itemPositions = itemPositions,
+                itemSizes = itemSizes,
+                boxPositionInRoot = boxPositionInRoot,
+                onItemEditClick = onItemEditClick,
+                onItemDeleteClick = onItemDeleteClick,
+                onExpandedStateChanged = { id, isExpanded ->
+                    expandedStates[id] = isExpanded
+                }
+            )
         )
     }
 }

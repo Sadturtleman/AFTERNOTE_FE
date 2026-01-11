@@ -35,6 +35,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -210,48 +211,50 @@ fun AfternoteEditScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     ProcessingMethodList(
-                        items = if (selectedCategory == "갤러리 및 파일") {
-                            galleryProcessingMethods
-                        } else {
-                            processingMethods
-                        },
-                        onAddClick = {
-                            // TODO: 처리 방법 추가 로직
-                        },
-                        onItemMoreClick = {
-                            // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
-                        },
-                        onItemEditClick = { itemId ->
-                            // TODO: 처리 방법 수정 로직
-                        },
-                        onItemDeleteClick = { itemId ->
-                            if (selectedCategory == "갤러리 및 파일") {
-                                galleryProcessingMethods = galleryProcessingMethods.filter { it.id != itemId }
+                        params = ProcessingMethodListParams(
+                            items = if (selectedCategory == "갤러리 및 파일") {
+                                galleryProcessingMethods
                             } else {
-                                processingMethods = processingMethods.filter { it.id != itemId }
+                                processingMethods
+                            },
+                            onAddClick = {
+                                // TODO: 처리 방법 추가 로직
+                            },
+                            onItemMoreClick = {
+                                // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
+                            },
+                            onItemEditClick = { itemId ->
+                                // TODO: 처리 방법 수정 로직
+                            },
+                            onItemDeleteClick = { itemId ->
+                                if (selectedCategory == "갤러리 및 파일") {
+                                    galleryProcessingMethods = galleryProcessingMethods.filter { it.id != itemId }
+                                } else {
+                                    processingMethods = processingMethods.filter { it.id != itemId }
+                                }
+                            },
+                            onItemAdded = { text ->
+                                val newItem = if (selectedCategory == "갤러리 및 파일") {
+                                    ProcessingMethodItem(
+                                        id = (galleryProcessingMethods.size + 1).toString(),
+                                        text = text
+                                    )
+                                } else {
+                                    ProcessingMethodItem(
+                                        id = (processingMethods.size + 1).toString(),
+                                        text = text
+                                    )
+                                }
+                                if (selectedCategory == "갤러리 및 파일") {
+                                    galleryProcessingMethods = galleryProcessingMethods + newItem
+                                } else {
+                                    processingMethods = processingMethods + newItem
+                                }
+                            },
+                            onTextFieldVisibilityChanged = { isOpen ->
+                                // 텍스트 필드 표시 상태 변경 처리
                             }
-                        },
-                        onItemAdded = { text ->
-                            val newItem = if (selectedCategory == "갤러리 및 파일") {
-                                ProcessingMethodItem(
-                                    id = (galleryProcessingMethods.size + 1).toString(),
-                                    text = text
-                                )
-                            } else {
-                                ProcessingMethodItem(
-                                    id = (processingMethods.size + 1).toString(),
-                                    text = text
-                                )
-                            }
-                            if (selectedCategory == "갤러리 및 파일") {
-                                galleryProcessingMethods = galleryProcessingMethods + newItem
-                            } else {
-                                processingMethods = processingMethods + newItem
-                            }
-                        },
-                        onTextFieldVisibilityChanged = { isOpen ->
-                            // 텍스트 필드 표시 상태 변경 처리
-                        }
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
