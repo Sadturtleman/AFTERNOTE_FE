@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,33 +7,25 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.common.header.EditHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.MessageTextField
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
@@ -44,12 +35,10 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray1
-import com.kuit.afternote.ui.theme.Gray9
-import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 애프터노트 수정/작성 화면
@@ -89,6 +78,13 @@ fun AfternoteEditScreen(
 
     // 정보 처리 방법 (갤러리 및 파일용)
     var selectedInformationProcessingMethod by remember { mutableStateOf(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
+
+    // 추가 수신자 리스트
+    val initialRecipients = listOf(
+        Recipient("1", "김지은", "친구"),
+        Recipient("2", "박선호", "가족")
+    )
+    var recipients by remember { mutableStateOf(initialRecipients) }
 
     // 처리 방법 리스트
     val defaultProcessingMethods = listOf(
@@ -181,36 +177,35 @@ fun AfternoteEditScreen(
                     } else {
                         GalleryAndFileEditContent(
                             selectedInformationProcessingMethod = selectedInformationProcessingMethod,
-                            onInformationProcessingMethodSelected = { selectedInformationProcessingMethod = it }
+                            onInformationProcessingMethodSelected = { selectedInformationProcessingMethod = it },
+                            recipients = recipients,
+                            onRecipientAddClick = {
+                                // TODO: 수신자 추가 로직
+                            },
+                            onRecipientItemEditClick = { recipientId ->
+                                // TODO: 수신자 수정 로직
+                            },
+                            onRecipientItemDeleteClick = { recipientId ->
+                                recipients = recipients.filter { it.id != recipientId }
+                            },
+                            onRecipientItemAdded = { text ->
+                                // TODO: 텍스트 필드에서 입력된 내용으로 수신자 추가
+                                // 현재는 간단히 이름으로만 추가
+                                val newRecipient = Recipient(
+                                    id = (recipients.size + 1).toString(),
+                                    name = text,
+                                    label = "친구"
+                                )
+                                recipients = recipients + newRecipient
+                            },
+                            onRecipientTextFieldVisibilityChanged = { isOpen ->
+                                // 텍스트 필드 표시 상태 변경 처리
+                            }
                         )
                     }
 
                     // 처리 방법 리스트 섹션
-                    Box {
-                        var textWidth by remember { mutableStateOf(0.dp) }
-                        val density = LocalDensity.current
-
-                        Text(
-                            text = "처리 방법 리스트",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 22.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight(500),
-                                color = Gray9
-                            ),
-                            modifier = Modifier.onGloballyPositioned { coordinates ->
-                                textWidth = with(density) { coordinates.size.width.toDp() }
-                            }
-                        )
-                        // 파란 점: 오른쪽 위 꼭짓점으로부터 오른쪽 8.dp, 아래 2.dp
-                        Box(
-                            modifier = Modifier
-                                .offset(x = textWidth + 8.dp, y = 2.dp)
-                                .size(4.dp)
-                                .background(color = B2, shape = CircleShape)
-                        )
-                    }
+                    RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
