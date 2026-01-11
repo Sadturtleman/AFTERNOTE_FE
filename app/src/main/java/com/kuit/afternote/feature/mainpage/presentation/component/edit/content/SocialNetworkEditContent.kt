@@ -7,22 +7,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.AccountInfoTextField
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray9
-import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 소셜네트워크 등 일반적인 종류 선택 시 표시되는 콘텐츠
@@ -36,16 +29,7 @@ fun SocialNetworkEditContent(
     onProcessingMethodSelected: (AccountProcessingMethod) -> Unit
 ) {
     // 계정 정보 섹션
-    Text(
-        text = "계정 정보",
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight(500),
-            color = Gray9
-        )
-    )
+    RequiredLabel(text = "계정 정보", offsetY = 4f)
 
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -65,16 +49,7 @@ fun SocialNetworkEditContent(
     Spacer(modifier = Modifier.height(32.dp))
 
     // 계정 처리 방법 섹션
-    Text(
-        text = "계정 처리 방법",
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight(500),
-            color = Gray9
-        )
-    )
+    RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
 
     Spacer(modifier = Modifier.height(16.dp))
 

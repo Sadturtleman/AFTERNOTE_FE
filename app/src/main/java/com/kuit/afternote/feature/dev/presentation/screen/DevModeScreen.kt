@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.ui.theme.AfternoteTheme
 
 data class ScreenInfo(
     val name: String,
@@ -56,5 +58,21 @@ fun DevModeScreen(
                 Text(screen.name)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DevModeScreenPreview() {
+    AfternoteTheme {
+        DevModeScreen(
+            screens = listOf(
+                ScreenInfo("메인 화면", "main"),
+                ScreenInfo("상세 화면", "detail"),
+                ScreenInfo("편집 화면", "edit")
+            ),
+            onScreenClick = {},
+            onUserModeClick = {}
+        )
     }
 }

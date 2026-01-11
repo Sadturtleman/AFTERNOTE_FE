@@ -5,21 +5,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.RecipientList
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray9
-import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 갤러리 및 파일 선택 시 표시되는 콘텐츠
@@ -28,19 +23,16 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
     selectedInformationProcessingMethod: InformationProcessingMethod,
-    onInformationProcessingMethodSelected: (InformationProcessingMethod) -> Unit
+    onInformationProcessingMethodSelected: (InformationProcessingMethod) -> Unit,
+    recipients: List<Recipient> = emptyList(),
+    onRecipientAddClick: () -> Unit = {},
+    onRecipientItemEditClick: (String) -> Unit = {},
+    onRecipientItemDeleteClick: (String) -> Unit = {},
+    onRecipientItemAdded: (String) -> Unit = {},
+    onRecipientTextFieldVisibilityChanged: (Boolean) -> Unit = {}
 ) {
     // 정보 처리 방법 섹션
-    Text(
-        text = "정보 처리 방법",
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight(500),
-            color = Gray9
-        )
-    )
+    RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -58,6 +50,25 @@ fun GalleryAndFileEditContent(
         onClick = { onInformationProcessingMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
     )
 
+    // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
+    if (selectedInformationProcessingMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // 수신자 추가 섹션 제목
+        RequiredLabel(text = "수신자 추가", offsetY = 3f)
+
+        Spacer(modifier = Modifier.height(9.dp))
+
+        RecipientList(
+            recipients = recipients,
+            onAddClick = onRecipientAddClick,
+            onItemEditClick = onRecipientItemEditClick,
+            onItemDeleteClick = onRecipientItemDeleteClick,
+            onItemAdded = onRecipientItemAdded,
+            onTextFieldVisibilityChanged = onRecipientTextFieldVisibilityChanged
+        )
+    }
+
     Spacer(modifier = Modifier.height(32.dp))
 }
 
@@ -74,6 +85,27 @@ private fun GalleryAndFileEditContentPreview() {
             GalleryAndFileEditContent(
                 selectedInformationProcessingMethod = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
                 onInformationProcessingMethodSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "추가 수신자 선택됨")
+@Composable
+private fun GalleryAndFileEditContentWithRecipientsPreview() {
+    AfternoteTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            GalleryAndFileEditContent(
+                selectedInformationProcessingMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+                onInformationProcessingMethodSelected = {},
+                recipients = listOf(
+                    Recipient("1", "김지은", "친구"),
+                    Recipient("2", "박선호", "가족")
+                )
             )
         }
     }
