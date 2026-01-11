@@ -12,17 +12,14 @@ import com.kuit.afternote.app.navigation.navigator.MainPageNavigatorImpl
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
-import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {

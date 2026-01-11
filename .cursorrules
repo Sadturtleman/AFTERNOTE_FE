@@ -39,8 +39,13 @@
 ## Composable Functions
 1. **State Hoisting**: 상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향).
 2. **Modifier**: 모든 Composable 함수는 `modifier: Modifier = Modifier`를 첫 번째 선택적 파라미터로 받아야 합니다.
-3. **Preview**: 모든 UI 컴포넌트는 `@Preview`를 포함해야 하며, 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등).
-   - 예외: 내부 전용 컴포넌트(`internal` 함수)는 선택적으로 작성 가능
+3. **Preview (필수)**: **모든 public Composable 함수는 반드시 `@Preview` 어노테이션을 사용한 Preview 함수를 포함해야 합니다.**
+   - Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다.
+   - 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등).
+   - 예외:
+     * 내부 전용 컴포넌트(`internal` 함수)는 선택적으로 작성 가능
+     * Navigation Graph Builder 확장 함수 (`NavGraphBuilder` 확장 함수)
+     * ViewModel이나 Repository 같은 비UI 컴포넌트
 
 ## File Structure
 - **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다.
@@ -53,6 +58,17 @@
      * 공통적으로 사용되는 로직은 별도의 유틸리티 함수나 헬퍼 컴포넌트로 추출합니다.
      * 큰 컴포넌트는 더 작은 하위 컴포넌트들로 분해합니다.
    - 예외: 자동 생성 코드나 데이터 클래스만 포함하는 파일은 예외적으로 더 길 수 있습니다.
+
+- **Folder Structure Reorganization (폴더 구조 재구성)**: 한 폴더에 파일이 너무 많아지면(예: 15개 이상) 해당 폴더 내에서 하위 폴더로 재구성해야 합니다.
+   - 재구성 기준:
+     * 기능별로 그룹화 (예: `component/common/`, `component/detail/`, `component/edit/`)
+     * 책임별로 그룹화 (예: `presentation/screen/`, `presentation/component/`, `presentation/viewmodel/`)
+     * 계층별로 그룹화 (예: `domain/usecase/`, `domain/repository/`, `data/datasource/`)
+   - 재구성 방법:
+     * 관련된 파일들을 논리적으로 묶을 수 있는 하위 폴더를 생성합니다.
+     * 기존 파일들을 적절한 하위 폴더로 이동합니다.
+     * 패키지 선언을 새로운 폴더 구조에 맞게 업데이트합니다.
+   - 예외: 자동 생성 파일이나 설정 파일이 많은 경우는 예외적으로 더 많은 파일을 허용할 수 있습니다.
 
 ## Component Spacing
 - 특정 컴포넌트(예: Text)에만 `padding`을 사용하여 다음 컴포넌트와의 간격을 처리하지 말아야 합니다.
@@ -94,11 +110,67 @@ private fun MyScreenPreview() {
 # 2.5. Import Rules (임포트 규칙) - Critical
 
 ## Import Rules (임포트 규칙 - 중요)
+
+### 1. Always Include Full Import Statements (항상 전체 임포트 문 포함)
+- **ALWAYS include full import statements** for every class, function, and extension used in the code snippet.
+  - *Reason*: Android Studio often fails to auto-import extension functions and Compose delegates.
+  - 코드 스니펫에서 사용되는 모든 클래스, 함수, 확장 함수에 대해 항상 전체 임포트 문을 포함해야 합니다.
+  - *이유*: Android Studio는 종종 확장 함수와 Compose delegate의 자동 임포트에 실패합니다.
+
+### 2. Explicitly Import Extension Functions (확장 함수 명시적 임포트)
+- **Never assume extension functions are globally available.** Always add the import line explicitly.
+- 다음 확장 함수들은 자동 임포트되지 않으므로 명시적으로 임포트해야 합니다:
+  - `androidx.core.view.isVisible` → `import androidx.core.view.isVisible`
+  - `androidx.lifecycle.compose.collectAsStateWithLifecycle` → `import androidx.lifecycle.compose.collectAsStateWithLifecycle`
+  - `androidx.compose.ui.platform.LocalContext` → `import androidx.compose.ui.platform.LocalContext`
+  - `androidx.compose.ui.platform.LocalDensity` → `import androidx.compose.ui.platform.LocalDensity`
+  - `androidx.compose.ui.platform.LocalFocusManager` → `import androidx.compose.ui.platform.LocalFocusManager`
+  - *Instruction*: 이들이 전역적으로 사용 가능하다고 가정하지 마세요. 항상 명시적으로 임포트 라인을 추가하세요.
+
+### 3. Jetpack Compose Imports (Jetpack Compose 임포트)
+- **Always import `androidx.compose.runtime.*` delegates when using `by` keyword:**
+  - `import androidx.compose.runtime.getValue`
+  - `import androidx.compose.runtime.setValue`
+  - `import androidx.compose.runtime.remember`
+  - `by` 키워드를 사용할 때는 항상 `androidx.compose.runtime.*` delegate를 임포트해야 합니다.
+- **Avoid wildcard imports** (e.g., `import androidx.compose.material3.*`) unless strictly necessary.
+  - Use explicit imports to prevent `Unresolved Reference` errors.
+  - 와일드카드 임포트를 피하고 명시적 임포트를 사용하여 `Unresolved Reference` 오류를 방지하세요.
+
+### 4. Standard Import Rules (표준 임포트 규칙)
 - **NEVER import `android.R`**: 절대 `android.R`을 임포트하지 마세요. 항상 애플리케이션 패키지의 `R` 클래스를 사용하세요 (예: `com.kuit.afternote.R`).
 - **NO Wildcard Imports**: `import java.util.*` 같은 와일드카드 임포트를 사용하지 마세요. 명시적으로 특정 클래스를 임포트하세요.
 - **Prefer AndroidX**: 항상 레거시 `android.support.*` 패키지보다 `androidx.*` 패키지를 선호하세요.
-- **Verify Imports**: 코드를 제안하기 전에 임포트된 클래스가 표준 Android SDK나 일반적으로 사용되는 라이브러리(Hilt, Retrofit, Room 등)에 존재하는지 확인하세요. 존재하지 않는 확장 함수를 환각하지 마세요.
-- **Data Binding/View Binding**: ViewBinding을 사용하는 경우, 임포트가 생성된 바인딩 클래스 이름과 엄격하게 일치하는지 확인하세요.
+
+### 5. No Hallucinated Imports (환각 임포트 금지)
+- **Do not invent extension functions** that do not exist in standard AndroidX libraries.
+  - 표준 AndroidX 라이브러리에 존재하지 않는 확장 함수를 만들어내지 마세요.
+- **Verify existence**: Before generating code, verify that all imported classes/functions exist in:
+  - Standard Android SDK
+  - Commonly used libraries (Hilt, Retrofit, Room, Compose, etc.)
+  - 코드 생성 전에 모든 임포트된 클래스/함수가 다음에 존재하는지 확인하세요:
+    * 표준 Android SDK
+    * 일반적으로 사용되는 라이브러리 (Hilt, Retrofit, Room, Compose 등)
+
+### 6. Generated Code Handling (생성된 코드 처리)
+- **Hilt & ViewBinding**:
+  - When referencing Hilt generated classes (`Hilt_MainActivity`), DO NOT import them manually.
+  - Hilt 생성 클래스를 참조할 때는 수동으로 임포트하지 마세요.
+  - For ViewBinding, ensure imports match the XML file name (e.g., `FragmentHomeBinding` for `fragment_home.xml`).
+  - ViewBinding의 경우, 임포트가 XML 파일 이름과 일치하는지 확인하세요 (예: `fragment_home.xml` → `FragmentHomeBinding`).
+
+### 7. Verification Step (검증 단계)
+- **Before generating the final code block, double-check:**
+  1. Are all `Modifier` extensions (padding, fillMaxSize, fillMaxWidth, etc.) imported?
+     - 모든 `Modifier` 확장 함수가 임포트되었는가? (padding, fillMaxSize, fillMaxWidth 등)
+  2. Are `getValue`/`setValue` imported for state delegates (`by remember { mutableStateOf() }`)?
+     - 상태 delegate (`by remember { mutableStateOf() }`)를 사용할 때 `getValue`/`setValue`가 임포트되었는가?
+  3. Are there any ambiguous imports (e.g., `android.R` vs `com.kuit.afternote.R`)?
+     - 모호한 임포트가 있는가? (예: `android.R` vs `com.kuit.afternote.R`) → 앱의 R 클래스를 사용하세요.
+  4. Are all Compose UI components properly imported?
+     - 모든 Compose UI 컴포넌트가 제대로 임포트되었는가?
+  5. Are extension functions from KTX libraries (fragment-ktx, activity-ktx) imported correctly?
+     - KTX 라이브러리(fragment-ktx, activity-ktx)의 확장 함수가 올바르게 임포트되었는가?
 
 ## Kotlin & Compose Style
 - 가능한 한 `var`보다 `val`을 사용하세요.
@@ -318,3 +390,244 @@ abstract class DataModule {
  */
 suspend fun checkAuth(forceRefresh: Boolean): AuthToken
 ```
+
+---
+
+# 10. Test Code Verification (테스트 코드 확인 규칙) - Critical
+
+## 코드 변경 시 테스트 디렉토리 확인 및 테스트 코드 추가
+
+코드를 생성하거나 수정할 때마다 **반드시** 다음을 확인하고 필요하면 테스트 코드를 추가해야 합니다:
+
+### 1. 테스트 디렉토리 확인
+- `app/src/test/java/com/kuit/afternote/` (Unit Test)
+- `app/src/androidTest/java/com/kuit/afternote/` (Instrumented Test)
+
+### 2. 테스트 코드 추가가 필요한 경우
+
+다음과 같은 코드 변경 시 해당하는 테스트 디렉토리에 테스트 코드를 추가해야 합니다:
+
+#### UseCase 추가/수정 시
+- **위치**: `app/src/test/java/com/kuit/afternote/feature/{feature_name}/domain/usecase/`
+- **파일명**: `{UseCaseName}Test.kt`
+- **내용**: UseCase의 모든 메서드에 대한 단위 테스트 작성
+- **예시**: `LoginUseCase` 추가 시 → `LoginUseCaseTest.kt` 생성
+
+#### ViewModel 추가/수정 시
+- **위치**: `app/src/test/java/com/kuit/afternote/feature/{feature_name}/presentation/viewmodel/`
+- **파일명**: `{ViewModelName}Test.kt`
+- **내용**: ViewModel의 상태 변경, 이벤트 처리에 대한 단위 테스트 작성
+- **예시**: `LoginViewModel` 추가 시 → `LoginViewModelTest.kt` 생성
+
+#### Repository Interface 추가/수정 시
+- **위치**: `app/src/test/java/com/kuit/afternote/feature/{feature_name}/domain/repository/`
+- **파일명**: `{RepositoryName}Test.kt` (인터페이스 테스트는 선택적)
+- **참고**: Repository 구현체(`Impl`)는 Data Layer이므로 실제 구현에 따라 테스트 작성
+
+#### 복잡한 비즈니스 로직 추가 시
+- Domain Layer의 복잡한 로직이 있는 경우 단위 테스트 작성
+- 유틸리티 함수나 헬퍼 클래스 추가 시 테스트 작성
+
+### 3. 테스트 코드 작성 규칙
+
+#### 테스트 파일 구조
+```kotlin
+package com.kuit.afternote.feature.{feature_name}.domain.usecase
+
+import org.junit.Test
+import org.junit.Assert.*
+// ... 필요한 임포트
+
+class {UseCaseName}Test {
+    
+    @Test
+    fun `methodName_whenCondition_returnsExpectedResult`() {
+        // Given
+        // When
+        // Then
+    }
+}
+```
+
+#### 테스트 네이밍 규칙
+- 테스트 함수명: `methodName_whenCondition_returnsExpectedResult` 형식
+- 예시: `login_whenSuccess_returnsUser()`, `login_whenInvalidCredentials_throwsException()`
+
+#### 테스트 작성 시 주의사항
+- MockK를 사용하여 의존성을 모킹합니다
+- Given-When-Then 패턴을 사용합니다
+- 모든 엣지 케이스를 테스트합니다
+
+### 4. 확인 절차
+
+코드 변경 후 다음을 확인:
+
+1. **UseCase/ViewModel 추가 여부 확인**
+   - 추가했다면 → 해당 테스트 디렉토리에 테스트 파일이 있는지 확인
+   - 없으면 → 테스트 파일 생성 및 테스트 코드 작성
+
+2. **기존 테스트 파일 확인**
+   - 수정한 코드에 해당하는 기존 테스트 파일이 있는지 확인
+   - 있으면 → 수정된 코드에 맞게 테스트 업데이트 필요 여부 확인
+
+3. **테스트 실행 가능 여부 확인**
+   - 작성한 테스트가 컴파일되는지 확인
+   - 테스트가 실제로 실행 가능한지 확인
+
+### 5. 예외 사항
+
+다음의 경우는 테스트 코드 작성이 선택적입니다:
+- 단순한 data class나 enum 추가
+- UI 컴포넌트만 추가 (Composable 함수)
+- 단순한 확장 함수 추가
+- 설정 파일이나 상수만 추가
+
+---
+
+# 11. Branch Workflow Rules (브랜치 작업 규칙)
+
+## 기본 원칙
+
+**변경사항은 항상 주제에 맞는 브랜치에서 작업해야 합니다.**
+
+### 규칙
+
+1. **현재 브랜치의 주제와 맞지 않는 변경사항은 별도 브랜치 생성**
+   - 예: `feat/afternote` 브랜치에서 작업 중인데 문서 수정이 필요한 경우
+   - → `docs/update-readme` 같은 별도 브랜치 생성
+
+2. **브랜치 네이밍 규칙**
+   - `feat/`: 새로운 기능
+   - `fix/`: 버그 수정
+   - `docs/`: 문서 수정
+   - `chore/`: 기타 작업 (설정, 도구 등)
+   - `refactor/`: 리팩토링
+
+3. **작업 흐름**
+   ```
+   현재 브랜치에서 작업 중
+   → 주제와 맞지 않는 변경 필요
+   → 새 브랜치 생성 (주제에 맞는 이름)
+   → 변경사항 커밋
+   → 메인에 병합
+   → 원래 브랜치로 돌아가서 메인 병합
+   ```
+
+4. **구현 요구 시 브랜치 생성 규칙**
+   - 사용자가 구현을 요구할 때마다 해당 구현에 적절한 이름의 브랜치를 생성하고 체크아웃한 다음 작업해야 합니다
+   - 브랜치 이름은 작업 내용을 명확히 나타내야 합니다
+   - 예: `feat/add-custom-radio-button`, `fix/text-field-padding`, `refactor/move-component-to-core`
+   - 작업 완료 후 해당 브랜치에서 커밋하고, 필요시 메인에 병합합니다
+
+5. **자동 병합 규칙 (Auto Merge Rules)**
+   - **푸시 후 자동 병합 판단**: 작업을 푸시한 후 다음 조건을 확인하여 메인에 병합이 필요한지 판단합니다:
+     * 작업이 완료되었고 테스트가 통과한 경우
+     * 다른 브랜치와의 충돌이 없는 경우
+     * 코드 리뷰가 필요 없는 간단한 변경인 경우 (설정 파일, 문서, 작은 버그 수정 등)
+   - **자동 병합 실행**: 위 조건을 만족하면 자동으로 메인 브랜치에 병합합니다.
+     * `git checkout main` 또는 `git checkout master`
+     * `git merge {작업_브랜치}` 또는 `git merge --no-ff {작업_브랜치}`
+     * `git push origin main` 또는 `git push origin master`
+   - **병합 불필요한 경우**: 다음의 경우는 자동 병합하지 않습니다:
+     * 큰 기능 추가나 리팩토링 (코드 리뷰 필요)
+     * 다른 팀원과 협의가 필요한 변경
+     * 사용자가 명시적으로 병합하지 말라고 한 경우
+
+6. **예외 상황**
+   - 현재 브랜치의 주제와 직접 관련된 변경은 현재 브랜치에서 작업 가능
+   - 긴급한 버그 수정은 별도 브랜치 생성 후 메인에 병합
+
+## 예시
+
+### ❌ 잘못된 예
+- `feat/afternote` 브랜치에서 README 수정 커밋
+- `feat/afternote` 브랜치에서 Gradle 설정 변경 커밋
+
+### ✅ 올바른 예
+- README 수정 → `docs/update-readme` 브랜치 생성
+- Gradle 설정 변경 → `chore/update-gradle-config` 브랜치 생성
+- 각각 메인에 병합 후 `feat/afternote`에 반영
+
+---
+
+# 12. General Guidelines (일반 작업 가이드라인)
+
+## 기본 원칙
+
+1. **주제에 맞는 브랜치에서 작업**
+   - 자세한 내용은 Branch Workflow Rules 참고
+
+2. **시도한 해결책 메모**
+   - 문제 해결 시 시도한 방법들을 메모해두기
+   - 같은 실수를 반복하지 않기 위함
+
+3. **문서화**
+   - 중요한 설정이나 해결 방법은 문서로 남기기
+   - 다른 팀원이나 미래의 자신을 위해
+
+4. **컴포넌트 프리뷰 필수**
+   - 모든 컴포넌트 함수는 반드시 `@Preview` 어노테이션을 사용한 프리뷰 함수를 포함해야 합니다
+   - 프리뷰는 컴포넌트의 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등)
+   - 예외: 내부 전용 컴포넌트(`internal` 함수)는 선택적으로 작성 가능
+
+5. **Compose 컴포넌트 파일 구조 규칙**
+   - 각 파일에는 하나의 `@Composable` 함수와 그에 해당하는 하나의 `@Preview` 함수만 포함해야 합니다
+   - 예외: data class나 enum 등은 같은 파일에 포함 가능하거나 별도 파일로 분리 가능
+   - 여러 컴포넌트가 필요한 경우 각각 별도 파일로 분리해야 합니다
+
+6. **Drawable 리소스 사용 규칙**
+   - SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다
+   - drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다
+   - 예외: 특별한 경우에만 크기 조정이 필요할 수 있으나, 일반적으로는 원본 크기를 유지합니다
+
+7. **컴포넌트 간 간격 처리 일관성 규칙**
+   - 특정 컴포넌트(예: Text)에만 `padding`을 사용하여 다음 컴포넌트와의 간격을 처리하지 말아야 합니다
+   - 모든 컴포넌트에 일관되게 간격 처리 방법을 적용해야 합니다
+   - 예외: 컴포넌트 내부 여백이 필요한 경우 (예: 배경이 있는 Box 내부의 Text, 버튼 내부의 Text 등)에는 `padding` 사용 가능
+
+## 작업 전 체크리스트
+
+- [ ] 현재 브랜치가 작업 주제와 맞는가?
+- [ ] 별도 브랜치가 필요한가?
+- [ ] 이전에 시도한 방법이 있는가? (문서 확인)
+- [ ] 변경사항을 문서화해야 하는가?
+- [ ] README에 변경이 필요한 내용이 있는가?
+
+## 파일 변경 시 README 체크 규칙
+
+**파일을 변경할 때마다 README 변경이 필요한지 체크하고, 필요하면 반드시 변경해야 합니다.**
+
+### 체크해야 할 경우
+
+1. **새로운 설정이나 도구 추가**
+   - 예: 새로운 라이브러리, 빌드 도구, 개발 환경 설정
+   - README의 설정 섹션 업데이트 필요
+
+2. **프로젝트 구조 변경**
+   - 예: 폴더 구조 변경, 새로운 모듈 추가
+   - README의 프로젝트 구조 설명 업데이트
+
+3. **개발 환경 요구사항 변경**
+   - 예: JDK 버전 변경, 새로운 의존성 추가
+   - README의 필수 요구사항 섹션 업데이트
+
+4. **빌드/실행 방법 변경**
+   - 예: 새로운 빌드 스크립트, 실행 방법 변경
+   - README의 빌드/실행 가이드 업데이트
+
+5. **트러블슈팅 정보 추가**
+   - 예: 새로운 에러 해결 방법 발견
+   - README의 트러블슈팅 섹션에 추가
+
+6. **워크플로우나 규칙 변경**
+   - 예: 브랜치 전략 변경, 커밋 규칙 변경
+   - README의 관련 섹션 업데이트
+
+### 체크 방법
+
+파일 변경 후 다음을 확인:
+1. 이 변경이 다른 개발자에게 영향을 주는가?
+2. 이 변경을 이해하기 위해 문서가 필요한가?
+3. 이 변경으로 인해 기존 README 내용이 부정확해졌는가?
+
+**모든 답변이 "아니오"가 아니라면 README를 업데이트해야 합니다.**

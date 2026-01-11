@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @Composable
 fun ModeSelectionScreen(
@@ -38,5 +40,16 @@ fun ModeSelectionScreen(
         ) {
             Text("개발자 모드")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ModeSelectionScreenPreview() {
+    AfternoteTheme {
+        ModeSelectionScreen(
+            onUserModeClick = {},
+            onDevModeClick = {}
+        )
     }
 }
