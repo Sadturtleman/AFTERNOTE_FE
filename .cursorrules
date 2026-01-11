@@ -46,6 +46,14 @@
 - **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다.
    - 예외: 비공개(`private`) 하위 컴포넌트나 data class, enum 등은 같은 파일에 둘 수 있습니다.
 
+- **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
+   - 파일이 너무 길어지면 가독성과 유지보수성이 저하됩니다.
+   - 분리 방법:
+     * 관련된 기능이나 책임을 기준으로 논리적으로 분리합니다.
+     * 공통적으로 사용되는 로직은 별도의 유틸리티 함수나 헬퍼 컴포넌트로 추출합니다.
+     * 큰 컴포넌트는 더 작은 하위 컴포넌트들로 분해합니다.
+   - 예외: 자동 생성 코드나 데이터 클래스만 포함하는 파일은 예외적으로 더 길 수 있습니다.
+
 ## Component Spacing
 - 특정 컴포넌트(예: Text)에만 `padding`을 사용하여 다음 컴포넌트와의 간격을 처리하지 말아야 합니다.
 - 모든 컴포넌트에 일관되게 간격 처리 방법을 적용해야 합니다.
@@ -80,6 +88,27 @@ private fun MyScreenPreview() {
     }
 }
 ```
+
+---
+
+# 2.5. Import Rules (임포트 규칙) - Critical
+
+## Import Rules (임포트 규칙 - 중요)
+- **NEVER import `android.R`**: 절대 `android.R`을 임포트하지 마세요. 항상 애플리케이션 패키지의 `R` 클래스를 사용하세요 (예: `com.kuit.afternote.R`).
+- **NO Wildcard Imports**: `import java.util.*` 같은 와일드카드 임포트를 사용하지 마세요. 명시적으로 특정 클래스를 임포트하세요.
+- **Prefer AndroidX**: 항상 레거시 `android.support.*` 패키지보다 `androidx.*` 패키지를 선호하세요.
+- **Verify Imports**: 코드를 제안하기 전에 임포트된 클래스가 표준 Android SDK나 일반적으로 사용되는 라이브러리(Hilt, Retrofit, Room 등)에 존재하는지 확인하세요. 존재하지 않는 확장 함수를 환각하지 마세요.
+- **Data Binding/View Binding**: ViewBinding을 사용하는 경우, 임포트가 생성된 바인딩 클래스 이름과 엄격하게 일치하는지 확인하세요.
+
+## Kotlin & Compose Style
+- 가능한 한 `var`보다 `val`을 사용하세요.
+- Jetpack Compose에서 `Modifier` 체이닝 순서를 선호하세요: Size -> Layout -> Drawing -> Event Listeners.
+- 기본적으로 Material3 디자인 시스템 컴포넌트를 사용하세요.
+- Coroutines: ViewModel에서는 `viewModelScope`를, Fragments/Activities에서는 `LifecycleScope`를 사용하세요.
+
+## Behavior
+- 표준 라이브러리 솔루션이 존재하면, 지정되지 않은 한 3rd party 라이브러리보다 표준 라이브러리를 선호하세요.
+- 오류를 수정할 때 임포트가 왜 잘못되었는지 설명하세요 (예: "사용하지 않는 임포트 제거").
 
 ---
 
