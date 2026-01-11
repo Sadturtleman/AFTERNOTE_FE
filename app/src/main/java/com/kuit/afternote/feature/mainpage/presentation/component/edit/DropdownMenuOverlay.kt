@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
+import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
@@ -23,21 +24,21 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
  *
  * 아이템의 위치를 추적하여 드롭다운 메뉴를 표시하고, 외부 클릭 시 닫습니다.
  */
-@Suppress("LongParameterList")
 @Composable
 fun DropdownMenuOverlay(
     modifier: Modifier = Modifier,
-    itemIds: List<String>,
-    expandedStates: Map<String, Boolean>,
-    itemPositions: Map<String, Offset>,
-    itemSizes: Map<String, IntSize>,
-    boxPositionInRoot: Offset,
-    onItemEditClick: (String) -> Unit,
-    onItemDeleteClick: (String) -> Unit,
-    onExpandedStateChanged: (String, Boolean) -> Unit,
-    menuOffsetX: Float = -91f,
-    menuOffsetY: Float = -2f
+    params: DropdownMenuOverlayParams
 ) {
+    val itemIds = params.itemIds
+    val expandedStates = params.expandedStates
+    val itemPositions = params.itemPositions
+    val itemSizes = params.itemSizes
+    val boxPositionInRoot = params.boxPositionInRoot
+    val onItemEditClick = params.onItemEditClick
+    val onItemDeleteClick = params.onItemDeleteClick
+    val onExpandedStateChanged = params.onExpandedStateChanged
+    val menuOffsetX = params.menuOffsetX
+    val menuOffsetY = params.menuOffsetY
     val density = LocalDensity.current
 
     Box(
@@ -104,14 +105,16 @@ private fun DropdownMenuOverlayPreview() {
     AfternoteTheme {
         Box(modifier = Modifier.fillMaxWidth()) {
             DropdownMenuOverlay(
-                itemIds = listOf("1", "2"),
-                expandedStates = mapOf("1" to true),
-                itemPositions = mapOf("1" to Offset(100f, 200f)),
-                itemSizes = mapOf("1" to IntSize(200, 50)),
-                boxPositionInRoot = Offset(0f, 0f),
-                onItemEditClick = {},
-                onItemDeleteClick = {},
-                onExpandedStateChanged = { _, _ -> }
+                params = DropdownMenuOverlayParams(
+                    itemIds = listOf("1", "2"),
+                    expandedStates = mapOf("1" to true),
+                    itemPositions = mapOf("1" to Offset(100f, 200f)),
+                    itemSizes = mapOf("1" to IntSize(200, 50)),
+                    boxPositionInRoot = Offset(0f, 0f),
+                    onItemEditClick = {},
+                    onItemDeleteClick = {},
+                    onExpandedStateChanged = { _, _ -> }
+                )
             )
         }
     }

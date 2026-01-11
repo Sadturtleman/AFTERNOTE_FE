@@ -27,27 +27,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White
 
 /**
  * 처리 방법 리스트 컴포넌트
  */
-@Suppress("LongParameterList")
 @Composable
 fun ProcessingMethodList(
     modifier: Modifier = Modifier,
-    items: List<ProcessingMethodItem>,
-    onAddClick: () -> Unit = {},
-    onItemMoreClick: (String) -> Unit = {},
-    onItemEditClick: (String) -> Unit = {},
-    onItemDeleteClick: (String) -> Unit = {},
-    onItemAdded: (String) -> Unit = {},
-    onTextFieldVisibilityChanged: (Boolean) -> Unit = {},
-    initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null
+    params: ProcessingMethodListParams
 ) {
+    val items = params.items
+    val onAddClick = params.onAddClick
+    val onItemMoreClick = params.onItemMoreClick
+    val onItemEditClick = params.onItemEditClick
+    val onItemDeleteClick = params.onItemDeleteClick
+    val onItemAdded = params.onItemAdded
+    val onTextFieldVisibilityChanged = params.onTextFieldVisibilityChanged
+    val initialShowTextField = params.initialShowTextField
+    val initialExpandedItemId = params.initialExpandedItemId
     var showTextField by remember { mutableStateOf(initialShowTextField) }
     val focusManager = LocalFocusManager.current
 
@@ -136,16 +138,18 @@ fun ProcessingMethodList(
 
         // 드롭다운 메뉴 오버레이
         DropdownMenuOverlay(
-            itemIds = items.map { it.id },
-            expandedStates = expandedStates,
-            itemPositions = itemPositions,
-            itemSizes = itemSizes,
-            boxPositionInRoot = boxPositionInRoot,
-            onItemEditClick = onItemEditClick,
-            onItemDeleteClick = onItemDeleteClick,
-            onExpandedStateChanged = { id, isExpanded ->
-                expandedStates[id] = isExpanded
-            }
+            params = DropdownMenuOverlayParams(
+                itemIds = items.map { it.id },
+                expandedStates = expandedStates,
+                itemPositions = itemPositions,
+                itemSizes = itemSizes,
+                boxPositionInRoot = boxPositionInRoot,
+                onItemEditClick = onItemEditClick,
+                onItemDeleteClick = onItemDeleteClick,
+                onExpandedStateChanged = { id, isExpanded ->
+                    expandedStates[id] = isExpanded
+                }
+            )
         )
     }
 }
@@ -155,17 +159,19 @@ fun ProcessingMethodList(
 private fun ProcessingMethodListPreview() {
     AfternoteTheme {
         ProcessingMethodList(
-            items = listOf(
-                ProcessingMethodItem("1", "게시물 내리기"),
-                ProcessingMethodItem("2", "댓글 비활성화")
-            ),
-            onAddClick = {},
-            onItemMoreClick = {},
-            onItemEditClick = {},
-            onItemDeleteClick = {},
-            onItemAdded = {},
-            onTextFieldVisibilityChanged = {},
-            initialShowTextField = true
+            params = ProcessingMethodListParams(
+                items = listOf(
+                    ProcessingMethodItem("1", "게시물 내리기"),
+                    ProcessingMethodItem("2", "댓글 비활성화")
+                ),
+                onAddClick = {},
+                onItemMoreClick = {},
+                onItemEditClick = {},
+                onItemDeleteClick = {},
+                onItemAdded = {},
+                onTextFieldVisibilityChanged = {},
+                initialShowTextField = true
+            )
         )
     }
 }
@@ -175,19 +181,21 @@ private fun ProcessingMethodListPreview() {
 private fun ProcessingMethodListWithDropdownPreview() {
     AfternoteTheme {
         ProcessingMethodList(
-            items = listOf(
-                ProcessingMethodItem("1", "게시물 내리기"),
-                ProcessingMethodItem("2", "댓글 비활성화"),
-                ProcessingMethodItem("3", "추모 계정으로 전환하기")
-            ),
-            onAddClick = {},
-            onItemMoreClick = {},
-            onItemEditClick = {},
-            onItemDeleteClick = {},
-            onItemAdded = {},
-            onTextFieldVisibilityChanged = {},
-            initialShowTextField = false,
-            initialExpandedItemId = "1"
+            params = ProcessingMethodListParams(
+                items = listOf(
+                    ProcessingMethodItem("1", "게시물 내리기"),
+                    ProcessingMethodItem("2", "댓글 비활성화"),
+                    ProcessingMethodItem("3", "추모 계정으로 전환하기")
+                ),
+                onAddClick = {},
+                onItemMoreClick = {},
+                onItemEditClick = {},
+                onItemDeleteClick = {},
+                onItemAdded = {},
+                onTextFieldVisibilityChanged = {},
+                initialShowTextField = false,
+                initialExpandedItemId = "1"
+            )
         )
     }
 }
