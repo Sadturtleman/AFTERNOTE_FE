@@ -13,18 +13,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.onboarding.presentation.component.EmailInputContent
-import com.kuit.afternote.feature.onboarding.presentation.component.SignUpContentButton
-import com.kuit.afternote.feature.onboarding.presentation.component.TopBar
+import com.kuit.afternote.core.ui.component.EmailInputContent
+import com.kuit.afternote.core.ui.component.SignUpContentButton
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.MasterKeyInputContent
+import com.kuit.afternote.feature.receiver.presentation.component.PdfInputContent
+import com.kuit.afternote.feature.receiver.presentation.component.ReceiveEndContent
 import com.kuit.afternote.feature.receiver.presentation.uimodel.VerifyStep
 
 @Composable
-fun VerifySelfScreen(onBackClick: () -> Unit) {
+fun VerifySelfScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
     var step by remember { mutableStateOf(VerifyStep.EMAIL_AUTH) }
     val email = rememberTextFieldState()
     val masterKey = rememberTextFieldState()
+    var deathCertificate = rememberTextFieldState()
+    var familyRelationCertificate = rememberTextFieldState()
+    var authCode = rememberTextFieldState()
 
     Scaffold(
         topBar = {
@@ -53,7 +59,9 @@ fun VerifySelfScreen(onBackClick: () -> Unit) {
                         onNextClick = { step = VerifyStep.MASTER_KEY_AUTH }
                     ) {
                         EmailInputContent(
-                            email = email
+                            email = email,
+                            authCode = authCode,
+                            onAuthClick = {}
                         )
                     }
                 }
@@ -69,10 +77,34 @@ fun VerifySelfScreen(onBackClick: () -> Unit) {
                 }
 
                 VerifyStep.UPLOAD_PDF_AUTH -> {
+                    SignUpContentButton(
+                        onNextClick = { step = VerifyStep.END }
+                    ) {
+                        PdfInputContent(
+                            deadPdf = deathCertificate,
+                            familyPdf = familyRelationCertificate,
+                            onDeadFileAdd = {},
+                            onFamilyFileAdd = {}
+                        )
+                    }
                 }
 
-                VerifyStep.END -> TODO()
+                VerifyStep.END -> {
+                    SignUpContentButton(
+                        onNextClick = {onNextClick()}
+                    ) {
+                        ReceiveEndContent()
+                    }
+                }
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun VerifySelfScreenPreview(){
+    VerifySelfScreen(
+        onBackClick = {}
+    ) { }
 }

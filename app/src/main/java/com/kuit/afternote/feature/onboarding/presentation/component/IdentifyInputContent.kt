@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import com.kuit.afternote.core.ui.component.OutlineTextField
 
 @Composable
 fun IdentifyInputContent(memberCode: TextFieldState) {
