@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.onboarding.presentation.component
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.core.uimodel.Step
+import com.kuit.afternote.feature.onboarding.presentation.component.StepProgressBar
 import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,6 +87,7 @@ fun TopBar(
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

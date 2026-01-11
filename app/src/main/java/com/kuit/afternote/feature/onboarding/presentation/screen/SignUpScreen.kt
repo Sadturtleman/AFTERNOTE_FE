@@ -17,13 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.onboarding.presentation.component.EmailInputContent
+import com.kuit.afternote.core.ui.component.EmailInputContent
 import com.kuit.afternote.feature.onboarding.presentation.component.IdentifyInputContent
 import com.kuit.afternote.feature.onboarding.presentation.component.PhoneAuthContent
 import com.kuit.afternote.feature.onboarding.presentation.component.PwInputContent
-import com.kuit.afternote.feature.onboarding.presentation.component.SignUpContentButton
+import com.kuit.afternote.core.ui.component.SignUpContentButton
 import com.kuit.afternote.feature.onboarding.presentation.component.SignUpEndContent
-import com.kuit.afternote.feature.onboarding.presentation.component.TopBar
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
 
 @Composable
@@ -92,7 +92,9 @@ fun SignUpScreen(
                             onNextClick = { step = SignUpStep.PW_INPUT }
                         ) {
                             EmailInputContent(
-                                email = email
+                                email = email,
+                                authCode = authCode,
+                                onAuthClick = {}
                             )
                         }
                     }
