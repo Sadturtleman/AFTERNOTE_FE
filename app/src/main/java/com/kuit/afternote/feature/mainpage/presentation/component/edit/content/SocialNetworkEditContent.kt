@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.AccountInfoTextField
+import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.LabeledTextField
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -33,14 +33,14 @@ fun SocialNetworkEditContent(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    AccountInfoTextField(
+    LabeledTextField(
         label = "아이디",
         textFieldState = idState
     )
 
     Spacer(modifier = Modifier.height(10.dp))
 
-    AccountInfoTextField(
+    LabeledTextField(
         label = "비밀번호",
         textFieldState = passwordState,
         keyboardType = androidx.compose.ui.text.input.KeyboardType.Password

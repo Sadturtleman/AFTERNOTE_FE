@@ -26,8 +26,9 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.EditHeader
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.MessageTextField
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
@@ -87,6 +88,13 @@ fun AfternoteEditScreen(
     )
     var recipients by remember { mutableStateOf(initialRecipients) }
 
+    // 수신자 추가 다이얼로그 상태
+    var showAddRecipientDialog by remember { mutableStateOf(false) }
+    val recipientNameState = rememberTextFieldState()
+    val phoneNumberState = rememberTextFieldState()
+    var relationshipSelectedValue by remember { mutableStateOf("친구") }
+    val relationshipOptions = listOf("친구", "가족", "연인")
+
     // 처리 방법 리스트
     val defaultProcessingMethods = listOf(
         ProcessingMethodItem("1", "게시물 내리기"),
@@ -124,9 +132,10 @@ fun AfternoteEditScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                EditHeader(
+                Header(
+                    title = "애프터노트 작성하기",
                     onBackClick = onBackClick,
-                    onRegisterClick = {
+                    onActionClick = {
                         // 서비스명을 전달하여 등록
                         onRegisterClick(selectedService)
                     }
@@ -149,8 +158,6 @@ fun AfternoteEditScreen(
                             selectedCategory = category
                             if (category == "갤러리 및 파일") {
                                 selectedService = "갤러리"
-                            } else if (selectedCategory == "갤러리 및 파일" && category != "갤러리 및 파일") {
-                                selectedService = "인스타그램"
                             }
                         }
                     )
@@ -181,7 +188,7 @@ fun AfternoteEditScreen(
                             onInformationProcessingMethodSelected = { selectedInformationProcessingMethod = it },
                             recipients = recipients,
                             onRecipientAddClick = {
-                                // TODO: 수신자 추가 로직
+                                showAddRecipientDialog = true
                             },
                             onRecipientItemEditClick = { recipientId ->
                                 // TODO: 수신자 수정 로직
@@ -266,6 +273,41 @@ fun AfternoteEditScreen(
 
                     Spacer(modifier = Modifier.height(169.dp))
                 }
+            }
+
+            // 수신자 추가 다이얼로그
+            if (showAddRecipientDialog) {
+                AddRecipientDialog(
+                    recipientNameState = recipientNameState,
+                    relationshipSelectedValue = relationshipSelectedValue,
+                    relationshipOptions = relationshipOptions,
+                    phoneNumberState = phoneNumberState,
+                    onDismiss = {
+                        showAddRecipientDialog = false
+                        recipientNameState.edit { replace(0, length, "") }
+                        phoneNumberState.edit { replace(0, length, "") }
+                        relationshipSelectedValue = "친구"
+                    },
+                    onAddClick = {
+                        val name = recipientNameState.text.toString().trim()
+                        if (name.isNotEmpty()) {
+                            val newRecipient = Recipient(
+                                id = (recipients.size + 1).toString(),
+                                name = name,
+                                label = relationshipSelectedValue
+                            )
+                            recipients = recipients + newRecipient
+                            showAddRecipientDialog = false
+                            recipientNameState.edit { replace(0, length, "") }
+                            phoneNumberState.edit { replace(0, length, "") }
+                            relationshipSelectedValue = "친구"
+                        }
+                    },
+                    onRelationshipSelected = { relationshipSelectedValue = it },
+                    onImportContactsClick = {
+                        // TODO: 연락처 가져오기 로직
+                    }
+                )
             }
         }
     }
