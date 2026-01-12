@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 
 @Composable
@@ -29,6 +31,19 @@ fun SignUpContentButton(
             color = B3,
             modifier = Modifier
                 .align(Alignment.Center)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SignUpContentButtonPreview() {
+    AfternoteTheme {
+        SignUpContentButton(
+            onNextClick = {},
+            content = {
+                // Preview용 콘텐츠
+            }
         )
     }
 }

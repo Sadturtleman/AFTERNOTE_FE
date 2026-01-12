@@ -35,11 +35,15 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ProcessingMethodCheckbox(
     modifier: Modifier = Modifier,
     item: ProcessingMethodItem,
+    onClick: (() -> Unit)? = null,
     onMoreClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable(enabled = onClick != null) {
+                onClick?.invoke()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

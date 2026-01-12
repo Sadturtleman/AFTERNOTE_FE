@@ -1,12 +1,12 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.model
 
 /**
  * 계정 처리 방법 라디오 버튼 옵션
  */
 enum class AccountProcessingMethod(
-    val title: String,
-    val description: String
-) {
+    override val title: String,
+    override val description: String
+) : ProcessingMethodOption {
     MEMORIAL_ACCOUNT(
         "추모 계정으로 전환",
         "가족과 친구들이 당신을 추억할 수 있도록 계정을 유지하고, 추모 라벨을 붙여 계정을 보존합니다."

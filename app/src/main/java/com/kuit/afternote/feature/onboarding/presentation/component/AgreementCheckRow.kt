@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -97,6 +99,27 @@ fun AgreementCheckRow(
                     fontWeight = FontWeight.Medium
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AgreementCheckRowPreview() {
+    AfternoteTheme {
+        Column {
+            AgreementCheckRow(
+                title = "약관에 전체동의",
+                checked = true,
+                onCheckedChange = {}
+            )
+            AgreementCheckRow(
+                title = "애프터노트 서비스 이용 약관",
+                checked = false,
+                required = true,
+                description = "다양한 프로모션 소식을 전해드립니다.",
+                onCheckedChange = {}
+            )
         }
     }
 }

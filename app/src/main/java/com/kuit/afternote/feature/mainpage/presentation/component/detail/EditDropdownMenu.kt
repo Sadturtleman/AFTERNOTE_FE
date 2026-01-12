@@ -43,8 +43,8 @@ fun EditDropdownMenu(
         Text(
             text = "수정하기",
             style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight(500),
                 color = Gray9,
@@ -52,7 +52,7 @@ fun EditDropdownMenu(
             ),
             modifier = Modifier
                 .clickable(onClick = onEditClick)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(all = 16.dp)
         )
 
         HorizontalDivider(
@@ -63,8 +63,8 @@ fun EditDropdownMenu(
         Text(
             text = "삭제하기",
             style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight(500),
                 color = Gray9,
