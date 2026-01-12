@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.DetailHeader
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
@@ -103,7 +103,8 @@ fun AfternoteDetailScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                DetailHeader(
+                Header(
+                    title = "",
                     onBackClick = onBackClick,
                     onEditClick = { showDropdownMenu = !showDropdownMenu }
                 )

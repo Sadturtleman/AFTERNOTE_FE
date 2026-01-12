@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -29,23 +31,50 @@ import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 /**
- * 계정 정보 입력 필드 컴포넌트
+ * 라벨이 있는 텍스트 필드 컴포넌트
  *
  * 피그마 디자인 기반:
  * - 라벨: 12sp, Regular, Gray9
  * - 텍스트 필드: 흰색 배경, 8dp 모서리, 56dp 높이
  */
 @Composable
-fun AccountInfoTextField(
+fun LabeledTextField(
     modifier: Modifier = Modifier,
     label: String,
     textFieldState: TextFieldState,
     placeholder: String = "Text Field",
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
+    LabeledTextField(
+        modifier = modifier,
+        label = label,
+        textFieldState = textFieldState,
+        placeholder = placeholder,
+        keyboardType = keyboardType,
+        containerColor = White,
+        labelSpacing = 6.dp
+    )
+}
+
+/**
+ * 라벨이 있는 텍스트 필드 컴포넌트 (배경색 및 간격 지정 가능)
+ *
+ * @param containerColor 텍스트 필드 배경색 (기본: White)
+ * @param labelSpacing 라벨과 필드 간 간격 (기본: 6.dp)
+ */
+@Composable
+fun LabeledTextField(
+    modifier: Modifier = Modifier,
+    label: String,
+    textFieldState: TextFieldState,
+    placeholder: String = "Text Field",
+    keyboardType: KeyboardType = KeyboardType.Text,
+    containerColor: Color = White,
+    labelSpacing: Dp = 6.dp
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = 6.dp)
+        verticalArrangement = Arrangement.spacedBy(space = labelSpacing)
     ) {
         Text(
             text = label,
@@ -78,8 +107,8 @@ fun AccountInfoTextField(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = White,
-                focusedContainerColor = White
+                unfocusedContainerColor = containerColor,
+                focusedContainerColor = containerColor
             ),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(
@@ -88,7 +117,7 @@ fun AccountInfoTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(White, RoundedCornerShape(8.dp)),
+                .background(containerColor, RoundedCornerShape(8.dp)),
             textStyle = TextStyle(
                 color = Gray9
             )
@@ -98,12 +127,11 @@ fun AccountInfoTextField(
 
 @Preview(showBackground = true)
 @Composable
-private fun AccountInfoTextFieldPreview() {
+private fun LabeledTextFieldPreview() {
     AfternoteTheme {
-        AccountInfoTextField(
+        LabeledTextField(
             label = "아이디",
-            textFieldState = androidx.compose.foundation.text.input
-                .rememberTextFieldState()
+            textFieldState = rememberTextFieldState()
         )
     }
 }

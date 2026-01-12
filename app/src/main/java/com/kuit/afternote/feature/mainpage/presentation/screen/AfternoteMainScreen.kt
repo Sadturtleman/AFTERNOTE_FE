@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.AddFloatingActionButton
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.MainHeader
+import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
@@ -73,7 +73,7 @@ fun AfternoteMainScreen(
                     .fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.statusBars)
             ) {
-                MainHeader()
+                Header(title = "애프터노트")
 
                 if (afternoteItems.isEmpty()) {
                     EmptyAfternoteContent(

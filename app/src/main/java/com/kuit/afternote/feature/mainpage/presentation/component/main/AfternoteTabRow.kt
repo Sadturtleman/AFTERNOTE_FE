@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +27,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 /**
  * 애프터노트 상단 탭 로우 컴포넌트
@@ -83,6 +85,9 @@ private fun TabItem(
         Text(
             text = tab.label,
             color = Gray9,
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Normal,
+            lineHeight = 18.sp,
             fontSize = 12.sp
         )
     }
