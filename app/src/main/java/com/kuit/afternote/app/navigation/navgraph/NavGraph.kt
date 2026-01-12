@@ -17,7 +17,8 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
-import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -31,7 +32,10 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("회원가입 화면", "dev_signup"),
         ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
         ScreenInfo("지문 로그인 화면", "fingerprint_login"),
-        ScreenInfo("타임레터 화면", "time_letter")
+        ScreenInfo("타임레터 화면", "time_letter_main"),
+        ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
+        ScreenInfo("임시저장 화면", "draft_letter"),
+        ScreenInfo("수신자 목록 화면", "receive_list")
     )
 
     NavHost(
@@ -52,7 +56,15 @@ fun NavGraph(navHostController: NavHostController) {
         composable("dev") {
             DevModeScreen(
                 screens = devModeScreens,
-                onScreenClick = { route -> navHostController.navigate(route) }
+                onScreenClick = { route ->
+                    when (route) {
+                        "time_letter_main" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
+                        "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
+                        "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
+                        "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
+                        else -> navHostController.navigate(route)
+                    }
+                }
             )
         }
 
@@ -131,9 +143,6 @@ fun NavGraph(navHostController: NavHostController) {
             FingerprintLoginScreen(
                 onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
-        }
-        composable ( "time_letter" ){
-            TimeLetterScreen()
         }
     }
 }

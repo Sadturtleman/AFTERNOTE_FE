@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
+
 detekt {
     buildUponDefaultConfig = true
     allRules = false

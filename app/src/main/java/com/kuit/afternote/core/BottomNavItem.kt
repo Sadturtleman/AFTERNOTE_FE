@@ -3,6 +3,10 @@ package com.kuit.afternote.core
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
 
+@androidx.compose.runtime.Composable
+fun (modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier) {
+    
+}
 /**
  * 하단 네비게이션 바 아이템 enum
  */

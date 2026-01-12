@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
@@ -29,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 
 @Composable
 fun TimeLetterWriterScreen(modifier: Modifier = Modifier) {
@@ -37,6 +40,7 @@ fun TimeLetterWriterScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .height(43.dp)
                 .fillMaxWidth()
+                .systemBarsPadding()
         ) {
             Image(
                 painterResource(R.drawable.vending),
@@ -155,8 +159,11 @@ fun TimeLetterWriterScreen(modifier: Modifier = Modifier) {
                 thickness = 0.4.dp
             )
         }
-        Spacer(modifier= Modifier.padding(top=37.dp))
-        LazyColumn {
+        Spacer(modifier= Modifier.padding(top=17.dp))
+        LazyColumn (
+            modifier= Modifier.padding(20.dp)
+                .weight(1f)
+        ){
             item {
                 Text(
                     text = "소중한 사람에게 타임 레터를 작성하세요.",
@@ -167,6 +174,7 @@ fun TimeLetterWriterScreen(modifier: Modifier = Modifier) {
                 )
             }
         }
+        TimeLetterWriterBottomBar()
     }
 }
 
