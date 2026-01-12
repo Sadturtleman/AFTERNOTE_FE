@@ -115,6 +115,83 @@
 - 모든 컴포넌트에 일관되게 간격 처리 방법을 적용해야 합니다.
 - 예외: 컴포넌트 내부 여백이 필요한 경우 (예: 배경이 있는 Box 내부의 Text, 버튼 내부의 Text 등)에는 `padding` 사용 가능
 
+## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
+
+### 원칙
+**"rem" 개념**: 화면 크기에 따라 동적으로 조정되는 단위. Android에서는 `weight`을 사용하여 구현합니다.
+
+### 핵심 규칙
+1. **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
+2. **Padding과 Spacing**: `weight`을 사용한 가변 패딩/간격 적용
+   - 화면 가장자리 padding: 고정값 허용 (예: `padding(horizontal = 20.dp)`)
+   - **내부 간격**: `Spacer(Modifier.weight())` 사용하여 화면 크기에 따라 동적 조정
+   - 작은 간격(8dp 이하): 고정값 허용 (예: `Spacer(Modifier.height(8.dp))`)
+3. **공통 컴포넌트 오버로딩**: 비슷한 컴포넌트는 오버로딩으로 재사용
+   - 예: `TopBar(title, onBackClick)`, `TopBar(title, step, onBackClick)`
+   - 예: `ClickButton(color, title, onClick)` - 공통 버튼 컴포넌트
+
+### 구현 가이드
+
+#### ✅ 올바른 예 (rem 적용)
+```kotlin
+Column {
+    Spacer(modifier = Modifier.weight(0.15f))  // 가변 간격
+    
+    OutlineTextField(...)
+    
+    Spacer(modifier = Modifier.height(8.dp))   // 작은 간격은 고정값 OK
+    
+    ClickButton(...)  // 공통 컴포넌트 재사용
+    
+    Spacer(modifier = Modifier.weight(1f))     // 가변 간격
+}
+```
+
+#### ❌ 잘못된 예 (rem 미적용)
+```kotlin
+Column {
+    Spacer(modifier = Modifier.height(24.dp))  // ❌ 고정 간격
+    Spacer(modifier = Modifier.height(16.dp))  // ❌ 고정 간격
+    Spacer(modifier = Modifier.height(169.dp)) // ❌ 고정 간격 (큰 간격)
+    
+    Button(...) { ... }  // ❌ 매번 직접 구현
+}
+```
+
+### 공통 컴포넌트 패턴
+
+#### 1. Header 컴포넌트 오버로딩
+```kotlin
+// 하나의 파일에 여러 버전 제공
+@Composable
+fun Header(title: String, onBackClick: () -> Unit)
+
+@Composable
+fun Header(title: String, step: Int, onBackClick: () -> Unit)
+
+@Composable
+fun Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)
+```
+
+#### 2. Button 컴포넌트 재사용
+```kotlin
+// 공통 버튼 컴포넌트
+@Composable
+fun ClickButton(
+    color: Color,
+    title: String,
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+)
+```
+
+### 적용 우선순위
+1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 사용
+2. **중간 간격 (8-24dp)**: 상황에 따라 weight 또는 고정값
+3. **작은 간격 (8dp 이하)**: 고정값 허용
+4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지)
+5. **컴포넌트 크기**: 항상 고정 dp 값 사용
+
 ## Drawable Resources
 - SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다.
 - drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다.
