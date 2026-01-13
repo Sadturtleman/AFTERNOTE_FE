@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.onboarding.presentation.component
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
