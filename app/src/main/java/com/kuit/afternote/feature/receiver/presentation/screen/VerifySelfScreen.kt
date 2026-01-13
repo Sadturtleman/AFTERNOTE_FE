@@ -24,7 +24,10 @@ import com.kuit.afternote.feature.receiver.presentation.component.ReceiveEndCont
 import com.kuit.afternote.feature.receiver.presentation.uimodel.VerifyStep
 
 @Composable
-fun VerifySelfScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
+fun VerifySelfScreen(
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit
+) {
     var step by remember { mutableStateOf(VerifyStep.EMAIL_AUTH) }
     val email = rememberTextFieldState()
     val masterKey = rememberTextFieldState()
@@ -91,7 +94,7 @@ fun VerifySelfScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
 
                 VerifyStep.END -> {
                     SignUpContentButton(
-                        onNextClick = {onNextClick()}
+                        onNextClick = { onNextClick() }
                     ) {
                         ReceiveEndContent()
                     }
@@ -103,7 +106,7 @@ fun VerifySelfScreen(onBackClick: () -> Unit, onNextClick: () -> Unit) {
 
 @Preview
 @Composable
-private fun VerifySelfScreenPreview(){
+private fun VerifySelfScreenPreview() {
     VerifySelfScreen(
         onBackClick = {}
     ) { }

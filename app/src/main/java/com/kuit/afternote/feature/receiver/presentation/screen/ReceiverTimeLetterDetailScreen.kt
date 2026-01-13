@@ -1,17 +1,20 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +30,9 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
-
-val TextLightGray = Color(0xFF999999)
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun TimeLetterDetailScreen() {
@@ -53,24 +55,25 @@ fun TimeLetterDetailScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // 긴 텍스트를 대비해 스크롤 가능하게 설정
-                .padding(horizontal = 24.dp, vertical = 20.dp) // 좌우 여백 넉넉하게
+                .verticalScroll(rememberScrollState())
+                .padding(all = 20.dp) // 좌우 여백 넉넉하게
         ) {
-            // 1. 날짜
             Text(
                 text = "2027년 11월 24일",
-                color = TextLightGray,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = Gray4,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 8.dp),
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium
             )
 
-            // 2. 제목
             Text(
                 text = "채연아 20번째 생일을 축하해",
                 color = Gray9,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 24.dp)
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(bottom = 16.dp),
+                fontFamily = Sansneo
             )
 
             // 3. 이미지 영역
@@ -81,17 +84,6 @@ fun TimeLetterDetailScreen() {
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.LightGray) // 실제 이미지가 없을 때 회색 배경
             ) {
-                // 실제 앱에서는 아래 주석을 해제하고 리소스 이미지를 사용하세요
-                /*
-                Image(
-                    painter = painterResource(id = R.drawable.sample_family_photo),
-                    contentDescription = "Family Photo",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-                */
-
-                // 플레이스홀더 텍스트 (시각적 확인용, 실제 사용시 제거)
                 Text(
                     text = "가족 사진 영역",
                     color = Color.DarkGray,
@@ -108,16 +100,16 @@ fun TimeLetterDetailScreen() {
                     "너무 기특해서 안아주고 싶구나.\n" +
                     "20번째 생일을 축하해.",
                 color = Gray9,
-                fontSize = 16.sp,
-                lineHeight = 26.sp, // 줄 간격을 넓혀서 가독성 확보
-                fontWeight = FontWeight.Normal
+                fontSize = 14.sp,
+                lineHeight = 26.sp,
+                fontWeight = FontWeight.Normal,
+                fontFamily = Sansneo
             )
 
-            Spacer(modifier = Modifier.height(40.dp)) // 하단 여백 추가
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.onboarding.presentation.component
+package com.kuit.afternote.feature.receiver.presentation.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.CircleCheckBox
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo

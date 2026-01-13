@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
 import ReceiverRow
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,9 +11,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.TopBar
 
-
 @Composable
-fun ReceiverListScreen(onBackClick: () -> Unit, onClick: (String) -> Unit){
+fun ReceiverListScreen(
+    onBackClick: () -> Unit,
+    onClick: (String) -> Unit
+) {
     val receiverList = listOf<String>(
         "박서연",
         "김건국"
@@ -23,16 +24,16 @@ fun ReceiverListScreen(onBackClick: () -> Unit, onClick: (String) -> Unit){
         topBar = {
             TopBar(
                 title = "받은 기록함",
-                onBackClick = {onBackClick()}
+                onBackClick = { onBackClick() }
             )
         }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+                .padding(20.dp)
         ) {
-            items(receiverList){ name ->
+            items(receiverList) { name ->
                 ReceiverRow(name) { onClick(name) }
             }
         }
@@ -41,7 +42,7 @@ fun ReceiverListScreen(onBackClick: () -> Unit, onClick: (String) -> Unit){
 
 @Preview
 @Composable
-private fun ReceiverListScreenPreview(){
+private fun ReceiverListScreenPreview() {
     ReceiverListScreen(
         onBackClick = {}
     ) { }

@@ -1,49 +1,43 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.ui.theme.Gray6
-
-
-// --- Data Model ---
-data class AppNoteItem(
-    val name: String,
-    val date: String,
-    val icon: ImageVector,
-    val iconColor: Color,
-    val iconBgColor: Color
-)
+import com.kuit.afternote.feature.receiver.presentation.component.AfterNoteListItem
+import com.kuit.afternote.feature.receiver.presentation.component.FilterChipItem
+import com.kuit.afternote.feature.receiver.presentation.uimodel.AppNoteItem
+import com.kuit.afternote.ui.theme.B1
 
 @Composable
 fun AfterNoteListScreen() {
@@ -65,7 +59,7 @@ fun AfterNoteListScreen() {
         topBar = {
             TopBar(
                 title = "애프터노트"
-            ) { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(
@@ -77,32 +71,52 @@ fun AfterNoteListScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(20.dp)
                 .fillMaxSize()
         ) {
-            // 1. 상단 카테고리 필터 (Horizontal Scroll)
-            LazyRow(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentAlignment = Alignment.CenterEnd
             ) {
-                items(categories) { category ->
-                    FilterChipItem(
-                        text = category,
-                        isSelected = category == selectedCategory,
-                        onClick = { selectedCategory = category }
-                    )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(categories) { category ->
+                        FilterChipItem(
+                            text = category,
+                            isSelected = category == selectedCategory,
+                            onClick = { selectedCategory = category }
+                        )
+                    }
                 }
+
+                Box(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(30.dp)
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(Color.Transparent, Color.White.copy(alpha = 0.8f), Color.White),
+                                startX = 0f
+                            )
+                        )
+                )
+
+                RightArrowIcon(
+                    color = B1,
+                    size = 16.dp
+                )
             }
 
-            Divider(thickness = 8.dp, color = Color(0xFFF8F9FA)) // 섹션 구분용 두꺼운 회색 선
-
-            // 2. 애프터노트 리스트
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF8F9FA)), // 전체 배경 회색 처리
+                    .background(Color(0xFFF8F9FA)),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -110,89 +124,6 @@ fun AfterNoteListScreen() {
                     AfterNoteListItem(item)
                 }
             }
-        }
-    }
-}
-
-// --- Components ---
-
-@Composable
-fun FilterChipItem(text: String, isSelected: Boolean, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(if (isSelected) PrimaryBlue else Gray6)
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = if (isSelected) Color.White else TextGray,
-            fontSize = 13.sp,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-fun AfterNoteListItem(item: AppNoteItem) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp), // 높이 고정
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp) // Flat design
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // 아이콘 박스
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(item.iconBgColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = null,
-                    tint = item.iconColor,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // 텍스트 정보
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = item.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    color = TextDark
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.date,
-                    fontSize = 11.sp,
-                    color = Color.Gray
-                )
-            }
-
-            // 화살표 아이콘
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Detail",
-                tint = PrimaryBlue
-            )
         }
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.feature.onboarding.presentation.uimodel.AgreementItem
+import com.kuit.afternote.feature.receiver.presentation.component.AgreementCheckRow
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Sansneo
 

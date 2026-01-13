@@ -17,7 +17,11 @@ import com.kuit.afternote.ui.theme.Sansneo
 import org.w3c.dom.Text
 
 @Composable
-fun EmailInputContent(email: TextFieldState, authCode: TextFieldState, onAuthClick: () -> Unit) {
+fun EmailInputContent(
+    email: TextFieldState,
+    authCode: TextFieldState,
+    onAuthClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

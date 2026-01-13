@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Photo
@@ -39,8 +38,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun PdfInputContent(
     deadPdf: TextFieldState,
     familyPdf: TextFieldState,
-    onDeadFileAdd: () -> Unit,   // 1. 사망진단서 파일 추가 함수
-    onFamilyFileAdd: () -> Unit  // 2. 가족관계증명서 파일 추가 함수
+    onDeadFileAdd: () -> Unit,
+    onFamilyFileAdd: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -104,7 +103,6 @@ private fun SinglePdfInputRow(
 
         // 1. Box는 전체 너비를 채웁니다.
         Box(modifier = Modifier.fillMaxWidth()) {
-
             // 2. 텍스트 필드 그리기
             OutlineTextField(
                 textFieldState = textFieldState,
@@ -116,8 +114,8 @@ private fun SinglePdfInputRow(
             // 메뉴를 감싸는 투명한 Box를 만들어 우측 상단(버튼 위치 근처)으로 보냅니다.
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd) // Box 기준 오른쪽 끝으로 정렬
-                    .padding(end = 25.dp)    // 아이콘이 있는 위치만큼 안쪽으로 살짝 밀어줌 (OutlineTextField의 padding과 맞춤)
+                    .align(Alignment.TopEnd)
+                    .padding(end = 25.dp)
             ) {
                 DropdownMenu(
                     expanded = expanded,
