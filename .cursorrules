@@ -1,3 +1,32 @@
+# ⚠️ CRITICAL RULES SUMMARY (핵심 규칙 요약) - READ FIRST
+
+**이 섹션은 AI가 가장 먼저 인식해야 하는 핵심 규칙입니다. 상세 설명은 아래 섹션을 참조하세요.**
+
+## MUST DO (반드시 수행)
+1. **Git**: 사용자 명시적 요청 없이 절대 커밋/푸시 금지
+2. **Branch**: 작업 전 반드시 적절한 브랜치 확인/생성 (`feat/`, `fix/`, `docs/` 등)
+3. **Branch Cleanup**: 푸시 완료 후 main에 병합된 로컬 브랜치 자동 삭제
+4. **Preview**: 모든 public Composable에 `@Preview` 필수
+5. **Import**: 전체 import 문 포함, 확장 함수 명시적 import, 와일드카드 금지
+6. **Modifier**: 모든 Composable 첫 파라미터 `modifier: Modifier = Modifier`
+7. **State**: 상태는 호출부로 hoisting, Stateless composable 지향
+8. **Architecture**: Presentation → Domain ← Data (엄격한 계층 분리)
+9. **Error Handling**: 3회 이상 실패 시 중단하고 Perplexity 프롬프트 제공
+
+## MUST NOT DO (절대 금지)
+1. 커밋/푸시 자동 실행
+2. `android.R` import
+3. 와일드카드 import (`import foo.*`)
+4. Domain Layer에 Android/Data 의존성
+5. 설명 없이 코드만 생성 (사용자 요청 시 제외)
+
+## CRITICAL PATTERNS (핵심 패턴)
+- **Rem-based Design**: 큰 간격(24dp+)은 `weight`, 작은 간격(8dp 이하)은 고정값, 컴포넌트 크기는 항상 고정 dp
+- **Component Reuse**: 불확실하면 `private` 함수로, 재사용 확정되면 별도 파일
+- **File Limit**: 400줄 초과 시 분리, 폴더당 10-15개 파일 유지
+- **Tests**: UseCase/ViewModel 변경 시 테스트 확인/추가
+
+---
 # Project Context
 - **Project Type**: Android App (Kotlin, Jetpack Compose)
 - **Architecture**: Clean Architecture (Data, Domain, Presentation Layers)
@@ -550,6 +579,49 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - 실수로 커밋한 경우: `git reset --soft HEAD~1` (변경사항은 유지) 또는 `git reset --hard HEAD~1` (변경사항도 제거)
 - 실수로 푸시한 경우: `git reset --hard HEAD~1` 후 `git push origin {branch-name} --force-with-lease`로 원격에서도 제거
 
+### 6. 브랜치 정리 규칙 (Branch Cleanup Rule) - Critical
+**커밋/푸시 완료 후 자동으로 병합된 브랜치를 정리합니다.**
+
+#### 자동 정리 조건
+- **푸시 완료 후 자동 실행**: 작업 브랜치를 푸시한 후, `main` 브랜치에 병합된 로컬 브랜치를 자동으로 삭제합니다.
+- **삭제 대상**:
+  * `main` 브랜치에 병합된 로컬 브랜치 (`git branch --merged main`)
+  * 현재 브랜치가 아닌 브랜치
+  * `main`, `master`, `develop` 브랜치가 아닌 브랜치
+- **삭제하지 않는 브랜치**:
+  * 현재 작업 중인 브랜치 (체크아웃된 브랜치)
+  * `main`, `master`, `develop` 브랜치
+  * `main`에 병합되지 않은 브랜치 (`git branch --no-merged main`)
+  * Worktree에서 사용 중인 브랜치
+
+#### 실행 방법
+- **자동 실행**: 푸시 완료 후 자동으로 실행
+- **수동 실행**: 사용자가 "브랜치 정리" 또는 "불필요한 브랜치 삭제"를 요청한 경우 실행
+- **명령어**: `git branch -d $(git branch --merged main | grep -v "main\|master\|develop\|^\*" | xargs)`
+
+#### 원격 브랜치 정리
+- **자동 삭제**: 푸시 완료 후 `origin/main`에 병합된 원격 브랜치를 자동으로 삭제합니다.
+- **삭제 대상**:
+  * `origin/main`에 병합된 원격 브랜치 (`git branch -r --merged origin/main`)
+  * `main`, `master`, `develop` 브랜치가 아닌 브랜치
+- **삭제하지 않는 브랜치**:
+  * `main`, `master`, `develop` 브랜치
+  * `origin/main`에 병합되지 않은 브랜치 (`git branch -r --no-merged origin/main`)
+  * 현재 작업 중인 브랜치 (체크아웃된 브랜치)
+- **명령어**: `git push origin --delete <branch-name>` (병합된 브랜치들)
+- **추적 제거**: `git remote prune origin` (원격에서 이미 삭제된 브랜치 추적 제거)
+- **커밋/푸시 완료 후 자동 브랜치 정리**: 작업이 완료되고 푸시가 성공적으로 완료된 후, 다음 조건을 만족하는 브랜치를 자동으로 삭제합니다:
+  - **로컬 브랜치 삭제 조건**:
+    * 현재 브랜치가 아닌 브랜치
+    * `main`, `master`, `develop` 브랜치가 아닌 브랜치
+    * 원격에 푸시되어 있고, 원격 브랜치가 존재하는 경우 (안전장치)
+  - **원격 브랜치 삭제 조건**:
+    * 로컬에서 이미 삭제된 브랜치
+    * `main`, `master`, `develop` 브랜치가 아닌 브랜치
+    * 사용자가 명시적으로 삭제를 요청한 경우
+  - **삭제 전 확인**: 중요한 브랜치(`main`, `master`, `develop`)는 절대 삭제하지 않습니다.
+  - **실행 시점**: 푸시 완료 후 자동으로 실행하거나, 사용자가 "브랜치 정리"를 요청한 경우 실행합니다.
+
 ## Conventional Commits
 커밋 메시지는 아래 형식을 따릅니다:
 `type(scope): subject`
@@ -799,6 +871,16 @@ class {UseCaseName}Test {
 1. **주제에 맞는 브랜치에서 작업**
    - 자세한 내용은 Branch Workflow Rules 참고
 
+2. **`.cursorrules` 파일 작성 규칙**
+   - **최상단에 Critical Rules Summary 필수**: `.cursorrules` 파일을 작성하거나 수정할 때는 반드시 최상단에 "⚠️ CRITICAL RULES SUMMARY" 섹션을 포함해야 합니다.
+   - **Summary 구조**:
+     * MUST DO (반드시 수행): 핵심 규칙을 간결하게 나열
+     * MUST NOT DO (절대 금지): 금지 사항을 명확히 표시
+     * CRITICAL PATTERNS (핵심 패턴): 중요한 패턴 요약
+   - **목적**: AI가 Context Window 초반부에서 핵심 규칙을 먼저 인식하도록 하여 규칙 무시나 환각을 방지합니다.
+   - **상세 설명**: Summary 아래에 상세한 설명과 예시를 포함합니다.
+   - **업데이트 시**: 새로운 Critical 규칙이 추가되면 Summary도 함께 업데이트해야 합니다.
+
 2. **시도한 해결책 메모**
    - 문제 해결 시 시도한 방법들을 메모해두기
    - 같은 실수를 반복하지 않기 위함
@@ -865,3 +947,78 @@ class {UseCaseName}Test {
 3. 이 변경으로 인해 기존 README 내용이 부정확해졌는가?
 
 **모든 답변이 "아니오"가 아니라면 README를 업데이트해야 합니다.**
+
+---
+
+# 13. Problem Solving & Research Rules (문제 해결 및 조사 규칙)
+
+## ⚠️ Critical: 작업 중단 및 조사 규칙 (Critical: Work Interruption & Research Rule)
+
+**작업 중 문제가 발생하거나 막히는 경우, 즉시 중단하고 Perplexity 프롬프트를 제공해야 합니다.**
+
+### 1. 작업 중단 조건
+다음과 같은 상황에서는 코드 수정을 중단하고 Perplexity 프롬프트를 작성해야 합니다:
+
+1. **예상치 못한 오류 발생**
+   - 컴파일 오류가 계속 발생하고 원인을 파악하기 어려운 경우
+   - 런타임 오류가 발생하고 해결 방법을 모르는 경우
+   - 라이브러리나 프레임워크의 예상치 못한 동작
+
+2. **API 또는 라이브러리 사용법 불확실**
+   - 공식 문서를 확인해도 해결되지 않는 경우
+   - 여러 시도를 했지만 원하는 결과를 얻지 못한 경우
+   - Material3, Compose 등 프레임워크의 특정 기능 사용법이 불명확한 경우
+
+3. **시각적 문제 발생**
+   - UI가 예상과 다르게 렌더링되는 경우
+   - 레이아웃이나 스타일링 문제가 발생한 경우
+   - 그림자, 테두리, 배경색 등 시각적 효과가 예상과 다른 경우
+
+4. **3회 이상 시도 실패**
+   - 같은 문제를 3회 이상 시도했지만 해결되지 않은 경우
+   - 여러 방법을 시도했지만 모두 실패한 경우
+
+### 2. Perplexity 프롬프트 작성 규칙
+
+#### 프롬프트 구조
+Perplexity 프롬프트는 다음 구조를 따라야 합니다:
+
+```
+[문제 상황 설명]
+
+**현재 상황:**
+- 구체적인 문제 설명
+- 발생한 오류 메시지 (있는 경우)
+- 예상했던 동작 vs 실제 동작
+
+**시도한 방법:**
+- 이미 시도한 해결 방법들 나열
+- 참고한 문서나 자료
+
+**질문:**
+1. [구체적인 질문 1]
+2. [구체적인 질문 2]
+3. [구체적인 질문 3]
+...
+
+**코드 컨텍스트:**
+\`\`\`kotlin
+// 관련 코드 스니펫
+\`\`\`
+```
+
+#### 프롬프트 작성 가이드
+- **구체적이고 명확하게**: 문제 상황을 구체적으로 설명
+- **코드 컨텍스트 포함**: 관련 코드 스니펫을 반드시 포함
+- **시도한 방법 명시**: 이미 시도한 방법들을 나열하여 중복 시도 방지
+- **질문은 구체적으로**: "왜 안 되나요?"보다 "Material3 DropdownMenu에서 Surface로 감싸면 검은 선이 생기는 이유는 무엇인가요?"처럼 구체적으로
+
+### 3. 작업 재개 조건
+- Perplexity 프롬프트를 제공한 후, 사용자가 답변을 받아 다시 요청할 때까지 기다립니다
+- 사용자가 추가 정보나 해결 방법을 제공한 경우에만 작업을 재개합니다
+
+### 4. 예외 상황
+다음의 경우는 작업을 계속 진행할 수 있습니다:
+- 명확한 해결 방법을 알고 있는 경우
+- 단순한 문법 오류나 타이핑 실수
+- 사용자가 명시적으로 계속 시도하라고 요청한 경우
