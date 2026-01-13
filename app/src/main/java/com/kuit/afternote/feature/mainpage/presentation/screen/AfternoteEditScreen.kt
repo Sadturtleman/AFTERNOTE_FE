@@ -29,6 +29,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.common.Require
 import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.MessageTextField
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
@@ -160,8 +161,10 @@ fun AfternoteEditScreen(
                                 selectedService = "갤러리"
                             }
                         },
-                        shadowElevation = 10.dp,
-                        tonalElevation = 10.dp
+                        menuStyle = DropdownMenuStyle(
+                            shadowElevation = 10.dp,
+                            tonalElevation = 10.dp
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -172,8 +175,10 @@ fun AfternoteEditScreen(
                         selectedValue = selectedService,
                         options = if (selectedCategory == "갤러리 및 파일") galleryServices else services,
                         onValueSelected = { selectedService = it },
-                        shadowElevation = 10.dp,
-                        tonalElevation = 10.dp
+                        menuStyle = DropdownMenuStyle(
+                            shadowElevation = 10.dp,
+                            tonalElevation = 10.dp
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,11 +36,27 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.bottomBorder
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
+
+/**
+ * 드롭다운 메뉴 스타일 설정
+ *
+ * @param menuOffset 드롭다운 메뉴가 필드 아래 나타나는 간격 (기본: 4.dp)
+ * @param menuBackgroundColor 드롭다운 메뉴 배경색 (기본: White)
+ * @param shadowElevation 드롭다운 메뉴 그림자 elevation (기본: 0.dp)
+ * @param tonalElevation 드롭다운 메뉴 톤 elevation (기본: 0.dp)
+ */
+data class DropdownMenuStyle(
+    val menuOffset: Dp = 4.dp,
+    val menuBackgroundColor: Color = White,
+    val shadowElevation: Dp = 0.dp,
+    val tonalElevation: Dp = 0.dp
+)
 
 /**
  * 선택 드롭다운 컴포넌트
@@ -57,38 +74,8 @@ fun SelectionDropdown(
     label: String,
     selectedValue: String,
     options: List<String>,
-    onValueSelected: (String) -> Unit
-) {
-    SelectionDropdown(
-        modifier = modifier,
-        label = label,
-        selectedValue = selectedValue,
-        options = options,
-        onValueSelected = onValueSelected,
-        menuOffset = 4.dp
-    )
-}
-
-/**
- * 선택 드롭다운 컴포넌트 (메뉴 offset 지정 가능)
- *
- * @param menuOffset 드롭다운 메뉴가 필드 아래 나타나는 간격 (기본: 4.dp)
- * @param menuBackgroundColor 드롭다운 메뉴 배경색 (기본: White)
- * @param shadowElevation 드롭다운 메뉴 그림자 elevation (기본: 0.dp)
- * @param tonalElevation 드롭다운 메뉴 톤 elevation (기본: 0.dp)
- * DropdownMenu를 사용하여 정확한 offset 조정이 가능합니다.
- */
-@Composable
-fun SelectionDropdown(
-    modifier: Modifier = Modifier,
-    label: String,
-    selectedValue: String,
-    options: List<String>,
     onValueSelected: (String) -> Unit,
-    menuOffset: Dp = 4.dp,
-    menuBackgroundColor: Color = White,
-    shadowElevation: Dp = 0.dp,
-    tonalElevation: Dp = 0.dp
+    menuStyle: DropdownMenuStyle = DropdownMenuStyle()
 ) {
     var expanded by remember { mutableStateOf(false) }
     var boxWidth by remember { mutableStateOf(0.dp) }
@@ -153,10 +140,10 @@ fun SelectionDropdown(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                offset = DpOffset(x = 0.dp, y = menuOffset),
-                containerColor = menuBackgroundColor,
-                shadowElevation = shadowElevation,
-                tonalElevation = tonalElevation,
+                offset = DpOffset(x = 0.dp, y = menuStyle.menuOffset),
+                containerColor = menuStyle.menuBackgroundColor,
+                shadowElevation = menuStyle.shadowElevation,
+                tonalElevation = menuStyle.tonalElevation,
                 modifier = Modifier
                     .then(if (boxWidth > 0.dp) Modifier.width(boxWidth) else Modifier.fillMaxWidth())
             ) {
@@ -179,7 +166,8 @@ fun SelectionDropdown(
                         onClick = {
                             onValueSelected(option)
                             expanded = false
-                        }
+                        },
+                        contentPadding = PaddingValues(vertical = 16.dp)
                     )
                 }
             }
@@ -197,5 +185,178 @@ private fun SelectionDropdownPreview() {
             options = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일"),
             onValueSelected = {}
         )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "펼쳐진 드롭다운 메뉴 (기본)"
+)
+@Composable
+private fun ExpandedDropdownMenuPreview() {
+    AfternoteTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                offset = DpOffset(x = 0.dp, y = 4.dp),
+                containerColor = White,
+                shadowElevation = 0.dp,
+                tonalElevation = 0.dp,
+                modifier = Modifier.width(200.dp)
+            ) {
+                listOf("소셜네트워크", "비즈니스", "갤러리 및 파일").forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 22.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Gray9,
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        onClick = {}
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "펼쳐진 드롭다운 메뉴 (높은 Elevation)"
+)
+@Composable
+private fun ExpandedDropdownMenuWithElevationPreview() {
+    AfternoteTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                offset = DpOffset(x = 0.dp, y = 4.dp),
+                containerColor = White,
+                shadowElevation = 10.dp,
+                tonalElevation = 10.dp,
+                modifier = Modifier.width(200.dp)
+            ) {
+                listOf("인스타그램", "페이스북", "트위터", "링크드인").forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 22.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Gray9,
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        onClick = {}
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "펼쳐진 드롭다운 메뉴 (다이얼로그 스타일)"
+)
+@Composable
+private fun ExpandedDropdownMenuInDialogPreview() {
+    AfternoteTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                offset = DpOffset(x = 0.dp, y = 5.2.dp),
+                containerColor = Gray1,
+                shadowElevation = 0.dp,
+                tonalElevation = 0.dp,
+                modifier = Modifier.width(200.dp)
+            ) {
+                listOf("친구", "가족", "연인", "동료").forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 22.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Gray9,
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        onClick = {}
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "펼쳐진 드롭다운 메뉴 (긴 리스트)"
+)
+@Composable
+private fun ExpandedDropdownMenuLongListPreview() {
+    AfternoteTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DropdownMenu(
+                expanded = true,
+                onDismissRequest = {},
+                offset = DpOffset(x = 0.dp, y = 4.dp),
+                containerColor = White,
+                shadowElevation = 0.dp,
+                tonalElevation = 0.dp,
+                modifier = Modifier.width(200.dp)
+            ) {
+                listOf(
+                    "카카오톡",
+                    "인스타그램",
+                    "페이스북",
+                    "트위터",
+                    "링크드인",
+                    "텔레그램",
+                    "디스코드",
+                    "슬랙"
+                ).forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option,
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 22.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Gray9,
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        onClick = {}
+                    )
+                }
+            }
+        }
     }
 }
