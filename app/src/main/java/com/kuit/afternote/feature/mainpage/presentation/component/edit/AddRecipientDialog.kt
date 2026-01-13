@@ -142,10 +142,12 @@ fun AddRecipientDialog(
                 selectedValue = relationshipSelectedValue,
                 options = relationshipOptions,
                 onValueSelected = onRelationshipSelected,
-                menuOffset = 5.2.dp,
-                menuBackgroundColor = Gray1,
-                shadowElevation = 0.dp,
-                tonalElevation = 0.dp
+                menuStyle = DropdownMenuStyle(
+                    menuOffset = 5.2.dp,
+                    menuBackgroundColor = Gray1,
+                    shadowElevation = 0.dp,
+                    tonalElevation = 0.dp
+                )
             )
             Spacer(modifier = Modifier.height(24.dp))
 
