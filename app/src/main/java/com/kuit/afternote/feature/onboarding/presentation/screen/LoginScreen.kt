@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.onboarding.presentation.component.ClickButton
-import com.kuit.afternote.feature.onboarding.presentation.component.OutlineTextField
-import com.kuit.afternote.feature.onboarding.presentation.component.TopBar
+import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6

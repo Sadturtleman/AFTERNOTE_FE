@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.onboarding.presentation.component
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
