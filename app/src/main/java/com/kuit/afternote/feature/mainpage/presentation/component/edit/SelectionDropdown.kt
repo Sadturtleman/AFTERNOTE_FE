@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -76,6 +74,8 @@ fun SelectionDropdown(
  *
  * @param menuOffset 드롭다운 메뉴가 필드 아래 나타나는 간격 (기본: 4.dp)
  * @param menuBackgroundColor 드롭다운 메뉴 배경색 (기본: White)
+ * @param shadowElevation 드롭다운 메뉴 그림자 elevation (기본: 0.dp)
+ * @param tonalElevation 드롭다운 메뉴 톤 elevation (기본: 0.dp)
  * DropdownMenu를 사용하여 정확한 offset 조정이 가능합니다.
  */
 @Composable
@@ -86,7 +86,9 @@ fun SelectionDropdown(
     options: List<String>,
     onValueSelected: (String) -> Unit,
     menuOffset: Dp = 4.dp,
-    menuBackgroundColor: Color = White
+    menuBackgroundColor: Color = White,
+    shadowElevation: Dp = 0.dp,
+    tonalElevation: Dp = 0.dp
 ) {
     var expanded by remember { mutableStateOf(false) }
     var boxWidth by remember { mutableStateOf(0.dp) }
@@ -152,10 +154,11 @@ fun SelectionDropdown(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 offset = DpOffset(x = 0.dp, y = menuOffset),
+                containerColor = menuBackgroundColor,
+                shadowElevation = shadowElevation,
+                tonalElevation = tonalElevation,
                 modifier = Modifier
                     .then(if (boxWidth > 0.dp) Modifier.width(boxWidth) else Modifier.fillMaxWidth())
-                    .shadow(elevation = 0.dp)
-                    .background(menuBackgroundColor)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(

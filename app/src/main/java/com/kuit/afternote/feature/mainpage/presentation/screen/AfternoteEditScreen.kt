@@ -159,7 +159,9 @@ fun AfternoteEditScreen(
                             if (category == "갤러리 및 파일") {
                                 selectedService = "갤러리"
                             }
-                        }
+                        },
+                        shadowElevation = 10.dp,
+                        tonalElevation = 10.dp
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -169,7 +171,9 @@ fun AfternoteEditScreen(
                         label = "서비스명",
                         selectedValue = selectedService,
                         options = if (selectedCategory == "갤러리 및 파일") galleryServices else services,
-                        onValueSelected = { selectedService = it }
+                        onValueSelected = { selectedService = it },
+                        shadowElevation = 10.dp,
+                        tonalElevation = 10.dp
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
