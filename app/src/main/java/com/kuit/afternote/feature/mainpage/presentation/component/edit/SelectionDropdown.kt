@@ -156,7 +156,7 @@ fun SelectionDropdown(
                                     fontSize = 16.sp,
                                     lineHeight = 22.sp,
                                     fontFamily = Sansneo,
-                                    fontWeight = FontWeight.Normal,
+                                    fontWeight = FontWeight.Medium,
                                     color = Gray9,
                                     textAlign = TextAlign.Center
                                 ),

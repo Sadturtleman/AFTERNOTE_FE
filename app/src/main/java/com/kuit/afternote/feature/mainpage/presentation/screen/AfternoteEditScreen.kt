@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +28,8 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.G
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContent
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountSection
+import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.model.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
@@ -90,16 +93,20 @@ fun AfternoteEditScreen(
                 when (dialogType) {
                     DialogType.ADD_RECIPIENT -> {
                         AddRecipientDialog(
-                            recipientNameState = state.recipientNameState,
-                            relationshipSelectedValue = state.relationshipSelectedValue,
-                            relationshipOptions = state.relationshipOptions,
-                            phoneNumberState = state.phoneNumberState,
-                            onDismiss = state::dismissDialog,
-                            onAddClick = state::onAddRecipient,
-                            onRelationshipSelected = state::onRelationshipSelected,
-                            onImportContactsClick = {
-                                // TODO: 연락처 가져오기 로직
-                            }
+                            params = AddRecipientDialogParams(
+                                recipientNameState = state.recipientNameState,
+                                phoneNumberState = state.phoneNumberState,
+                                relationshipSelectedValue = state.relationshipSelectedValue,
+                                relationshipOptions = state.relationshipOptions,
+                                callbacks = AddRecipientDialogCallbacks(
+                                    onDismiss = state::dismissDialog,
+                                    onAddClick = state::onAddRecipient,
+                                    onRelationshipSelected = state::onRelationshipSelected,
+                                    onImportContactsClick = {
+                                        // TODO: 연락처 가져오기 로직
+                                    }
+                                )
+                            )
                         )
                     }
                 }
@@ -255,6 +262,44 @@ private fun AfternoteEditScreenPreview() {
     AfternoteTheme {
         AfternoteEditScreen(
             onBackClick = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "갤러리 및 파일"
+)
+@Composable
+private fun AfternoteEditScreenGalleryAndFilePreview() {
+    AfternoteTheme {
+        val state = rememberAfternoteEditState()
+        LaunchedEffect(Unit) {
+            state.onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+        }
+        AfternoteEditScreen(
+            onBackClick = {},
+            state = state
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "추모 가이드라인"
+)
+@Composable
+private fun AfternoteEditScreenMemorialGuidelinePreview() {
+    AfternoteTheme {
+        val state = rememberAfternoteEditState()
+        LaunchedEffect(Unit) {
+            state.onCategorySelected("추모 가이드라인")
+        }
+        AfternoteEditScreen(
+            onBackClick = {},
+            state = state
         )
     }
 }
