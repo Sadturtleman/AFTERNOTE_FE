@@ -1,21 +1,34 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +43,9 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 // --- Data Model ---
 data class Song(
@@ -40,7 +56,7 @@ data class Song(
 
 @Composable
 fun MemorialPlaylistScreen() {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
 
     var searchText by remember { mutableStateOf("") }
 
@@ -65,20 +81,22 @@ fun MemorialPlaylistScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(20.dp)
                 .fillMaxSize()
         ) {
             // 1. 검색 영역
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .padding(vertical = 20.dp)
             ) {
                 Text(
                     text = "노래 검색",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = TextDark,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = Sansneo,
+                    fontSize = 16.sp,
+                    color = Gray9,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
 
                 // 검색 입력창
@@ -108,16 +126,14 @@ fun MemorialPlaylistScreen() {
                 )
             }
 
-            Divider(thickness = 1.dp, color = Color(0xFFF5F5F5))
-
             // 2. 노래 리스트
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(bottom = 20.dp)
+                contentPadding = PaddingValues(bottom = 10.dp)
             ) {
                 items(songList) { song ->
                     SongListItem(song = song)
-                    Divider(thickness = 1.dp, color = Color(0xFFF8F8F8), modifier = Modifier.padding(horizontal = 20.dp))
+                    HorizontalDivider(thickness = 1.dp, color = Gray6, modifier = Modifier.padding(horizontal = 20.dp))
                 }
             }
         }
@@ -162,9 +178,6 @@ fun SongListItem(song: Song) {
         }
     }
 }
-
-// --- Bottom Navigation (재사용) ---
-
 
 @Preview(showBackground = true)
 @Composable

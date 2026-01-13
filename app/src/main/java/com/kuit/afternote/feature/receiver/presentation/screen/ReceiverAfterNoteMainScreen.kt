@@ -1,26 +1,29 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,17 +33,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 // --- Colors ---
 val PrimaryBlue = Color(0xFFA3C9FF)
@@ -50,7 +57,6 @@ val LightBlueBg = Color(0xFFEAF4FF) // 프로필 배경색
 
 @Composable
 fun AfterNoteMainScreen(title: String) {
-
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
 
     Scaffold(
@@ -67,8 +73,9 @@ fun AfterNoteMainScreen(title: String) {
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(20.dp)
                 .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp)
+            contentPadding = PaddingValues(vertical = 20.dp)
         ) {
             // 1. 프로필 영역
             item {
@@ -76,31 +83,27 @@ fun AfterNoteMainScreen(title: String) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(B3.copy(alpha = 0.3f)), // 연한 파랑 배경
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
-                            modifier = Modifier.size(60.dp),
-                            tint = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "故 박서연님의 애프터노트입니다.",
-                        color = Gray6,
-                        fontSize = 14.sp
+                    Image(
+                        painter = painterResource(R.drawable.profile),
+                        contentDescription = null,
+                        modifier = Modifier.size(140.dp)
                     )
+
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
-                Spacer(modifier = Modifier.height(32.dp))
             }
 
-            // 2. 추모 플레이리스트
+            item {
+                Text(
+                    text = "故 ${title}님의 애프터노트입니다.",
+                    color = Gray9,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = Sansneo
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+
             item {
                 SectionHeader(title = "추모 플레이리스트")
 
@@ -113,36 +116,32 @@ fun AfterNoteMainScreen(title: String) {
                 ) {
                     Text(
                         text = "현재 16개의 노래가 담겨 있습니다.",
-                        fontSize = 12.sp,
-                        color = TextGray
+                        fontSize = 14.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal
                     )
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
-                        contentDescription = "More",
-                        tint = PrimaryBlue,
-                        modifier = Modifier.size(20.dp)
+                    RightArrowIcon(
+                        color = B1,
+                        size = 16.dp
                     )
                 }
 
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(4) { // 가짜 데이터 4개
+                    items(4) {
                         Box(
                             modifier = Modifier
                                 .size(80.dp)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.LightGray) // 앨범 아트 플레이스홀더
+                                .background(Color.LightGray)
                         ) {
-                            // 실제 이미지 사용 시:
-                            // Image(painter = ..., contentScale = ContentScale.Crop)
                         }
                     }
                 }
                 Spacer(modifier = Modifier.height(32.dp))
             }
 
-            // 3. 남기고 싶은 당부 (Message Bubble)
             item {
                 SectionHeader(title = "남기고 싶은 당부")
                 Spacer(modifier = Modifier.height(8.dp))
@@ -160,24 +159,12 @@ fun AfterNoteMainScreen(title: String) {
                         Text(
                             text = "끼니 거르지 말고 건강 챙기고 지내.",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-                            color = PrimaryBlue,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            color = B1,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            fontFamily = Sansneo
                         )
                     }
-
-                    // 데코레이션 아이콘 (꽃/별 모양)
-                    Icon(
-                        imageVector = Icons.Default.Star, // 적절한 꽃 아이콘 리소스가 없다면 Star 사용
-                        contentDescription = null,
-                        tint = Color(0xFFCCFF90), // 연두색
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = (-20).dp, y = 0.dp) // 박스 위로 살짝 걸치게
-                            .size(24.dp)
-                            .background(Color.White, CircleShape) // 아이콘 뒤 배경 가림
-                            .border(1.dp, Color(0xFFEEEEEE), CircleShape) // 아이콘 테두리
-                    )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -192,7 +179,7 @@ fun AfterNoteMainScreen(title: String) {
                         .fillMaxWidth()
                         .height(180.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray), // 영상 썸네일 플레이스홀더
+                        .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
                     // 플레이 버튼 아이콘
@@ -211,21 +198,11 @@ fun AfterNoteMainScreen(title: String) {
 
             // 5. 하단 버튼
             item {
-                Button(
-                    onClick = { },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
-                ) {
-                    Text(
-                        text = "애프터노트 전체 확인하기",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White // 이미지상 텍스트는 흰색 또는 검정, 여기선 흰색 적용
-                    )
-                }
+                ClickButton(
+                    color = B3,
+                    title = "애프터노트 전체 확인하기",
+                    onButtonClick = {}
+                )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -238,13 +215,13 @@ fun AfterNoteMainScreen(title: String) {
 fun SectionHeader(title: String) {
     Text(
         text = title,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
-        color = TextDark,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        color = Gray9,
+        fontFamily = Sansneo,
         modifier = Modifier.padding(bottom = 8.dp)
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable

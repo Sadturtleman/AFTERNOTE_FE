@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,14 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.receiver.presentation.uimodel.Receiver
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray4
@@ -33,7 +35,7 @@ fun ReceiverDetailScreen(
     receiver: Receiver,
     onBackClick: () -> Unit,
     onOpenClick: () -> Unit
-){
+) {
     Scaffold(
         topBar = {
             TopBar(
@@ -45,6 +47,7 @@ fun ReceiverDetailScreen(
     ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
@@ -52,7 +55,8 @@ fun ReceiverDetailScreen(
             Icon(
                 painter = painterResource(R.drawable.profile),
                 contentDescription = null,
-                modifier = Modifier.size(130.dp)
+                modifier = Modifier.size(130.dp),
+                tint = Color.White
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -68,7 +72,10 @@ fun ReceiverDetailScreen(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             ) {
                 Text(
                     text = "기록",
@@ -88,7 +95,10 @@ fun ReceiverDetailScreen(
             HorizontalDivider(thickness = 1.dp, color = Gray4)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             ) {
                 Text(
                     text = "상태",
@@ -108,7 +118,10 @@ fun ReceiverDetailScreen(
             HorizontalDivider(thickness = 1.dp, color = Gray4)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             ) {
                 Text(
                     text = "신청일",
@@ -128,7 +141,10 @@ fun ReceiverDetailScreen(
             HorizontalDivider(thickness = 1.dp, color = Gray4)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             ) {
                 Text(
                     text = "승인일",
@@ -147,18 +163,22 @@ fun ReceiverDetailScreen(
 
             HorizontalDivider(thickness = 1.dp, color = Gray4)
 
+            Spacer(modifier = Modifier.weight(0.9f))
+
             ClickButton(
                 color = B3,
-                onButtonClick = {onOpenClick()},
+                onButtonClick = { onOpenClick() },
                 title = "열람하기"
             )
+
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
 
 @Preview
 @Composable
-private fun ReceiverDetailScreenPreview(){
+private fun ReceiverDetailScreenPreview() {
     ReceiverDetailScreen(
         Receiver(
             name = "미진이",
@@ -167,7 +187,6 @@ private fun ReceiverDetailScreenPreview(){
             record = "완료",
             state = true
         ),
-        onBackClick = { },
-
+        onBackClick = { }
     ) { }
 }

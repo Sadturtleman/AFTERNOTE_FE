@@ -1,11 +1,20 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.ui.theme.B2
+import com.kuit.afternote.ui.theme.Gray4
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun ReceiverRow(
@@ -43,8 +55,8 @@ fun ReceiverRow(
                         // 대각선 그라데이션 효과 (하늘색 -> 살구색)
                         brush = Brush.linearGradient(
                             colors = listOf(
-                                Color(0xFFD6E6F5), // 연한 하늘색
-                                Color(0xFFFFE0D1)  // 연한 살구색
+                                Color(0xFFD6E6F5),
+                                Color(0xFFFFE0D1)
                             )
                         )
                     ),
@@ -58,30 +70,30 @@ fun ReceiverRow(
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp)) // 아이콘과 이름 사이 간격
+            Spacer(modifier = Modifier.width(16.dp))
 
             // 2. 이름
             Text(
                 text = name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.weight(1f) // 남은 공간을 다 차지해서 화살표를 밀어냄
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f),
+                fontFamily = Sansneo
             )
 
             // 3. 화살표 아이콘
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "이동",
-                tint = Color(0xFF6495ED), // 옥수수꽃 파란색 (이미지와 유사한 톤)
-                modifier = Modifier.size(28.dp)
+                tint = B2,
+                modifier = Modifier.size(14.dp)
             )
         }
 
         // 4. 하단 구분선
         HorizontalDivider(
             thickness = 1.dp,
-            color = Color(0xFFEEEEEE) // 연한 회색
+            color = Gray4 // 연한 회색
         )
     }
 }

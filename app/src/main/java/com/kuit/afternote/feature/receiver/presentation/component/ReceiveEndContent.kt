@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun ReceiveEndContent(){
+fun ReceiveEndContent() {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = "열람 요청 완료",
