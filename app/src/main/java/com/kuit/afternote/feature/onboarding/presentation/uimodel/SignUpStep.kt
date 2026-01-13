@@ -1,8 +1,10 @@
 package com.kuit.afternote.feature.onboarding.presentation.uimodel
 
+import com.kuit.afternote.core.uimodel.Step
+
 enum class SignUpStep(
-    val value: Int
-) {
+    override val value: Int
+) : Step {
     PHONE_AUTH(1),
     IDENTIFY_INPUT(2),
     EMAIL_INPUT(3),
@@ -10,7 +12,7 @@ enum class SignUpStep(
 
     END(4);
 
-    fun previous(): SignUpStep? =
+    override fun previous(): SignUpStep? =
         when (this) {
             PHONE_AUTH -> null
             IDENTIFY_INPUT -> PHONE_AUTH

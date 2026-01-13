@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @Composable
