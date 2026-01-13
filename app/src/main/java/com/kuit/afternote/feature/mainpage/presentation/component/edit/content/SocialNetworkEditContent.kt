@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,6 +76,7 @@ fun SocialNetworkEditContent(
         onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECIPIENT) }
     )
 
+    Spacer(modifier = Modifier.height(32.dp))
     // 처리 방법 리스트 섹션
     RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
