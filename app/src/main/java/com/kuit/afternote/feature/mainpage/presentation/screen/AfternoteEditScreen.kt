@@ -37,6 +37,7 @@ import com.kuit.afternote.feature.mainpage.presentation.model.SocialNetworkEditC
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
+import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 
@@ -116,6 +117,7 @@ private fun EditContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        // 1. 상단 영역 (고정)
         Header(
             title = "애프터노트 작성하기",
             onBackClick = onBackClick,
@@ -124,13 +126,15 @@ private fun EditContent(
             }
         )
 
+        // 2. 메인 콘텐츠 (스크롤 가능, 남은 공간 차지)
         Column(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 종류 선택 (Line 279 해결: State의 메서드 사용)
             SelectionDropdown(
@@ -144,7 +148,7 @@ private fun EditContent(
                 )
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.m))
 
             // 서비스명 선택 (Line 295 해결: Computed Property 사용)
             SelectionDropdown(
@@ -158,12 +162,13 @@ private fun EditContent(
                 )
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 종류에 따라 다른 콘텐츠 표시
             CategoryContent(state = state)
 
-            Spacer(modifier = Modifier.height(169.dp))
+            // 스크롤 내부의 하단 여백 (피그마 기준: 169dp - BottomNav 88dp = 81dp)
+            Spacer(modifier = Modifier.height(81.dp))
         }
     }
 }

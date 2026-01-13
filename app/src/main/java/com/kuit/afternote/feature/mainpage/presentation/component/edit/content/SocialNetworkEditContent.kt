@@ -20,6 +20,7 @@ import com.kuit.afternote.feature.mainpage.presentation.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.model.SocialNetworkEditContentParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 소셜네트워크 등 일반적인 종류 선택 시 표시되는 콘텐츠
@@ -32,7 +33,7 @@ fun SocialNetworkEditContent(
     // 계정 정보 섹션
     RequiredLabel(text = "계정 정보", offsetY = 4f)
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Spacing.m))
 
     LabeledTextField(
         label = "아이디",
@@ -47,12 +48,12 @@ fun SocialNetworkEditContent(
         keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
     )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(Spacing.xl))
 
     // 계정 처리 방법 섹션
     RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Spacing.m))
 
     AccountProcessingRadioButton(
         method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
@@ -60,7 +61,7 @@ fun SocialNetworkEditContent(
         onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Spacing.s))
 
     AccountProcessingRadioButton(
         method = AccountProcessingMethod.PERMANENT_DELETE,
@@ -68,7 +69,7 @@ fun SocialNetworkEditContent(
         onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) }
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Spacing.s))
 
     AccountProcessingRadioButton(
         method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
@@ -76,11 +77,11 @@ fun SocialNetworkEditContent(
         onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECIPIENT) }
     )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(Spacing.xl))
     // 처리 방법 리스트 섹션
     RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Spacing.m))
 
     ProcessingMethodList(
         params = ProcessingMethodListParams(
@@ -94,7 +95,7 @@ fun SocialNetworkEditContent(
         )
     )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(Spacing.xl))
 
     // 남기실 말씀
     MessageTextField(
