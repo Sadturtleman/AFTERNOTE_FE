@@ -22,6 +22,7 @@ import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodLi
 import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 갤러리 및 파일 선택 시 표시되는 콘텐츠
@@ -34,7 +35,7 @@ fun GalleryAndFileEditContent(
     // 정보 처리 방법 섹션
     RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Spacing.m))
 
     InformationProcessingRadioButton(
         method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
@@ -42,7 +43,7 @@ fun GalleryAndFileEditContent(
         onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Spacing.s))
 
     InformationProcessingRadioButton(
         method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
@@ -52,7 +53,7 @@ fun GalleryAndFileEditContent(
 
     // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
     params.recipientSection?.let { recipientSection ->
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(Spacing.xl))
 
         // 수신자 추가 섹션 제목
         RequiredLabel(text = "수신자 추가", offsetY = 3f)
@@ -68,11 +69,11 @@ fun GalleryAndFileEditContent(
             onTextFieldVisibilityChanged = recipientSection.callbacks.onTextFieldVisibilityChanged
         )
     }
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(Spacing.xl))
     // 처리 방법 리스트 섹션
     RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Spacing.m))
 
     ProcessingMethodList(
         params = ProcessingMethodListParams(
@@ -86,7 +87,7 @@ fun GalleryAndFileEditContent(
         )
     )
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(Spacing.xl))
 
     // 남기실 말씀
     MessageTextField(
