@@ -599,6 +599,12 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - **수동 실행**: 사용자가 "브랜치 정리" 또는 "불필요한 브랜치 삭제"를 요청한 경우 실행
 - **명령어**: `git branch -d $(git branch --merged main | grep -v "main\|master\|develop\|^\*" | xargs)`
 
+#### 브랜치 추적 설정 (Branch Tracking)
+- **푸시 시 자동 추적 설정**: 새로운 브랜치를 푸시할 때는 반드시 `-u` 옵션을 사용하여 원격 브랜치 추적을 자동으로 설정합니다.
+  - 명령어: `git push -u origin <branch-name>`
+  - 목적: IDE에서 브랜치 상태를 올바르게 표시하고, "퍼블리시" 메시지를 방지합니다.
+- **기존 브랜치 추적 확인**: 푸시 전에 `git branch -vv`로 브랜치 추적 상태를 확인하고, 추적이 설정되지 않은 경우 `git branch --set-upstream-to=origin/<branch-name> <branch-name>`으로 설정합니다.
+
 #### 원격 브랜치 정리
 - **자동 삭제**: 푸시 완료 후 `origin/main`에 병합된 원격 브랜치를 자동으로 삭제합니다.
 - **삭제 대상**:
