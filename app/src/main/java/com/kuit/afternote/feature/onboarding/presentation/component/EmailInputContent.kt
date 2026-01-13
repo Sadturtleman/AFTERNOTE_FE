@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @Composable
