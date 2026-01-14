@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.LabeledTextField
+import com.kuit.afternote.core.LabeledTextField
 import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
 import com.kuit.afternote.feature.onboarding.presentation.component.ClickButton
 import com.kuit.afternote.ui.expand.dropShadow

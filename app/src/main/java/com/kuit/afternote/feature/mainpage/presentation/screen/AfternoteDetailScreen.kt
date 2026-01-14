@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
+import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
@@ -43,7 +43,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoRow
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
-import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -87,7 +86,6 @@ fun AfternoteDetailScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Gray1,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,

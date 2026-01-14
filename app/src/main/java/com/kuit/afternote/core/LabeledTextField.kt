@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.common.textfield
+package com.kuit.afternote.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
