@@ -35,6 +35,7 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -116,7 +117,7 @@ fun AddRecipientDialog(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 수신자 이름 입력 필드
             LabeledTextField(
@@ -142,7 +143,7 @@ fun AddRecipientDialog(
                     tonalElevation = 0.dp
                 )
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 전화번호로 추가하기 입력 필드
             LabeledTextField(

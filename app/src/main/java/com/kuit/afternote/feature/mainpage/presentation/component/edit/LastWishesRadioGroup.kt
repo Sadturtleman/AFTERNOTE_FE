@@ -19,6 +19,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 남기고 싶은 당부 라디오 버튼 옵션
@@ -144,7 +145,7 @@ private fun LastWishesRadioGroupPreview() {
                 onOptionSelected = {}
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 선택 안 된 상태
             LastWishesRadioGroup(
@@ -154,7 +155,7 @@ private fun LastWishesRadioGroupPreview() {
                 onOptionSelected = {}
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 두 번째 옵션 선택
             LastWishesRadioGroup(
