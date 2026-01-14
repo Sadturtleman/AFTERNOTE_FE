@@ -23,4 +23,13 @@ object Spacing {
 
     /** Extra Large: 32dp */
     val xl = 32.dp
+
+    /** Social Network Bottom Spacing: 81dp (소셜네트워크 탭 하단 여백) */
+    val socialNetworkBottom = 81.dp
+
+    /** Gallery and File Bottom Spacing: 459dp (갤러리 및 파일 탭 하단 여백) */
+    val galleryAndFileBottom = 459.dp
+
+    /** Memorial Guideline Bottom Spacing: 272dp (추모 가이드라인 탭 하단 여백) */
+    val memorialGuidelineBottom = 272.dp
 }

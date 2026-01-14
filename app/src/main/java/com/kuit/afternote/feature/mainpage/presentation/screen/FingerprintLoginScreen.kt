@@ -19,7 +19,6 @@ import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.mainpage.presentation.component.common.header.MainHeader
 import com.kuit.afternote.feature.mainpage.presentation.component.fingerprint.FingerprintAuthContent
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray1
 
 /**
  * 지문 로그인 화면
@@ -40,7 +39,6 @@ fun FingerprintLoginScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Gray1,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,

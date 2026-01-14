@@ -101,6 +101,9 @@ fun SocialNetworkEditContent(
     MessageTextField(
         textFieldState = params.messageState
     )
+
+    // 소셜네트워크 탭 하단 여백 (81dp)
+    Spacer(modifier = Modifier.height(Spacing.socialNetworkBottom))
 }
 
 @Preview(showBackground = true)
