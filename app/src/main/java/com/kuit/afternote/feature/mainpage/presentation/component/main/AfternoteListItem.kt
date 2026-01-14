@@ -2,7 +2,6 @@ package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -58,106 +58,112 @@ fun AfternoteListItem(
     iconVector: ImageVector? = null,
     onClick: () -> Unit = {}
 ) {
-    Box(
+    val shape = RoundedCornerShape(16.dp)
+
+    Surface(
         modifier = modifier
             .fillMaxWidth()
             .height(74.dp)
             .dropShadow(
-                shape = RoundedCornerShape(16.dp),
+                shape = shape,
                 color = ShadowBlack,
                 blur = 5.dp,
                 offsetY = 2.dp,
                 offsetX = 0.dp,
                 spread = 0.dp
-            ).clip(RoundedCornerShape(16.dp))
-            .background(White)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp)
+            ),
+        shape = shape,
+        color = White,
+        onClick = onClick
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier.padding(horizontal = 20.dp)
         ) {
-            // 왼쪽: 아이콘/이미지 영역
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(
-                        when {
-                            iconVector != null -> LightBlue
-                            imageRes != null -> Color.Transparent
-                            else -> LightBlue
-                        }
-                    ),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                when {
-                    iconVector != null -> {
-                        Icon(
-                            imageVector = iconVector,
-                            contentDescription = null,
-                            tint = B2,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                    imageRes != null -> {
-                        Image(
-                            painter = painterResource(imageRes),
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp),
-                            contentScale = ContentScale.FillBounds
-                        )
+                // 왼쪽: 아이콘/이미지 영역
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            when {
+                                iconVector != null -> LightBlue
+                                imageRes != null -> Color.Transparent
+                                else -> LightBlue
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when {
+                        iconVector != null -> {
+                            Icon(
+                                imageVector = iconVector,
+                                contentDescription = null,
+                                tint = B2,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        imageRes != null -> {
+                            Image(
+                                painter = painterResource(imageRes),
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                                contentScale = ContentScale.FillBounds
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-            // 중간: 텍스트 영역
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Text(
-                    text = title,
-                    color = Black,
-                    fontSize = 16.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "최종 작성일 $date",
-                    color = Gray5,
-                    fontSize = 10.sp,
-                    fontFamily = Sansneo,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // 오른쪽: 화살표 버튼
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(B2)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_arrow_forward),
-                    contentDescription = null,
+                // 중간: 텍스트 영역
+                Column(
                     modifier = Modifier
-                        .size(6.dp, 12.dp)
-                        .offset(x = 9.9.dp, y = 6.dp)
-                )
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = title,
+                        color = Black,
+                        fontSize = 16.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "최종 작성일 $date",
+                        color = Gray5,
+                        fontSize = 10.sp,
+                        fontFamily = Sansneo,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // 오른쪽: 화살표 버튼
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(B2)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_arrow_forward),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(6.dp, 12.dp)
+                            .offset(x = 9.9.dp, y = 6.dp)
+                    )
+                }
             }
         }
     }

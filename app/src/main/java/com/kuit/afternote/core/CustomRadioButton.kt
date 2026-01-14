@@ -27,16 +27,16 @@ import com.kuit.afternote.ui.theme.Gray4
  * 체크 표시(인디케이터)와 윤곽선 간 간격이 전체 크기의 12분의 1이 되도록 자동 계산됩니다.
  *
  * @param selected 선택 여부
- * @param onClick 클릭 이벤트
+ * @param onClick 클릭 이벤트 (null인 경우 클릭 불가, 부모 컴포넌트에서 클릭 처리)
  * @param buttonSize 전체 버튼 크기 (기본값: 24.dp)
  * @param selectedColor 선택된 색상 (기본값: B2)
  * @param unselectedColor 선택 안 된 색상 (기본값: Gray4)
  */
 @Composable
 fun CustomRadioButton(
-    selected: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selected: Boolean,
+    onClick: (() -> Unit)? = null,
     buttonSize: Dp = 24.dp,
     selectedColor: Color = B2,
     unselectedColor: Color = Gray4
@@ -58,7 +58,13 @@ fun CustomRadioButton(
                 width = borderWidth,
                 color = if (selected) selectedColor else unselectedColor,
                 shape = CircleShape
-            ).clickable(onClick = onClick),
+            ).then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         if (selected) {

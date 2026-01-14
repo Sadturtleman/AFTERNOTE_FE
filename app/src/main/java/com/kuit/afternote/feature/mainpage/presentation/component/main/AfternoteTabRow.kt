@@ -86,7 +86,7 @@ private fun TabItem(
             text = tab.label,
             color = Gray9,
             fontFamily = Sansneo,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             lineHeight = 18.sp,
             fontSize = 12.sp
         )

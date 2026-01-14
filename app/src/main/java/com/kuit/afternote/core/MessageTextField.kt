@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.common.textfield
+package com.kuit.afternote.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -92,8 +93,7 @@ fun MessageTextField(
 private fun MessageTextFieldPreview() {
     AfternoteTheme {
         MessageTextField(
-            textFieldState = androidx.compose.foundation.text.input
-                .rememberTextFieldState()
+            textFieldState = rememberTextFieldState()
         )
     }
 }
