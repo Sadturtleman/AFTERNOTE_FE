@@ -35,6 +35,7 @@ import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 앨범 커버 데이터
@@ -173,7 +174,7 @@ private fun MemorialPlaylistPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             // 빈 플레이리스트
             MemorialPlaylist(

@@ -19,6 +19,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 영정사진 추가 컴포넌트
@@ -81,7 +82,7 @@ private fun MemorialPhotoUploadPreview() {
     AfternoteTheme {
         Column(
 //            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             // 이미지 없음
             MemorialPhotoUpload(

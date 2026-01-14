@@ -46,6 +46,7 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 애프터노트 상세 화면
@@ -113,7 +114,7 @@ fun AfternoteDetailScreen(
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 20.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(Spacing.l))
 
                     Text(
                         text = buildAnnotatedString {
@@ -130,7 +131,7 @@ fun AfternoteDetailScreen(
                             color = Gray9
                         )
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(Spacing.l))
 
                     InfoCard(
                         modifier = Modifier.fillMaxWidth(),
