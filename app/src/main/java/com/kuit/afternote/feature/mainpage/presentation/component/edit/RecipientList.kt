@@ -200,7 +200,7 @@ private fun RecipientItem(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     color = Gray9
                 )
             )

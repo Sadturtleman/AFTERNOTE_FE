@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,12 +28,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.LabeledTextField
+import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -50,17 +51,10 @@ import com.kuit.afternote.ui.theme.White
 @Composable
 fun AddRecipientDialog(
     modifier: Modifier = Modifier,
-    recipientNameState: TextFieldState,
-    relationshipSelectedValue: String,
-    relationshipOptions: List<String>,
-    phoneNumberState: TextFieldState,
-    onDismiss: () -> Unit = {},
-    onAddClick: () -> Unit = {},
-    onRelationshipSelected: (String) -> Unit = {},
-    onImportContactsClick: () -> Unit = {}
+    params: AddRecipientDialogParams
 ) {
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = params.callbacks.onDismiss,
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true
@@ -99,7 +93,7 @@ fun AddRecipientDialog(
                 )
 
                 Button(
-                    onClick = onAddClick,
+                    onClick = params.callbacks.onAddClick,
                     modifier = Modifier.height(32.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -116,19 +110,19 @@ fun AddRecipientDialog(
                             fontSize = 12.sp,
                             lineHeight = 18.sp,
                             fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
+                            fontWeight = FontWeight.Medium,
                             color = Gray9
                         )
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 수신자 이름 입력 필드
             LabeledTextField(
                 label = "수신자 이름",
-                textFieldState = recipientNameState,
+                textFieldState = params.recipientNameState,
                 keyboardType = KeyboardType.Text,
                 containerColor = Gray1,
                 labelSpacing = 7.95.dp
@@ -139,18 +133,22 @@ fun AddRecipientDialog(
             // 수신자와의 관계 드롭다운
             SelectionDropdown(
                 label = "수신자와의 관계",
-                selectedValue = relationshipSelectedValue,
-                options = relationshipOptions,
-                onValueSelected = onRelationshipSelected,
-                menuOffset = 5.2.dp,
-                menuBackgroundColor = Gray1
+                selectedValue = params.relationshipSelectedValue,
+                options = params.relationshipOptions,
+                onValueSelected = params.callbacks.onRelationshipSelected,
+                menuStyle = DropdownMenuStyle(
+                    menuOffset = 5.2.dp,
+                    menuBackgroundColor = Gray1,
+                    shadowElevation = 0.dp,
+                    tonalElevation = 0.dp
+                )
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             // 전화번호로 추가하기 입력 필드
             LabeledTextField(
                 label = "전화번호로 추가하기",
-                textFieldState = phoneNumberState,
+                textFieldState = params.phoneNumberState,
                 keyboardType = KeyboardType.Phone,
                 containerColor = Gray1,
                 labelSpacing = 7.95.dp
@@ -176,7 +174,7 @@ fun AddRecipientDialog(
             ClickButton(
                 color = B3,
                 title = "연락처 가져오기",
-                onButtonClick = onImportContactsClick
+                onButtonClick = params.callbacks.onImportContactsClick
             )
         }
     }
@@ -187,14 +185,12 @@ fun AddRecipientDialog(
 private fun AddRecipientDialogPreview() {
     AfternoteTheme {
         AddRecipientDialog(
-            recipientNameState = rememberTextFieldState(),
-            relationshipSelectedValue = "친구",
-            relationshipOptions = listOf("친구", "가족", "연인"),
-            phoneNumberState = rememberTextFieldState(),
-            onDismiss = {},
-            onAddClick = {},
-            onRelationshipSelected = {},
-            onImportContactsClick = {}
+            params = AddRecipientDialogParams(
+                recipientNameState = rememberTextFieldState(),
+                phoneNumberState = rememberTextFieldState(),
+                relationshipSelectedValue = "친구",
+                relationshipOptions = listOf("친구", "가족", "연인")
+            )
         )
     }
 }

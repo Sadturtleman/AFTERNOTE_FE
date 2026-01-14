@@ -9,12 +9,20 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.kuit.afternote.ui.theme.Gray1
+import com.kuit.afternote.ui.theme.Gray8
+import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.White
 
 private val DarkColorScheme =
     darkColorScheme(
         primary = Purple80,
         secondary = PurpleGrey80,
         tertiary = Pink80,
+        background = Gray8,
+        surface = Gray8,
+        onBackground = White,
+        onSurface = White,
     )
 
 private val LightColorScheme =
@@ -22,15 +30,10 @@ private val LightColorScheme =
         primary = Purple40,
         secondary = PurpleGrey40,
         tertiary = Pink40,
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-     */
+        background = Gray1,
+        surface = Gray1,
+        onBackground = Gray9,
+        onSurface = Gray9,
     )
 
 @Composable

@@ -11,36 +11,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
-import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.MessageTextField
+import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContent
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.model.AccountSection
+import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
+import com.kuit.afternote.feature.mainpage.presentation.model.GalleryAndFileEditContentParams
+import com.kuit.afternote.feature.mainpage.presentation.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.model.MemorialGuidelineEditContentParams
+import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodSection
+import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.model.SocialNetworkEditContentParams
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray1
+import com.kuit.afternote.ui.theme.Spacing
+
+private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 
 /**
  * 애프터노트 수정/작성 화면
@@ -58,257 +59,193 @@ import com.kuit.afternote.ui.theme.Gray1
 fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onRegisterClick: (String) -> Unit = {}
+    onRegisterClick: (String) -> Unit = {},
+    state: AfternoteEditState = rememberAfternoteEditState()
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
-
-    // 종류 선택
-    var selectedCategory by remember { mutableStateOf("소셜네트워크") }
-    val categories = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일", "재산 처리", "추모 가이드라인")
-
-    // 서비스명 선택
-    var selectedService by remember { mutableStateOf("인스타그램") }
-    val services = listOf("인스타그램", "페이스북", "트위터", "카카오톡", "네이버")
-    val galleryServices = listOf("갤러리", "파일")
-
-    // 계정 정보
-    val idState = rememberTextFieldState()
-    val passwordState = rememberTextFieldState()
-
-    // 계정 처리 방법
-    var selectedProcessingMethod by remember { mutableStateOf(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
-
-    // 정보 처리 방법 (갤러리 및 파일용)
-    var selectedInformationProcessingMethod by remember { mutableStateOf(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
-
-    // 추가 수신자 리스트
-    val initialRecipients = listOf(
-        Recipient("1", "김지은", "친구"),
-        Recipient("2", "박선호", "가족")
-    )
-    var recipients by remember { mutableStateOf(initialRecipients) }
-
-    // 수신자 추가 다이얼로그 상태
-    var showAddRecipientDialog by remember { mutableStateOf(false) }
-    val recipientNameState = rememberTextFieldState()
-    val phoneNumberState = rememberTextFieldState()
-    var relationshipSelectedValue by remember { mutableStateOf("친구") }
-    val relationshipOptions = listOf("친구", "가족", "연인")
-
-    // 처리 방법 리스트
-    val defaultProcessingMethods = listOf(
-        ProcessingMethodItem("1", "게시물 내리기"),
-        ProcessingMethodItem("2", "추모 게시물 올리기"),
-        ProcessingMethodItem("3", "추모 계정으로 전환하기")
-    )
-    val initialGalleryProcessingMethods = listOf(
-        ProcessingMethodItem("1", "'엽사' 폴더 박선호에게 전송"),
-        ProcessingMethodItem("2", "'흑역사' 폴더 삭제")
-    )
-    var processingMethods by remember { mutableStateOf(defaultProcessingMethods) }
-    var galleryProcessingMethods by remember { mutableStateOf(initialGalleryProcessingMethods) }
-
-    // 남기실 말씀
-    val messageState = rememberTextFieldState()
-
     val focusManager = LocalFocusManager.current
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Gray1,
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = state.selectedBottomNavItem,
+                onItemSelected = state::onBottomNavItemSelected
             )
         }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .windowInsetsPadding(WindowInsets.statusBars)
                 .addFocusCleaner(focusManager)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Header(
-                    title = "애프터노트 작성하기",
-                    onBackClick = onBackClick,
-                    onActionClick = {
-                        // 서비스명을 전달하여 등록
-                        onRegisterClick(selectedService)
-                    }
-                )
+            EditContent(
+                state = state,
+                onBackClick = onBackClick,
+                onRegisterClick = onRegisterClick
+            )
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 종류 선택
-                    SelectionDropdown(
-                        label = "종류",
-                        selectedValue = selectedCategory,
-                        options = categories,
-                        onValueSelected = { category ->
-                            selectedCategory = category
-                            if (category == "갤러리 및 파일") {
-                                selectedService = "갤러리"
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 서비스명 선택 (갤러리 및 파일일 때는 다른 옵션 표시)
-                    SelectionDropdown(
-                        label = "서비스명",
-                        selectedValue = selectedService,
-                        options = if (selectedCategory == "갤러리 및 파일") galleryServices else services,
-                        onValueSelected = { selectedService = it }
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // 종류에 따라 다른 콘텐츠 표시
-                    if (selectedCategory != "갤러리 및 파일") {
-                        SocialNetworkEditContent(
-                            idState = idState,
-                            passwordState = passwordState,
-                            selectedProcessingMethod = selectedProcessingMethod,
-                            onProcessingMethodSelected = { selectedProcessingMethod = it }
-                        )
-                    } else {
-                        GalleryAndFileEditContent(
-                            selectedInformationProcessingMethod = selectedInformationProcessingMethod,
-                            onInformationProcessingMethodSelected = { selectedInformationProcessingMethod = it },
-                            recipients = recipients,
-                            onRecipientAddClick = {
-                                showAddRecipientDialog = true
-                            },
-                            onRecipientItemEditClick = { recipientId ->
-                                // TODO: 수신자 수정 로직
-                            },
-                            onRecipientItemDeleteClick = { recipientId ->
-                                recipients = recipients.filter { it.id != recipientId }
-                            },
-                            onRecipientItemAdded = { text ->
-                                // TODO: 텍스트 필드에서 입력된 내용으로 수신자 추가
-                                // 현재는 간단히 이름으로만 추가
-                                val newRecipient = Recipient(
-                                    id = (recipients.size + 1).toString(),
-                                    name = text,
-                                    label = "친구"
+            // Line 336 해결: 조건부 렌더링을 nullable로 변경
+            state.activeDialog?.let { dialogType ->
+                when (dialogType) {
+                    DialogType.ADD_RECIPIENT -> {
+                        AddRecipientDialog(
+                            params = AddRecipientDialogParams(
+                                recipientNameState = state.recipientNameState,
+                                phoneNumberState = state.phoneNumberState,
+                                relationshipSelectedValue = state.relationshipSelectedValue,
+                                relationshipOptions = state.relationshipOptions,
+                                callbacks = AddRecipientDialogCallbacks(
+                                    onDismiss = state::dismissDialog,
+                                    onAddClick = state::onAddRecipient,
+                                    onRelationshipSelected = state::onRelationshipSelected,
+                                    onImportContactsClick = {
+                                        // TODO: 연락처 가져오기 로직
+                                    }
                                 )
-                                recipients = recipients + newRecipient
-                            },
-                            onRecipientTextFieldVisibilityChanged = { isOpen ->
-                                // 텍스트 필드 표시 상태 변경 처리
-                            }
+                            )
                         )
                     }
-
-                    // 처리 방법 리스트 섹션
-                    RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    ProcessingMethodList(
-                        params = ProcessingMethodListParams(
-                            items = if (selectedCategory == "갤러리 및 파일") {
-                                galleryProcessingMethods
-                            } else {
-                                processingMethods
-                            },
-                            onAddClick = {
-                                // TODO: 처리 방법 추가 로직
-                            },
-                            onItemMoreClick = {
-                                // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
-                            },
-                            onItemEditClick = { itemId ->
-                                // TODO: 처리 방법 수정 로직
-                            },
-                            onItemDeleteClick = { itemId ->
-                                if (selectedCategory == "갤러리 및 파일") {
-                                    galleryProcessingMethods = galleryProcessingMethods.filter { it.id != itemId }
-                                } else {
-                                    processingMethods = processingMethods.filter { it.id != itemId }
-                                }
-                            },
-                            onItemAdded = { text ->
-                                val newItem = if (selectedCategory == "갤러리 및 파일") {
-                                    ProcessingMethodItem(
-                                        id = (galleryProcessingMethods.size + 1).toString(),
-                                        text = text
-                                    )
-                                } else {
-                                    ProcessingMethodItem(
-                                        id = (processingMethods.size + 1).toString(),
-                                        text = text
-                                    )
-                                }
-                                if (selectedCategory == "갤러리 및 파일") {
-                                    galleryProcessingMethods = galleryProcessingMethods + newItem
-                                } else {
-                                    processingMethods = processingMethods + newItem
-                                }
-                            },
-                            onTextFieldVisibilityChanged = { isOpen ->
-                                // 텍스트 필드 표시 상태 변경 처리
-                            }
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // 남기실 말씀
-                    MessageTextField(
-                        textFieldState = messageState
-                    )
-
-                    Spacer(modifier = Modifier.height(169.dp))
                 }
             }
+        }
+    }
+}
 
-            // 수신자 추가 다이얼로그
-            if (showAddRecipientDialog) {
-                AddRecipientDialog(
-                    recipientNameState = recipientNameState,
-                    relationshipSelectedValue = relationshipSelectedValue,
-                    relationshipOptions = relationshipOptions,
-                    phoneNumberState = phoneNumberState,
-                    onDismiss = {
-                        showAddRecipientDialog = false
-                        recipientNameState.edit { replace(0, length, "") }
-                        phoneNumberState.edit { replace(0, length, "") }
-                        relationshipSelectedValue = "친구"
-                    },
-                    onAddClick = {
-                        val name = recipientNameState.text.toString().trim()
-                        if (name.isNotEmpty()) {
-                            val newRecipient = Recipient(
-                                id = (recipients.size + 1).toString(),
-                                name = name,
-                                label = relationshipSelectedValue
-                            )
-                            recipients = recipients + newRecipient
-                            showAddRecipientDialog = false
-                            recipientNameState.edit { replace(0, length, "") }
-                            phoneNumberState.edit { replace(0, length, "") }
-                            relationshipSelectedValue = "친구"
-                        }
-                    },
-                    onRelationshipSelected = { relationshipSelectedValue = it },
-                    onImportContactsClick = {
-                        // TODO: 연락처 가져오기 로직
-                    }
+@Composable
+private fun EditContent(
+    state: AfternoteEditState,
+    onBackClick: () -> Unit,
+    onRegisterClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // 1. 상단 영역 (고정)
+        Header(
+            title = "애프터노트 작성하기",
+            onBackClick = onBackClick,
+            onActionClick = {
+                onRegisterClick(state.selectedService)
+            }
+        )
+
+        // 2. 메인 콘텐츠 (스크롤 가능, 남은 공간 차지)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(modifier = Modifier.height(Spacing.l))
+
+            // 종류 선택 (Line 279 해결: State의 메서드 사용)
+            SelectionDropdown(
+                label = "종류",
+                selectedValue = state.selectedCategory,
+                options = state.categories,
+                onValueSelected = state::onCategorySelected,
+                menuStyle = DropdownMenuStyle(
+                    shadowElevation = 10.dp,
+                    tonalElevation = 10.dp
+                )
+            )
+
+            // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
+            if (state.selectedCategory != "추모 가이드라인") {
+                Spacer(modifier = Modifier.height(Spacing.m))
+
+                SelectionDropdown(
+                    label = "서비스명",
+                    selectedValue = state.selectedService,
+                    options = state.currentServiceOptions,
+                    onValueSelected = state::onServiceSelected,
+                    menuStyle = DropdownMenuStyle(
+                        shadowElevation = 10.dp,
+                        tonalElevation = 10.dp
+                    )
                 )
             }
+            Spacer(modifier = Modifier.height(Spacing.l))
+
+            // 종류에 따라 다른 콘텐츠 표시
+            // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
+            CategoryContent(state = state)
+        }
+    }
+}
+
+@Composable
+private fun CategoryContent(state: AfternoteEditState) {
+    when (state.selectedCategory) {
+        "추모 가이드라인" -> {
+            MemorialGuidelineEditContent(
+                params = MemorialGuidelineEditContentParams(
+                    memorialPhotoUrl = state.memorialPhotoUrl,
+                    playlistSongCount = state.playlistSongCount,
+                    playlistAlbumCovers = state.playlistAlbumCovers,
+                    selectedLastWish = state.selectedLastWish,
+                    lastWishOptions = state.lastWishOptions,
+                    funeralVideoUrl = state.funeralVideoUrl,
+                    onPhotoAddClick = {
+                        // TODO: 사진 선택 로직
+                    },
+                    onSongAddClick = {
+                        // TODO: 노래 추가 로직
+                    },
+                    onLastWishSelected = state::onLastWishSelected,
+                    onVideoAddClick = {
+                        // TODO: 영상 선택 로직
+                    }
+                )
+            )
+        }
+
+        CATEGORY_GALLERY_AND_FILE -> {
+            GalleryAndFileEditContent(
+                params = GalleryAndFileEditContentParams(
+                    messageState = state.messageState,
+                    infoMethodSection = InfoMethodSection(
+                        selectedMethod = state.selectedInformationProcessingMethod,
+                        onMethodSelected = state::onInformationProcessingMethodSelected
+                    ),
+                    recipientSection = if (
+                        state.selectedInformationProcessingMethod ==
+                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT
+                    ) {
+                        RecipientSection(
+                            recipients = state.recipients,
+                            callbacks = state.galleryRecipientCallbacks
+                        )
+                    } else {
+                        null
+                    },
+                    processingMethodSection = ProcessingMethodSection(
+                        items = state.galleryProcessingMethods,
+                        callbacks = state.galleryProcessingCallbacks
+                    )
+                )
+            )
+        }
+
+        else -> {
+            SocialNetworkEditContent(
+                params = SocialNetworkEditContentParams(
+                    messageState = state.messageState,
+                    accountSection = AccountSection(
+                        idState = state.idState,
+                        passwordState = state.passwordState,
+                        selectedMethod = state.selectedProcessingMethod,
+                        onMethodSelected = state::onProcessingMethodSelected
+                    ),
+                    processingMethodSection = ProcessingMethodSection(
+                        items = state.processingMethods,
+                        callbacks = state.socialProcessingCallbacks
+                    )
+                )
+            )
         }
     }
 }
@@ -322,6 +259,44 @@ private fun AfternoteEditScreenPreview() {
     AfternoteTheme {
         AfternoteEditScreen(
             onBackClick = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "갤러리 및 파일"
+)
+@Composable
+private fun AfternoteEditScreenGalleryAndFilePreview() {
+    AfternoteTheme {
+        val state = rememberAfternoteEditState()
+        LaunchedEffect(Unit) {
+            state.onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+        }
+        AfternoteEditScreen(
+            onBackClick = {},
+            state = state
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "추모 가이드라인"
+)
+@Composable
+private fun AfternoteEditScreenMemorialGuidelinePreview() {
+    AfternoteTheme {
+        val state = rememberAfternoteEditState()
+        LaunchedEffect(Unit) {
+            state.onCategorySelected("추모 가이드라인")
+        }
+        AfternoteEditScreen(
+            onBackClick = {},
+            state = state
         )
     }
 }

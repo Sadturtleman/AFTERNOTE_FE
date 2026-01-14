@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.navgraph
 
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -8,9 +10,22 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailSc
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+/**
+ * mainpage feature 전용 composable 래퍼
+ * 내부적으로 라이트 모드를 강제 적용하여 다크모드를 비활성화합니다.
+ */
+inline fun <reified T : Any> NavGraphBuilder.mainPageComposable(noinline content: @Composable (NavBackStackEntry) -> Unit) {
+    composable<T> { backStackEntry ->
+        AfternoteTheme(darkTheme = false) {
+            content(backStackEntry)
+        }
+    }
+}
 
 fun NavGraphBuilder.mainPageNavGraph(
     navController: NavController,
@@ -18,7 +33,7 @@ fun NavGraphBuilder.mainPageNavGraph(
     onItemsUpdated: (List<Pair<String, String>>) -> Unit,
     mainPageNavigator: MainPageNavigator
 ) {
-    composable<MainPageRoute.MainEmptyRoute> {
+    mainPageComposable<MainPageRoute.MainEmptyRoute> {
         AfternoteMainScreen(
             afternoteItems = emptyList(),
             onItemClick = { navController.navigate(MainPageRoute.DetailRoute) },
@@ -26,7 +41,7 @@ fun NavGraphBuilder.mainPageNavGraph(
         )
     }
 
-    composable<MainPageRoute.MainWithItemsRoute> {
+    mainPageComposable<MainPageRoute.MainWithItemsRoute> {
         AfternoteMainScreen(
             afternoteItems = afternoteItems,
             onItemClick = { navController.navigate(MainPageRoute.DetailRoute) },
@@ -34,14 +49,14 @@ fun NavGraphBuilder.mainPageNavGraph(
         )
     }
 
-    composable<MainPageRoute.DetailRoute> {
+    mainPageComposable<MainPageRoute.DetailRoute> {
         AfternoteDetailScreen(
             onBackClick = { navController.popBackStack() },
             onEditClick = { navController.navigate(MainPageRoute.EditRoute) }
         )
     }
 
-    composable<MainPageRoute.EditRoute> {
+    mainPageComposable<MainPageRoute.EditRoute> {
         AfternoteEditScreen(
             onBackClick = { navController.popBackStack() },
             onRegisterClick = { selectedService ->
@@ -65,7 +80,7 @@ fun NavGraphBuilder.mainPageNavGraph(
         )
     }
 
-    composable<MainPageRoute.FingerprintLoginRoute> {
+    mainPageComposable<MainPageRoute.FingerprintLoginRoute> {
         FingerprintLoginScreen(
             onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
         )
