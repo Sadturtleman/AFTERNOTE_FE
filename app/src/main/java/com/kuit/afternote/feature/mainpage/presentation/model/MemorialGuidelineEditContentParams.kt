@@ -1,0 +1,22 @@
+package com.kuit.afternote.feature.mainpage.presentation.model
+
+import androidx.compose.runtime.Immutable
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
+
+/**
+ * 추모 가이드라인 콘텐츠 파라미터
+ */
+@Immutable
+data class MemorialGuidelineEditContentParams(
+    val memorialPhotoUrl: String?,
+    val playlistSongCount: Int,
+    val playlistAlbumCovers: List<AlbumCover>,
+    val selectedLastWish: String?,
+    val lastWishOptions: List<LastWishOption>,
+    val funeralVideoUrl: String?,
+    val onPhotoAddClick: () -> Unit,
+    val onSongAddClick: () -> Unit,
+    val onLastWishSelected: (String) -> Unit,
+    val onVideoAddClick: () -> Unit
+)

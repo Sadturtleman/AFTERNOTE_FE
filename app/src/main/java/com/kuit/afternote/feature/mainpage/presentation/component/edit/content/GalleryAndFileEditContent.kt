@@ -93,6 +93,9 @@ fun GalleryAndFileEditContent(
     MessageTextField(
         textFieldState = params.messageState
     )
+
+    // 갤러리 및 파일 탭 하단 여백 (459dp)
+    Spacer(modifier = Modifier.height(Spacing.galleryAndFileBottom))
 }
 
 @Preview(showBackground = true)

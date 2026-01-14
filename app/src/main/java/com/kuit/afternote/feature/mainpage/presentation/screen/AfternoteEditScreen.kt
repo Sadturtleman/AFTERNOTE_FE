@@ -153,27 +153,26 @@ private fun EditContent(
                 )
             )
 
-            Spacer(modifier = Modifier.height(Spacing.m))
+            // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
+            if (state.selectedCategory != "추모 가이드라인") {
+                Spacer(modifier = Modifier.height(Spacing.m))
 
-            // 서비스명 선택 (Line 295 해결: Computed Property 사용)
-            SelectionDropdown(
-                label = "서비스명",
-                selectedValue = state.selectedService,
-                options = state.currentServiceOptions,
-                onValueSelected = state::onServiceSelected,
-                menuStyle = DropdownMenuStyle(
-                    shadowElevation = 10.dp,
-                    tonalElevation = 10.dp
+                SelectionDropdown(
+                    label = "서비스명",
+                    selectedValue = state.selectedService,
+                    options = state.currentServiceOptions,
+                    onValueSelected = state::onServiceSelected,
+                    menuStyle = DropdownMenuStyle(
+                        shadowElevation = 10.dp,
+                        tonalElevation = 10.dp
+                    )
                 )
-            )
-
+            }
             Spacer(modifier = Modifier.height(Spacing.l))
 
             // 종류에 따라 다른 콘텐츠 표시
+            // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
             CategoryContent(state = state)
-
-            // 스크롤 내부의 하단 여백 (피그마 기준: 169dp - BottomNav 88dp = 81dp)
-            Spacer(modifier = Modifier.height(81.dp))
         }
     }
 }
