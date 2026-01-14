@@ -29,6 +29,8 @@
 - **Tests**: UseCase/ViewModel 변경 시 테스트 확인/추가
 - **Parameter Refactoring Pattern**: 10개 이상 파라미터가 필요한 경우, 단순히 data class로 묶지 말고 **섹션별 그룹화** 패턴 적용
 - **State Holder Pattern for Cognitive Complexity**: SonarQube 인지 복잡도 15 이하를 위해 **State Holder 패턴** 필수 적용. Composable 내부 람다 정의 금지, 모든 로직은 State 클래스로 이동
+- **Slot API Pattern (Composition over Inheritance)**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용. 공통 껍데기를 제공하고 내용물은 Slot(`content: @Composable () -> Unit`)으로 주입받는 방식
+- **Component Location Rules (컴포넌트 위치 결정 규칙)**: 공통 컴포넌트는 반드시 `core` 모듈에 위치해야 함. Feature 모듈 간 직접 의존은 금지되며, 공통 컴포넌트는 `core`에 두어야 함
 
 ---
 # Project Context
@@ -1053,6 +1055,61 @@ class {UseCaseName}Test {
    - 예외: data class나 enum 등은 같은 파일에 포함 가능하거나 별도 파일로 분리 가능
    - 여러 컴포넌트가 필요한 경우 각각 별도 파일로 분리해야 합니다
 
+8. **Slot API 패턴 (Composition over Inheritance) - Critical**
+   - **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.
+   - **원칙**: "공통 껍데기를 제공하고, 내용물은 호출부에서 주입받는다"
+   - **구현 방법**:
+     1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
+     2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
+     3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
+     4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지
+   - **예시 구조**:
+     ```kotlin
+     // ✅ 공통 껍데기 (core 패키지)
+     @Composable
+     fun SelectableRadioCard(
+         selected: Boolean,
+         onClick: () -> Unit,
+         borderWhenUnselected: Boolean = false,
+         content: @Composable ColumnScope.() -> Unit  // Slot
+     ) {
+         Surface(
+             modifier = modifier.selectable(
+                 selected = selected,
+                 onClick = onClick,
+                 role = Role.RadioButton
+             ),
+             border = BorderStroke(...)
+         ) {
+             Row {
+                 CustomRadioButton(selected = selected, onClick = null)  // 이벤트 충돌 방지
+                 Column { content() }  // Slot 주입
+             }
+         }
+     }
+     
+     // ✅ 사용 예시 1: 제목+설명
+     SelectableRadioCard(selected = true, onClick = {}) {
+         Text("제목", fontWeight = Medium)
+         Text("설명", fontWeight = Normal)
+     }
+     
+     // ✅ 사용 예시 2: 단순 텍스트
+     SelectableRadioCard(selected = false, onClick = {}, borderWhenUnselected = true) {
+         Text("옵션 텍스트")
+     }
+     ```
+   - **장점**:
+     * 코드 중복 제거: 공통 로직을 한 곳에서 관리
+     * 유연성: Slot API로 다양한 콘텐츠 주입 가능
+     * 접근성: `Role`과 `selectable`로 스크린 리더 지원
+     * 유지보수성: 공통 변경 시 한 곳만 수정
+     * Material Design 준수: 공식 권장 패턴 적용
+   - **주의사항**:
+     * Slot을 너무 많이 뚫으면 사용하기 복잡해짐 (1-2개가 적절)
+     * 구조적 차이가 큰 경우는 분리 유지 (예: 제목+설명 vs 단순 텍스트는 다른 컴포넌트로 분리)
+     * YAGNI 원칙: 현재 사용 사례만 고려하여 필요한 Slot만 제공
+
 9. **Drawable 리소스 사용 규칙**
    - SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다
    - drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다
@@ -1062,6 +1119,24 @@ class {UseCaseName}Test {
    - 특정 컴포넌트(예: Text)에만 `padding`을 사용하여 다음 컴포넌트와의 간격을 처리하지 말아야 합니다
    - 모든 컴포넌트에 일관되게 간격 처리 방법을 적용해야 합니다
    - 예외: 컴포넌트 내부 여백이 필요한 경우 (예: 배경이 있는 Box 내부의 Text, 버튼 내부의 Text 등)에는 `padding` 사용 가능
+
+11. **Component Location Rules (컴포넌트 위치 결정 규칙) - Critical**
+   - **핵심 원칙**: Feature 모듈 간 직접 의존은 절대 금지됩니다. Feature A가 Feature B의 컴포넌트를 직접 참조하면 순환 참조 위험과 클린 아키텍처 위반이 발생합니다.
+   - **Core 모듈로 이동 기준**:
+     * **2개 이상의 Feature에서 사용될 가능성이 있는가?** (YES)
+     * **도메인 로직이나 특정 화면 상태에 의존하지 않는가?** (순수 UI 컴포넌트인가? YES)
+     * **브랜드 아이덴티티(디자인 시스템)의 일부인가?** (버튼, 텍스트 필드, 헤더 등)
+   - **Feature 내부에 유지 (`feature/xxx/component/common`)**:
+     * 해당 Feature의 여러 화면(Screen)에서만 공유되고, 다른 Feature에서는 절대 쓰일 일이 없는 경우
+     * 특정 Feature의 도메인 데이터(예: `Album`, `Song`)를 파라미터로 받는 경우
+   - **마이그레이션 전략**:
+     1. 패키지 이동: `feature/mainpage/.../common/` → `core/`
+     2. 의존성 확인: 이동한 컴포넌트가 `mainpage`만의 리소스나 도메인 모델을 참조하는지 확인
+     3. Import 경로 수정: 모든 사용처의 import 경로를 `core`로 변경
+     4. 빌드 테스트: 앱 전체를 빌드하여 깨지는 곳이 없는지 확인
+   - **예시**:
+     * `Header`, `LabeledTextField`, `MessageTextField`, `RequiredLabel` → **Core로 이동** (다른 Feature에서도 필요)
+     * `InfoCard`, `InfoRow` (detail 전용) → **Feature 내부 유지** (나중에 필요해지면 그때 이동)
 
 ## 파일 변경 시 README 체크 규칙
 
@@ -1176,3 +1251,10 @@ Perplexity 프롬프트는 다음 구조를 따라야 합니다:
 - 명확한 해결 방법을 알고 있는 경우
 - 단순한 문법 오류나 타이핑 실수
 - 사용자가 명시적으로 계속 시도하라고 요청한 경우
+
+### 5. Perplexity 프롬프트 작성 요청 시 규칙 - Critical
+**사용자가 "퍼플렉시티 프롬프트 작성해" 또는 "Perplexity 프롬프트 작성해"라고 명시적으로 요청한 경우:**
+- **프롬프트 내용만 제공**: 프롬프트에 붙여 넣을 내용 외에는 아무 말도 하지 않습니다.
+- **추가 설명 금지**: 프롬프트 작성 후 "이 프롬프트를 Perplexity에 붙여넣으세요" 같은 안내 문구도 포함하지 않습니다.
+- **코드 수정 금지**: 프롬프트 작성과 동시에 코드를 수정하지 않습니다.
+- **형식**: 프롬프트는 마크다운 코드 블록 없이 순수 텍스트로 제공합니다 (사용자가 바로 복사-붙여넣기 할 수 있도록).

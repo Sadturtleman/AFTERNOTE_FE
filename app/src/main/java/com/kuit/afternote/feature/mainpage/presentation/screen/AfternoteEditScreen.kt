@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.Header
+import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
@@ -39,7 +39,6 @@ import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
 import com.kuit.afternote.feature.mainpage.presentation.model.SocialNetworkEditContentParams
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
@@ -67,7 +66,6 @@ fun AfternoteEditScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Gray1,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = state.selectedBottomNavItem,

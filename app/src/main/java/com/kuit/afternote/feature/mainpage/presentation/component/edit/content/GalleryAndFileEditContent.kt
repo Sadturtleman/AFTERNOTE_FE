@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.mainpage.presentation.component.common.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.common.textfield.MessageTextField
+import com.kuit.afternote.core.MessageTextField
+import com.kuit.afternote.core.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.RecipientList
