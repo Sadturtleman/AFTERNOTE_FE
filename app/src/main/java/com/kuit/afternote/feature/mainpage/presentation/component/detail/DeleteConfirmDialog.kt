@@ -66,7 +66,7 @@ fun DeleteConfirmDialog(
                     fontSize = 16.sp,
                     lineHeight = 22.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight.Medium,
                     color = TextPrimary,
                     textAlign = TextAlign.Center
                 ),
@@ -86,7 +86,7 @@ fun DeleteConfirmDialog(
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
                         fontFamily = Sansneo,
-                        fontWeight = FontWeight(500),
+                        fontWeight = FontWeight.Medium,
                         color = Gray9,
                         textAlign = TextAlign.Center
                     ),
@@ -112,7 +112,7 @@ fun DeleteConfirmDialog(
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
                         fontFamily = Sansneo,
-                        fontWeight = FontWeight(500),
+                        fontWeight = FontWeight.Medium,
                         color = Gray9,
                         textAlign = TextAlign.Center
                     ),

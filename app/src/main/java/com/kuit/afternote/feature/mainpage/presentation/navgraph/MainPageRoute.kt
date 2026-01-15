@@ -13,6 +13,9 @@ sealed interface MainPageRoute {
     data object DetailRoute : MainPageRoute
 
     @Serializable
+    data object GalleryDetailRoute : MainPageRoute
+
+    @Serializable
     data object EditRoute : MainPageRoute
 
     @Serializable
