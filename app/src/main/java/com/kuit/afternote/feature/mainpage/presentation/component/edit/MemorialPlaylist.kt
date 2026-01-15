@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,27 +11,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ArrowIconSpec
+import com.kuit.afternote.core.CircleArrowIcon
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.Black
-import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.Spacing
@@ -103,10 +99,7 @@ fun MemorialPlaylist(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalFadingEdge(
-                            edgeWidth = 45.dp,
-                            edgeColor = Gray1
-                        ),
+                        .horizontalFadingEdge(edgeWidth = 45.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(albumCovers) { album ->
@@ -148,22 +141,14 @@ fun MemorialPlaylist(
             )
 
             // 밝은 파란색 원형 배경에 흰색 화살표 아이콘
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(B1)
-                    .padding(1.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_right_vector),
-                    contentDescription = "추가",
-//                        modifier = Modifier
-//                            .height(height = 6.dp)
-//                            .width(width = 4.dp)
-                )
-            }
+            CircleArrowIcon(
+                iconSpec = ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_right_playlist,
+                    contentDescription = "추가"
+                ),
+                backgroundColor = B1,
+                size = 12.dp
+            )
         }
     }
 }
