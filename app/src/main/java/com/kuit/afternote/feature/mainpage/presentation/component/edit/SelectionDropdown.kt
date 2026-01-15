@@ -67,7 +67,11 @@ data class DropdownMenuStyle(
  * - 선택된 값: 16sp, Regular, Gray8
  * - 드롭다운 아이콘: 오른쪽 정렬
  * - 드롭다운 메뉴 offset: 기본 4.dp
+ *
+ * Note: State Hoisting 패턴 적용으로 파라미터가 많아졌으나,
+ * 각 파라미터는 상태 관리와 UI 제어에 필수적이므로 @Suppress 사용
  */
+@Suppress("LongParameterList")
 @Composable
 fun SelectionDropdown(
     modifier: Modifier = Modifier,
@@ -75,10 +79,12 @@ fun SelectionDropdown(
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
-    menuStyle: DropdownMenuStyle = DropdownMenuStyle()
+    menuStyle: DropdownMenuStyle = DropdownMenuStyle(),
+    expanded: Boolean = false,
+    boxWidth: Dp = 0.dp,
+    onExpandedChange: (Boolean) -> Unit = {},
+    onBoxWidthChange: (Dp) -> Unit = {}
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var boxWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
     Column(
@@ -108,8 +114,11 @@ fun SelectionDropdown(
                     .fillMaxWidth()
                     .height(36.dp)
                     .onGloballyPositioned { coordinates ->
-                        boxWidth = with(density) { coordinates.size.width.toDp() }
-                    }.clickable { expanded = !expanded }
+                        val newWidth = with(density) { coordinates.size.width.toDp() }
+                        if (newWidth != boxWidth) {
+                            onBoxWidthChange(newWidth)
+                        }
+                    }.clickable { onExpandedChange(!expanded) }
                     .bottomBorder(color = Gray3, width = 0.5.dp)
                     .padding(all = 8.dp)
             ) {
@@ -139,7 +148,7 @@ fun SelectionDropdown(
             // 드롭다운 메뉴
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false },
+                onDismissRequest = { onExpandedChange(false) },
                 offset = DpOffset(x = 0.dp, y = menuStyle.menuOffset),
                 containerColor = menuStyle.menuBackgroundColor,
                 shadowElevation = menuStyle.shadowElevation,
@@ -165,7 +174,7 @@ fun SelectionDropdown(
                         },
                         onClick = {
                             onValueSelected(option)
-                            expanded = false
+                            onExpandedChange(false)
                         },
                         contentPadding = PaddingValues(vertical = 16.dp)
                     )
@@ -179,11 +188,17 @@ fun SelectionDropdown(
 @Composable
 private fun SelectionDropdownPreview() {
     AfternoteTheme {
+        var expanded by remember { mutableStateOf(false) }
+        var boxWidth by remember { mutableStateOf(0.dp) }
         SelectionDropdown(
             label = "종류",
             selectedValue = "소셜네트워크",
             options = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일"),
-            onValueSelected = {}
+            onValueSelected = {},
+            expanded = expanded,
+            boxWidth = boxWidth,
+            onExpandedChange = { expanded = it },
+            onBoxWidthChange = { boxWidth = it }
         )
     }
 }

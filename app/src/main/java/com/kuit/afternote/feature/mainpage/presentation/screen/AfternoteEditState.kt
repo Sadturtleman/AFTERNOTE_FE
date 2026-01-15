@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
@@ -30,7 +32,10 @@ enum class DialogType {
 
 /**
  * AfternoteEditScreen의 상태를 관리하는 State Holder
+ *
+ * Note: State Holder 패턴으로 인해 많은 함수가 필요하므로 @Suppress 사용
  */
+@Suppress("TooManyFunctions")
 @Stable
 class AfternoteEditState(
     // TextFieldState는 Composable에서 생성하여 전달
@@ -93,6 +98,20 @@ class AfternoteEditState(
     var funeralVideoUrl by mutableStateOf<String?>(null)
         private set
     var playlistSongCount by mutableIntStateOf(16)
+        private set
+
+    // Dropdown States
+    var categoryDropdownExpanded by mutableStateOf(false)
+        private set
+    var categoryDropdownWidth by mutableStateOf(0.dp)
+        private set
+    var serviceDropdownExpanded by mutableStateOf(false)
+        private set
+    var serviceDropdownWidth by mutableStateOf(0.dp)
+        private set
+    var relationshipDropdownExpanded by mutableStateOf(false)
+        private set
+    var relationshipDropdownWidth by mutableStateOf(0.dp)
         private set
 
     // Constants
@@ -270,6 +289,30 @@ class AfternoteEditState(
 
     fun onBottomNavItemSelected(item: BottomNavItem) {
         selectedBottomNavItem = item
+    }
+
+    fun onCategoryDropdownExpandedChange(expanded: Boolean) {
+        categoryDropdownExpanded = expanded
+    }
+
+    fun onCategoryDropdownWidthChange(width: Dp) {
+        categoryDropdownWidth = width
+    }
+
+    fun onServiceDropdownExpandedChange(expanded: Boolean) {
+        serviceDropdownExpanded = expanded
+    }
+
+    fun onServiceDropdownWidthChange(width: Dp) {
+        serviceDropdownWidth = width
+    }
+
+    fun onRelationshipDropdownExpandedChange(expanded: Boolean) {
+        relationshipDropdownExpanded = expanded
+    }
+
+    fun onRelationshipDropdownWidthChange(width: Dp) {
+        relationshipDropdownWidth = width
     }
 }
 

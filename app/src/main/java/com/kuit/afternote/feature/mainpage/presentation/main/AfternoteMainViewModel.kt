@@ -46,6 +46,7 @@ class AfternoteMainViewModel
                 is AfternoteMainEvent.ClickAdd -> {
                     // 네비게이션은 Route에서 처리
                 }
+                is AfternoteMainEvent.UpdateScrollState -> updateScrollState(event.canScrollRight)
             }
         }
 
@@ -86,5 +87,12 @@ class AfternoteMainViewModel
          */
         private fun handleItemClick(itemId: String) {
             // 네비게이션은 Route에서 처리
+        }
+
+        /**
+         * 탭 로우 스크롤 상태 업데이트
+         */
+        private fun updateScrollState(canScrollRight: Boolean) {
+            _uiState.update { it.copy(canScrollRight = canScrollRight) }
         }
     }

@@ -50,13 +50,17 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun AfternoteTabRow(
     modifier: Modifier = Modifier,
     selectedTab: AfternoteTab = AfternoteTab.ALL,
-    onTabSelected: (AfternoteTab) -> Unit
+    canScrollRight: Boolean = false,
+    onTabSelected: (AfternoteTab) -> Unit,
+    onScrollStateChanged: (Boolean) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-    var canScrollRight by remember { mutableStateOf(false) }
 
     LaunchedEffect(scrollState.value) {
-        canScrollRight = scrollState.canScrollForward
+        val canScroll = scrollState.canScrollForward
+        if (canScroll != canScrollRight) {
+            onScrollStateChanged(canScroll)
+        }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
@@ -129,6 +133,7 @@ private fun AfternoteTabRowPreview() {
         var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
         AfternoteTabRow(
             selectedTab = selectedTab,
+            canScrollRight = false,
             onTabSelected = { selectedTab = it }
         )
     }
