@@ -62,11 +62,7 @@ fun GalleryAndFileEditContent(
 
         RecipientList(
             recipients = recipientSection.recipients,
-            onAddClick = recipientSection.callbacks.onAddClick,
-            onItemEditClick = recipientSection.callbacks.onItemEditClick,
-            onItemDeleteClick = recipientSection.callbacks.onItemDeleteClick,
-            onItemAdded = recipientSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = recipientSection.callbacks.onTextFieldVisibilityChanged
+            events = recipientSection.callbacks
         )
     }
     Spacer(modifier = Modifier.height(Spacing.xl))

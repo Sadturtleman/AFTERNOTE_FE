@@ -151,10 +151,7 @@ private fun EditContent(
                     shadowElevation = 10.dp,
                     tonalElevation = 10.dp
                 ),
-                expanded = state.categoryDropdownExpanded,
-                boxWidth = state.categoryDropdownWidth,
-                onExpandedChange = state::onCategoryDropdownExpandedChange,
-                onBoxWidthChange = state::onCategoryDropdownWidthChange
+                state = state.categoryDropdownState
             )
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
@@ -170,10 +167,7 @@ private fun EditContent(
                         shadowElevation = 10.dp,
                         tonalElevation = 10.dp
                     ),
-                    expanded = state.serviceDropdownExpanded,
-                    boxWidth = state.serviceDropdownWidth,
-                    onExpandedChange = state::onServiceDropdownExpandedChange,
-                    onBoxWidthChange = state::onServiceDropdownWidthChange
+                    state = state.serviceDropdownState
                 )
             }
             Spacer(modifier = Modifier.height(Spacing.l))

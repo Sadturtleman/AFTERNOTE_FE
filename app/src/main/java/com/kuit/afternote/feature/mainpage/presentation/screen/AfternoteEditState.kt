@@ -9,11 +9,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdownState
 import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodCallbacks
@@ -33,9 +32,13 @@ enum class DialogType {
 /**
  * AfternoteEditScreen의 상태를 관리하는 State Holder
  *
- * Note: State Holder 패턴으로 인해 많은 함수가 필요하므로 @Suppress 사용
+ * Note: State Holder 패턴으로 인해 많은 함수가 필요합니다.
+ * 현재 18개의 public 함수가 있으며, detekt threshold(20)를 초과하지 않지만
+ * 향후 확장 시 Manager 클래스로 책임 분리를 고려해야 합니다.
+ * (예: RecipientManager, CategoryManager, ProcessingMethodManager)
+ *
+ * TODO: 함수가 20개를 초과하면 Manager 클래스로 분리 고려
  */
-@Suppress("TooManyFunctions")
 @Stable
 class AfternoteEditState(
     // TextFieldState는 Composable에서 생성하여 전달
@@ -101,17 +104,20 @@ class AfternoteEditState(
         private set
 
     // Dropdown States
-    var categoryDropdownExpanded by mutableStateOf(false)
+    var categoryDropdownState by mutableStateOf(
+        com.kuit.afternote.feature.mainpage.presentation.component.edit
+            .SelectionDropdownState()
+    )
         private set
-    var categoryDropdownWidth by mutableStateOf(0.dp)
+    var serviceDropdownState by mutableStateOf(
+        com.kuit.afternote.feature.mainpage.presentation.component.edit
+            .SelectionDropdownState()
+    )
         private set
-    var serviceDropdownExpanded by mutableStateOf(false)
-        private set
-    var serviceDropdownWidth by mutableStateOf(0.dp)
-        private set
-    var relationshipDropdownExpanded by mutableStateOf(false)
-        private set
-    var relationshipDropdownWidth by mutableStateOf(0.dp)
+    var relationshipDropdownState by mutableStateOf(
+        com.kuit.afternote.feature.mainpage.presentation.component.edit
+            .SelectionDropdownState()
+    )
         private set
 
     // Constants
@@ -289,30 +295,6 @@ class AfternoteEditState(
 
     fun onBottomNavItemSelected(item: BottomNavItem) {
         selectedBottomNavItem = item
-    }
-
-    fun onCategoryDropdownExpandedChange(expanded: Boolean) {
-        categoryDropdownExpanded = expanded
-    }
-
-    fun onCategoryDropdownWidthChange(width: Dp) {
-        categoryDropdownWidth = width
-    }
-
-    fun onServiceDropdownExpandedChange(expanded: Boolean) {
-        serviceDropdownExpanded = expanded
-    }
-
-    fun onServiceDropdownWidthChange(width: Dp) {
-        serviceDropdownWidth = width
-    }
-
-    fun onRelationshipDropdownExpandedChange(expanded: Boolean) {
-        relationshipDropdownExpanded = expanded
-    }
-
-    fun onRelationshipDropdownWidthChange(width: Dp) {
-        relationshipDropdownWidth = width
     }
 }
 

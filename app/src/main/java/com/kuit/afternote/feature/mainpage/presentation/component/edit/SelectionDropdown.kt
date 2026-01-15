@@ -16,8 +16,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,11 +65,7 @@ data class DropdownMenuStyle(
  * - 선택된 값: 16sp, Regular, Gray8
  * - 드롭다운 아이콘: 오른쪽 정렬
  * - 드롭다운 메뉴 offset: 기본 4.dp
- *
- * Note: State Hoisting 패턴 적용으로 파라미터가 많아졌으나,
- * 각 파라미터는 상태 관리와 UI 제어에 필수적이므로 @Suppress 사용
  */
-@Suppress("LongParameterList")
 @Composable
 fun SelectionDropdown(
     modifier: Modifier = Modifier,
@@ -80,10 +74,7 @@ fun SelectionDropdown(
     options: List<String>,
     onValueSelected: (String) -> Unit,
     menuStyle: DropdownMenuStyle = DropdownMenuStyle(),
-    expanded: Boolean = false,
-    boxWidth: Dp = 0.dp,
-    onExpandedChange: (Boolean) -> Unit = {},
-    onBoxWidthChange: (Dp) -> Unit = {}
+    state: SelectionDropdownState = rememberSelectionDropdownState()
 ) {
     val density = LocalDensity.current
 
@@ -115,10 +106,10 @@ fun SelectionDropdown(
                     .height(36.dp)
                     .onGloballyPositioned { coordinates ->
                         val newWidth = with(density) { coordinates.size.width.toDp() }
-                        if (newWidth != boxWidth) {
-                            onBoxWidthChange(newWidth)
+                        if (newWidth != state.boxWidth) {
+                            state.setBoxWidth(newWidth)
                         }
-                    }.clickable { onExpandedChange(!expanded) }
+                    }.clickable { state.setExpanded(!state.expanded) }
                     .bottomBorder(color = Gray3, width = 0.5.dp)
                     .padding(all = 8.dp)
             ) {
@@ -147,8 +138,8 @@ fun SelectionDropdown(
 
             // 드롭다운 메뉴
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { onExpandedChange(false) },
+                expanded = state.expanded,
+                onDismissRequest = { state.setExpanded(false) },
                 offset = DpOffset(x = 0.dp, y = menuStyle.menuOffset),
                 containerColor = menuStyle.menuBackgroundColor,
                 shadowElevation = menuStyle.shadowElevation,
@@ -174,7 +165,7 @@ fun SelectionDropdown(
                         },
                         onClick = {
                             onValueSelected(option)
-                            onExpandedChange(false)
+                            state.setExpanded(false)
                         },
                         contentPadding = PaddingValues(vertical = 16.dp)
                     )
@@ -188,17 +179,11 @@ fun SelectionDropdown(
 @Composable
 private fun SelectionDropdownPreview() {
     AfternoteTheme {
-        var expanded by remember { mutableStateOf(false) }
-        var boxWidth by remember { mutableStateOf(0.dp) }
         SelectionDropdown(
             label = "종류",
             selectedValue = "소셜네트워크",
             options = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일"),
-            onValueSelected = {},
-            expanded = expanded,
-            boxWidth = boxWidth,
-            onExpandedChange = { expanded = it },
-            onBoxWidthChange = { boxWidth = it }
+            onValueSelected = {}
         )
     }
 }
