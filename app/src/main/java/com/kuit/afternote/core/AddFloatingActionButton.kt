@@ -1,19 +1,22 @@
 package com.kuit.afternote.core
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
+import com.kuit.afternote.ui.expand.dropShadow
 
 /**
  * 추가 버튼 FAB 컴포넌트
@@ -32,16 +35,15 @@ fun BoxScope.AddFloatingActionButton(
     Box(
         modifier = modifier
             .align(Alignment.BottomEnd)
-            .wrapContentSize()
-            .shadow(elevation = 10.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
-//            .dropShadow(
-//                shape = CircleShape,
-//                color = Color.Black.copy(alpha = 0.15f),
-//                blur = 40.dp,
-//                offsetX = 0.dp,
-//                offsetY = 2.dp,
-//                spread = 0.dp
-//            )
+            .dropShadow(
+                shape = CircleShape,
+                color = Color(0x26000000),
+                blur = 40.dp,
+                offsetX = 0.dp,
+                offsetY = 2.dp,
+                spread = 0.dp
+            ).background(Color.White, CircleShape)
+            .clip(CircleShape)
             .clickable(onClick = onClick)
     ) {
         Image(

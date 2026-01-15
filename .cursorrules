@@ -41,6 +41,8 @@
 - **State Holder Pattern for Cognitive Complexity**: SonarQube 인지 복잡도 15 이하를 위해 **State Holder 패턴** 필수 적용. Composable 내부 람다 정의 금지, 모든 로직은 State 클래스로 이동
 - **Slot API Pattern (Composition over Inheritance)**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용. 공통 껍데기를 제공하고 내용물은 Slot(`content: @Composable () -> Unit`)으로 주입받는 방식
 - **Component Location Rules (컴포넌트 위치 결정 규칙)**: 공통 컴포넌트는 반드시 `core` 모듈에 위치해야 함. Feature 모듈 간 직접 의존은 금지되며, 공통 컴포넌트는 `core`에 두어야 함
+- **@Suppress 사용 전 코드 구조 개선 필수**: detekt 경고 발생 시 `@Suppress`를 사용하기 전에 반드시 코드 구조 개선을 시도해야 함. State Hoisting 패턴 적용 후 파라미터가 많아지면 Event Interface나 State Class로 그룹화하여 해결
+- **구조 변경 시 필수 검증**: 파일 이동, 패키지 변경, 클래스 리팩토링 시 변경 전/후 빌드 확인, 사용처 전체 검색, import 경로 일괄 변경 필수
 
 ---
 
@@ -138,6 +140,17 @@
 2. API 또는 라이브러리 사용법 불확실
 3. 시각적 문제 발생
 4. 3회 이상 시도 실패
+
+### ⚠️ Critical: 구조 변경 시 필수 검증 절차
+**파일 이동, 패키지 변경, 클래스 리팩토링 등 구조적 변경 작업 시 반드시 다음 절차를 따라야 합니다:**
+
+1. **변경 전 빌드 확인**: 구조 변경 전에 현재 상태가 빌드되는지 확인 (`./gradlew :app:compileDebugKotlin`)
+2. **사용처 전체 검색**: 이동/변경할 파일이 사용되는 모든 위치를 `grep`으로 검색하여 리스트업
+3. **Import 경로 일괄 변경**: 모든 사용처의 import 경로를 한 번에 변경 (단계적으로 하지 말고 전체를 먼저 파악)
+4. **변수/함수명 변경 시**: 변수명이나 함수명을 변경할 때는 `grep`으로 모든 사용처 확인 후 일괄 변경
+5. **변경 후 즉시 빌드 검증**: 파일 이동/변경 후 반드시 빌드하여 컴파일 오류 확인 (`./gradlew :app:compileDebugKotlin`)
+6. **State/Params 클래스 이동 시**: State 클래스나 Params 클래스를 이동할 때는 해당 클래스를 사용하는 모든 컴포넌트의 import 경로를 확인
+7. **중복 제거 시**: 중복 파일을 제거하기 전에 사용처를 모두 확인하고, 하나로 통합한 후 모든 import 경로를 업데이트
 
 ### Perplexity 프롬프트 작성 요청 시 규칙 - Critical
 **사용자가 "퍼플렉시티 프롬프트 작성해" 또는 "Perplexity 프롬프트 작성해"라고 명시적으로 요청한 경우:**

@@ -77,23 +77,42 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 ## State Holder 패턴 (Cognitive Complexity 해결) - Critical
 - **목표**: SonarQube 인지 복잡도(Cognitive Complexity)를 15 이하로 유지
 - **핵심 원칙**: "로직과 상태를 Composable에서 분리해내는 것(State Holder 패턴)"
+- **⚠️ Critical: TooManyFunctions 경고 해결**
+  - State Holder 패턴 적용 후 `TooManyFunctions` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - **불필요한 함수 제거**: 사용되지 않는 헬퍼 함수나 중복 함수 제거
+    * 예: 드롭다운 상태 관리 함수들이 State Class로 이동하면서 불필요해진 경우 제거
+  - **책임 분리**: Manager 클래스로 로직 위임 고려
+    * 예: `RecipientManager`, `CategoryManager`, `ProcessingMethodManager`로 분리
+    * 함수 24개 → 16개로 감소 가능
+  - **Private 함수 활용**: 외부에 노출될 필요 없는 함수는 `private`으로 변경
+    * detekt 설정에서 `ignorePrivate: true`인 경우 카운트에서 제외됨
 - **필수 적용 규칙**:
-  1. **State 클래스 생성**: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
-  2. **로직 캡슐화**: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
-  3. **Computed Properties**: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
-  4. **콜백 람다 제거**: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
-  5. **함수 참조 사용**: State의 메서드는 함수 참조(`::`)로 전달
-  6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
-  7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
+ 1. **State 클래스 생성**: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
+ 2. **로직 캡슐화**: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
+ 3. **Computed Properties**: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
+ 4. **콜백 람다 제거**: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
+ 5. **함수 참조 사용**: State의 메서드는 함수 참조(`::`)로 전달
+ 6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
+ 7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
 
 ## Parameter Refactoring Pattern (LongParameterList 해결) - Critical
 - **문제**: Composable 함수에 10개 이상의 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것은 부족함
+- **⚠️ Critical: @Suppress는 최후의 수단**
+  - State Hoisting 패턴 적용 후 `LongParameterList` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
+    * 예: `RecipientCallbacks`, `ProcessingMethodCallbacks` 같은 인터페이스/데이터 클래스 사용
+    * 파라미터 11개 → 4개로 감소 가능 (콜백 5개를 1개로 그룹화)
+  - **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
+    * 예: `SelectionDropdownState` 클래스 생성
+    * 파라미터 10개 → 7개로 감소 가능
+  - **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
+    * UI 컴포넌트는 초기값을 직접 알 필요 없이 완성된 `state`만 받으면 됨
 - **올바른 접근**: 다음 패턴을 순서대로 적용
-  1. **공통 섹션 추출**: 여러 화면에서 동일하게 사용되는 섹션은 별도 클래스로 추출
-  2. **섹션별 그룹화**: UI 섹션 단위로 상태(State)와 액션(Actions)을 함께 묶기
-  3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
-  4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
-  5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
+ 1. **공통 섹션 추출**: 여러 화면에서 동일하게 사용되는 섹션은 별도 클래스로 추출
+ 2. **섹션별 그룹화**: UI 섹션 단위로 상태(State)와 액션(Actions)을 함께 묶기
+ 3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
+ 4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
+ 5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
 
 ## Slot API 패턴 (Composition over Inheritance) - Critical
 - **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.
