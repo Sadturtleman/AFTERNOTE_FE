@@ -33,11 +33,4 @@ sealed interface AfternoteMainEvent {
      * 추가 버튼 클릭 이벤트
      */
     data object ClickAdd : AfternoteMainEvent
-
-    /**
-     * 탭 로우 스크롤 상태 변경 이벤트
-     */
-    data class UpdateScrollState(
-        val canScrollRight: Boolean
-    ) : AfternoteMainEvent
 }

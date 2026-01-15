@@ -117,12 +117,8 @@ fun AfternoteMainScreen(
                     AfternoteContent(
                         selectedTab = uiState.selectedTab,
                         items = uiState.items,
-                        canScrollRight = uiState.canScrollRight,
                         onTabSelected = { onEvent(AfternoteMainEvent.SelectTab(it)) },
-                        onItemClick = { onEvent(AfternoteMainEvent.ClickItem(it)) },
-                        onScrollStateChanged = { canScroll ->
-                            onEvent(AfternoteMainEvent.UpdateScrollState(canScroll))
-                        }
+                        onItemClick = { onEvent(AfternoteMainEvent.ClickItem(it)) }
                     )
                 }
             }
@@ -143,16 +139,12 @@ fun AfternoteMainScreen(
 private fun AfternoteContent(
     selectedTab: AfternoteTab,
     items: List<AfternoteItem>,
-    canScrollRight: Boolean,
     onTabSelected: (AfternoteTab) -> Unit,
-    onItemClick: (String) -> Unit,
-    onScrollStateChanged: (Boolean) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     AfternoteTabRow(
         selectedTab = selectedTab,
-        canScrollRight = canScrollRight,
-        onTabSelected = onTabSelected,
-        onScrollStateChanged = onScrollStateChanged
+        onTabSelected = onTabSelected
     )
 
     Spacer(modifier = Modifier.height(height = 20.dp))
