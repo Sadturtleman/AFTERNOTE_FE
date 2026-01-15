@@ -21,12 +21,14 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Rec
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
+private const val CUSTOM_ADD_OPTION = "직접 추가하기"
 
 /**
  * 다이얼로그 타입
  */
 enum class DialogType {
-    ADD_RECIPIENT
+    ADD_RECIPIENT,
+    CUSTOM_SERVICE
 }
 
 /**
@@ -46,7 +48,8 @@ class AfternoteEditState(
     val passwordState: TextFieldState,
     val messageState: TextFieldState,
     val recipientNameState: TextFieldState,
-    val phoneNumberState: TextFieldState
+    val phoneNumberState: TextFieldState,
+    val customServiceNameState: TextFieldState
 ) {
     // Navigation
     var selectedBottomNavItem by mutableStateOf(BottomNavItem.HOME)
@@ -122,7 +125,7 @@ class AfternoteEditState(
 
     // Constants
     val categories = listOf("소셜네트워크", "비즈니스", CATEGORY_GALLERY_AND_FILE, "재산 처리", "추모 가이드라인")
-    val services = listOf("인스타그램", "페이스북", "트위터", "카카오톡", "네이버")
+    val services = listOf("인스타그램", "페이스북")
     val galleryServices = listOf("갤러리", "파일")
     val relationshipOptions = listOf("친구", "가족", "연인")
     val lastWishOptions = listOf(
@@ -148,7 +151,16 @@ class AfternoteEditState(
 
     // Computed Properties (Line 295 해결: 삼항 연산자 제거)
     val currentServiceOptions: List<String>
-        get() = if (selectedCategory == CATEGORY_GALLERY_AND_FILE) galleryServices else services
+        get() = if (selectedCategory == CATEGORY_GALLERY_AND_FILE) {
+            galleryServices
+        } else {
+            services + CUSTOM_ADD_OPTION
+        }
+
+    /**
+     * 선택된 서비스가 "직접 추가하기"인지 확인
+     */
+    fun isCustomAddOption(service: String): Boolean = service == CUSTOM_ADD_OPTION
 
     // Callbacks (Composable 내부 람다 제거로 인지 복잡도 최소화)
     val galleryRecipientCallbacks: RecipientCallbacks by lazy {
@@ -212,7 +224,11 @@ class AfternoteEditState(
     }
 
     fun onServiceSelected(service: String) {
-        selectedService = service
+        if (isCustomAddOption(service)) {
+            showCustomServiceDialog()
+        } else {
+            selectedService = service
+        }
     }
 
     fun onProcessingMethodSelected(method: AccountProcessingMethod) {
@@ -231,11 +247,24 @@ class AfternoteEditState(
         activeDialog = DialogType.ADD_RECIPIENT
     }
 
+    fun showCustomServiceDialog() {
+        activeDialog = DialogType.CUSTOM_SERVICE
+    }
+
     fun dismissDialog() {
         activeDialog = null
         recipientNameState.edit { replace(0, length, "") }
         phoneNumberState.edit { replace(0, length, "") }
+        customServiceNameState.edit { replace(0, length, "") }
         relationshipSelectedValue = "친구"
+    }
+
+    fun onAddCustomService() {
+        val serviceName = customServiceNameState.text.toString().trim()
+        if (serviceName.isEmpty()) return
+
+        selectedService = serviceName
+        dismissDialog()
     }
 
     // Line 350 해결: Guard Clause로 중첩 줄이기
@@ -305,6 +334,7 @@ fun rememberAfternoteEditState(): AfternoteEditState {
     val messageState = rememberTextFieldState()
     val recipientNameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
+    val customServiceNameState = rememberTextFieldState()
 
     return remember {
         AfternoteEditState(
@@ -312,7 +342,8 @@ fun rememberAfternoteEditState(): AfternoteEditState {
             passwordState = passwordState,
             messageState = messageState,
             recipientNameState = recipientNameState,
-            phoneNumberState = phoneNumberState
+            phoneNumberState = phoneNumberState,
+            customServiceNameState = customServiceNameState
         )
     }
 }
