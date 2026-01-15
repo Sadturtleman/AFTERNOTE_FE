@@ -105,6 +105,14 @@ private fun CircleArrowIconPreview() {
             // 작은 원형 (MemorialPlaylist 스타일)
             CircleArrowIcon(
                 iconSpec = ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_right_tab,
+                    contentDescription = "추가"
+                ),
+                backgroundColor = B1,
+                size = 12.dp
+            )
+            CircleArrowIcon(
+                iconSpec = ArrowIconSpec(
                     iconRes = R.drawable.ic_arrow_right_playlist,
                     contentDescription = "추가"
                 ),

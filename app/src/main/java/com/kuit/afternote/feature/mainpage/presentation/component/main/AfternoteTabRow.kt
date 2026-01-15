@@ -13,7 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,26 +49,19 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun AfternoteTabRow(
     modifier: Modifier = Modifier,
     selectedTab: AfternoteTab = AfternoteTab.ALL,
-    canScrollRight: Boolean = false,
-    onTabSelected: (AfternoteTab) -> Unit,
-    onScrollStateChanged: (Boolean) -> Unit = {}
+    onTabSelected: (AfternoteTab) -> Unit
 ) {
     val scrollState = rememberScrollState()
-
-    LaunchedEffect(scrollState.value) {
-        val canScroll = scrollState.canScrollForward
-        if (canScroll != canScrollRight) {
-            onScrollStateChanged(canScroll)
-        }
+    val canScrollRight by remember {
+        derivedStateOf { scrollState.canScrollForward }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalFadingEdge(edgeWidth = 45.dp) // 페이드 효과를 스크롤보다 먼저 적용하여 화면에 고정
+                .horizontalFadingEdge(edgeWidth = 45.dp)
                 .horizontalScroll(scrollState),
-//                .padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 0.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AfternoteTab.entries.forEach { tab ->
@@ -88,7 +81,7 @@ fun AfternoteTabRow(
                     contentDescription = "더 보기"
                 ),
                 backgroundColor = B1,
-                size = 12.dp,
+                size = 16.dp,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
@@ -132,7 +125,6 @@ private fun AfternoteTabRowPreview() {
         var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
         AfternoteTabRow(
             selectedTab = selectedTab,
-            canScrollRight = false,
             onTabSelected = { selectedTab = it }
         )
     }
