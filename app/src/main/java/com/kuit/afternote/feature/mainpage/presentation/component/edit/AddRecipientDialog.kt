@@ -16,8 +16,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +30,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kuit.afternote.core.LabeledTextField
 import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.rememberSelectionDropdownState
 import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -53,8 +52,7 @@ private fun RelationshipDropdown(
     onValueSelected: (String) -> Unit,
     menuStyle: DropdownMenuStyle
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var boxWidth by remember { mutableStateOf(0.dp) }
+    val dropdownState = rememberSelectionDropdownState()
 
     SelectionDropdown(
         label = label,
@@ -62,10 +60,7 @@ private fun RelationshipDropdown(
         options = options,
         onValueSelected = onValueSelected,
         menuStyle = menuStyle,
-        expanded = expanded,
-        boxWidth = boxWidth,
-        onExpandedChange = { expanded = it },
-        onBoxWidthChange = { boxWidth = it }
+        state = dropdownState
     )
 }
 

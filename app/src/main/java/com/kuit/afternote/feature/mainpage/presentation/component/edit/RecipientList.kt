@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.model.RecipientCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -47,28 +48,18 @@ import com.kuit.afternote.ui.theme.White
  * - 수신자 아이템 리스트
  * - 하단 중앙에 추가 버튼 (파란 원형 버튼)
  */
-@Suppress("LongParameterList")
 @Composable
 fun RecipientList(
     modifier: Modifier = Modifier,
     recipients: List<Recipient>,
-    onAddClick: () -> Unit = {},
-    onItemEditClick: (String) -> Unit = {},
-    onItemDeleteClick: (String) -> Unit = {},
-    onItemAdded: (String) -> Unit = {},
-    onTextFieldVisibilityChanged: (Boolean) -> Unit = {},
-    initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null,
-    state: RecipientListState = rememberRecipientListState(
-        initialShowTextField = initialShowTextField,
-        initialExpandedItemId = initialExpandedItemId
-    )
+    events: RecipientCallbacks = RecipientCallbacks(),
+    state: RecipientListState = rememberRecipientListState()
 ) {
     val focusManager = LocalFocusManager.current
 
     // 초기화: 수신자들의 expanded 상태 설정
-    androidx.compose.runtime.LaunchedEffect(recipients, initialExpandedItemId) {
-        state.initializeExpandedStates(recipients, initialExpandedItemId)
+    androidx.compose.runtime.LaunchedEffect(recipients) {
+        state.initializeExpandedStates(recipients, null)
     }
 
     Box(
@@ -116,7 +107,7 @@ fun RecipientList(
                 modifier = Modifier
                     .clickable(onClick = {
                         state.toggleTextField()
-                        onAddClick()
+                        events.onAddClick()
                     })
             )
         }
@@ -129,8 +120,8 @@ fun RecipientList(
                 itemPositions = state.itemPositions,
                 itemSizes = state.itemSizes,
                 boxPositionInRoot = state.boxPositionInRoot,
-                onItemEditClick = onItemEditClick,
-                onItemDeleteClick = onItemDeleteClick,
+                onItemEditClick = events.onItemEditClick,
+                onItemDeleteClick = events.onItemDeleteClick,
                 onExpandedStateChanged = { id, isExpanded ->
                     state.expandedStates[id] = isExpanded
                 }
@@ -220,11 +211,7 @@ private fun RecipientListPreview() {
                 Recipient("1", "김지은", "친구"),
                 Recipient("2", "박선호", "가족")
             ),
-            onAddClick = {},
-            onItemEditClick = {},
-            onItemDeleteClick = {},
-            onItemAdded = {},
-            onTextFieldVisibilityChanged = {}
+            events = RecipientCallbacks()
         )
     }
 }
