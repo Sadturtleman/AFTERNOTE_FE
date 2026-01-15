@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 
 /**
  * ProcessingMethodList의 상태를 관리하는 State Holder

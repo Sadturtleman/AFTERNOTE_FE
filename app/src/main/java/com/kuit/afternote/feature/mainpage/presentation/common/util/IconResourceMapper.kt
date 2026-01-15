@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.main
+package com.kuit.afternote.feature.mainpage.presentation.common.util
 
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.mainpage.domain.model.ServiceType

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.model
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.model
 
 import androidx.compose.runtime.Immutable
 

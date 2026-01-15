@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.model
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.model
 
 /**
  * 계정 처리 방법 라디오 버튼 옵션

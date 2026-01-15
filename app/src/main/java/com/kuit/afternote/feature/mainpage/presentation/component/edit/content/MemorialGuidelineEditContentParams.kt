@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.model
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
 import androidx.compose.runtime.Immutable
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover

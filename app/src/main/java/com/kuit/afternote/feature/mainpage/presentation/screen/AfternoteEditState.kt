@@ -13,12 +13,12 @@ import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdownState
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.model.RecipientCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 
