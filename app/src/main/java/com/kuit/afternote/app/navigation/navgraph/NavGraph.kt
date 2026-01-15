@@ -29,8 +29,8 @@ fun NavGraph(navHostController: NavHostController) {
             listOf(
                 "인스타그램" to "2023.11.24",
                 "갤러리" to "2023.11.25",
-                "갤러리" to "2023.11.26",
-                "인스타그램" to "2023.11.27"
+                "추모 가이드라인" to "2023.11.26",
+                "네이버 메일" to "2023.11.27"
             )
         )
     }

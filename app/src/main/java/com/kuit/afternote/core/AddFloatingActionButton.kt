@@ -44,7 +44,7 @@ fun BoxScope.AddFloatingActionButton(
             ).clickable(onClick = onClick)
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_add_circle_fab),
+            painter = painterResource(R.drawable.ic_add_circle_fab_no_padding),
             contentDescription = "새 애프터노트 추가"
         )
     }

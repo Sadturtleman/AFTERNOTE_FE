@@ -45,7 +45,7 @@ fun HeroCard() {
             )
     ) {
         Image(
-            painter = painterResource(R.drawable.hero_background),
+            painter = painterResource(R.drawable.img_hero_background),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
