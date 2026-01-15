@@ -72,9 +72,9 @@ fun AfternoteMainRoute(
  */
 @Composable
 fun AfternoteMainScreen(
+    modifier: Modifier = Modifier,
     uiState: AfternoteMainUiState,
-    onEvent: (AfternoteMainEvent) -> Unit,
-    modifier: Modifier = Modifier
+    onEvent: (AfternoteMainEvent) -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -120,8 +120,12 @@ fun AfternoteMainScreen(
                     AfternoteContent(
                         selectedTab = uiState.selectedTab,
                         items = uiState.items,
+                        canScrollRight = uiState.canScrollRight,
                         onTabSelected = { onEvent(AfternoteMainEvent.SelectTab(it)) },
-                        onItemClick = { onEvent(AfternoteMainEvent.ClickItem(it)) }
+                        onItemClick = { onEvent(AfternoteMainEvent.ClickItem(it)) },
+                        onScrollStateChanged = { canScroll ->
+                            onEvent(AfternoteMainEvent.UpdateScrollState(canScroll))
+                        }
                     )
                 }
             }
@@ -142,12 +146,16 @@ fun AfternoteMainScreen(
 private fun AfternoteContent(
     selectedTab: AfternoteTab,
     items: List<AfternoteItem>,
+    canScrollRight: Boolean,
     onTabSelected: (AfternoteTab) -> Unit,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    onScrollStateChanged: (Boolean) -> Unit
 ) {
     AfternoteTabRow(
         selectedTab = selectedTab,
-        onTabSelected = onTabSelected
+        canScrollRight = canScrollRight,
+        onTabSelected = onTabSelected,
+        onScrollStateChanged = onScrollStateChanged
     )
 
     Spacer(modifier = Modifier.height(height = 20.dp))

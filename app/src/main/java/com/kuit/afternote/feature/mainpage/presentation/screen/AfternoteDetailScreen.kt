@@ -19,10 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -33,7 +30,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
@@ -68,18 +64,15 @@ fun AfternoteDetailScreen(
     userName: String = "서영",
     onBackClick: () -> Unit,
     onEditClick: () -> Unit,
-    onDeleteConfirm: () -> Unit = {}
+    onDeleteConfirm: () -> Unit = {},
+    state: AfternoteDetailState = rememberAfternoteDetailState()
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
-    var showDropdownMenu by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
-    if (showDeleteDialog) {
+    if (state.showDeleteDialog) {
         DeleteConfirmDialog(
             serviceName = serviceName,
-            onDismiss = { showDeleteDialog = false },
+            onDismiss = state::hideDeleteDialog,
             onConfirm = {
-                showDeleteDialog = false
+                state.hideDeleteDialog()
                 onDeleteConfirm()
             }
         )
@@ -89,8 +82,8 @@ fun AfternoteDetailScreen(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = state.selectedBottomNavItem,
+                onItemSelected = state::onBottomNavItemSelected
             )
         }
     ) { paddingValues ->
@@ -105,7 +98,7 @@ fun AfternoteDetailScreen(
                 Header(
                     title = "",
                     onBackClick = onBackClick,
-                    onEditClick = { showDropdownMenu = !showDropdownMenu }
+                    onEditClick = state::toggleDropdownMenu
                 )
 
                 Column(
@@ -264,14 +257,14 @@ fun AfternoteDetailScreen(
                 }
             }
 
-            if (showDropdownMenu) {
+            if (state.showDropdownMenu) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
-                        ) { showDropdownMenu = false }
+                        ) { state.hideDropdownMenu() }
                 )
 
                 Box(
@@ -281,12 +274,12 @@ fun AfternoteDetailScreen(
                 ) {
                     EditDropdownMenu(
                         onEditClick = {
-                            showDropdownMenu = false
+                            state.hideDropdownMenu()
                             onEditClick()
                         },
                         onDeleteClick = {
-                            showDropdownMenu = false
-                            showDeleteDialog = true
+                            state.hideDropdownMenu()
+                            state.showDeleteDialog()
                         }
                     )
                 }
