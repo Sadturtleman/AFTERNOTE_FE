@@ -1,4 +1,4 @@
-﻿# AFTERNOTE-Android
+# AFTERNOTE-Android
 
 AFTERNOTE Android 개발 Repository입니다.
 
@@ -148,4 +148,40 @@ Windows에서 pre-commit hook 실행 시 `java.lang.InternalError: Error loading
 1. `npm install` 실행하여 Husky 설정 확인
 2. `.husky` 폴더의 hook 파일들이 실행 권한을 가지고 있는지 확인
 3. Git Bash 환경에서 실행 중인 경우, Eclipse Adoptium JDK 사용 확인
+
+## Cursor & Claude Code Rules 동기화
+
+이 프로젝트는 Cursor IDE와 Claude Code 간의 규칙을 공유합니다. `CLAUDE.md`는 `@` 문법을 사용하여 Cursor 규칙 파일들을 참조합니다.
+
+### 작동 방식
+
+- **Source of Truth**: `.cursorrules` 및 `.cursor/rules/*.mdc` 파일들
+- **CLAUDE.md**: 인덱스 파일로, `@파일경로` 문법으로 규칙 파일들을 참조
+- **자동 로드**: Claude Code가 `CLAUDE.md`를 읽을 때 참조된 파일들을 자동으로 읽어옴
+
+### 빠른 시작
+
+1. **수동 동기화** (규칙 파일 추가/변경 시):
+   ```bash
+   python3 scripts/sync_rules.py  # 또는 python scripts/sync_rules.py
+   ```
+
+2. **자동 동기화 설정** (커밋 시 자동 실행):
+   ```bash
+   # Unix/Mac/Linux
+   bash scripts/setup-git-hooks.sh
+   
+   # Windows (PowerShell)
+   powershell -ExecutionPolicy Bypass -File scripts/setup-git-hooks.ps1
+   ```
+
+### 규칙 수정 방법
+
+⚠️ **중요**: 규칙을 수정할 때는 **반드시** 다음 파일들만 수정하세요:
+- `.cursorrules` - 핵심 규칙 요약
+- `.cursor/rules/**/*.mdc` - 상세 규칙 파일들
+
+**절대 `CLAUDE.md`를 직접 수정하지 마세요!** 이 파일은 자동 생성되는 인덱스 파일입니다.
+
+자세한 내용은 [규칙 동기화 문서](docs/cursor-claude-rules-sync.md)를 참고하세요.
 
