@@ -157,7 +157,7 @@ fun AfterNoteScreen() {
                     desc = "고인의 일상적인 생각과 감정, 일기들입니다.",
                     subDesc = "150개 마음의 기록이 있습니다.",
                     btnText = "마음의 기록 확인하러 가기",
-                    imageResource = painterResource(R.drawable.book)
+                    imageResource = painterResource(R.drawable.img_book)
                 )
             }
 
@@ -167,7 +167,7 @@ fun AfterNoteScreen() {
                     desc = "고인이 특별한 날에 작성한 편지입니다.",
                     subDesc = "30개 라이프 이벤트 레터가 있습니다.",
                     btnText = "라이프 이벤트 레터 확인하러 가기",
-                    imageResource = painterResource(R.drawable.letter)
+                    imageResource = painterResource(R.drawable.img_letter)
                 )
             }
 
@@ -177,7 +177,7 @@ fun AfterNoteScreen() {
                     desc = "고인이 사후 정리하고자 하는 데이터입니다.",
                     subDesc = "10개의 애프터노트가 있습니다.",
                     btnText = "애프터노트 확인하러 가기",
-                    imageResource = painterResource(R.drawable.notebook)
+                    imageResource = painterResource(R.drawable.img_notebook)
                 )
             }
 

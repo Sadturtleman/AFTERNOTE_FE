@@ -84,7 +84,7 @@ fun AfterNoteMainScreen(title: String) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.profile),
+                        painter = painterResource(R.drawable.img_profile_placeholder),
                         contentDescription = null,
                         modifier = Modifier.size(140.dp)
                     )

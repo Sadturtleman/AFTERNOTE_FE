@@ -53,7 +53,7 @@ fun ReceiverDetailScreen(
                 .padding(horizontal = 20.dp)
         ) {
             Icon(
-                painter = painterResource(R.drawable.profile),
+                painter = painterResource(R.drawable.img_profile_placeholder),
                 contentDescription = null,
                 modifier = Modifier.size(130.dp),
                 tint = Color.White
