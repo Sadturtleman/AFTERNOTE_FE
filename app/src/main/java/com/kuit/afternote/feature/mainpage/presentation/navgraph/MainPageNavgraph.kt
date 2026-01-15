@@ -6,9 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.navigation.MainPageNavigator
+import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
@@ -34,18 +35,18 @@ fun NavGraphBuilder.mainPageNavGraph(
     mainPageNavigator: MainPageNavigator
 ) {
     mainPageComposable<MainPageRoute.MainEmptyRoute> {
-        AfternoteMainScreen(
-            afternoteItems = emptyList(),
-            onItemClick = { navController.navigate(MainPageRoute.DetailRoute) },
-            onAddClick = { navController.navigate(MainPageRoute.EditRoute) }
+        AfternoteMainRoute(
+            onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
+            onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
+            initialItems = emptyList()
         )
     }
 
     mainPageComposable<MainPageRoute.MainWithItemsRoute> {
-        AfternoteMainScreen(
-            afternoteItems = afternoteItems,
-            onItemClick = { navController.navigate(MainPageRoute.DetailRoute) },
-            onAddClick = { navController.navigate(MainPageRoute.EditRoute) }
+        AfternoteMainRoute(
+            onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
+            onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
+            initialItems = AfternoteItemMapper.toAfternoteItems(afternoteItems)
         )
     }
 
@@ -64,7 +65,7 @@ fun NavGraphBuilder.mainPageNavGraph(
                 val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                 val currentDate = dateFormat.format(Date())
 
-                // 목록에 추가
+                // 목록에 추가 (레거시 형식 유지)
                 val newItem = selectedService to currentDate
                 val updatedItems = afternoteItems + newItem
                 onItemsUpdated(updatedItems)
