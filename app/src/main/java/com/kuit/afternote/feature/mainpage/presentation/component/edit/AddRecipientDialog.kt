@@ -188,7 +188,7 @@ fun AddRecipientDialog(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight(400),
+                    fontWeight = FontWeight.Normal,
                     color = Gray9,
                 )
             )

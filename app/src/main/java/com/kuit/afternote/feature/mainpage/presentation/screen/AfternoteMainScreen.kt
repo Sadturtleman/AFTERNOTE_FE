@@ -39,6 +39,7 @@ import com.kuit.afternote.ui.theme.Spacing
 fun AfternoteMainRoute(
     viewModel: AfternoteMainViewModel = viewModel(),
     onNavigateToDetail: () -> Unit = {},
+    onNavigateToGalleryDetail: () -> Unit = {},
     onNavigateToAdd: () -> Unit = {},
     initialItems: List<AfternoteItem> = emptyList()
 ) {
@@ -55,7 +56,16 @@ fun AfternoteMainRoute(
         uiState = uiState,
         onEvent = { event ->
             when (event) {
-                is AfternoteMainEvent.ClickItem -> onNavigateToDetail()
+                is AfternoteMainEvent.ClickItem -> {
+                    // 아이템 ID로 아이템 찾기
+                    val item = uiState.items.find { it.id == event.itemId }
+                    // 서비스명이 "갤러리"인 경우 갤러리 상세 화면으로 이동
+                    if (item?.serviceName == "갤러리") {
+                        onNavigateToGalleryDetail()
+                    } else {
+                        onNavigateToDetail()
+                    }
+                }
                 is AfternoteMainEvent.ClickAdd -> onNavigateToAdd()
                 else -> viewModel.onEvent(event)
             }

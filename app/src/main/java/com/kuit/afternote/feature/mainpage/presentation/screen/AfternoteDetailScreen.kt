@@ -120,7 +120,7 @@ fun AfternoteDetailScreen(
                             fontSize = 18.sp,
                             lineHeight = 24.sp,
                             fontFamily = Sansneo,
-                            fontWeight = FontWeight(700),
+                            fontWeight = FontWeight.Bold,
                             color = Gray9
                         )
                     )
@@ -138,7 +138,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 10.sp,
                                         lineHeight = 16.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(400),
+                                        fontWeight = FontWeight.Normal,
                                         color = Gray6
                                     )
                                 )
@@ -154,7 +154,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -174,7 +174,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     ),
                                 )
@@ -207,7 +207,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -234,7 +234,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -247,7 +247,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 14.sp,
                                         lineHeight = 20.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(400),
+                                        fontWeight = FontWeight.Normal,
                                         color = Gray9
                                     )
                                 )

@@ -11,6 +11,9 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScre
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -37,6 +40,7 @@ fun NavGraphBuilder.mainPageNavGraph(
     mainPageComposable<MainPageRoute.MainEmptyRoute> {
         AfternoteMainRoute(
             onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
+            onNavigateToGalleryDetail = { navController.navigate(MainPageRoute.GalleryDetailRoute) },
             onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
             initialItems = emptyList()
         )
@@ -45,6 +49,7 @@ fun NavGraphBuilder.mainPageNavGraph(
     mainPageComposable<MainPageRoute.MainWithItemsRoute> {
         AfternoteMainRoute(
             onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
+            onNavigateToGalleryDetail = { navController.navigate(MainPageRoute.GalleryDetailRoute) },
             onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
             initialItems = AfternoteItemMapper.toAfternoteItems(afternoteItems)
         )
@@ -54,6 +59,16 @@ fun NavGraphBuilder.mainPageNavGraph(
         AfternoteDetailScreen(
             onBackClick = { navController.popBackStack() },
             onEditClick = { navController.navigate(MainPageRoute.EditRoute) }
+        )
+    }
+
+    mainPageComposable<MainPageRoute.GalleryDetailRoute> {
+        GalleryDetailScreen(
+            detailState = GalleryDetailState(),
+            callbacks = GalleryDetailCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onEditClick = { navController.navigate(MainPageRoute.EditRoute) }
+            )
         )
     }
 

@@ -66,8 +66,8 @@ class AfternoteEditState(
 
     // Recipients
     private val initialRecipients = listOf(
-        Recipient("1", "김지은", "친구"),
-        Recipient("2", "박선호", "가족")
+        Recipient(id = "1", name = "김지은", label = "친구"),
+        Recipient(id = "2", name = "박선호", label = "가족")
     )
     var recipients by mutableStateOf(initialRecipients)
         private set
