@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.mainpage.presentation.util.getIconResForTitle
+import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
+import com.kuit.afternote.feature.mainpage.presentation.main.IconResourceMapper
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black
@@ -46,18 +46,16 @@ import com.kuit.afternote.ui.theme.White
  * 피그마 디자인:
  * - 흰색 배경, 둥근 모서리 16dp
  * - 왼쪽: 아이콘 (40x40)
- * - 중간: 제목, 날짜
+ * - 중간: 서비스명, 날짜
  * - 오른쪽: 화살표 버튼 (24x24, 파란색)
  */
 @Composable
 fun AfternoteListItem(
     modifier: Modifier = Modifier,
-    title: String,
-    date: String,
-    imageRes: Int? = null,
-    iconVector: ImageVector? = null,
+    item: AfternoteItem,
     onClick: () -> Unit = {}
 ) {
+    val imageRes = IconResourceMapper.getIconResForServiceType(item.type)
     val shape = RoundedCornerShape(16.dp)
 
     Surface(
@@ -90,33 +88,15 @@ fun AfternoteListItem(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            when {
-                                iconVector != null -> LightBlue
-                                imageRes != null -> Color.Transparent
-                                else -> LightBlue
-                            }
-                        ),
+                        .background(Color.Transparent),
                     contentAlignment = Alignment.Center
                 ) {
-                    when {
-                        iconVector != null -> {
-                            Icon(
-                                imageVector = iconVector,
-                                contentDescription = null,
-                                tint = B2,
-                                modifier = Modifier.size(40.dp)
-                            )
-                        }
-                        imageRes != null -> {
-                            Image(
-                                painter = painterResource(imageRes),
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp),
-                                contentScale = ContentScale.FillBounds
-                            )
-                        }
-                    }
+                    Image(
+                        painter = painterResource(imageRes),
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        contentScale = ContentScale.FillBounds
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -127,7 +107,7 @@ fun AfternoteListItem(
                         .weight(1f)
                 ) {
                     Text(
-                        text = title,
+                        text = item.serviceName,
                         color = Black,
                         fontSize = 16.sp,
                         fontFamily = Sansneo,
@@ -137,7 +117,7 @@ fun AfternoteListItem(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "최종 작성일 $date",
+                        text = "최종 작성일 ${item.date}",
                         color = Gray5,
                         fontSize = 10.sp,
                         fontFamily = Sansneo,
@@ -157,7 +137,7 @@ fun AfternoteListItem(
                         .background(B2)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_arrow_forward),
+                        painter = painterResource(R.drawable.ic_arrow_forward_b2),
                         contentDescription = null,
                         modifier = Modifier
                             .size(6.dp, 12.dp)
@@ -174,15 +154,21 @@ fun AfternoteListItem(
 private fun AfternoteListItemPreview() {
     Column {
         AfternoteListItem(
-            title = "인스타그램",
-            date = "2023.11.24",
-            imageRes = getIconResForTitle("인스타그램")
+            item = AfternoteItem(
+                id = "1",
+                serviceName = "인스타그램",
+                date = "2023.11.24",
+                type = com.kuit.afternote.feature.mainpage.domain.model.ServiceType.SOCIAL_NETWORK
+            )
         )
         Spacer(modifier = Modifier.height(8.dp))
         AfternoteListItem(
-            title = "갤러리",
-            date = "2023.11.25",
-            imageRes = getIconResForTitle("갤러리")
+            item = AfternoteItem(
+                id = "2",
+                serviceName = "갤러리",
+                date = "2023.11.25",
+                type = com.kuit.afternote.feature.mainpage.domain.model.ServiceType.GALLERY_AND_FILES
+            )
         )
     }
 }

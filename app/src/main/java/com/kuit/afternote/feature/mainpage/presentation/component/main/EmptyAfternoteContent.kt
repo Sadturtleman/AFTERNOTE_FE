@@ -32,7 +32,7 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_empty_state),
+            painter = painterResource(R.drawable.img_empty_state),
             contentDescription = "빈 애프터노트",
             modifier = Modifier
                 .width(106.dp)
