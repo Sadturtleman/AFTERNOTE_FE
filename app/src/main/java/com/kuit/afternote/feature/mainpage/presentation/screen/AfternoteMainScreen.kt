@@ -25,12 +25,9 @@ import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainEvent
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainUiState
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainViewModel
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 

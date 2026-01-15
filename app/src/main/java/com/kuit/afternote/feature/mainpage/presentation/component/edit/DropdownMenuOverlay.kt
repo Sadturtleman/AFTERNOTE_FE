@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
-import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**

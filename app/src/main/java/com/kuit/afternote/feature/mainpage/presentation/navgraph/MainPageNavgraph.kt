@@ -6,9 +6,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.navigation.MainPageNavigator
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.ui.theme.AfternoteTheme

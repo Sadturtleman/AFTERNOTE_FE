@@ -14,13 +14,12 @@ import com.kuit.afternote.core.MessageTextField
 import com.kuit.afternote.core.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.RecipientList
-import com.kuit.afternote.feature.mainpage.presentation.model.GalleryAndFileEditContentParams
-import com.kuit.afternote.feature.mainpage.presentation.model.InfoMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 

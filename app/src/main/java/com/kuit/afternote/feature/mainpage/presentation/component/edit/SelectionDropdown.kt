@@ -107,9 +107,9 @@ fun SelectionDropdown(
                     .onGloballyPositioned { coordinates ->
                         val newWidth = with(density) { coordinates.size.width.toDp() }
                         if (newWidth != state.boxWidth) {
-                            state.setBoxWidth(newWidth)
+                            state.boxWidth = newWidth
                         }
-                    }.clickable { state.setExpanded(!state.expanded) }
+                    }.clickable { state.expanded = !state.expanded }
                     .bottomBorder(color = Gray3, width = 0.5.dp)
                     .padding(all = 8.dp)
             ) {
@@ -139,13 +139,13 @@ fun SelectionDropdown(
             // 드롭다운 메뉴
             DropdownMenu(
                 expanded = state.expanded,
-                onDismissRequest = { state.setExpanded(false) },
+                onDismissRequest = { state.expanded = false },
                 offset = DpOffset(x = 0.dp, y = menuStyle.menuOffset),
                 containerColor = menuStyle.menuBackgroundColor,
                 shadowElevation = menuStyle.shadowElevation,
                 tonalElevation = menuStyle.tonalElevation,
                 modifier = Modifier
-                    .then(if (boxWidth > 0.dp) Modifier.width(boxWidth) else Modifier.fillMaxWidth())
+                    .then(if (state.boxWidth > 0.dp) Modifier.width(state.boxWidth) else Modifier.fillMaxWidth())
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
@@ -165,7 +165,7 @@ fun SelectionDropdown(
                         },
                         onClick = {
                             onValueSelected(option)
-                            state.setExpanded(false)
+                            state.expanded = false
                         },
                         contentPadding = PaddingValues(vertical = 16.dp)
                     )

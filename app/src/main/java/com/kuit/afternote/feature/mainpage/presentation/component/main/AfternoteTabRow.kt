@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ArrowIconSpec
 import com.kuit.afternote.core.CircleArrowIcon
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1

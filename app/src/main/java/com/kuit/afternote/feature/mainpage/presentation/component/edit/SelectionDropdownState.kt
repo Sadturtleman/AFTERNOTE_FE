@@ -19,24 +19,8 @@ class SelectionDropdownState(
     initialBoxWidth: Dp = 0.dp
 ) {
     var expanded by mutableStateOf(initialExpanded)
-        private set
 
     var boxWidth by mutableStateOf(initialBoxWidth)
-        private set
-
-    /**
-     * 드롭다운 열림/닫힘 상태 변경
-     */
-    fun setExpanded(expanded: Boolean) {
-        this.expanded = expanded
-    }
-
-    /**
-     * 박스 너비 업데이트
-     */
-    fun setBoxWidth(width: Dp) {
-        this.boxWidth = width
-    }
 }
 
 /**

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.model
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.model
 
 /**
  * 처리 방법 옵션 인터페이스

@@ -15,10 +15,9 @@ import com.kuit.afternote.core.MessageTextField
 import com.kuit.afternote.core.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountSection
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.model.SocialNetworkEditContentParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodListParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
