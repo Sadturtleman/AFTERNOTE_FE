@@ -24,6 +24,9 @@ import com.kuit.afternote.core.Header
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
@@ -103,6 +106,18 @@ fun AfternoteEditScreen(
                                     onImportContactsClick = {
                                         // TODO: 연락처 가져오기 로직
                                     }
+                                )
+                            )
+                        )
+                    }
+
+                    DialogType.CUSTOM_SERVICE -> {
+                        CustomServiceDialog(
+                            params = CustomServiceDialogParams(
+                                serviceNameState = state.customServiceNameState,
+                                callbacks = CustomServiceDialogCallbacks(
+                                    onDismiss = state::dismissDialog,
+                                    onAddClick = state::onAddCustomService
                                 )
                             )
                         )

@@ -98,10 +98,10 @@ fun LabeledTextField(
                 Text(
                     text = placeholder,
                     fontSize = 16.sp,
+                    lineHeight = 20.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Normal,
-                    color = Gray4,
-                    lineHeight = 20.sp
+                    color = Gray4
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
