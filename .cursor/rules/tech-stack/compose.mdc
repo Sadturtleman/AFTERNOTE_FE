@@ -1,0 +1,105 @@
+---
+description: Jetpack Compose 코딩 규칙 및 패턴
+globs: **/*.kt
+alwaysApply: true
+---
+
+# Jetpack Compose Rules (Compose 규칙)
+
+## Composable Functions
+
+### 1. State Hoisting
+상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향).
+- **완전한 State Hoisting**: 화면 내부의 **모든 상태**(탭 선택, 네비게이션 아이템 선택 등)는 ViewModel로 이동해야 합니다.
+- **로컬 상태 금지**: Composable 내부에서 `remember { mutableStateOf() }`로 상태를 관리하지 말고, ViewModel의 State로 관리하세요.
+- **하단 네비게이션 상태도 ViewModel로**: `BottomNavigationBar`의 `selectedItem` 상태도 ViewModel의 `UiState`에 포함시켜야 합니다.
+
+<rule id="compose_state_hoisting">
+<description>상태 호이스팅을 통해 컴포저블을 재사용 가능하게 만드세요.</description>
+<bad_example>
+@Composable
+fun MyScreen() {
+    var selectedTab by remember { mutableStateOf(Tab.ALL) }
+    var selectedNavItem by remember { mutableStateOf(NavItem.HOME) }
+    // 로컬 상태 사용 - 재사용 불가능
+}
+</bad_example>
+<good_example>
+@Composable
+fun MyRoute(viewModel: MyViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    MyScreen(uiState = uiState, onEvent = viewModel::onEvent)
+}
+
+@Composable
+fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
+    // 모든 상태는 파라미터로 받음 - 재사용 가능
+}
+</good_example>
+</rule>
+
+### 2. Lifecycle-aware State Collection
+- **❌ Deprecated**: `collectAsState()` 사용 금지 (메모리 누수 위험)
+- **✅ 권장**: `androidx.lifecycle.compose.collectAsStateWithLifecycle()` 사용
+- **Import**: `import androidx.lifecycle.compose.collectAsStateWithLifecycle` (필수)
+
+### 3. Modifier
+모든 Composable 함수는 `modifier: Modifier = Modifier`를 첫 번째 선택적 파라미터로 받아야 합니다.
+
+### 4. Preview (필수)
+**모든 public Composable 함수는 반드시 `@Preview` 어노테이션을 사용한 Preview 함수를 포함해야 합니다.**
+- Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다.
+- 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등).
+
+## File Structure
+- **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다.
+- **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
+- **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다.
+
+## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
+
+### 핵심 규칙
+1. **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
+2. **Padding과 Spacing**: `weight`을 사용한 가변 패딩/간격 적용
+   - 화면 가장자리 padding: 고정값 허용 (예: `padding(horizontal = 20.dp)`)
+   - **내부 간격**: `Spacer(Modifier.weight())` 사용하여 화면 크기에 따라 동적 조정
+   - 작은 간격(8dp 이하): 고정값 허용 (예: `Spacer(Modifier.height(8.dp))`)
+3. **공통 컴포넌트 오버로딩**: 비슷한 컴포넌트는 오버로딩으로 재사용
+
+### 적용 우선순위
+1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 사용
+   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
+2. **중간 간격 (8-24dp)**: 상황에 따라 weight 또는 고정값
+3. **작은 간격 (8dp 이하)**: 고정값 허용
+4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지)
+5. **컴포넌트 크기**: 항상 고정 dp 값 사용
+
+## State Holder 패턴 (Cognitive Complexity 해결) - Critical
+- **목표**: SonarQube 인지 복잡도(Cognitive Complexity)를 15 이하로 유지
+- **핵심 원칙**: "로직과 상태를 Composable에서 분리해내는 것(State Holder 패턴)"
+- **필수 적용 규칙**:
+  1. **State 클래스 생성**: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
+  2. **로직 캡슐화**: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
+  3. **Computed Properties**: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
+  4. **콜백 람다 제거**: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
+  5. **함수 참조 사용**: State의 메서드는 함수 참조(`::`)로 전달
+  6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
+  7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
+
+## Parameter Refactoring Pattern (LongParameterList 해결) - Critical
+- **문제**: Composable 함수에 10개 이상의 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것은 부족함
+- **올바른 접근**: 다음 패턴을 순서대로 적용
+  1. **공통 섹션 추출**: 여러 화면에서 동일하게 사용되는 섹션은 별도 클래스로 추출
+  2. **섹션별 그룹화**: UI 섹션 단위로 상태(State)와 액션(Actions)을 함께 묶기
+  3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
+  4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
+  5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
+
+## Slot API 패턴 (Composition over Inheritance) - Critical
+- **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.
+- **원칙**: "공통 껍데기를 제공하고, 내용물은 호출부에서 주입받는다"
+- **구현 방법**:
+  1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
+  2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
+  3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
+  4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지

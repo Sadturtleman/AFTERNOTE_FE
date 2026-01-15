@@ -1,0 +1,104 @@
+---
+description: Android/Kotlin 코딩 컨벤션 및 Import 규칙
+globs: **/*.kt
+alwaysApply: true
+---
+
+# Android/Kotlin 코딩 규칙
+
+## Import Rules (임포트 규칙) - Critical
+
+### 1. Always Include Full Import Statements
+- **ALWAYS include full import statements** for every class, function, and extension used in the code snippet.
+- Android Studio는 종종 확장 함수와 Compose delegate의 자동 임포트에 실패합니다.
+
+### 2. Explicitly Import Extension Functions
+- **Never assume extension functions are globally available.** Always add the import line explicitly.
+- 다음 확장 함수들은 자동 임포트되지 않으므로 명시적으로 임포트해야 합니다:
+  - `androidx.core.view.isVisible` → `import androidx.core.view.isVisible`
+  - `androidx.lifecycle.compose.collectAsStateWithLifecycle` → `import androidx.lifecycle.compose.collectAsStateWithLifecycle` (**필수**: StateFlow 수집 시)
+  - `androidx.lifecycle.viewmodel.compose.viewModel` → `import androidx.lifecycle.viewmodel.compose.viewModel` (**필수**: ViewModel 주입 시, `hiltViewModel()` 대신 사용)
+  - `androidx.compose.ui.platform.LocalContext` → `import androidx.compose.ui.platform.LocalContext`
+  - `androidx.compose.ui.platform.LocalDensity` → `import androidx.compose.ui.platform.LocalDensity`
+  - `androidx.compose.ui.platform.LocalFocusManager` → `import androidx.compose.ui.platform.LocalFocusManager`
+- **중요**: `androidx.hilt.navigation.compose.hiltViewModel`은 **절대 사용하지 마세요** (Deprecated).
+
+### 3. Jetpack Compose Imports
+- **Always import `androidx.compose.runtime.*` delegates when using `by` keyword:**
+  - `import androidx.compose.runtime.getValue`
+  - `import androidx.compose.runtime.setValue`
+  - `import androidx.compose.runtime.remember`
+- **Avoid wildcard imports** (e.g., `import androidx.compose.material3.*`) unless strictly necessary.
+
+### 4. Standard Import Rules
+- **NEVER import `android.R`**: 절대 `android.R`을 임포트하지 마세요. 항상 애플리케이션 패키지의 `R` 클래스를 사용하세요 (예: `com.kuit.afternote.R`).
+- **NO Wildcard Imports**: `import java.util.*` 같은 와일드카드 임포트를 사용하지 마세요. 명시적으로 특정 클래스를 임포트하세요.
+- **Prefer AndroidX**: 항상 레거시 `android.support.*` 패키지보다 `androidx.*` 패키지를 선호하세요.
+
+### 5. No Hallucinated Imports
+- **Do not invent extension functions** that do not exist in standard AndroidX libraries.
+- **Verify existence**: Before generating code, verify that all imported classes/functions exist in:
+  - Standard Android SDK
+  - Commonly used libraries (Hilt, Retrofit, Room, Compose, etc.)
+
+## Dependency Injection (Hilt)
+
+### ViewModel 주입 (Compose)
+- **절대 `androidx.hilt.navigation.compose.hiltViewModel()`을 사용하지 마세요.**
+- **Deprecated**: `hiltViewModel()`은 Hilt 1.2.0+ 및 Navigation 2.8.0+에서 deprecated 되었습니다.
+- **올바른 방법**: `androidx.lifecycle.viewmodel.compose.viewModel()`을 사용하세요.
+- `@HiltViewModel`이 붙은 클래스는 `viewModel()` 함수가 자동으로 Hilt Factory를 사용하여 주입을 처리합니다.
+- **Import**: `import androidx.lifecycle.viewmodel.compose.viewModel`
+
+<rule id="hilt_viewmodel_injection">
+<description>Hilt ViewModel 주입은 viewModel() 함수를 사용하세요. hiltViewModel()은 deprecated입니다.</description>
+<bad_example>
+import androidx.hilt.navigation.compose.hiltViewModel
+
+@Composable
+fun MyRoute(viewModel: MyViewModel = hiltViewModel()) {
+    // Deprecated API 사용
+}
+</bad_example>
+<good_example>
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+@Composable
+fun MyRoute(viewModel: MyViewModel = viewModel()) {
+    // 최신 API 사용
+}
+</good_example>
+</rule>
+
+### Constructor Injection
+- 가능한 모든 클래스(`RepositoryImpl`, `UseCase`, `ViewModel`)는 생성자 주입(`@Inject constructor`)을 사용합니다.
+- `@HiltViewModel`을 사용하고, `SavedStateHandle`이 필요한 경우 생성자에 포함합니다.
+
+## Navigation Rules
+
+### Type-Safe Navigation
+1. **Serializable Routes**: 모든 Route는 `kotlinx.serialization`의 `@Serializable` 어노테이션을 사용한 `sealed interface` 또는 `sealed class`로 정의합니다.
+   - 문자열 하드코딩(예: "home/{id}")은 금지합니다.
+
+2. **Domain Navigation (도메인 간 네비게이션)**
+   - **다른 도메인으로 navigate 할 때는 인터페이스를 사용하세요.**
+   - navgraph 내부에서 다른 도메인을 직접 아는 것은 지양합니다.
+   - 각 도메인은 자신의 Navigator 인터페이스를 정의하고, 구현체는 app 레벨에서 생성합니다.
+
+## Kotlin & Compose Style
+- 가능한 한 `var`보다 `val`을 사용하세요.
+- Jetpack Compose에서 `Modifier` 체이닝 순서를 선호하세요: Size -> Layout -> Drawing -> Event Listeners.
+- 기본적으로 Material3 디자인 시스템 컴포넌트를 사용하세요.
+- Coroutines: ViewModel에서는 `viewModelScope`를, Fragments/Activities에서는 `LifecycleScope`를 사용하세요.
+
+## Resource Management
+
+### Drawable
+- 아이콘은 `Icon` 컴포저블을 사용하고, `contentDescription`을 반드시 지정합니다.
+- 이미지 리소스 사용 시 `painterResource(R.drawable.name)`을 사용합니다.
+- SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다.
+- drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다.
+
+### Strings
+- 모든 UI 텍스트는 `strings.xml`에 정의하여 사용합니다 (`stringResource(R.string.key)`).
+- 하드코딩된 문자열은 금지합니다.

@@ -1,0 +1,47 @@
+---
+description: Clean Architecture 및 계층 분리 규칙
+globs: **/*.kt
+alwaysApply: true
+---
+
+# Architecture Rules (아키텍처 규칙)
+
+## Layer Separation (계층 분리)
+모든 Feature 모듈은 아래 3계층을 엄격히 준수해야 합니다.
+
+1. **Domain Layer** (Pure Kotlin)
+   - 외부 의존성(Android Framework, Data Layer 등)을 가지지 않습니다.
+   - `Entity`, `Repository Interface`, `UseCase`가 위치합니다.
+   - 비즈니스 로직의 핵심입니다.
+
+2. **Data Layer**
+   - Domain Layer의 `Repository`를 구현(`Impl`)합니다.
+   - API 호출, DB 접근, DTO 매핑을 담당합니다.
+   - `Mapper`를 통해 DTO를 Domain Entity로 변환하여 반환합니다.
+
+3. **Presentation Layer**
+   - UI (`Screen`, `Component`)와 상태 관리 (`ViewModel`)를 담당합니다.
+   - Domain Layer의 `UseCase`를 주입받아 비즈니스 로직을 수행합니다.
+   - `UiModel`을 정의하여 UI에 필요한 데이터만 가공해 보여줍니다.
+
+## Dependency Flow (의존성 방향)
+- **Correct**: Presentation → Domain ← Data
+- **Incorrect**: Domain → Data (X), Domain → Presentation (X)
+
+## Component Location Rules (컴포넌트 위치 결정 규칙) - Critical
+- **핵심 원칙**: Feature 모듈 간 직접 의존은 절대 금지됩니다. Feature A가 Feature B의 컴포넌트를 직접 참조하면 순환 참조 위험과 클린 아키텍처 위반이 발생합니다.
+- **Core 모듈로 이동 기준**:
+  * **2개 이상의 Feature에서 사용될 가능성이 있는가?** (YES)
+  * **도메인 로직이나 특정 화면 상태에 의존하지 않는가?** (순수 UI 컴포넌트인가? YES)
+  * **브랜드 아이덴티티(디자인 시스템)의 일부인가?** (버튼, 텍스트 필드, 헤더 등)
+- **Feature 내부에 유지 (`feature/xxx/component/common`)**:
+  * 해당 Feature의 여러 화면(Screen)에서만 공유되고, 다른 Feature에서는 절대 쓰일 일이 없는 경우
+  * 특정 Feature의 도메인 데이터(예: `Album`, `Song`)를 파라미터로 받는 경우
+- **마이그레이션 전략**:
+  1. 패키지 이동: `feature/mainpage/.../common/` → `core/`
+  2. 의존성 확인: 이동한 컴포넌트가 `mainpage`만의 리소스나 도메인 모델을 참조하는지 확인
+  3. Import 경로 수정: 모든 사용처의 import 경로를 `core`로 변경
+  4. 빌드 테스트: 앱 전체를 빌드하여 깨지는 곳이 없는지 확인
+- **예시**:
+  * `Header`, `LabeledTextField`, `MessageTextField`, `RequiredLabel` → **Core로 이동** (다른 Feature에서도 필요)
+  * `InfoCard`, `InfoRow` (detail 전용) → **Feature 내부 유지** (나중에 필요해지면 그때 이동)
