@@ -44,94 +44,107 @@ fun DeleteConfirmDialog(
             dismissOnClickOutside = true
         )
     ) {
-        Column(
+        DeleteConfirmDialogContent(
+            serviceName = serviceName,
+            onDismiss = onDismiss,
+            onConfirm = onConfirm
+        )
+    }
+}
+
+@Composable
+fun DeleteConfirmDialogContent(
+    serviceName: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .dropShadow(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Black.copy(alpha = 0.15f),
+                blur = 10.dp,
+                offsetX = 0.dp,
+                offsetY = 2.dp,
+                spread = 0.dp
+            ).clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(horizontal = 33.dp, vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
+                "\n삭제 시, 되돌릴 수 없습니다.",
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = TextPrimary,
+                textAlign = TextAlign.Center
+            ),
             modifier = Modifier
-                .fillMaxWidth()
-                .dropShadow(
-                    shape = RoundedCornerShape(16.dp),
-                    color = Color.Black.copy(alpha = 0.15f),
-                    blur = 10.dp,
-                    offsetX = 0.dp,
-                    offsetY = 2.dp,
-                    spread = 0.dp
-                ).clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .padding(horizontal = 33.dp, vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(
+                    bottom = 20.dp
+                )
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
-                    "\n삭제 시, 되돌릴 수 없습니다.",
+                text = "아니요",
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 22.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary,
+                    color = Gray9,
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier
-                    .padding(
-                        bottom = 20.dp
-                    )
+                    .width(136.dp)
+                    .dropShadow(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.Black.copy(alpha = 0.05f),
+                        blur = 5.dp,
+                        offsetX = 0.dp,
+                        offsetY = 2.dp,
+                        spread = 0.dp
+                    ).clip(RoundedCornerShape(8.dp))
+                    .background(Gray3)
+                    .clickable(onClick = onDismiss)
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .weight(1f)
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "아니요",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    ),
-                    modifier = Modifier
-                        .width(136.dp)
-                        .dropShadow(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color.Black.copy(alpha = 0.05f),
-                            blur = 5.dp,
-                            offsetX = 0.dp,
-                            offsetY = 2.dp,
-                            spread = 0.dp
-                        ).clip(RoundedCornerShape(8.dp))
-                        .background(Gray3)
-                        .clickable(onClick = onDismiss)
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
-                        .weight(1f)
-                )
-
-                Text(
-                    text = "예",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    ),
-                    modifier = Modifier
-                        .width(136.dp)
-                        .dropShadow(
-                            shape = RoundedCornerShape(8.dp),
-                            color = Color.Black.copy(alpha = 0.05f),
-                            blur = 5.dp,
-                            offsetX = 0.dp,
-                            offsetY = 2.dp,
-                            spread = 0.dp
-                        ).clip(RoundedCornerShape(8.dp))
-                        .background(B3)
-                        .clickable(onClick = onConfirm)
-                        .padding(horizontal = 20.dp, vertical = 12.dp)
-                        .weight(1f)
-                )
-            }
+            Text(
+                text = "예",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                    textAlign = TextAlign.Center
+                ),
+                modifier = Modifier
+                    .width(136.dp)
+                    .dropShadow(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.Black.copy(alpha = 0.05f),
+                        blur = 5.dp,
+                        offsetX = 0.dp,
+                        offsetY = 2.dp,
+                        spread = 0.dp
+                    ).clip(RoundedCornerShape(8.dp))
+                    .background(B3)
+                    .clickable(onClick = onConfirm)
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .weight(1f)
+            )
         }
     }
 }
