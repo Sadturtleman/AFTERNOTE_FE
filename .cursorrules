@@ -18,6 +18,12 @@
 10. **ViewModel 주입**: `androidx.lifecycle.viewmodel.compose.viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
 11. **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
 12. **`.cursorrules` 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
+13. **Named Arguments 필수**: 함수 호출 시 파라미터 이름 명시 (아래 조건 해당 시)
+   - 인자가 3개 이상인 경우
+   - Boolean, Null, 숫자 리터럴이 포함된 경우
+   - 같은 타입의 인자가 연속되는 경우
+   - Compose 함수 호출 시 (modifier 제외한 모든 인자)
+   - 예: `Recipient(id = "1", name = "김지은", label = "친구")`, `FontWeight.Medium` (NOT `FontWeight(500)`)
 
 ## MUST NOT DO (절대 금지)
 1. 커밋/푸시 자동 실행
@@ -32,6 +38,7 @@
 10. **로컬 상태 관리**: Composable 내부에서 `remember { mutableStateOf() }`로 화면 상태 관리 금지 (ViewModel로 이동)
 
 ## CRITICAL PATTERNS (핵심 패턴)
+- **Named Arguments Pattern**: 가독성과 안전성을 위해 명시적 파라미터 이름 사용. `FontWeight(500)` 대신 `FontWeight.Medium` 사용. 계산식(`Spacing.l - 8.dp`) 금지
 - **Rem-based Design**: 큰 간격(24dp+)은 `weight`, 작은 간격(8dp 이하)은 고정값, 컴포넌트 크기는 항상 고정 dp
 - **Component Reuse**: 불확실하면 `private` 함수로, 재사용 확정되면 별도 파일
 - **File Limit**: 400줄 초과 시 분리, 폴더당 10-15개 파일 유지
@@ -43,6 +50,7 @@
 - **Component Location Rules (컴포넌트 위치 결정 규칙)**: 공통 컴포넌트는 반드시 `core` 모듈에 위치해야 함. Feature 모듈 간 직접 의존은 금지되며, 공통 컴포넌트는 `core`에 두어야 함
 - **@Suppress 사용 전 코드 구조 개선 필수**: detekt 경고 발생 시 `@Suppress`를 사용하기 전에 반드시 코드 구조 개선을 시도해야 함. State Hoisting 패턴 적용 후 파라미터가 많아지면 Event Interface나 State Class로 그룹화하여 해결
 - **구조 변경 시 필수 검증**: 파일 이동, 패키지 변경, 클래스 리팩토링 시 변경 전/후 빌드 확인, 사용처 전체 검색, import 경로 일괄 변경 필수
+- **Spacing Grouping Pattern**: `Arrangement.spacedBy`와 `Spacer` 혼용 시 계산식 금지. 간격이 다른 요소는 별도 `Column`으로 그룹화
 
 ---
 
