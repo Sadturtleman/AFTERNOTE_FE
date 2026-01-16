@@ -20,6 +20,8 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -49,7 +51,12 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
         ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
-        ScreenInfo("지문 로그인 화면", "fingerprint_login")
+        ScreenInfo("지문 로그인 화면", "fingerprint_login"),
+        ScreenInfo("타임레터 화면", "time_letter_main"),
+        ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
+        ScreenInfo("임시저장 화면", "draft_letter"),
+        ScreenInfo("수신자 목록 화면", "receive_list"),
+        ScreenInfo("타임레터 빈 화면", "letter_empty")
     )
 
     NavHost(
@@ -73,11 +80,16 @@ fun NavGraph(navHostController: NavHostController) {
             mainPageNavigator = mainPageNavigator
         )
 
+        timeLetterNavGraph(
+            navController = navHostController
+        )
+
         // 개발자 모드 화면 (기본 시작 화면)
         composable("dev") {
             DevModeScreen(
                 screens = devModeScreens,
                 onScreenClick = { route ->
+
                     // 문자열 route를 MainPageRoute로 변환하여 navigate
                     when (route) {
                         "main_empty" -> navHostController.navigate(MainPageRoute.MainEmptyRoute)
@@ -85,10 +97,16 @@ fun NavGraph(navHostController: NavHostController) {
                         "afternote_detail" -> navHostController.navigate(MainPageRoute.DetailRoute)
                         "afternote_edit" -> navHostController.navigate(MainPageRoute.EditRoute)
                         "fingerprint_login" -> navHostController.navigate(MainPageRoute.FingerprintLoginRoute)
+                        "time_letter_main" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
+                        "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
+                        "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
+                        "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
+                        "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
                         else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
                     }
                 },
                 onUserModeClick = { mainPageNavigator.goToOnboarding(OnboardingRoute.SplashRoute) }
+
             )
         }
 
