@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,7 @@ fun DraftDeleteBottomBar(
 ) {
     Row(
         modifier = Modifier
-            .height(46.dp)
+            .height(52.dp)
             .shadow(
                 elevation = 10.dp,
                 shape = RoundedCornerShape(8.dp),
@@ -63,9 +64,10 @@ fun DraftDeleteBottomBar(
 
         Box(
             modifier = Modifier
-                .width(1.dp)
-                .fillMaxHeight()
-                .background(Color(0xFFBDBDBD))
+                .border(width = 0.5.dp, color = Color(0xFFBDBDBD))
+                .padding(0.5.dp)
+                .width(0.dp)
+                .height(16.dp)
         )
 
         Box(
@@ -90,7 +92,7 @@ fun DraftDeleteBottomBar(
 @Composable
 private fun DraftBottomPrev() {
     DraftDeleteBottomBar(
-        onDeleteAll ={},
-    onDeleteSelected= {}
+        onDeleteAll = {},
+        onDeleteSelected = {}
     )
 }
