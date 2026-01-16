@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.timeletter.presentation.component
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * 한글 초성 리스트
@@ -70,4 +71,3 @@ fun <T> LazyListScope.chosungGroupedItems(
         }
     }
 }
-

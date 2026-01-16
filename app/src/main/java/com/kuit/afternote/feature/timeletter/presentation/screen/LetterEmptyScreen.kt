@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+
 @Composable
 fun LetterEmptyScreen(
     onNavigateBack: () -> Unit,
+    onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -52,10 +54,9 @@ fun LetterEmptyScreen(
                         contentDescription = "뒤로가기",
                         modifier = Modifier
                             .size(width = 6.dp, height = 12.dp)
-                            .clickable { navController.popBackStack() }
+                            .clickable {  onNavigateBack() }
                     )
                 }
-
                 Text(
                     text = "타임레터",
                     color = Color(0xFF212121),
@@ -73,13 +74,15 @@ fun LetterEmptyScreen(
         },
         floatingActionButton = {
             Box(
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier
+                    .size(56.dp)
+                    .clickable { onAddClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.plus),
                     contentDescription = "add",
-                    modifier = Modifier.fillMaxSize() //
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
@@ -88,6 +91,7 @@ fun LetterEmptyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
+
         ) {
             Spacer(modifier = Modifier.height(287.38.dp))
 
@@ -122,10 +126,12 @@ fun LetterEmptyScreen(
 }
 
 @Preview(
-    showBackground = true,
-    device = "spec:width=390dp,height=814.9dp,dpi=420,isRound=false"
+    showBackground = true
 )
 @Composable
-fun EmptyPrev() {
-    LetterEmptyScreen()
+private fun LetterEmptyScreenPreview() {
+    LetterEmptyScreen(
+        onNavigateBack = {},
+        onAddClick = {}
+    )
 }

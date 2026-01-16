@@ -3,7 +3,6 @@ package com.kuit.afternote.feature.timeletter.presentation.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +30,14 @@ import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfo
 import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
 import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 
+/**
+ * 수신자 목록 화면
+ *
+ * @param receivers 수신자 목록
+ * @param onBackClick 뒤로가기 클릭 콜백
+ * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
+ * @param modifier Modifier
+ */
 @Composable
 fun ReceiveListScreen(
     receivers: List<TimeLetterReceiver>,
@@ -41,57 +48,52 @@ fun ReceiveListScreen(
     // 초성별로 그룹화
     val groupedReceivers = groupByChosung(receivers) { it.receiver_name }
 
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .systemBarsPadding()) {
-        // 상단 헤더 (고정)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(29.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            Row(
                 modifier = Modifier
-                    .padding(start = 23.dp, top = 5.dp)
-                    .clickable { onBackClick() }
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .height(44.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.vector),
-                    contentDescription = "뒤로가기",
+                Box(
                     modifier = Modifier
-                        .size(width = 6.dp, height = 12.dp)
+                        .padding(start = 23.dp)
+                        .clickable { onBackClick() }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.vector),
+                        contentDescription = "뒤로가기",
+                        modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                    )
+                }
+                Text(
+                    text = "수신자 목록",
+                    color = Color(0xFF212121),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 131.dp)
                 )
             }
-            Text(
-                text = "수신자 목록",
-                color = Color(0xFF212121),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(
-                        start = 131.dp,
-                        top = 5.dp
-                    )
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = BottomNavItem.TIME_LETTER,
+                onItemSelected = onNavItemSelected
             )
         }
-
-        // 초성별 그룹화된 수신자 리스트 (스크롤 가능, 남은 공간 채움)
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             chosungGroupedItems(groupedReceivers) { receiver ->
                 ReceiverInfoItem(receiver = receiver)
             }
         }
-
-        // 하단 네비게이션 바 (고정)
-        BottomNavigationBar(
-            selectedItem = BottomNavItem.TIME_LETTER,
-            onItemSelected = onNavItemSelected
-        )
     }
 }
 

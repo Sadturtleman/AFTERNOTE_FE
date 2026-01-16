@@ -10,6 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * 타임레터 메인 화면의 ViewModel
+ *
+ * 타임레터 목록을 관리하고 뷰 모드(리스트/블록)를 제어합니다.
+ */
 class TimeLetterViewModel : ViewModel() {
 
     private val _viewMode = MutableStateFlow(ViewMode.LIST)

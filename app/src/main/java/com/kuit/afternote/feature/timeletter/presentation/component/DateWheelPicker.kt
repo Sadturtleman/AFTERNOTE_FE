@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -46,17 +44,17 @@ fun DateWheelPicker(
     val currentYear = LocalDate.now().year
     val years = (currentYear..currentYear + 10).toList()
     val months = (1..12).toList()
-    
+
     var selectedYear by remember { mutableIntStateOf(initialYear) }
     var selectedMonth by remember { mutableIntStateOf(initialMonth) }
     var selectedDay by remember { mutableIntStateOf(initialDay) }
-    
+
     // 월에 따른 일수 계산
     val daysInMonth = remember(selectedYear, selectedMonth) {
         LocalDate.of(selectedYear, selectedMonth, 1).lengthOfMonth()
     }
     val days = (1..daysInMonth).toList()
-    
+
     // 일이 월의 일수를 초과하면 조정
     LaunchedEffect(daysInMonth) {
         if (selectedDay > daysInMonth) {
@@ -85,8 +83,8 @@ fun DateWheelPicker(
     Box(modifier = modifier) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
+                .width(228.dp)
+                .height(152.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
