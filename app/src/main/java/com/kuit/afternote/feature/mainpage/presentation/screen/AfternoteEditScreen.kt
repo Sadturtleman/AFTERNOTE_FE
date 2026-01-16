@@ -63,6 +63,8 @@ fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: (String) -> Unit = {},
+    onNavigateToPlaylist: () -> Unit = {},
+    onNavigateToAddSong: () -> Unit = {},
     state: AfternoteEditState = rememberAfternoteEditState()
 ) {
     val focusManager = LocalFocusManager.current
@@ -86,7 +88,9 @@ fun AfternoteEditScreen(
             EditContent(
                 state = state,
                 onBackClick = onBackClick,
-                onRegisterClick = onRegisterClick
+                onRegisterClick = onRegisterClick,
+                onNavigateToPlaylist = onNavigateToPlaylist,
+                onNavigateToAddSong = onNavigateToAddSong
             )
 
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
@@ -132,7 +136,9 @@ fun AfternoteEditScreen(
 private fun EditContent(
     state: AfternoteEditState,
     onBackClick: () -> Unit,
-    onRegisterClick: (String) -> Unit
+    onRegisterClick: (String) -> Unit,
+    onNavigateToPlaylist: () -> Unit,
+    onNavigateToAddSong: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -189,13 +195,19 @@ private fun EditContent(
 
             // 종류에 따라 다른 콘텐츠 표시
             // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
-            CategoryContent(state = state)
+            CategoryContent(
+                state = state,
+                onNavigateToAddSong = onNavigateToAddSong
+            )
         }
     }
 }
 
 @Composable
-private fun CategoryContent(state: AfternoteEditState) {
+private fun CategoryContent(
+    state: AfternoteEditState,
+    onNavigateToAddSong: () -> Unit
+) {
     when (state.selectedCategory) {
         "추모 가이드라인" -> {
             MemorialGuidelineEditContent(
@@ -209,9 +221,7 @@ private fun CategoryContent(state: AfternoteEditState) {
                     onPhotoAddClick = {
                         // TODO: 사진 선택 로직
                     },
-                    onSongAddClick = {
-                        // TODO: 노래 추가 로직
-                    },
+                    onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
                     onVideoAddClick = {
                         // TODO: 영상 선택 로직

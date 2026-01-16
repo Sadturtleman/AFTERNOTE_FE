@@ -20,4 +20,10 @@ sealed interface MainPageRoute {
 
     @Serializable
     data object FingerprintLoginRoute : MainPageRoute
+
+    @Serializable
+    data object MemorialPlaylistRoute : MainPageRoute
+
+    @Serializable
+    data object AddSongRoute : MainPageRoute
 }

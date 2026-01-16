@@ -11,9 +11,13 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScre
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistScreen
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -92,13 +96,37 @@ fun NavGraphBuilder.mainPageNavGraph(
                     // 같은 Route가 이미 있으면 재사용
                     launchSingleTop = true
                 }
-            }
+            },
+            onNavigateToPlaylist = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
+            onNavigateToAddSong = { navController.navigate(MainPageRoute.AddSongRoute) }
         )
     }
 
     mainPageComposable<MainPageRoute.FingerprintLoginRoute> {
         FingerprintLoginScreen(
             onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
+        )
+    }
+
+    mainPageComposable<MainPageRoute.MemorialPlaylistRoute> {
+        MemorialPlaylistScreen(
+            callbacks = MemorialPlaylistCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onAddSongClick = { navController.navigate(MainPageRoute.AddSongRoute) }
+            )
+        )
+    }
+
+    mainPageComposable<MainPageRoute.AddSongRoute> {
+        AddSongScreen(
+            selectedSongIds = emptySet(),
+            callbacks = AddSongCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onSongSelected = { song ->
+                    // TODO: 선택된 노래를 플레이리스트에 추가
+                    navController.popBackStack()
+                }
+            )
         )
     }
 }
