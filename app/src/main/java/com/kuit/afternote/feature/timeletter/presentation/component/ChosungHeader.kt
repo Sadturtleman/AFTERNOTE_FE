@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
@@ -46,6 +47,7 @@ fun ChosungHeader(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth()
         )
+        Spacer(modifier = modifier.padding(top = 16.dp))
     }
 }
 

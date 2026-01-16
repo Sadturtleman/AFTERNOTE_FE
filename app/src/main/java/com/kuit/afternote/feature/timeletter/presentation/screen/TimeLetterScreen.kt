@@ -20,6 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,22 +34,33 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.R
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterBlockItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle
+import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterUiState
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.ViewMode
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
+/**
+ * 타임레터 메인 화면
+ *
+ * 타임레터 목록을 리스트 또는 블록 형태로 표시합니다.
+ *
+ * @param viewModel 타임레터 ViewModel
+ * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
+ * @param onBackClick 뒤로가기 클릭 콜백
+ * @param modifier Modifier
+ */
 @Composable
 fun TimeLetterScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimeLetterViewModel = viewModel(),
+    viewModel: TimeLetterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
@@ -199,13 +213,133 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
     }
 }
 
+
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "리스트형"
 )
 @Composable
-private fun TimeLetterScreenPreview() {
+private fun TimeLetterScreenListPreview() {
     AfternoteTheme {
-        TimeLetterScreen()
+        TimeLetterScreenPreviewContent(viewMode = ViewMode.LIST)
     }
 }
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "블록형"
+)
+@Composable
+private fun TimeLetterScreenBlockPreview() {
+    AfternoteTheme {
+        TimeLetterScreenPreviewContent(viewMode = ViewMode.BLOCK)
+    }
+}
+
+@Composable
+private fun TimeLetterScreenPreviewContent(viewMode: ViewMode) {
+    val mockLetters = listOf(
+        TimeLetterItem(
+            id = "1",
+            receivername = "박채연",
+            sendDate = "2027. 11. 24",
+            title = "채연아 20번째 생일을 축하해",
+            content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
+            imageResId = null,
+            theme = LetterTheme.PEACH
+        ),
+        TimeLetterItem(
+            id = "2",
+            receivername = "김민수",
+            sendDate = "2026. 05. 10",
+            title = "졸업 축하해 친구야",
+            content = "드디어 졸업이구나! 우리가 함께한 시간들이 정말 소중했어. 앞으로도 좋은 일만 가득하길...",
+            imageResId = null,
+            theme = com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme.BLUE
+        ),
+        TimeLetterItem(
+            id = "3",
+            receivername = "이지은",
+            sendDate = "2028. 01. 01",
+            title = "새해 복 많이 받아",
+            content = "새해가 밝았어! 올해도 건강하고 행복하게 보내길 바라. 사랑해!",
+            imageResId = null,
+            theme = com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme.YELLOW
+        )
+    )
+
+    var currentViewMode by remember { mutableStateOf(viewMode) }
+    val uiState = TimeLetterUiState.Success(mockLetters)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding()
+    ) {
+        TimeLetterHeader(onBackClick = {})
+
+        Spacer(modifier = Modifier.padding(top = 18.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "전체보기",
+                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Image(
+                painterResource(R.drawable.ic_down_vector),
+                contentDescription = "아래 열기",
+                modifier = Modifier.padding(start = 13.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            ViewModeToggle(
+                currentMode = currentViewMode,
+                onModeChange = { currentViewMode = it }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(mockLetters) { letter ->
+                when (currentViewMode) {
+                    ViewMode.LIST -> {
+                        TimeLetterListItem(
+                            receiverName = letter.receivername,
+                            sendDate = letter.sendDate,
+                            title = letter.title,
+                            content = letter.content,
+                            imageResId = letter.imageResId
+                        )
+                        Spacer(modifier = Modifier.height(18.dp))
+                    }
+                    ViewMode.BLOCK -> {
+                        TimeLetterBlockItem(
+                            receiverName = letter.receivername,
+                            sendDate = letter.sendDate,
+                            title = letter.title,
+                            content = letter.content,
+                            imageResId = letter.imageResId,
+                            theme = letter.theme
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+            }
+        }
+
+        BottomNavigationBar(
+            selectedItem = BottomNavItem.TIME_LETTER,
+            onItemSelected = { }
+        )
+    }
+}
+

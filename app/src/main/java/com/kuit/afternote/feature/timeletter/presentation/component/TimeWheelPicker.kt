@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
-import android.R.attr.height
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,7 +79,7 @@ fun TimeWheelPicker(
     }
 
     Box(modifier = modifier
-        .width(228.dp)
+        .width(204.dp)
         .height(152.dp)) {
         Row(
             modifier = Modifier
@@ -137,7 +136,7 @@ fun TimeWheelPicker(
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .width(180.dp)
+                .width(184.dp)
                 .height(40.dp)
                 .border(1.dp, Color(0xFF6B8FF8), RoundedCornerShape(8.dp))
         )
