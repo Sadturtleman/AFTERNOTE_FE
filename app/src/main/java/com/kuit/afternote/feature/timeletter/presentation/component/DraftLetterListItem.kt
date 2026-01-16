@@ -48,8 +48,10 @@ fun DraftLetterListItem(
             // 편집 모드 체크 아이콘
             if (isEditMode) {
                 Image(
-                    painter = painterResource(R.drawable.ic_draft_circle),
-                    contentDescription = "편집모드 원",
+                    painter = painterResource(
+                        if (isSelected) R.drawable.ic_check_circle else R.drawable.ic_draft_circle
+                    ),
+                    contentDescription = if (isSelected) "선택됨" else "선택 안됨",
                     modifier = Modifier
                         .size(16.dp)
                         .align(Alignment.CenterVertically)
@@ -132,6 +134,21 @@ private fun DraftLetterListItemSelectedPreview() {
         ),
         isEditMode = true,
         isSelected = true,
+        onItemClick = {}
+    )
+}
+@Preview(showBackground = true, name = "편집 모드")
+@Composable
+private fun DraftLetterListItemUnSelectedPreview() {
+    DraftLetterListItem(
+        item = DraftLetterItem(
+            id = "1",
+            receiverName = "김지은",
+            sendDate = "2029. 11. 20",
+            title = "지은아 결혼을 축하해"
+        ),
+        isEditMode = true,
+        isSelected = false,
         onItemClick = {}
     )
 }
