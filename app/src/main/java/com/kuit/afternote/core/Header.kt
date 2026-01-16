@@ -71,6 +71,7 @@ fun Header(
 
 /**
  * 뒤로가기 + 타이틀 + 액션 버튼 헤더
+ * Box + Alignment 방식으로 타이틀을 정확히 화면 중앙에 고정
  */
 @Composable
 fun Header(
@@ -80,77 +81,129 @@ fun Header(
     onActionClick: () -> Unit,
     actionText: String = "등록"
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(horizontal = 20.dp)
     ) {
-        // 뒤로가기 버튼
+        // 뒤로가기 버튼 (왼쪽)
         Box(
             modifier = Modifier
+                .align(Alignment.CenterStart)
                 .padding(
                     top = 11.dp,
                     bottom = 17.dp
                 )
+                .clickable(onClick = onBackClick),
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_arrow_back),
                 contentDescription = "뒤로가기",
-                modifier = Modifier
-                    .size(
-                        width = 6.dp,
-                        height = 12.dp
-                    )
-                    .clickable(onClick = onBackClick)
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(weight = 83f))
-
-        // 타이틀
-        Box(
-            modifier = Modifier.padding(
-                top = 4.dp,
-                bottom = 10.dp
-            )
-        ) {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    lineHeight = 26.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Bold,
-                    color = Gray9,
-                    textAlign = TextAlign.Center
+                modifier = Modifier.size(
+                    width = 6.dp,
+                    height = 12.dp
                 )
             )
         }
 
-        Spacer(modifier = Modifier.weight(weight = 64f))
-
-        // 액션 버튼
-        Box(
+        // 타이틀 (정확히 중앙)
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 20.sp,
+                lineHeight = 26.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
+                color = Gray9,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.05).sp
+            ),
             modifier = Modifier
+                .align(Alignment.Center)
+                .padding(
+                    top = 4.dp,
+                    bottom = 10.dp
+                )
+        )
+
+        // 액션 버튼 (오른쪽)
+        Text(
+            text = actionText,
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
+                color = Gray5,
+                textAlign = TextAlign.Center
+            ),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
                 .padding(
                     top = 7.dp,
                     bottom = 13.dp
                 )
+                .clickable(onClick = onActionClick)
+        )
+    }
+}
+
+/**
+ * 뒤로가기 + 타이틀 헤더 (액션 버튼 없음)
+ * Box + Alignment 방식으로 타이틀을 정확히 화면 중앙에 고정
+ */
+@Composable
+fun Header(
+    modifier: Modifier = Modifier,
+    title: String,
+    onBackClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        // 뒤로가기 버튼 (왼쪽)
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(
+                    top = 11.dp,
+                    bottom = 17.dp
+                )
+                .clickable(onClick = onBackClick),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = actionText,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray5,
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier.clickable(onClick = onActionClick)
+            Image(
+                painter = painterResource(R.drawable.ic_arrow_back),
+                contentDescription = "뒤로가기",
+                modifier = Modifier.size(
+                    width = 6.dp,
+                    height = 12.dp
+                )
             )
         }
+
+        // 타이틀 (정확히 중앙)
+        Text(
+            text = title,
+            style = TextStyle(
+                fontSize = 20.sp,
+                lineHeight = 26.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
+                color = Gray9,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.05).sp
+            ),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(
+                    top = 4.dp,
+                    bottom = 10.dp
+                )
+        )
     }
 }
 
@@ -220,6 +273,10 @@ private fun HeaderPreview() {
             title = "애프터노트 작성하기",
             onBackClick = {},
             onActionClick = {}
+        )
+        Header(
+            title = "추모 플레이리스트",
+            onBackClick = {}
         )
         Header(
             onBackClick = {},
