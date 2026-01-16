@@ -96,7 +96,6 @@ fun AfternoteDetailScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Header(
-                    title = "",
                     onBackClick = onBackClick,
                     onEditClick = state::toggleDropdownMenu
                 )

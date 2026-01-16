@@ -153,7 +153,6 @@ private fun GalleryDetailContent(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Header(
-                title = "",
                 onBackClick = callbacks.onBackClick,
                 onEditClick = uiState::toggleDropdownMenu
             )
