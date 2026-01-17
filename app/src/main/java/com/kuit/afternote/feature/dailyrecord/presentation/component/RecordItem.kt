@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -78,7 +78,7 @@ fun RecordItem(
             ) {
                 Text(
                     text = title,
-                    color = Black9,
+                    color = Black,
                     fontFamily = Sansneo,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -104,7 +104,7 @@ fun RecordItem(
                     .background(B2)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_listitemarrow),
+                    painter = painterResource(R.drawable.ic_arrow_forward),
                     contentDescription = null,
                     modifier = Modifier
                         .size(6.dp, 12.dp)

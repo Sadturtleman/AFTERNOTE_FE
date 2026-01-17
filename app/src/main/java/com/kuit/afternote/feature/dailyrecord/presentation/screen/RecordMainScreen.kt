@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,13 +32,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
-import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
 import com.kuit.afternote.ui.theme.Gray1
 
 /**
@@ -53,8 +50,12 @@ import com.kuit.afternote.ui.theme.Gray1
 @Composable
 fun RecordMainScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    onDiaryClick: () -> Unit,
+    onDeepMindClick: () -> Unit,
+    onWeekendReportClick: () -> Unit,
+    onQuestionClick: () -> Unit
 ) {
+
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -96,6 +97,7 @@ fun RecordMainScreen(
             }
         }
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -130,10 +132,10 @@ fun RecordMainScreen(
                         subtitle = subtitle,
                         modifier = Modifier.clickable {
                             when (title) {
-                                "데일리 질문답변" -> navController.navigate("dailyQuestion")
-                                "일기" -> navController.navigate("diary")
-                                "깊은 생각" -> navController.navigate("deepThought")
-                                "주간 리포트" -> navController.navigate("weeklyReport")
+                                "데일리 질문답변" -> onQuestionClick()
+                                "일기" -> onDiaryClick()
+                                "깊은 생각" -> onDeepMindClick()
+                                "주간 리포트" -> onWeekendReportClick()
                             }
                         }
                     )
@@ -151,5 +153,5 @@ fun RecordMainScreen(
 )
 @Composable
 private fun RecordMainScreenPrev() {
-    //RecordMainScreen(navController = n)
+
 }

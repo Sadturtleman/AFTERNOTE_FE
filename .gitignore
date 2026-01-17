@@ -36,3 +36,6 @@ node_modules
 
 # Temporary gitignore merge files
 .gitignore.*
+
+# Build reports
+reports/

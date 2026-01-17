@@ -1,0 +1,13 @@
+package com.kuit.afternote.feature.mainpage.presentation.util
+
+import com.kuit.afternote.R
+
+/**
+ * 제목에 따라 적절한 아이콘 리소스를 반환하는 유틸리티 함수
+ */
+fun getIconResForTitle(title: String): Int =
+    when {
+        title.contains("인스타그램") -> R.drawable.img_insta_pattern
+        title.contains("갤러리") -> R.drawable.ic_gallery
+        else -> R.drawable.img_logo
+    }

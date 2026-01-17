@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
@@ -43,7 +43,7 @@ fun RecordMainTopbar(
 
     //스타일
     backgroundColor: Color = Color.White,
-    contentColor: Color = Black9,
+    contentColor: Color = Black,
 
 ) {
     Box(
@@ -56,7 +56,7 @@ fun RecordMainTopbar(
         // 텍스트는 항상 중앙
         Text(
             text = text,
-            color = Black9,
+            color = Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = Sansneo

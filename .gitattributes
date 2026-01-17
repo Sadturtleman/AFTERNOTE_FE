@@ -1,0 +1,14 @@
+# 줄바꿈 문자 설정
+# 마크다운 파일은 항상 LF 사용 (Windows에서 CRLF 변환 방지)
+*.md text eol=lf
+
+# Kotlin 파일도 LF 사용
+*.kt text eol=lf
+
+# 기타 텍스트 파일
+*.txt text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+
