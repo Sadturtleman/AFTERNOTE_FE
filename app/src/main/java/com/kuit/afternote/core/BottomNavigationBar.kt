@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
@@ -28,6 +29,7 @@ fun BottomNavigationBar(
     selectedItem: BottomNavItem = BottomNavItem.HOME,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
+
     Row(
         modifier = modifier
             .fillMaxWidth()
