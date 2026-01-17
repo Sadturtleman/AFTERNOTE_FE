@@ -14,7 +14,7 @@ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendR
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.recordNavGraph(navController: NavController) {
-    composable("recordMain") {
+    composable("record_main") {
         RecordMainScreen(
             onDiaryClick = {navController.navigate(RecordRoute.DiaryRoute) },
             onQuestionClick = {navController.navigate(RecordRoute.QuestionRoute)},

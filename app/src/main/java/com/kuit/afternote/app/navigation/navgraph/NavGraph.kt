@@ -1,9 +1,17 @@
 package com.kuit.afternote.app.navigation.navgraph
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
+import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -18,18 +26,23 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingS
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val devModeScreens = listOf(
-        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
-        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
+//        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
+//        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
         ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
         ScreenInfo("애프터노트 수정 화면", "afternote_edit"),
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
         ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
-        ScreenInfo("지문 로그인 화면", "fingerprint_login")
+        ScreenInfo("지문 로그인 화면", "fingerprint_login"),
+        ScreenInfo("마음의기록 메인 화면","record_main"),
+        ScreenInfo("마음의기록 deep","record_deep"),
+        ScreenInfo("마음의기록 diary","record_diary"),
+        ScreenInfo("마음의기록 report","record_report")
     )
 
     NavHost(
@@ -46,6 +59,9 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(navHostController)
 
+        recordNavGraph(navHostController)
+
+
         // 개발자 모드 화면 (기본 시작 화면)
         composable("dev") {
             DevModeScreen(
@@ -57,23 +73,23 @@ fun NavGraph(navHostController: NavHostController) {
 
         // 메인 화면 - 빈 상태 (개발용)
         composable("main_empty") {
-            AfternoteMainScreen(
-                afternoteItems = emptyList(),
-                onItemClick = { navHostController.navigate("afternote_detail") }
-            )
+//            AfternoteMainScreen(
+//                afternoteItems = emptyList(),
+//                onItemClick = { navHostController.navigate("afternote_detail") }
+//            )
         }
 
         // 메인 화면 - 목록 있음 (개발용)
         composable("main_with_items") {
-            AfternoteMainScreen(
-                afternoteItems = listOf(
-                    "인스타그램" to "2023.11.24",
-                    "갤러리" to "2023.11.25",
-                    "갤러리" to "2023.11.26",
-                    "인스타그램" to "2023.11.27"
-                ),
-                onItemClick = { navHostController.navigate("afternote_detail") }
-            )
+//            AfternoteMainScreen(
+//                afternoteItems = listOf(
+//                    "인스타그램" to "2023.11.24",
+//                    "갤러리" to "2023.11.25",
+//                    "갤러리" to "2023.11.26",
+//                    "인스타그램" to "2023.11.27"
+//                ),
+//                onItemClick = { navHostController.navigate("afternote_detail") }
+//            )
         }
 
         // 애프터노트 상세 화면
@@ -130,6 +146,25 @@ fun NavGraph(navHostController: NavHostController) {
             FingerprintLoginScreen(
                 onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
+        }
+        composable("record_main"){
+            RecordMainScreen(
+                onDiaryClick = { navHostController.navigate("record_diary") },
+                onDeepMindClick = { navHostController.navigate("record_deep")},
+                onWeekendReportClick = { navHostController.navigate("record_report")},
+                onQuestionClick = { }
+            )
+        }
+
+        composable("record_deep") {
+            RecordDeepMindScreen()
+        }
+        composable("record_diary"){
+            RecordDiaryScreen()
+        }
+
+        composable("record_report") {
+            RecordWeekendReportScreen()
         }
     }
 }
