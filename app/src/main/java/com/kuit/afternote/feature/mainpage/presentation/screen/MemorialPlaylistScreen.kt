@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items as lazyItems
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,10 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,9 +44,11 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import androidx.compose.foundation.lazy.items as lazyItems
 
 /**
  * 추모 플레이리스트 화면의 콜백
@@ -62,8 +65,8 @@ data class MemorialPlaylistCallbacks(
  * 추모 플레이리스트 화면
  *
  * 피그마 디자인 기반:
- * - 헤더 (뒤로가기, 타이틀, 노래 추가하기 버튼)
- * - 총 노래 개수 표시
+ * - 헤더 (뒤로가기, 타이틀)
+ * - 총 노래 개수 표시 + 노래 추가하기 버튼 (같은 Row)
  * - 노래 목록 (앨범 커버, 제목, 가수, 체크박스)
  * - 하단 네비게이션 바
  * - 선택 모드 시 하단 액션 바 (전체 삭제, 선택 삭제)
@@ -121,8 +124,7 @@ private fun MemorialPlaylistContent(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             MemorialPlaylistHeader(
-                onBackClick = callbacks.onBackClick,
-                onAddSongClick = callbacks.onAddSongClick
+                onBackClick = callbacks.onBackClick
             )
 
             MemorialPlaylistList(
@@ -131,7 +133,8 @@ private fun MemorialPlaylistContent(
                 isSelectionMode = isSelectionMode,
                 onSongClick = { songId ->
                     stateHolder.toggleSongSelection(songId)
-                }
+                },
+                onAddSongClick = callbacks.onAddSongClick
             )
         }
 
@@ -156,52 +159,12 @@ private fun MemorialPlaylistContent(
 
 @Composable
 private fun MemorialPlaylistHeader(
-    onBackClick: () -> Unit,
-    onAddSongClick: () -> Unit
+    onBackClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-//        Header(
-//            title = "추모 플레이리스트",
-//            onBackClick = onBackClick
-//        )
-
-        // 노래 추가하기 버튼 (헤더 오른쪽)
-        Row(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 20.dp)
-                .background(
-                    color = B3,
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .clickable(onClick = onAddSongClick)
-                .padding(vertical = 8.dp, horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "노래 추가하기",
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
-            )
-
-            CircleArrowIcon(
-                iconSpec = ArrowIconSpec(
-                    iconRes = R.drawable.ic_arrow_right_playlist,
-                    contentDescription = "추가"
-                ),
-                backgroundColor = B1,
-                size = 12.dp
-            )
-        }
-    }
+    Header(
+        title = "추모 플레이리스트",
+        onBackClick = onBackClick
+    )
 }
 
 @Composable
@@ -209,19 +172,20 @@ private fun MemorialPlaylistList(
     songs: List<Song>,
     selectedSongIds: Set<String>,
     isSelectionMode: Boolean,
-    onSongClick: (String) -> Unit
+    onSongClick: (String) -> Unit,
+    onAddSongClick: () -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
     ) {
         // 상단 라벨 (선택 모드 여부에 따라 다르게 표시)
         item {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (isSelectionMode) {
                     // 선택 모드: "현재 플레이리스트" (왼쪽), "총 N곡" (오른쪽)
@@ -246,23 +210,72 @@ private fun MemorialPlaylistList(
                         )
                     )
                 } else {
-                    // 비선택 모드: "총 N곡" (왼쪽)
-                    Text(
-                        text = "총 ${songs.size}곡",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
+                    // 비선택 모드: "총 N곡" (왼쪽), "노래 추가하기" 버튼 (오른쪽)
+                    Box(
+                        modifier = Modifier
+                            .padding(
+                                top = 25.dp,
+                                bottom = 16.dp
+                            )
+                    ) {
+                        Text(
+                            text = "총 ${songs.size}곡",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Color(color = 0xFF000000)
+                            )
                         )
-                    )
+                    }
+
+                    // 노래 추가하기 버튼
+                    Box(
+                        modifier = Modifier
+                            .padding(
+                                top = 16.dp,
+                                bottom = 11.dp
+                            )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .background(
+                                    color = B3,
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .clickable(onClick = onAddSongClick)
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "노래 추가하기",
+                                style = TextStyle(
+                                    fontSize = 12.sp,
+                                    lineHeight = 18.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Gray9
+                                )
+                            )
+
+                            CircleArrowIcon(
+                                iconSpec = ArrowIconSpec(
+                                    iconRes = R.drawable.ic_arrow_right_playlist,
+                                    contentDescription = "추가"
+                                ),
+                                backgroundColor = B1,
+                                size = 12.dp
+                            )
+                        }
+                    }
                 }
             }
         }
 
         // 노래 목록
-        lazyItems(songs) { song ->
+        lazyItems(items = songs, key = { it.id }) { song ->
             SongListItem(
                 song = song,
                 isSelected = selectedSongIds.contains(song.id),
@@ -281,8 +294,18 @@ private fun SongListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val y = size.height - strokeWidth / 2
+                drawLine(
+                    color = Gray3,
+                    start = Offset(x = 0f, y = y),
+                    end = Offset(x = size.width, y = y),
+                    strokeWidth = strokeWidth
+                )
+            }
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(all = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -290,7 +313,6 @@ private fun SongListItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(4.dp))
                 .background(Color.Black),
             contentAlignment = Alignment.Center
         ) {
@@ -307,7 +329,9 @@ private fun SongListItem(
 
         // 노래 정보
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(space = 4.dp)
         ) {
             Text(
                 text = song.title,
@@ -315,7 +339,7 @@ private fun SongListItem(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Normal,
                     color = Gray9
                 )
             )
@@ -370,7 +394,7 @@ private fun MemorialPlaylistActionBar(
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
                     color = Gray9,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             )
 
@@ -395,7 +419,7 @@ private fun MemorialPlaylistActionBar(
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
                     color = Gray9,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             )
         }
