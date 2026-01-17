@@ -1,11 +1,9 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,9 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.mainpage.presentation.component.common.header.MainHeader
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.fingerprint.FingerprintAuthContent
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
@@ -39,6 +37,9 @@ fun FingerprintLoginScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(title = "지문 로그인")
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
@@ -49,12 +50,8 @@ fun FingerprintLoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.statusBars)
-//                .padding(paddingValues)
+                .padding(paddingValues)
         ) {
-            // 헤더
-            MainHeader(title = "지문 로그인")
-
             // 메인 컨텐츠
             FingerprintAuthContent(
                 modifier = Modifier

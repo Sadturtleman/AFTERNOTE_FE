@@ -5,16 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -33,12 +32,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ArrowIconSpec
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.core.CircleArrowIcon
-import com.kuit.afternote.core.CustomRadioButton
-import com.kuit.afternote.core.Header
+import com.kuit.afternote.core.ui.component.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.CustomRadioButton
+import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -92,6 +91,12 @@ private fun MemorialPlaylistScaffold(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(
+                title = "추모 플레이리스트",
+                onBackClick = callbacks.onBackClick
+            )
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = BottomNavItem.HOME,
@@ -118,14 +123,9 @@ private fun MemorialPlaylistContent(
     val isSelectionMode = stateHolder.isSelectionMode
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.statusBars)
+        modifier = modifier.fillMaxSize()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            MemorialPlaylistHeader(
-                onBackClick = callbacks.onBackClick
-            )
 
             MemorialPlaylistList(
                 songs = songs,
@@ -158,16 +158,6 @@ private fun MemorialPlaylistContent(
 }
 
 @Composable
-private fun MemorialPlaylistHeader(
-    onBackClick: () -> Unit
-) {
-    Header(
-        title = "추모 플레이리스트",
-        onBackClick = onBackClick
-    )
-}
-
-@Composable
 private fun MemorialPlaylistList(
     songs: List<Song>,
     selectedSongIds: Set<String>,
@@ -176,48 +166,41 @@ private fun MemorialPlaylistList(
     onAddSongClick: () -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp)
     ) {
         // 상단 라벨 (선택 모드 여부에 따라 다르게 표시)
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (isSelectionMode) {
-                    // 선택 모드: "현재 플레이리스트" (왼쪽), "총 N곡" (오른쪽)
-                    Text(
-                        text = "현재 플레이리스트",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
-                        )
-                    )
-                    Text(
-                        text = "총 ${songs.size}곡",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
-                        )
-                    )
-                } else {
-                    // 비선택 모드: "총 N곡" (왼쪽), "노래 추가하기" 버튼 (오른쪽)
-                    Box(
-                        modifier = Modifier
-                            .padding(
-                                top = 25.dp,
-                                bottom = 16.dp
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    if (isSelectionMode) {
+                        // 선택 모드: "현재 플레이리스트" (왼쪽), "총 N곡" (오른쪽)
+                        Text(
+                            text = "현재 플레이리스트",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray9
                             )
-                    ) {
+                        )
+                        Text(
+                            text = "총 ${songs.size}곡",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray9
+                            )
+                        )
+                    } else {
+                        // 비선택 모드: "총 N곡" (왼쪽), "노래 추가하기" 버튼 (오른쪽)
+                        Spacer(modifier = Modifier.height(25.dp))
                         Text(
                             text = "총 ${songs.size}곡",
                             style = TextStyle(
@@ -228,16 +211,9 @@ private fun MemorialPlaylistList(
                                 color = Color(color = 0xFF000000)
                             )
                         )
-                    }
 
-                    // 노래 추가하기 버튼
-                    Box(
-                        modifier = Modifier
-                            .padding(
-                                top = 16.dp,
-                                bottom = 11.dp
-                            )
-                    ) {
+                        // 노래 추가하기 버튼
+                        Spacer(modifier = Modifier.height(16.dp))
                         Row(
                             modifier = Modifier
                                 .background(
@@ -260,7 +236,7 @@ private fun MemorialPlaylistList(
                                 )
                             )
 
-                            CircleArrowIcon(
+                            RightArrowIcon(
                                 iconSpec = ArrowIconSpec(
                                     iconRes = R.drawable.ic_arrow_right_playlist,
                                     contentDescription = "추가"
@@ -269,7 +245,11 @@ private fun MemorialPlaylistList(
                                 size = 12.dp
                             )
                         }
+                        Spacer(modifier = Modifier.height(11.dp))
                     }
+                }
+                if (!isSelectionMode) {
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -291,7 +271,7 @@ private fun SongListItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .drawBehind {
@@ -305,10 +285,13 @@ private fun SongListItem(
                 )
             }
             .clickable(onClick = onClick)
-            .padding(all = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
         // 앨범 커버 (Placeholder - 이미지 로딩 라이브러리 추가 후 구현)
         Box(
             modifier = Modifier
@@ -363,6 +346,8 @@ private fun SongListItem(
             selectedColor = B2,
             unselectedColor = Gray4
         )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -371,32 +356,37 @@ private fun MemorialPlaylistActionBar(
     onDeleteAllClick: () -> Unit,
     onDeleteSelectedClick: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .padding(horizontal = 20.dp)
     ) {
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // 전체 삭제
-            Text(
-                text = "전체 삭제",
+            Column(
                 modifier = Modifier
                     .weight(1f)
                     .clickable(onClick = onDeleteAllClick)
-                    .padding(vertical = 12.dp),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 22.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9,
-                    textAlign = TextAlign.Center
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "전체 삭제",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9,
+                        textAlign = TextAlign.Center
+                    )
                 )
-            )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
             // 구분선
             Box(
@@ -407,22 +397,27 @@ private fun MemorialPlaylistActionBar(
             )
 
             // 선택 삭제
-            Text(
-                text = "선택 삭제",
+            Column(
                 modifier = Modifier
                     .weight(1f)
                     .clickable(onClick = onDeleteSelectedClick)
-                    .padding(vertical = 12.dp),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 22.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9,
-                    textAlign = TextAlign.Center
+            ) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "선택 삭제",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9,
+                        textAlign = TextAlign.Center
+                    )
                 )
-            )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

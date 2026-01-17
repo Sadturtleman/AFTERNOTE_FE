@@ -81,7 +81,9 @@ fun rememberMemorialPlaylistStateHolder(): MemorialPlaylistStateHolder {
                 Song(id = "6", title = "노래 제목", artist = "가수 이름"),
                 Song(id = "7", title = "노래 제목", artist = "가수 이름"),
                 Song(id = "8", title = "노래 제목", artist = "가수 이름"),
-                Song(id = "9", title = "노래 제목", artist = "가수 이름")
+                Song(id = "9", title = "노래 제목", artist = "가수 이름"),
+                Song(id = "10", title = "노래 제목", artist = "가수 이름"),
+                Song(id = "11", title = "노래 제목", artist = "가수 이름")
             )
         )
     }

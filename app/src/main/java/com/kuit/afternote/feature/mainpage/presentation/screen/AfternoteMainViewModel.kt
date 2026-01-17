@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.lifecycle.ViewModel
-import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
 import com.kuit.afternote.feature.mainpage.domain.model.ServiceType
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab

@@ -10,9 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.LabeledTextField
-import com.kuit.afternote.core.MessageTextField
-import com.kuit.afternote.core.RequiredLabel
+import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodListParams
@@ -34,14 +33,14 @@ fun SocialNetworkEditContent(
 
     Spacer(modifier = Modifier.height(Spacing.m))
 
-    LabeledTextField(
+    OutlineTextField(
         label = "아이디",
         textFieldState = params.accountSection.idState
     )
 
     Spacer(modifier = Modifier.height(10.dp))
 
-    LabeledTextField(
+    OutlineTextField(
         label = "비밀번호",
         textFieldState = params.accountSection.passwordState,
         keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
@@ -97,8 +96,10 @@ fun SocialNetworkEditContent(
     Spacer(modifier = Modifier.height(Spacing.xl))
 
     // 남기실 말씀
-    MessageTextField(
-        textFieldState = params.messageState
+    OutlineTextField(
+        label = "남기실 말씀",
+        textFieldState = params.messageState,
+        isMultiline = true
     )
 
     // 소셜네트워크 탭 하단 여백 (81dp)

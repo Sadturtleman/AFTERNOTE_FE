@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.core.LabeledTextField
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -108,7 +108,7 @@ fun CustomServiceDialog(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 추가 서비스명 입력 필드
-            LabeledTextField(
+            OutlineTextField(
                 label = "추가 서비스명",
                 textFieldState = params.serviceNameState,
                 keyboardType = KeyboardType.Text,

@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdownState

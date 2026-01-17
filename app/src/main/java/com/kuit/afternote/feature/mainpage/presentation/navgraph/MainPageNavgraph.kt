@@ -98,7 +98,7 @@ fun NavGraphBuilder.mainPageNavGraph(
                 }
             },
             onNavigateToPlaylist = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
-            onNavigateToAddSong = { navController.navigate(MainPageRoute.AddSongRoute) }
+            onNavigateToAddSong = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) }
         )
     }
 

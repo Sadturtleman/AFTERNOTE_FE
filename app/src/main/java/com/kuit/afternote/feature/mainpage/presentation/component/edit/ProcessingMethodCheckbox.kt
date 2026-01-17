@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.CheckCircleIcon
+import com.kuit.afternote.core.ui.component.CheckCircleIcon
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9

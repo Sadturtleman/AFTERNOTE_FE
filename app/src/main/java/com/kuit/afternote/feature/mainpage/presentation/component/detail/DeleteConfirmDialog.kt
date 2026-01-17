@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -70,9 +72,10 @@ fun DeleteConfirmDialogContent(
                 spread = 0.dp
             ).clip(RoundedCornerShape(16.dp))
             .background(Color.White)
-            .padding(horizontal = 33.dp, vertical = 32.dp),
+            .padding(horizontal = 33.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
                 "\n삭제 시, 되돌릴 수 없습니다.",
@@ -83,12 +86,9 @@ fun DeleteConfirmDialogContent(
                 fontWeight = FontWeight.Medium,
                 color = TextPrimary,
                 textAlign = TextAlign.Center
-            ),
-            modifier = Modifier
-                .padding(
-                    bottom = 20.dp
-                )
+            )
         )
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -116,7 +116,7 @@ fun DeleteConfirmDialogContent(
                     ).clip(RoundedCornerShape(8.dp))
                     .background(Gray3)
                     .clickable(onClick = onDismiss)
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .padding(horizontal = 20.dp)
                     .weight(1f)
             )
 
@@ -142,10 +142,11 @@ fun DeleteConfirmDialogContent(
                     ).clip(RoundedCornerShape(8.dp))
                     .background(B3)
                     .clickable(onClick = onConfirm)
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .padding(horizontal = 20.dp)
                     .weight(1f)
             )
         }
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 

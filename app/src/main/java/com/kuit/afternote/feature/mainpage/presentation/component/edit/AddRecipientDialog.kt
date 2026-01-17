@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.core.LabeledTextField
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.rememberSelectionDropdownState
 import com.kuit.afternote.ui.expand.dropShadow
@@ -145,7 +145,7 @@ fun AddRecipientDialog(
             Spacer(modifier = Modifier.height(Spacing.l))
 
             // 수신자 이름 입력 필드
-            LabeledTextField(
+            OutlineTextField(
                 label = "수신자 이름",
                 textFieldState = params.recipientNameState,
                 keyboardType = KeyboardType.Text,
@@ -171,7 +171,7 @@ fun AddRecipientDialog(
             Spacer(modifier = Modifier.height(Spacing.l))
 
             // 전화번호로 추가하기 입력 필드
-            LabeledTextField(
+            OutlineTextField(
                 label = "전화번호로 추가하기",
                 textFieldState = params.phoneNumberState,
                 keyboardType = KeyboardType.Phone,
