@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ArrowIconSpec
-import com.kuit.afternote.core.CircleArrowIcon
+import com.kuit.afternote.core.ui.component.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -75,7 +75,7 @@ fun AfternoteTabRow(
 
         // 오른쪽 끝에 화살표 아이콘 (스크롤 가능할 때만 표시)
         if (canScrollRight) {
-            CircleArrowIcon(
+            RightArrowIcon(
                 iconSpec = ArrowIconSpec(
                     iconRes = R.drawable.ic_arrow_right_tab,
                     contentDescription = "더 보기"

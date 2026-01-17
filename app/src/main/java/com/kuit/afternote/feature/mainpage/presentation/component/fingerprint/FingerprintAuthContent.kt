@@ -3,7 +3,9 @@ package com.kuit.afternote.feature.mainpage.presentation.component.fingerprint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -35,11 +37,11 @@ fun FingerprintAuthContent(
     onFingerprintAuthClick: () -> Unit = {}
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 137.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(1f))
+        
         // 안내 텍스트
         Text(
             text = "사용자 인증 후 조회가 가능합니다.",
@@ -50,15 +52,14 @@ fun FingerprintAuthContent(
                 fontWeight = FontWeight.Medium,
                 color = Gray9,
                 textAlign = TextAlign.Center
-            ),
-            modifier = Modifier.padding(bottom = 40.dp)
+            )
         )
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         // 지문 아이콘
         Box(
-            modifier = Modifier
-                .size(100.dp, 114.dp)
-                .padding(bottom = 32.dp),
+            modifier = Modifier.size(100.dp, 114.dp),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -67,6 +68,8 @@ fun FingerprintAuthContent(
                 modifier = Modifier.size(100.dp, 114.dp)
             )
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 지문 인증 버튼
         ClickButton(
@@ -77,6 +80,8 @@ fun FingerprintAuthContent(
                 .fillMaxWidth()
                 .padding(horizontal = 44.dp)
         )
+        
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

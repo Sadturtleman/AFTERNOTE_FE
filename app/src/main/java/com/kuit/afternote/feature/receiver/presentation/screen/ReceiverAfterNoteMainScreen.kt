@@ -39,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
@@ -61,7 +61,10 @@ fun AfterNoteMainScreen(title: String) {
 
     Scaffold(
         topBar = {
-            TopBar("故${title}님의 애프터노트") { }
+            TopBar(
+                title = "故${title}님의 애프터노트",
+                onBackClick = { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(

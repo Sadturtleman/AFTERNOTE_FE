@@ -34,10 +34,9 @@ fun ProfileSettingScreen(
     Scaffold(
         topBar = {
             TopBar(
-                title = "프로필 설정"
-            ) {
-                onBackClick()
-            }
+                title = "프로필 설정",
+                onBackClick = { onBackClick() }
+            )
         }
     ) { paddingValues ->
         Column(

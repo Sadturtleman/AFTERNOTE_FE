@@ -27,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
@@ -41,8 +41,9 @@ fun TimeLetterDetailScreen() {
     Scaffold(
         topBar = {
             TopBar(
-                title = "타임레터"
-            ) { }
+                title = "타임레터",
+                onBackClick = { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(

@@ -2,9 +2,9 @@ package com.kuit.afternote.feature.mainpage.presentation.component.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,11 +26,11 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 226.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(1f))
+        
         Image(
             painter = painterResource(R.drawable.img_empty_state),
             contentDescription = "빈 애프터노트",
@@ -38,8 +38,9 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
                 .width(106.dp)
                 .height(109.dp)
                 .alpha(0.6f)
-                .padding(bottom = 16.dp)
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "아직 등록된 애프터노트가 없어요.\n등록하여 계정을 보호하세요.",
@@ -52,6 +53,8 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center
             )
         )
+        
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

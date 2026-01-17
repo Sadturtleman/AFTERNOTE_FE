@@ -3,13 +3,10 @@ package com.kuit.afternote.feature.mainpage.presentation.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -19,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.core.Header
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogParams
@@ -71,6 +68,15 @@ fun AfternoteEditScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(
+                title = "애프터노트 작성하기",
+                onBackClick = onBackClick,
+                onActionClick = {
+                    onRegisterClick(state.selectedService)
+                }
+            )
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = state.selectedBottomNavItem,
@@ -82,7 +88,6 @@ fun AfternoteEditScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .windowInsetsPadding(WindowInsets.statusBars)
                 .addFocusCleaner(focusManager)
         ) {
             EditContent(
@@ -143,16 +148,7 @@ private fun EditContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 1. 상단 영역 (고정)
-        Header(
-            title = "애프터노트 작성하기",
-            onBackClick = onBackClick,
-            onActionClick = {
-                onRegisterClick(state.selectedService)
-            }
-        )
-
-        // 2. 메인 콘텐츠 (스크롤 가능, 남은 공간 차지)
+        // 메인 콘텐츠 (스크롤 가능, 남은 공간 차지)
         Column(
             modifier = Modifier
                 .weight(1f)

@@ -39,7 +39,11 @@
 
 ## CRITICAL PATTERNS (핵심 패턴)
 - **Named Arguments Pattern**: 가독성과 안전성을 위해 명시적 파라미터 이름 사용. `FontWeight(500)` 대신 `FontWeight.Medium` 사용. 계산식(`Spacing.l - 8.dp`) 금지
-- **Rem-based Design**: 큰 간격(24dp+)은 `weight`, 작은 간격(8dp 이하)은 고정값, 컴포넌트 크기는 항상 고정 dp
+- **Rem-based Design**: 큰 간격(24dp+)은 `weight`과 `Arrangement`, 작은 간격(8dp 이하)은 `Spacer`, 컴포넌트 크기는 항상 고정 dp
+- **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()` 직접 적용 금지. 간격은 `Spacer`로 표현. 화면 가장자리 padding만 예외
+- **Core 컴포넌트 최대한 활용**: `core` 모듈의 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton` 등)를 최대한 재사용
+- **컴포넌트 오버로딩**: 전체 틀은 비슷하고 세부 디자인만 다른 경우, 별도 컴포넌트 대신 **오버로딩**으로 처리
+- **큰 간격 처리**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween` 등으로 해결
 - **Component Reuse**: 불확실하면 `private` 함수로, 재사용 확정되면 별도 파일
 - **File Limit**: 400줄 초과 시 분리, 폴더당 10-15개 파일 유지
 - **`.cursorrules` 최적화**: 300줄 이하 권장, 초과 시 `.cursor/rules/*.mdc`로 분리 고려

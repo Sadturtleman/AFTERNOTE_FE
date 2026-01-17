@@ -60,19 +60,78 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 
 ### 핵심 규칙
 1. **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
-2. **Padding과 Spacing**: `weight`을 사용한 가변 패딩/간격 적용
-   - 화면 가장자리 padding: 고정값 허용 (예: `padding(horizontal = 20.dp)`)
-   - **내부 간격**: `Spacer(Modifier.weight())` 사용하여 화면 크기에 따라 동적 조정
-   - 작은 간격(8dp 이하): 고정값 허용 (예: `Spacer(Modifier.height(8.dp))`)
-3. **공통 컴포넌트 오버로딩**: 비슷한 컴포넌트는 오버로딩으로 재사용
+2. **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()`을 직접 적용하지 말고, `Spacer`를 사용하여 간격을 표현
+   - **❌ 금지**: `Column(modifier = Modifier.padding(vertical = 16.dp)) { ... }`
+   - **✅ 권장**: `Column { Spacer(Modifier.height(16.dp)); ... }`
+   - **예외**: 화면 가장자리 padding만 고정값 허용 (예: `padding(horizontal = 20.dp)`)
+3. **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween`, `Arrangement.SpaceEvenly` 등을 사용
+   - **❌ 금지**: `padding(top = 100.dp)` 같은 큰 padding 값
+   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(1f))`
+4. **공통 컴포넌트 최대한 활용**: `core` 모듈에 있는 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, `BottomNavigationBar` 등)를 최대한 재사용
+5. **컴포넌트 오버로딩**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 **오버로딩**으로 처리
+   - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
+   - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
 ### 적용 우선순위
-1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 사용
-   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
-2. **중간 간격 (8-24dp)**: 상황에 따라 weight 또는 고정값
-3. **작은 간격 (8dp 이하)**: 고정값 허용
-4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지)
+1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
+   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없으므로 `Spacer(Modifier.height())` 사용
+2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
+3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)
+4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지, 예: `padding(horizontal = 20.dp)`)
 5. **컴포넌트 크기**: 항상 고정 dp 값 사용
+6. **컴포넌트 간 간격**: `Arrangement.spacedBy()` 사용 권장
+
+### 패딩 대신 Spacer 사용 예시
+<rule id="spacer_instead_of_padding">
+<description>컴포넌트 패딩 대신 Spacer를 사용하여 간격을 표현하세요.</description>
+<bad_example>
+Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 16.dp, horizontal = 20.dp)
+) {
+    Text("Title")
+    Text("Content")
+}
+</bad_example>
+<good_example>
+Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 20.dp)
+) {
+    Spacer(Modifier.height(16.dp))
+    Text("Title")
+    Spacer(Modifier.height(16.dp))
+    Text("Content")
+    Spacer(Modifier.height(16.dp))
+}
+</good_example>
+</rule>
+
+### 큰 간격 처리 예시
+<rule id="large_spacing_with_arrangement">
+<description>큰 간격은 Arrangement나 weight을 사용하여 처리하세요.</description>
+<bad_example>
+Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 100.dp, bottom = 50.dp)
+) {
+    // Content
+}
+</bad_example>
+<good_example>
+Column(
+    modifier = Modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.SpaceBetween
+) {
+    Spacer(Modifier.weight(1f))
+    // Content
+    Spacer(Modifier.weight(1f))
+}
+</good_example>
+</rule>
 
 ## State Holder 패턴 (Cognitive Complexity 해결) - Critical
 - **목표**: SonarQube 인지 복잡도(Cognitive Complexity)를 15 이하로 유지
@@ -113,6 +172,22 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
  3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
  4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
  5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
+
+## Core 컴포넌트 최대한 활용 - Critical
+- **원칙**: `core` 모듈에 있는 공통 컴포넌트를 최대한 재사용하여 코드 중복을 방지하고 일관성을 유지합니다.
+- **사용 가능한 Core 컴포넌트**:
+  - `Header`: 화면 상단 헤더 (오버로딩 지원)
+  - `LabeledTextField`: 라벨이 있는 텍스트 필드
+  - `MessageTextField`: 멀티라인 메시지 입력 필드
+  - `CustomRadioButton`: 커스텀 라디오 버튼
+  - `BottomNavigationBar`: 하단 네비게이션 바
+  - `RequiredLabel`: 필수 입력 표시 라벨
+  - `CircleArrowIcon`: 원형 화살표 아이콘
+  - `SelectableRadioCard`: 선택 가능한 라디오 카드
+- **사용 전 확인**: 새로운 컴포넌트를 만들기 전에 `core` 모듈에 유사한 컴포넌트가 있는지 반드시 확인
+- **오버로딩 활용**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 기존 컴포넌트의 **오버로딩**을 활용
+  - **예시**: `Header` 컴포넌트는 `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(onBackClick: () -> Unit, onEditClick: () -> Unit)` 등으로 오버로딩되어 있음
+  - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
 ## Slot API 패턴 (Composition over Inheritance) - Critical
 - **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.

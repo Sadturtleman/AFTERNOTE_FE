@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavItem
 
 /**
  * AfternoteDetailScreen의 상태를 관리하는 State Holder

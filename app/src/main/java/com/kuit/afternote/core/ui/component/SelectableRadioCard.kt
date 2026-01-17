@@ -1,4 +1,4 @@
-package com.kuit.afternote.core
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
