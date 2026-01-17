@@ -24,8 +24,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.CheckItem
 import com.kuit.afternote.feature.receiver.presentation.component.CredentialRow
@@ -42,8 +42,9 @@ fun AfterNoteDetailScreen() {
     Scaffold(
         topBar = {
             TopBar(
-                title = ""
-            ) { }
+                title = "",
+                onBackClick = { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(

@@ -1,0 +1,15 @@
+Fix code quality issues in GalleryDetailScreen.kt:
+
+1. Reduce Cognitive Complexity from 46 to 15 (line 69)
+2. Reduce function parameters from 12 to 7 (line 69) 
+3. Replace if-else with ifEmpty at line 256
+
+Apply State Holder pattern:
+- Create GalleryDetailData data class to group: serviceName, userName, finalWriteDate, informationProcessingMethod, recipients, processingMethods, message
+- Create GalleryDetailCallbacks data class to group: onBackClick, onEditClick, onDeleteConfirm
+- Extract UI sections into private Composables: TitleSection, DateAndMethodCard, RecipientsCard, ProcessingMethodsCard, MessageCard
+- Use message.ifEmpty { "남기신 말씀이 없습니다." } instead of if-else
+
+Read the file: app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/screen/GalleryDetailScreen.kt
+
+Apply the fixes and return the complete refactored code.

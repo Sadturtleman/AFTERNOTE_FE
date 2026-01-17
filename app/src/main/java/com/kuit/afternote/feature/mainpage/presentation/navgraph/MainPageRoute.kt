@@ -13,8 +13,17 @@ sealed interface MainPageRoute {
     data object DetailRoute : MainPageRoute
 
     @Serializable
+    data object GalleryDetailRoute : MainPageRoute
+
+    @Serializable
     data object EditRoute : MainPageRoute
 
     @Serializable
     data object FingerprintLoginRoute : MainPageRoute
+
+    @Serializable
+    data object MemorialPlaylistRoute : MainPageRoute
+
+    @Serializable
+    data object AddSongRoute : MainPageRoute
 }

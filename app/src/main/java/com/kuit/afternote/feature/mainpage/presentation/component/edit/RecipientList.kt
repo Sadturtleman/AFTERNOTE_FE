@@ -17,29 +17,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.mainpage.presentation.model.DropdownMenuOverlayParams
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -58,38 +51,21 @@ import com.kuit.afternote.ui.theme.White
 fun RecipientList(
     modifier: Modifier = Modifier,
     recipients: List<Recipient>,
-    onAddClick: () -> Unit = {},
-    onItemEditClick: (String) -> Unit = {},
-    onItemDeleteClick: (String) -> Unit = {},
-    onItemAdded: (String) -> Unit = {},
-    onTextFieldVisibilityChanged: (Boolean) -> Unit = {},
-    initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null
+    events: RecipientCallbacks = RecipientCallbacks(),
+    state: RecipientListState = rememberRecipientListState()
 ) {
-    var showTextField by remember { mutableStateOf(initialShowTextField) }
     val focusManager = LocalFocusManager.current
 
-    // 각 아이템의 expanded 상태를 추적하기 위한 맵
-    val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
-    // 각 아이템의 위치를 추적하기 위한 맵
-    val itemPositions = remember { mutableStateMapOf<String, Offset>() }
-    // 각 아이템의 크기를 추적하기 위한 맵
-    val itemSizes = remember { mutableStateMapOf<String, IntSize>() }
-    // 부모 Box의 루트 위치
-    var boxPositionInRoot by remember { mutableStateOf(Offset.Zero) }
-    val density = LocalDensity.current
-
-    recipients.forEach { recipient ->
-        if (!expandedStates.containsKey(recipient.id)) {
-            expandedStates[recipient.id] = initialExpandedItemId == recipient.id
-        }
+    // 초기화: 수신자들의 expanded 상태 설정
+    androidx.compose.runtime.LaunchedEffect(recipients) {
+        state.initializeExpandedStates(recipients, null)
     }
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .onGloballyPositioned { coordinates ->
-                boxPositionInRoot = coordinates.positionInRoot()
+                state.updateBoxPosition(coordinates.positionInRoot())
             }
     ) {
         Column(
@@ -100,22 +76,21 @@ fun RecipientList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             recipients.forEachIndexed { _, recipient ->
-                val expanded = expandedStates[recipient.id] ?: false
+                val expanded = state.expandedStates[recipient.id] ?: false
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coordinates ->
-                            // 각 아이템의 위치와 크기 저장
-                            itemPositions[recipient.id] = coordinates.positionInRoot()
-                            itemSizes[recipient.id] = coordinates.size
+                            state.updateItemPosition(recipient.id, coordinates.positionInRoot())
+                            state.updateItemSize(recipient.id, coordinates.size)
                         }
                 ) {
                     RecipientItem(
                         recipient = recipient,
                         onMoreClick = {
                             focusManager.clearFocus()
-                            expandedStates[recipient.id] = !expanded
+                            state.toggleItemExpanded(recipient.id)
                         }
                     )
                 }
@@ -130,8 +105,8 @@ fun RecipientList(
                 contentDescription = "수신자 추가",
                 modifier = Modifier
                     .clickable(onClick = {
-                        showTextField = !showTextField
-                        onAddClick()
+                        state.toggleTextField()
+                        events.onAddClick()
                     })
             )
         }
@@ -140,14 +115,14 @@ fun RecipientList(
         DropdownMenuOverlay(
             params = DropdownMenuOverlayParams(
                 itemIds = recipients.map { it.id },
-                expandedStates = expandedStates,
-                itemPositions = itemPositions,
-                itemSizes = itemSizes,
-                boxPositionInRoot = boxPositionInRoot,
-                onItemEditClick = onItemEditClick,
-                onItemDeleteClick = onItemDeleteClick,
+                expandedStates = state.expandedStates,
+                itemPositions = state.itemPositions,
+                itemSizes = state.itemSizes,
+                boxPositionInRoot = state.boxPositionInRoot,
+                onItemEditClick = events.onItemEditClick,
+                onItemDeleteClick = events.onItemDeleteClick,
                 onExpandedStateChanged = { id, isExpanded ->
-                    expandedStates[id] = isExpanded
+                    state.expandedStates[id] = isExpanded
                 }
             )
         )
@@ -232,14 +207,10 @@ private fun RecipientListPreview() {
     AfternoteTheme {
         RecipientList(
             recipients = listOf(
-                Recipient("1", "김지은", "친구"),
-                Recipient("2", "박선호", "가족")
+                Recipient(id = "1", name = "김지은", label = "친구"),
+                Recipient(id = "2", name = "박선호", label = "가족")
             ),
-            onAddClick = {},
-            onItemEditClick = {},
-            onItemDeleteClick = {},
-            onItemAdded = {},
-            onTextFieldVisibilityChanged = {}
+            events = RecipientCallbacks()
         )
     }
 }

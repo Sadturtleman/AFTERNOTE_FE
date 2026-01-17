@@ -39,10 +39,9 @@ fun ReceiverDetailScreen(
     Scaffold(
         topBar = {
             TopBar(
-                title = "받은 기록함"
-            ) {
-                onBackClick()
-            }
+                title = "받은 기록함",
+                onBackClick = { onBackClick() }
+            )
         }
     ) { paddingValues ->
         Column(
