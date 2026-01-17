@@ -210,3 +210,43 @@ Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+*.manifest
+
+# Python Logs
+*.log
+
+# Security & Local Configurations
+.env
+.env.*
+!.env.example
+signing.properties
+keystore.properties
+*.p12
+
+# Static Analysis Reports (if generated in root)
+detekt-report.html
+detekt-report.xml
+detekt-report.txt
+ktlint-report.html
+ktlint-report.txt
+site/
+docs/generated/
+
+# VS Code / Cursor
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+*.code-workspace
+
+# Kotlin 2.0+
+.kotlin/
