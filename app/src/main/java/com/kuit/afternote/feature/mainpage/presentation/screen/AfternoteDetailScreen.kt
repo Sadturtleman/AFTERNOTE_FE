@@ -6,23 +6,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -33,9 +27,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.core.Header
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
@@ -68,18 +61,15 @@ fun AfternoteDetailScreen(
     userName: String = "서영",
     onBackClick: () -> Unit,
     onEditClick: () -> Unit,
-    onDeleteConfirm: () -> Unit = {}
+    onDeleteConfirm: () -> Unit = {},
+    state: AfternoteDetailState = rememberAfternoteDetailState()
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
-    var showDropdownMenu by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-
-    if (showDeleteDialog) {
+    if (state.showDeleteDialog) {
         DeleteConfirmDialog(
             serviceName = serviceName,
-            onDismiss = { showDeleteDialog = false },
+            onDismiss = state::hideDeleteDialog,
             onConfirm = {
-                showDeleteDialog = false
+                state.hideDeleteDialog()
                 onDeleteConfirm()
             }
         )
@@ -87,26 +77,27 @@ fun AfternoteDetailScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(
+                onBackClick = onBackClick,
+                onEditClick = state::toggleDropdownMenu
+            )
+        },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = state.selectedBottomNavItem,
+                onItemSelected = state::onBottomNavItemSelected
             )
         }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(paddingValues)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Header(
-                    title = "",
-                    onBackClick = onBackClick,
-                    onEditClick = { showDropdownMenu = !showDropdownMenu }
-                )
 
                 Column(
                     modifier = Modifier
@@ -127,7 +118,7 @@ fun AfternoteDetailScreen(
                             fontSize = 18.sp,
                             lineHeight = 24.sp,
                             fontFamily = Sansneo,
-                            fontWeight = FontWeight(700),
+                            fontWeight = FontWeight.Bold,
                             color = Gray9
                         )
                     )
@@ -145,7 +136,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 10.sp,
                                         lineHeight = 16.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(400),
+                                        fontWeight = FontWeight.Normal,
                                         color = Gray6
                                     )
                                 )
@@ -161,7 +152,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -181,7 +172,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     ),
                                 )
@@ -214,7 +205,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -241,7 +232,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 16.sp,
                                         lineHeight = 22.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(500),
+                                        fontWeight = FontWeight.Medium,
                                         color = Gray9
                                     )
                                 )
@@ -254,7 +245,7 @@ fun AfternoteDetailScreen(
                                         fontSize = 14.sp,
                                         lineHeight = 20.sp,
                                         fontFamily = Sansneo,
-                                        fontWeight = FontWeight(400),
+                                        fontWeight = FontWeight.Normal,
                                         color = Gray9
                                     )
                                 )
@@ -264,14 +255,14 @@ fun AfternoteDetailScreen(
                 }
             }
 
-            if (showDropdownMenu) {
+            if (state.showDropdownMenu) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
-                        ) { showDropdownMenu = false }
+                        ) { state.hideDropdownMenu() }
                 )
 
                 Box(
@@ -281,12 +272,12 @@ fun AfternoteDetailScreen(
                 ) {
                     EditDropdownMenu(
                         onEditClick = {
-                            showDropdownMenu = false
+                            state.hideDropdownMenu()
                             onEditClick()
                         },
                         onDeleteClick = {
-                            showDropdownMenu = false
-                            showDeleteDialog = true
+                            state.hideDropdownMenu()
+                            state.showDeleteDialog()
                         }
                     )
                 }

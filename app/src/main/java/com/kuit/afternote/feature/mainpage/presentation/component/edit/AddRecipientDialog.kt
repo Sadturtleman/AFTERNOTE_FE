@@ -15,6 +15,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.core.LabeledTextField
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.ClickButton
-import com.kuit.afternote.feature.mainpage.presentation.model.AddRecipientDialogParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.rememberSelectionDropdownState
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
@@ -37,6 +39,29 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
+
+/**
+ * 수신자와의 관계 드롭다운 (로컬 상태 사용)
+ */
+@Composable
+private fun RelationshipDropdown(
+    label: String,
+    selectedValue: String,
+    options: List<String>,
+    onValueSelected: (String) -> Unit,
+    menuStyle: DropdownMenuStyle
+) {
+    val dropdownState = rememberSelectionDropdownState()
+
+    SelectionDropdown(
+        label = label,
+        selectedValue = selectedValue,
+        options = options,
+        onValueSelected = onValueSelected,
+        menuStyle = menuStyle,
+        state = dropdownState
+    )
+}
 
 /**
  * 수신자 추가 다이얼로그 컴포넌트
@@ -120,7 +145,7 @@ fun AddRecipientDialog(
             Spacer(modifier = Modifier.height(Spacing.l))
 
             // 수신자 이름 입력 필드
-            LabeledTextField(
+            OutlineTextField(
                 label = "수신자 이름",
                 textFieldState = params.recipientNameState,
                 keyboardType = KeyboardType.Text,
@@ -131,7 +156,7 @@ fun AddRecipientDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 수신자와의 관계 드롭다운
-            SelectionDropdown(
+            RelationshipDropdown(
                 label = "수신자와의 관계",
                 selectedValue = params.relationshipSelectedValue,
                 options = params.relationshipOptions,
@@ -146,7 +171,7 @@ fun AddRecipientDialog(
             Spacer(modifier = Modifier.height(Spacing.l))
 
             // 전화번호로 추가하기 입력 필드
-            LabeledTextField(
+            OutlineTextField(
                 label = "전화번호로 추가하기",
                 textFieldState = params.phoneNumberState,
                 keyboardType = KeyboardType.Phone,
@@ -163,7 +188,7 @@ fun AddRecipientDialog(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight(400),
+                    fontWeight = FontWeight.Normal,
                     color = Gray9,
                 )
             )

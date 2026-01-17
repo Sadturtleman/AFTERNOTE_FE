@@ -40,8 +40,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
@@ -68,8 +68,9 @@ fun MemorialPlaylistScreen() {
     Scaffold(
         topBar = {
             TopBar(
-                title = "추모 플레이리스트"
-            ) { }
+                title = "추모 플레이리스트",
+                onBackClick = { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(

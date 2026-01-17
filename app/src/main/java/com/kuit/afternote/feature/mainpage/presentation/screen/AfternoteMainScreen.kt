@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,17 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kuit.afternote.core.AddFloatingActionButton
-import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.core.Header
+import com.kuit.afternote.core.ui.component.AddFloatingActionButton
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteListItem
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainEvent
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainUiState
-import com.kuit.afternote.feature.mainpage.presentation.main.AfternoteMainViewModel
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
@@ -42,6 +38,7 @@ import com.kuit.afternote.ui.theme.Spacing
 fun AfternoteMainRoute(
     viewModel: AfternoteMainViewModel = viewModel(),
     onNavigateToDetail: () -> Unit = {},
+    onNavigateToGalleryDetail: () -> Unit = {},
     onNavigateToAdd: () -> Unit = {},
     initialItems: List<AfternoteItem> = emptyList()
 ) {
@@ -58,7 +55,16 @@ fun AfternoteMainRoute(
         uiState = uiState,
         onEvent = { event ->
             when (event) {
-                is AfternoteMainEvent.ClickItem -> onNavigateToDetail()
+                is AfternoteMainEvent.ClickItem -> {
+                    // 아이템 ID로 아이템 찾기
+                    val item = uiState.items.find { it.id == event.itemId }
+                    // 서비스명이 "갤러리"인 경우 갤러리 상세 화면으로 이동
+                    if (item?.serviceName == "갤러리") {
+                        onNavigateToGalleryDetail()
+                    } else {
+                        onNavigateToDetail()
+                    }
+                }
                 is AfternoteMainEvent.ClickAdd -> onNavigateToAdd()
                 else -> viewModel.onEvent(event)
             }
@@ -72,42 +78,36 @@ fun AfternoteMainRoute(
  */
 @Composable
 fun AfternoteMainScreen(
+    modifier: Modifier = Modifier,
     uiState: AfternoteMainUiState,
-    onEvent: (AfternoteMainEvent) -> Unit,
-    modifier: Modifier = Modifier
+    onEvent: (AfternoteMainEvent) -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(title = "애프터노트")
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = uiState.selectedBottomNavItem,
                 onItemSelected = { navItem -> onEvent(AfternoteMainEvent.SelectBottomNav(navItem)) }
             )
         }
-    ) { innerPadding ->
-        // 패턴 A: Scaffold 기본 동작 활용 + 수동 계산
-        // innerPadding에는 시스템 인셋(상태바)과 bottomBar 높이가 자동으로 포함됨
-        // 피그마 디자인 요구값을 innerPadding에 더하여 정확한 패딩 적용
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    // 상단: 시스템 상태바 높이 + 디자인 요구값 (필요시 추가)
-                    top = innerPadding.calculateTopPadding() + 20.dp,
-                    // 하단: BottomBar 높이 (자동 계산됨)
-                    bottom = innerPadding.calculateBottomPadding() + 16.dp,
-                    // 좌우: 디자인 요구값 직접 적용
+                    bottom = paddingValues.calculateBottomPadding() + 16.dp,
                     start = 20.dp,
                     end = 20.dp
                 )
-                // 중요: 시스템 인셋을 소비했다고 명시하여 자식 컴포넌트에서 중첩 적용 방지
-                .consumeWindowInsets(innerPadding)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = paddingValues.calculateTopPadding())
             ) {
-                Header(title = "애프터노트")
-
                 Spacer(modifier = Modifier.height(height = Spacing.m))
 
                 if (uiState.items.isEmpty() && uiState.selectedTab == AfternoteTab.ALL) {

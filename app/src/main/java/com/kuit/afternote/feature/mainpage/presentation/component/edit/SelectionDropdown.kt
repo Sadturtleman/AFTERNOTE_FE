@@ -16,8 +16,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,10 +73,9 @@ fun SelectionDropdown(
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
-    menuStyle: DropdownMenuStyle = DropdownMenuStyle()
+    menuStyle: DropdownMenuStyle = DropdownMenuStyle(),
+    state: SelectionDropdownState = rememberSelectionDropdownState()
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var boxWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
     Column(
@@ -108,8 +105,11 @@ fun SelectionDropdown(
                     .fillMaxWidth()
                     .height(36.dp)
                     .onGloballyPositioned { coordinates ->
-                        boxWidth = with(density) { coordinates.size.width.toDp() }
-                    }.clickable { expanded = !expanded }
+                        val newWidth = with(density) { coordinates.size.width.toDp() }
+                        if (newWidth != state.boxWidth) {
+                            state.boxWidth = newWidth
+                        }
+                    }.clickable { state.expanded = !state.expanded }
                     .bottomBorder(color = Gray3, width = 0.5.dp)
                     .padding(all = 8.dp)
             ) {
@@ -138,14 +138,14 @@ fun SelectionDropdown(
 
             // 드롭다운 메뉴
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
+                expanded = state.expanded,
+                onDismissRequest = { state.expanded = false },
                 offset = DpOffset(x = 0.dp, y = menuStyle.menuOffset),
                 containerColor = menuStyle.menuBackgroundColor,
                 shadowElevation = menuStyle.shadowElevation,
                 tonalElevation = menuStyle.tonalElevation,
                 modifier = Modifier
-                    .then(if (boxWidth > 0.dp) Modifier.width(boxWidth) else Modifier.fillMaxWidth())
+                    .then(if (state.boxWidth > 0.dp) Modifier.width(state.boxWidth) else Modifier.fillMaxWidth())
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
@@ -165,7 +165,7 @@ fun SelectionDropdown(
                         },
                         onClick = {
                             onValueSelected(option)
-                            expanded = false
+                            state.expanded = false
                         },
                         contentPadding = PaddingValues(vertical = 16.dp)
                     )

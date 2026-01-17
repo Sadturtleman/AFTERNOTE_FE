@@ -18,6 +18,12 @@
 10. **ViewModel 주입**: `androidx.lifecycle.viewmodel.compose.viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
 11. **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
 12. **`.cursorrules` 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
+13. **Named Arguments 필수**: 함수 호출 시 파라미터 이름 명시 (아래 조건 해당 시)
+   - 인자가 3개 이상인 경우
+   - Boolean, Null, 숫자 리터럴이 포함된 경우
+   - 같은 타입의 인자가 연속되는 경우
+   - Compose 함수 호출 시 (modifier 제외한 모든 인자)
+   - 예: `Recipient(id = "1", name = "김지은", label = "친구")`, `FontWeight.Medium` (NOT `FontWeight(500)`)
 
 ## MUST NOT DO (절대 금지)
 1. 커밋/푸시 자동 실행
@@ -32,7 +38,12 @@
 10. **로컬 상태 관리**: Composable 내부에서 `remember { mutableStateOf() }`로 화면 상태 관리 금지 (ViewModel로 이동)
 
 ## CRITICAL PATTERNS (핵심 패턴)
-- **Rem-based Design**: 큰 간격(24dp+)은 `weight`, 작은 간격(8dp 이하)은 고정값, 컴포넌트 크기는 항상 고정 dp
+- **Named Arguments Pattern**: 가독성과 안전성을 위해 명시적 파라미터 이름 사용. `FontWeight(500)` 대신 `FontWeight.Medium` 사용. 계산식(`Spacing.l - 8.dp`) 금지
+- **Rem-based Design**: 큰 간격(24dp+)은 `weight`과 `Arrangement`, 작은 간격(8dp 이하)은 `Spacer`, 컴포넌트 크기는 항상 고정 dp
+- **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()` 직접 적용 금지. 간격은 `Spacer`로 표현. 화면 가장자리 padding만 예외
+- **Core 컴포넌트 최대한 활용**: `core` 모듈의 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton` 등)를 최대한 재사용
+- **컴포넌트 오버로딩**: 전체 틀은 비슷하고 세부 디자인만 다른 경우, 별도 컴포넌트 대신 **오버로딩**으로 처리
+- **큰 간격 처리**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween` 등으로 해결
 - **Component Reuse**: 불확실하면 `private` 함수로, 재사용 확정되면 별도 파일
 - **File Limit**: 400줄 초과 시 분리, 폴더당 10-15개 파일 유지
 - **`.cursorrules` 최적화**: 300줄 이하 권장, 초과 시 `.cursor/rules/*.mdc`로 분리 고려
@@ -41,6 +52,9 @@
 - **State Holder Pattern for Cognitive Complexity**: SonarQube 인지 복잡도 15 이하를 위해 **State Holder 패턴** 필수 적용. Composable 내부 람다 정의 금지, 모든 로직은 State 클래스로 이동
 - **Slot API Pattern (Composition over Inheritance)**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용. 공통 껍데기를 제공하고 내용물은 Slot(`content: @Composable () -> Unit`)으로 주입받는 방식
 - **Component Location Rules (컴포넌트 위치 결정 규칙)**: 공통 컴포넌트는 반드시 `core` 모듈에 위치해야 함. Feature 모듈 간 직접 의존은 금지되며, 공통 컴포넌트는 `core`에 두어야 함
+- **@Suppress 사용 전 코드 구조 개선 필수**: detekt 경고 발생 시 `@Suppress`를 사용하기 전에 반드시 코드 구조 개선을 시도해야 함. State Hoisting 패턴 적용 후 파라미터가 많아지면 Event Interface나 State Class로 그룹화하여 해결
+- **구조 변경 시 필수 검증**: 파일 이동, 패키지 변경, 클래스 리팩토링 시 변경 전/후 빌드 확인, 사용처 전체 검색, import 경로 일괄 변경 필수
+- **Spacing Grouping Pattern**: `Arrangement.spacedBy`와 `Spacer` 혼용 시 계산식 금지. 간격이 다른 요소는 별도 `Column`으로 그룹화
 
 ---
 
@@ -138,6 +152,17 @@
 2. API 또는 라이브러리 사용법 불확실
 3. 시각적 문제 발생
 4. 3회 이상 시도 실패
+
+### ⚠️ Critical: 구조 변경 시 필수 검증 절차
+**파일 이동, 패키지 변경, 클래스 리팩토링 등 구조적 변경 작업 시 반드시 다음 절차를 따라야 합니다:**
+
+1. **변경 전 빌드 확인**: 구조 변경 전에 현재 상태가 빌드되는지 확인 (`./gradlew :app:compileDebugKotlin`)
+2. **사용처 전체 검색**: 이동/변경할 파일이 사용되는 모든 위치를 `grep`으로 검색하여 리스트업
+3. **Import 경로 일괄 변경**: 모든 사용처의 import 경로를 한 번에 변경 (단계적으로 하지 말고 전체를 먼저 파악)
+4. **변수/함수명 변경 시**: 변수명이나 함수명을 변경할 때는 `grep`으로 모든 사용처 확인 후 일괄 변경
+5. **변경 후 즉시 빌드 검증**: 파일 이동/변경 후 반드시 빌드하여 컴파일 오류 확인 (`./gradlew :app:compileDebugKotlin`)
+6. **State/Params 클래스 이동 시**: State 클래스나 Params 클래스를 이동할 때는 해당 클래스를 사용하는 모든 컴포넌트의 import 경로를 확인
+7. **중복 제거 시**: 중복 파일을 제거하기 전에 사용처를 모두 확인하고, 하나로 통합한 후 모든 import 경로를 업데이트
 
 ### Perplexity 프롬프트 작성 요청 시 규칙 - Critical
 **사용자가 "퍼플렉시티 프롬프트 작성해" 또는 "Perplexity 프롬프트 작성해"라고 명시적으로 요청한 경우:**

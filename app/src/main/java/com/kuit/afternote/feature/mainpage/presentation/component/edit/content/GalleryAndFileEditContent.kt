@@ -10,17 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.MessageTextField
-import com.kuit.afternote.core.RequiredLabel
+import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.RecipientList
-import com.kuit.afternote.feature.mainpage.presentation.model.GalleryAndFileEditContentParams
-import com.kuit.afternote.feature.mainpage.presentation.model.InfoMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
@@ -62,11 +61,7 @@ fun GalleryAndFileEditContent(
 
         RecipientList(
             recipients = recipientSection.recipients,
-            onAddClick = recipientSection.callbacks.onAddClick,
-            onItemEditClick = recipientSection.callbacks.onItemEditClick,
-            onItemDeleteClick = recipientSection.callbacks.onItemDeleteClick,
-            onItemAdded = recipientSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = recipientSection.callbacks.onTextFieldVisibilityChanged
+            events = recipientSection.callbacks
         )
     }
     Spacer(modifier = Modifier.height(Spacing.xl))
@@ -90,8 +85,10 @@ fun GalleryAndFileEditContent(
     Spacer(modifier = Modifier.height(Spacing.xl))
 
     // 남기실 말씀
-    MessageTextField(
-        textFieldState = params.messageState
+    OutlineTextField(
+        label = "남기실 말씀",
+        textFieldState = params.messageState,
+        isMultiline = true
     )
 
     // 갤러리 및 파일 탭 하단 여백 (459dp)
@@ -139,8 +136,8 @@ private fun GalleryAndFileEditContentWithRecipientsPreview() {
                     ),
                     recipientSection = RecipientSection(
                         recipients = listOf(
-                            Recipient("1", "김지은", "친구"),
-                            Recipient("2", "박선호", "가족")
+                            Recipient(id = "1", name = "김지은", label = "친구"),
+                            Recipient(id = "2", name = "박선호", label = "가족")
                         )
                     )
                 )

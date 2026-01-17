@@ -13,7 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,9 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ArrowIconSpec
-import com.kuit.afternote.core.CircleArrowIcon
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
+import com.kuit.afternote.core.ui.component.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -53,19 +52,16 @@ fun AfternoteTabRow(
     onTabSelected: (AfternoteTab) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var canScrollRight by remember { mutableStateOf(false) }
-
-    LaunchedEffect(scrollState.value) {
-        canScrollRight = scrollState.canScrollForward
+    val canScrollRight by remember {
+        derivedStateOf { scrollState.canScrollForward }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalFadingEdge(edgeWidth = 45.dp) // 페이드 효과를 스크롤보다 먼저 적용하여 화면에 고정
+                .horizontalFadingEdge(edgeWidth = 45.dp)
                 .horizontalScroll(scrollState),
-//                .padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 0.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AfternoteTab.entries.forEach { tab ->
@@ -79,13 +75,13 @@ fun AfternoteTabRow(
 
         // 오른쪽 끝에 화살표 아이콘 (스크롤 가능할 때만 표시)
         if (canScrollRight) {
-            CircleArrowIcon(
+            RightArrowIcon(
                 iconSpec = ArrowIconSpec(
                     iconRes = R.drawable.ic_arrow_right_tab,
                     contentDescription = "더 보기"
                 ),
                 backgroundColor = B1,
-                size = 12.dp,
+                size = 16.dp,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }

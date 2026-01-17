@@ -14,7 +14,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishO
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishesRadioGroup
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.MemorialPhotoUpload
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.MemorialPlaylist
-import com.kuit.afternote.feature.mainpage.presentation.model.MemorialGuidelineEditContentParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 

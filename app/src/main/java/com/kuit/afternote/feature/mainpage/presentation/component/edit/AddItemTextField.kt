@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -46,7 +45,9 @@ fun AddItemTextField(
     visible: Boolean,
     onItemAdded: (String) -> Unit,
     onVisibilityChanged: (Boolean) -> Unit,
-    placeholder: String = "Text Field"
+    placeholder: String = "Text Field",
+    previousFocusedState: Boolean = false,
+    onPreviousFocusedStateChange: (Boolean) -> Unit = {}
 ) {
     val textFieldState = rememberTextFieldState()
     val focusManager = LocalFocusManager.current
@@ -55,9 +56,6 @@ fun AddItemTextField(
 
     val onItemAddedState = rememberUpdatedState(onItemAdded)
     val onVisibilityChangedState = rememberUpdatedState(onVisibilityChanged)
-
-    // 포커스 해제 시 텍스트 필드 내용을 리스트에 추가
-    var previousFocusedState by remember { mutableStateOf(false) }
 
     fun addItemIfNotEmpty() {
         val text = textFieldState.text.toString().trim()
@@ -69,11 +67,11 @@ fun AddItemTextField(
         focusManager.clearFocus()
     }
 
-    DisposableEffect(isFocused, visible) {
+    DisposableEffect(isFocused, visible, previousFocusedState) {
         if (visible && previousFocusedState && !isFocused) {
             addItemIfNotEmpty()
         }
-        previousFocusedState = isFocused
+        onPreviousFocusedStateChange(isFocused)
         onDispose { }
     }
 

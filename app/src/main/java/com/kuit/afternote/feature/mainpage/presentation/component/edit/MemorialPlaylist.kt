@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ArrowIconSpec
-import com.kuit.afternote.core.CircleArrowIcon
+import com.kuit.afternote.core.ui.component.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -77,11 +79,9 @@ fun MemorialPlaylist(
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             // 노래 개수 텍스트
             Text(
                 text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
@@ -93,6 +93,8 @@ fun MemorialPlaylist(
                     color = Color(0xFF000000)
                 )
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // 앨범 커버 리스트 (페이드 아웃 효과 포함)
             if (albumCovers.isNotEmpty()) {
@@ -115,6 +117,7 @@ fun MemorialPlaylist(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // 노래 추가하기 버튼
@@ -141,7 +144,7 @@ fun MemorialPlaylist(
             )
 
             // 밝은 파란색 원형 배경에 흰색 화살표 아이콘
-            CircleArrowIcon(
+            RightArrowIcon(
                 iconSpec = ArrowIconSpec(
                     iconRes = R.drawable.ic_arrow_right_playlist,
                     contentDescription = "추가"

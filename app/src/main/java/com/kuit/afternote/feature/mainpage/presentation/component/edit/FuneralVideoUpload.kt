@@ -3,7 +3,9 @@ package com.kuit.afternote.feature.mainpage.presentation.component.edit
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,19 +59,26 @@ fun FuneralVideoUpload(
             )
         )
 
-        Column(
-            Modifier
+        Box(
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
                 .background(color = White, shape = RoundedCornerShape(size = 16.dp))
-                .padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_add_circle),
-                contentDescription = "영상 추가",
-                modifier = Modifier.size(24.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Image(
+                    painter = painterResource(R.drawable.ic_add_circle),
+                    contentDescription = "영상 추가",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }
