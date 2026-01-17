@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,9 +63,26 @@ fun AfternoteEditScreen(
     onRegisterClick: (String) -> Unit = {},
     onNavigateToPlaylist: () -> Unit = {},
     onNavigateToAddSong: () -> Unit = {},
-    state: AfternoteEditState = rememberAfternoteEditState()
+    state: AfternoteEditState = rememberAfternoteEditState(),
+    playlistStateHolder: MemorialPlaylistStateHolder? = null
 ) {
     val focusManager = LocalFocusManager.current
+    
+    // 플레이리스트 상태 홀더가 전달되면 설정
+    LaunchedEffect(playlistStateHolder) {
+        playlistStateHolder?.let { state.setPlaylistStateHolder(it) }
+    }
+    
+    // 플레이리스트 노래 개수 변경 감지 및 동기화
+    val songCount by playlistStateHolder?.songs?.let { 
+        androidx.compose.runtime.derivedStateOf { it.size } 
+    } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
+    
+    LaunchedEffect(songCount) {
+        if (playlistStateHolder != null) {
+            state.updatePlaylistSongCount()
+        }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

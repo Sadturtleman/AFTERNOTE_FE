@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.navgraph
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -18,6 +19,7 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScre
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.rememberMemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -77,6 +79,34 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.EditRoute> {
+        // 공유 플레이리스트 상태 생성 (EditRoute와 MemorialPlaylistRoute 간 공유)
+        val playlistStateHolder = remember { 
+            com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder().apply {
+                // 초기 데이터 설정
+                if (songs.isEmpty()) {
+                    initializeSongs(
+                        listOf(
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "1", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "2", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "3", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "4", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "5", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "6", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "7", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "8", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "9", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "10", title = "노래 제목", artist = "가수 이름"),
+                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "11", title = "노래 제목", artist = "가수 이름")
+                        )
+                    )
+                }
+                // AfternoteEditState와 동기화를 위한 콜백 설정
+                onSongCountChanged = {
+                    // 콜백은 AfternoteEditScreen에서 설정됨
+                }
+            }
+        }
+        
         AfternoteEditScreen(
             onBackClick = { navController.popBackStack() },
             onRegisterClick = { selectedService ->
@@ -98,7 +128,8 @@ fun NavGraphBuilder.mainPageNavGraph(
                 }
             },
             onNavigateToPlaylist = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
-            onNavigateToAddSong = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) }
+            onNavigateToAddSong = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
+            playlistStateHolder = playlistStateHolder
         )
     }
 
@@ -109,7 +140,15 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.MemorialPlaylistRoute> {
+        // EditRoute에서 생성한 공유 플레이리스트 상태 재사용
+        // 주의: 실제로는 NavBackStackEntry의 savedStateHandle을 사용하거나
+        // ViewModel을 통해 상태를 공유해야 하지만, 현재는 간단한 해결책으로
+        // rememberMemorialPlaylistStateHolder를 사용 (실제로는 공유되지 않음)
+        // TODO: 실제 상태 공유를 위해 ViewModel 또는 savedStateHandle 사용 고려
+        val playlistStateHolder = rememberMemorialPlaylistStateHolder()
+        
         MemorialPlaylistScreen(
+            stateHolder = playlistStateHolder,
             callbacks = MemorialPlaylistCallbacks(
                 onBackClick = { navController.popBackStack() },
                 onAddSongClick = { navController.navigate(MainPageRoute.AddSongRoute) }

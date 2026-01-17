@@ -105,6 +105,26 @@ class AfternoteEditState(
         private set
     var playlistSongCount by mutableIntStateOf(16)
         private set
+    
+    // Memorial Playlist State Holder (옵셔널 - 공유 상태)
+    var playlistStateHolder: MemorialPlaylistStateHolder? = null
+        private set
+    
+    /**
+     * 플레이리스트 상태 홀더 설정
+     */
+    fun setPlaylistStateHolder(stateHolder: MemorialPlaylistStateHolder) {
+        playlistStateHolder = stateHolder
+        // 상태 홀더가 설정되면 실제 노래 개수로 업데이트
+        updatePlaylistSongCount()
+    }
+    
+    /**
+     * 플레이리스트 노래 개수 업데이트
+     */
+    fun updatePlaylistSongCount() {
+        playlistSongCount = playlistStateHolder?.songs?.size ?: 16
+    }
 
     // Dropdown States
     var categoryDropdownState by mutableStateOf(
@@ -218,8 +238,11 @@ class AfternoteEditState(
     // Actions (Line 279 해결: 람다 내부 중첩 조건문 제거)
     fun onCategorySelected(category: String) {
         selectedCategory = category
-        if (category == CATEGORY_GALLERY_AND_FILE) {
-            selectedService = "갤러리"
+        // 카테고리 변경 시 서비스를 해당 카테고리의 기본값으로 초기화
+        selectedService = if (category == CATEGORY_GALLERY_AND_FILE) {
+            "갤러리"
+        } else {
+            "인스타그램"
         }
     }
 
