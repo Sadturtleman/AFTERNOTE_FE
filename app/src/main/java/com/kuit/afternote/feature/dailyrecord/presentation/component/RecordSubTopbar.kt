@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
@@ -50,7 +50,7 @@ fun RecordSubTopbar(
     ){
         Text(
             text = text,
-            color = Black9,
+            color = Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = Sansneo

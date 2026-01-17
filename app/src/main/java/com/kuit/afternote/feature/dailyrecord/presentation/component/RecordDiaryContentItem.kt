@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.kuit.afternote.R
-import com.kuit.afternote.ui.theme.Black9
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDate
@@ -73,7 +73,7 @@ fun RecordDiaryContentItem(
     ) {
         Text(
             text = s,
-            color = Black9,
+            color = Black,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             fontFamily = Sansneo

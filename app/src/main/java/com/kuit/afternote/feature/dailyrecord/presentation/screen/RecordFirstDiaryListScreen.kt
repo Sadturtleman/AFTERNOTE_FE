@@ -33,7 +33,7 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiary
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
-import com.kuit.afternote.feature.mainpage.presentation.component.AfternoteTab
+import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 
 /**
  * 일기, 깊은 생각하기로 넘어가면 먼저뜨는 리스트형 창
