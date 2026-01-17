@@ -200,56 +200,63 @@ private fun MemorialPlaylistList(
                         )
                     } else {
                         // 비선택 모드: "총 N곡" (왼쪽), "노래 추가하기" 버튼 (오른쪽)
-                        Spacer(modifier = Modifier.height(25.dp))
-                        Text(
-                            text = "총 ${songs.size}곡",
-                            style = TextStyle(
-                                fontSize = 14.sp,
-                                lineHeight = 20.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight.Normal,
-                                color = Color(color = 0xFF000000)
-                            )
-                        )
-
-                        // 노래 추가하기 버튼
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier
-                                .background(
-                                    color = B3,
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                                .clickable(onClick = onAddSongClick)
-                                .padding(vertical = 8.dp, horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(25.dp))
                             Text(
-                                text = "노래 추가하기",
+                                text = "총 ${songs.size}곡",
                                 style = TextStyle(
-                                    fontSize = 12.sp,
-                                    lineHeight = 18.sp,
+                                    fontSize = 14.sp,
+                                    lineHeight = 20.sp,
                                     fontFamily = Sansneo,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Gray9
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color(color = 0xFF000000)
                                 )
                             )
-
-                            RightArrowIcon(
-                                iconSpec = ArrowIconSpec(
-                                    iconRes = R.drawable.ic_arrow_right_playlist,
-                                    contentDescription = "추가"
-                                ),
-                                backgroundColor = B1,
-                                size = 12.dp
-                            )
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
-                        Spacer(modifier = Modifier.height(11.dp))
+                        // 노래 추가하기 버튼
+                        Column {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        color = B3,
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
+                                    .clickable(onClick = onAddSongClick),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Spacer(modifier = Modifier.width(width = 16.dp))
+                                Column {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row {
+                                        Text(
+                                            text = "노래 추가하기",
+                                            style = TextStyle(
+                                                fontSize = 12.sp,
+                                                lineHeight = 18.sp,
+                                                fontFamily = Sansneo,
+                                                fontWeight = FontWeight.Medium,
+                                                color = Gray9
+                                            )
+                                        )
+                                        Spacer(modifier = Modifier.width(width = 4.dp))
+                                        RightArrowIcon(
+                                            iconSpec = ArrowIconSpec(
+                                                iconRes = R.drawable.ic_arrow_right_playlist,
+                                                contentDescription = "추가"
+                                            ),
+                                            backgroundColor = B1,
+                                            size = 12.dp
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                                Spacer(modifier = Modifier.width(width = 16.dp))
+                            }
+                            Spacer(modifier = Modifier.height(11.dp))
+                        }
                     }
-                }
-                if (!isSelectionMode) {
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -292,60 +299,60 @@ private fun SongListItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-        // 앨범 커버 (Placeholder - 이미지 로딩 라이브러리 추가 후 구현)
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(Color.Black),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = song.title.take(1),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
+            // 앨범 커버 (Placeholder - 이미지 로딩 라이브러리 추가 후 구현)
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = song.title.take(1),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
                 )
-            )
-        }
+            }
 
-        // 노래 정보
-        Column(
-            modifier = Modifier
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(space = 4.dp)
-        ) {
-            Text(
-                text = song.title,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray9
+            // 노래 정보
+            Column(
+                modifier = Modifier
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(space = 4.dp)
+            ) {
+                Text(
+                    text = song.title,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray9
+                    )
                 )
-            )
-            Text(
-                text = song.artist,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray9
+                Text(
+                    text = song.artist,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray9
+                    )
                 )
-            )
-        }
+            }
 
-        // 체크박스
-        CustomRadioButton(
-            selected = isSelected,
-            onClick = null,
-            buttonSize = 24.dp,
-            selectedColor = B2,
-            unselectedColor = Gray4
-        )
+            // 체크박스
+            CustomRadioButton(
+                selected = isSelected,
+                onClick = null,
+                buttonSize = 24.dp,
+                selectedColor = B2,
+                unselectedColor = Gray4
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
     }

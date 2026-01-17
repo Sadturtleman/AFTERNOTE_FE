@@ -21,6 +21,11 @@ class MemorialPlaylistStateHolder {
 
     var isSelectionMode by mutableStateOf(false)
         private set
+    
+    /**
+     * 노래 개수 변경 콜백 (AfternoteEditState와 동기화용)
+     */
+    var onSongCountChanged: (() -> Unit)? = null
 
     /**
      * 노래 선택/해제
@@ -42,6 +47,7 @@ class MemorialPlaylistStateHolder {
         songs = emptyList()
         selectedSongIds = emptySet()
         isSelectionMode = false
+        onSongCountChanged?.invoke()
     }
 
     /**
@@ -51,6 +57,7 @@ class MemorialPlaylistStateHolder {
         songs = songs.filter { it.id !in selectedSongIds }
         selectedSongIds = emptySet()
         isSelectionMode = false
+        onSongCountChanged?.invoke()
     }
 
     /**
@@ -58,6 +65,15 @@ class MemorialPlaylistStateHolder {
      */
     fun initializeSongs(songs: List<Song>) {
         this.songs = songs
+        onSongCountChanged?.invoke()
+    }
+    
+    /**
+     * 노래 추가 (AddSongScreen에서 사용)
+     */
+    fun addSongs(newSongs: List<Song>) {
+        songs = songs + newSongs
+        onSongCountChanged?.invoke()
     }
 }
 
