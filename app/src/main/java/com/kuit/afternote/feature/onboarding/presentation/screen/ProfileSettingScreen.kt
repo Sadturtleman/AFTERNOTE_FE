@@ -46,7 +46,7 @@ fun ProfileSettingScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.weight(0.8f))
+            Spacer(modifier = Modifier.weight(0.4f))
 
             Image(
                 painter = painterResource(R.drawable.img_profile),
@@ -64,6 +64,8 @@ fun ProfileSettingScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+            
+            Spacer(modifier = Modifier.weight(0.4f))
 
             ClickButton(
                 color = B2,
@@ -71,7 +73,7 @@ fun ProfileSettingScreen(
                 onButtonClick = onFinishClick
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(0.7f))
         }
     }
 }
