@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AfternoteTheme {
+            AfternoteTheme(darkTheme = false) {
                 Column {
                     val navController = rememberNavController()
                     NavGraph(navController)

@@ -27,7 +27,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.main.Afternote
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTabRow
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.Spacing
 
 /**
@@ -180,7 +180,7 @@ private fun AfternoteContent(
 )
 @Composable
 private fun AfternoteMainScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         AfternoteMainScreen(
             uiState = AfternoteMainUiState(
                 selectedTab = AfternoteTab.ALL,
@@ -211,7 +211,7 @@ private fun AfternoteMainScreenPreview() {
 )
 @Composable
 private fun AfternoteMainScreenEmptyPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         AfternoteMainScreen(
             uiState = AfternoteMainUiState(),
             onEvent = {}

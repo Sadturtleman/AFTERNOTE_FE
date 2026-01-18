@@ -38,8 +38,8 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Inf
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
@@ -297,7 +297,7 @@ private fun CategoryContent(
 )
 @Composable
 private fun AfternoteEditScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         AfternoteEditScreen(
             onBackClick = {}
         )
@@ -311,7 +311,7 @@ private fun AfternoteEditScreenPreview() {
 )
 @Composable
 private fun AfternoteEditScreenGalleryAndFilePreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         val state = rememberAfternoteEditState()
         LaunchedEffect(Unit) {
             state.onCategorySelected(CATEGORY_GALLERY_AND_FILE)
@@ -330,7 +330,7 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 )
 @Composable
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         val state = rememberAfternoteEditState()
         LaunchedEffect(Unit) {
             state.onCategorySelected("추모 가이드라인")

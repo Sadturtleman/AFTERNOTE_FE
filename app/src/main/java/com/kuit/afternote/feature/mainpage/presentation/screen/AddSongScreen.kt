@@ -38,7 +38,7 @@ import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.CustomRadioButton
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
@@ -238,7 +238,7 @@ private fun SongListItem(
 @Preview(showBackground = true)
 @Composable
 private fun AddSongScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         AddSongScreen(
             callbacks = AddSongCallbacks(
                 onBackClick = {},

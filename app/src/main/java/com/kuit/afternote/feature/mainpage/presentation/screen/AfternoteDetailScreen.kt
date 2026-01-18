@@ -34,7 +34,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDro
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoRow
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
@@ -292,7 +292,7 @@ fun AfternoteDetailScreen(
 )
 @Composable
 private fun AfternoteDetailScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         AfternoteDetailScreen(
             onBackClick = {},
             onEditClick = {}

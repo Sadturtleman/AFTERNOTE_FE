@@ -44,7 +44,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDro
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
@@ -499,7 +499,7 @@ private fun RecipientDetailItem(
 )
 @Composable
 private fun GalleryDetailScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         GalleryDetailScreen(
             detailState = GalleryDetailState(),
             callbacks = GalleryDetailCallbacks(
@@ -517,7 +517,7 @@ private fun GalleryDetailScreenPreview() {
 )
 @Composable
 private fun GalleryDetailScreenWithDialogPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         val uiState = rememberAfternoteDetailState()
         uiState.showDeleteDialog()
         

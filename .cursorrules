@@ -8,6 +8,12 @@
    - **조건부 긍정문**: "하지 마라" 대신 "검증 절차를 먼저 수행하라"로 표현
 2. **Branch**: 작업 전 반드시 적절한 브랜치 확인/생성 (`feat/`, `fix/`, `docs/` 등)
 3. **Branch Cleanup**: 푸시 완료 후 main에 병합된 로컬 브랜치 자동 삭제
+4. **Merge Strategy (병합 전략) - Critical**: 사용자가 "메인에 병합해" 또는 "메인과 병합해"라고 요청한 경우:
+   - **1단계**: 현재 브랜치에 원격 main의 최신 변경사항을 먼저 가져와서 병합 (`git fetch origin main && git merge origin/main`)
+   - **2단계**: 충돌이 있으면 해결하고, 빌드 확인 (`./gradlew :app:compileDebugKotlin`)
+   - **3단계**: 문제가 없을 때만 main 브랜치로 체크아웃하여 현재 브랜치를 병합 (`git checkout main && git merge {현재브랜치}`)
+   - **4단계**: main 브랜치에 푸시 (`git push origin main`)
+   - **원칙**: "먼저 현재 브랜치에 main을 병합하고, 문제 없을 때만 main에 반영"
 4. **Preview**: 모든 public Composable에 `@Preview` 필수
 5. **Import**: 전체 import 문 포함, 확장 함수 명시적 import, 와일드카드 금지
 6. **Modifier**: 모든 Composable 첫 파라미터 `modifier: Modifier = Modifier`
