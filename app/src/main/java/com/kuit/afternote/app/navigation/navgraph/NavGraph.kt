@@ -9,8 +9,7 @@ import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
@@ -18,7 +17,6 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
-import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -58,54 +56,21 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         // 메인 화면 - 빈 상태 (개발용)
-        composable("main_empty") {
-            AfternoteTheme(darkTheme = false) {
-                AfternoteMainRoute(
-                    onNavigateToDetail = { navHostController.navigate("afternote_detail") },
-                    onNavigateToGalleryDetail = { navHostController.navigate("afternote_detail") },
-                    onNavigateToAdd = { navHostController.navigate("afternote_edit") },
-                    initialItems = emptyList()
-                )
-            }
-        }
-
-        // 메인 화면 - 목록 있음 (개발용)
-        composable("main_with_items") {
-            AfternoteTheme(darkTheme = false) {
-                AfternoteMainRoute(
-                    onNavigateToDetail = { navHostController.navigate("afternote_detail") },
-                    onNavigateToGalleryDetail = { navHostController.navigate("afternote_detail") },
-                    onNavigateToAdd = { navHostController.navigate("afternote_edit") },
-                    initialItems = AfternoteItemMapper.toAfternoteItems(
-                        listOf(
-                            "인스타그램" to "2023.11.24",
-                            "갤러리" to "2023.11.25",
-                            "갤러리" to "2023.11.26",
-                            "인스타그램" to "2023.11.27"
-                        )
-                    )
-                )
-            }
-        }
 
         // 애프터노트 상세 화면
         composable("afternote_detail") {
-            AfternoteTheme(darkTheme = false) {
-                AfternoteDetailScreen(
-                    onBackClick = { navHostController.popBackStack() },
-                    onEditClick = { navHostController.navigate("afternote_edit") }
-                )
-            }
+            AfternoteDetailScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onEditClick = { navHostController.navigate("afternote_edit") }
+            )
         }
 
         // 애프터노트 수정 화면
         composable("afternote_edit") {
-            AfternoteTheme(darkTheme = false) {
-                AfternoteEditScreen(
-                    onBackClick = { navHostController.popBackStack() },
-                    onRegisterClick = { /* TODO: 등록 처리 */ }
-                )
-            }
+            AfternoteEditScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onRegisterClick = { /* TODO: 등록 처리 */ }
+            )
         }
 
         // 개발자 모드용 화면들
@@ -143,11 +108,9 @@ fun NavGraph(navHostController: NavHostController) {
 
         // 지문 로그인 화면
         composable("fingerprint_login") {
-            AfternoteTheme(darkTheme = false) {
-                FingerprintLoginScreen(
-                    onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
-                )
-            }
+            FingerprintLoginScreen(
+                onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
+            )
         }
     }
 }
