@@ -26,6 +26,26 @@ import java.util.Date
 import java.util.Locale
 
 /**
+ * mainpage feature 전용 라이트 모드 테마 래퍼
+ * Preview 함수에서 사용하여 다크 모드를 강제로 비활성화합니다.
+ * 
+ * 사용 예시:
+ * ```
+ * @Preview(showBackground = true)
+ * @Composable
+ * private fun MyScreenPreview() {
+ *     MainPageLightTheme {
+ *         MyScreen()
+ *     }
+ * }
+ * ```
+ */
+@Composable
+fun MainPageLightTheme(content: @Composable () -> Unit) {
+    AfternoteTheme(darkTheme = false, content = content)
+}
+
+/**
  * mainpage feature 전용 composable 래퍼
  * 내부적으로 라이트 모드를 강제 적용하여 다크모드를 비활성화합니다.
  */

@@ -39,7 +39,36 @@ alwaysApply: true
 - 실수로 커밋한 경우: `git reset --soft HEAD~1` (변경사항은 유지) 또는 `git reset --hard HEAD~1` (변경사항도 제거)
 - 실수로 푸시한 경우: `git reset --hard HEAD~1` 후 `git push origin {branch-name} --force-with-lease`로 원격에서도 제거
 
-### 7. 브랜치 정리 규칙 (Branch Cleanup Rule) - Critical
+### 7. 병합 전략 (Merge Strategy) - Critical
+**사용자가 "메인에 병합해" 또는 "메인과 병합해"라고 요청한 경우, 다음 절차를 반드시 따라야 합니다:**
+
+#### 병합 절차 (4단계)
+1. **1단계: 현재 브랜치에 원격 main 병합**
+   - 현재 브랜치 확인: `git branch --show-current`
+   - 원격 main 최신화: `git fetch origin main`
+   - 현재 브랜치에 main 병합: `git merge origin/main`
+   - 목적: 충돌을 현재 브랜치에서 먼저 해결
+
+2. **2단계: 충돌 해결 및 빌드 확인**
+   - 충돌이 있으면 해결
+   - 빌드 확인: `./gradlew :app:compileDebugKotlin`
+   - 문제가 있으면 사용자에게 알리고 중단
+
+3. **3단계: main 브랜치로 체크아웃 및 병합**
+   - 문제가 없을 때만 진행: `git checkout main`
+   - main 브랜치 최신화: `git pull origin main` (필요시)
+   - 현재 브랜치를 main에 병합: `git merge {현재브랜치}`
+
+4. **4단계: main 브랜치 푸시**
+   - 검증: 현재 브랜치가 `main`인지 확인 (`git branch --show-current`)
+   - 푸시: `git push origin main`
+
+#### 원칙
+- **"먼저 현재 브랜치에 main을 병합하고, 문제 없을 때만 main에 반영"**
+- 충돌이나 빌드 오류가 있으면 main에 병합하지 않음
+- 모든 단계에서 문제가 발생하면 사용자에게 알리고 중단
+
+### 8. 브랜치 정리 규칙 (Branch Cleanup Rule) - Critical
 **커밋/푸시 완료 후 자동으로 병합된 브랜치를 정리합니다.**
 
 #### 자동 정리 조건

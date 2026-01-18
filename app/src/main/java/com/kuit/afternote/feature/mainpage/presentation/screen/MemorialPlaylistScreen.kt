@@ -39,7 +39,7 @@ import com.kuit.afternote.core.ui.component.CustomRadioButton
 import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
@@ -431,7 +431,7 @@ private fun MemorialPlaylistActionBar(
 @Preview(showBackground = true)
 @Composable
 private fun MemorialPlaylistScreenPreview() {
-    AfternoteTheme {
+    MainPageLightTheme {
         MemorialPlaylistScreen(
             callbacks = MemorialPlaylistCallbacks(
                 onBackClick = {},
