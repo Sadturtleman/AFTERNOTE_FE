@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,18 +8,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,7 +100,7 @@ fun MemorialPlaylist(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 앨범 커버 리스트 (페이드 아웃 효과 포함)
+            // 앨범 커버 리스트 (페이드 아웃 효과 포함, 1부터 차례대로 숫자 표시)
             if (albumCovers.isNotEmpty()) {
                 LazyRow(
                     modifier = Modifier
@@ -104,14 +108,33 @@ fun MemorialPlaylist(
                         .horizontalFadingEdge(edgeWidth = 45.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(albumCovers) { album ->
+                    itemsIndexed(albumCovers) { index, album ->
                         Box(
-                            modifier = Modifier
-                                .size(87.dp)
-                                .background(color = Color.Black)
+                            modifier = Modifier.size(87.dp)
                         ) {
                             if (album.imageUrl != null) {
                                 // TODO: 실제 이미지 로드 (Coil 등 사용)
+                            } else {
+                                val placeholderResId = when ((index % 12) + 1) {
+                                    1 -> R.drawable.img_placeholder_1
+                                    2 -> R.drawable.img_placeholder_2
+                                    3 -> R.drawable.img_placeholder_3
+                                    4 -> R.drawable.img_placeholder_4
+                                    5 -> R.drawable.img_placeholder_5
+                                    6 -> R.drawable.img_placeholder_6
+                                    7 -> R.drawable.img_placeholder_7
+                                    8 -> R.drawable.img_placeholder_8
+                                    9 -> R.drawable.img_placeholder_9
+                                    10 -> R.drawable.img_placeholder_10
+                                    11 -> R.drawable.img_placeholder_11
+                                    else -> R.drawable.img_placeholder_12
+                                }
+                                Image(
+                                    painter = painterResource(id = placeholderResId),
+                                    contentDescription = "${index + 1}",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
                             }
                         }
                     }

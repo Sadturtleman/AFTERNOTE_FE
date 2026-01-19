@@ -13,12 +13,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogParams
@@ -61,7 +63,6 @@ fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: (String) -> Unit = {},
-    onNavigateToPlaylist: () -> Unit = {},
     onNavigateToAddSong: () -> Unit = {},
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null
@@ -74,9 +75,11 @@ fun AfternoteEditScreen(
     }
     
     // 플레이리스트 노래 개수 변경 감지 및 동기화
-    val songCount by playlistStateHolder?.songs?.let { 
-        androidx.compose.runtime.derivedStateOf { it.size } 
-    } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
+    val songCount by remember {
+        playlistStateHolder?.songs?.let { 
+            androidx.compose.runtime.derivedStateOf { it.size } 
+        } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
+    }
     
     LaunchedEffect(songCount) {
         if (playlistStateHolder != null) {
@@ -110,9 +113,6 @@ fun AfternoteEditScreen(
         ) {
             EditContent(
                 state = state,
-                onBackClick = onBackClick,
-                onRegisterClick = onRegisterClick,
-                onNavigateToPlaylist = onNavigateToPlaylist,
                 onNavigateToAddSong = onNavigateToAddSong
             )
 
@@ -158,9 +158,6 @@ fun AfternoteEditScreen(
 @Composable
 private fun EditContent(
     state: AfternoteEditState,
-    onBackClick: () -> Unit,
-    onRegisterClick: (String) -> Unit,
-    onNavigateToPlaylist: () -> Unit,
     onNavigateToAddSong: () -> Unit
 ) {
     Column(
@@ -224,11 +221,14 @@ private fun CategoryContent(
 ) {
     when (state.selectedCategory) {
         "추모 가이드라인" -> {
+            val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
+                (1..songs.size).map { AlbumCover(id = "$it") }
+            } ?: state.playlistAlbumCovers
             MemorialGuidelineEditContent(
                 params = MemorialGuidelineEditContentParams(
                     memorialPhotoUrl = state.memorialPhotoUrl,
                     playlistSongCount = state.playlistSongCount,
-                    playlistAlbumCovers = state.playlistAlbumCovers,
+                    playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
                     funeralVideoUrl = state.funeralVideoUrl,
