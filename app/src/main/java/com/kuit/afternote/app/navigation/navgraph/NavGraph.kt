@@ -1,17 +1,24 @@
 package com.kuit.afternote.app.navigation.navgraph
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
+import com.kuit.afternote.feature.mainpage.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
@@ -22,6 +29,9 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
+    val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
+    val editState = rememberAfternoteEditState()
+
     val devModeScreens = listOf(
         ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
         ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
@@ -100,10 +110,38 @@ fun NavGraph(navHostController: NavHostController) {
 
         // 애프터노트 수정 화면
         composable("afternote_edit") {
+            LaunchedEffect(Unit) {
+                if (playlistStateHolder.songs.isEmpty()) {
+                    playlistStateHolder.initializeSongs(
+                        (1..11).map {
+                            Song(id = "$it", title = "노래 제목", artist = "가수 이름")
+                        }
+                    )
+                }
+            }
             AfternoteTheme(darkTheme = false) {
                 AfternoteEditScreen(
                     onBackClick = { navHostController.popBackStack() },
-                    onRegisterClick = { /* TODO: 등록 처리 */ }
+                    onRegisterClick = { /* TODO: 등록 처리 */ },
+                    onNavigateToAddSong = { navHostController.navigate("add_song") },
+                    state = editState,
+                    playlistStateHolder = playlistStateHolder
+                )
+            }
+        }
+
+        // 노래 추가 화면 (작성 화면 플레이리스트 곡 수와 일치하도록 전달)
+        composable("add_song") {
+            AfternoteTheme(darkTheme = false) {
+                AddSongScreen(
+                    currentPlaylistCount = playlistStateHolder.songs.size,
+                    callbacks = AddSongCallbacks(
+                        onBackClick = { navHostController.popBackStack() },
+                        onSongsAdded = { songs: List<Song> ->
+                            songs.forEach { playlistStateHolder.addSong(it) }
+                            navHostController.popBackStack()
+                        }
+                    )
                 )
             }
         }

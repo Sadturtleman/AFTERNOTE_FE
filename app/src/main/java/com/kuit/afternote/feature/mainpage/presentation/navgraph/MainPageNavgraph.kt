@@ -17,9 +17,6 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
-import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.rememberMemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -99,7 +96,7 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.EditRoute> {
-        // 공유 플레이리스트 상태 생성 (EditRoute와 MemorialPlaylistRoute 간 공유)
+        // 플레이리스트 상태 생성
         val playlistStateHolder = remember { 
             com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder().apply {
                 // 초기 데이터 설정
@@ -147,8 +144,7 @@ fun NavGraphBuilder.mainPageNavGraph(
                     launchSingleTop = true
                 }
             },
-            onNavigateToPlaylist = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
-            onNavigateToAddSong = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
+            onNavigateToAddSong = { navController.navigate(MainPageRoute.AddSongRoute) },
             playlistStateHolder = playlistStateHolder
         )
     }
@@ -159,29 +155,11 @@ fun NavGraphBuilder.mainPageNavGraph(
         )
     }
 
-    mainPageComposable<MainPageRoute.MemorialPlaylistRoute> {
-        // EditRoute에서 생성한 공유 플레이리스트 상태 재사용
-        // 주의: 실제로는 NavBackStackEntry의 savedStateHandle을 사용하거나
-        // ViewModel을 통해 상태를 공유해야 하지만, 현재는 간단한 해결책으로
-        // rememberMemorialPlaylistStateHolder를 사용 (실제로는 공유되지 않음)
-        // TODO: 실제 상태 공유를 위해 ViewModel 또는 savedStateHandle 사용 고려
-        val playlistStateHolder = rememberMemorialPlaylistStateHolder()
-        
-        MemorialPlaylistScreen(
-            stateHolder = playlistStateHolder,
-            callbacks = MemorialPlaylistCallbacks(
-                onBackClick = { navController.popBackStack() },
-                onAddSongClick = { navController.navigate(MainPageRoute.AddSongRoute) }
-            )
-        )
-    }
-
     mainPageComposable<MainPageRoute.AddSongRoute> {
         AddSongScreen(
-            selectedSongIds = emptySet(),
             callbacks = AddSongCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onSongSelected = { song ->
+                onSongsAdded = { songs ->
                     // TODO: 선택된 노래를 플레이리스트에 추가
                     navController.popBackStack()
                 }
