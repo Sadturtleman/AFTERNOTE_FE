@@ -22,6 +22,8 @@ detekt = "1.23.8"
 googleServices = "4.4.4"
 firebaseBom = "34.7.0"
 crashlytics = "3.0.6"
+navigationRuntimeKtx = "2.9.6"
+roomCommonJvm = "2.8.4"
 runtime = "1.10.0"
 
 [libraries]
@@ -54,6 +56,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
