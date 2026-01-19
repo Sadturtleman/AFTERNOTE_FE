@@ -1,5 +1,11 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -54,13 +63,16 @@ import com.kuit.afternote.ui.theme.Sansneo
  * 추모 플레이리스트 화면.
  * - 헤더: "추모 플레이리스트"
  * - 총 N곡, "노래 추가하기" 버튼(→ 추모 플레이리스트 추가 화면으로 이동), 담은 곡 목록
+ *
+ * @param initialSelectedSongIds Preview용. 넣으면 해당 ID가 선택된 상태로 시작 (기본 null)
  */
 @Composable
 fun MemorialPlaylistRouteScreen(
     modifier: Modifier = Modifier,
     playlistStateHolder: MemorialPlaylistStateHolder,
     onBackClick: () -> Unit,
-    onNavigateToAddSong: () -> Unit
+    onNavigateToAddSong: () -> Unit,
+    initialSelectedSongIds: Set<String>? = null
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
 
@@ -79,8 +91,20 @@ fun MemorialPlaylistRouteScreen(
             )
         }
     ) { paddingValues ->
-        var selectedSongIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        var selectedSongIds by remember {
+            mutableStateOf<Set<String>>(initialSelectedSongIds ?: emptySet())
+        }
+        val actionBarHeight = 80.dp
+        val gapAboveNavBar = 24.dp
+        val extraBottomPadding by animateDpAsState(
+            targetValue = if (selectedSongIds.isNotEmpty()) actionBarHeight + gapAboveNavBar else 0.dp,
+            label = "ListPaddingAnimation"
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             MemorialPlaylistList(
                 modifier = Modifier.fillMaxSize(),
                 songs = playlistStateHolder.songs,
@@ -89,11 +113,18 @@ fun MemorialPlaylistRouteScreen(
                     selectedSongIds = if (id in selectedSongIds) selectedSongIds - id else selectedSongIds + id
                 },
                 onAddSongClick = onNavigateToAddSong,
-                extraBottomPadding = if (selectedSongIds.isNotEmpty()) 80.dp else 0.dp
+                extraBottomPadding = extraBottomPadding
             )
-            if (selectedSongIds.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = selectedSongIds.isNotEmpty(),
+                enter = slideInVertically { it } + fadeIn(),
+                exit = slideOutVertically { it } + fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = gapAboveNavBar)
+            ) {
                 MemorialPlaylistActionBar(
-                    modifier = Modifier.align(Alignment.BottomCenter),
                     onDeleteAllClick = {
                         playlistStateHolder.clearAllSongs()
                         selectedSongIds = emptySet()
@@ -128,26 +159,34 @@ private fun MemorialPlaylistList(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (isSelectionMode) {
-                    Text(
-                        text = "현재 플레이리스트",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
+                    Column {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            text = "현재 플레이리스트",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9
+                            )
                         )
-                    )
-                    Text(
-                        text = "총 ${songs.size}곡",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    Column {
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Text(
+                            text = "총 ${songs.size}곡",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray9
+                            )
                         )
-                    )
+                        Spacer(modifier = Modifier.height(17.dp))
+                    }
                 } else {
                     Column {
                         Spacer(modifier = Modifier.height(25.dp))
@@ -232,63 +271,83 @@ private fun MemorialPlaylistActionBar(
     onDeleteAllClick: () -> Unit,
     onDeleteSelectedClick: () -> Unit
 ) {
-    Column(
+    val actionBarShape = RoundedCornerShape(8.dp)
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
-            .padding(horizontal = 20.dp)
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onDeleteAllClick)
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "전체 삭제",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(20.dp)
-                    .background(Color(0xFFE0E0E0))
+            .shadow(
+                elevation = 5.dp,
+                shape = actionBarShape,
+                clip = false,
+                ambientColor = Color(0x26000000),
+                spotColor = Color(0x26000000)
             )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onDeleteSelectedClick)
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "선택 삭제",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    )
+            .background(color = Color.White, shape = actionBarShape)
+            .clip(actionBarShape)
+            .padding(horizontal = 56.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable(onClick = onDeleteAllClick)
+        ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "전체 삭제",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
+                    textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
+            )
+            Spacer(modifier = Modifier.height(12.dp))
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier = Modifier
+                .width(1.dp)
+                .height(20.dp)
+                .background(Color(0xFFE0E0E0))
+        )
+        Column(
+            modifier = Modifier
+                .clickable(onClick = onDeleteSelectedClick)
+        ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "선택 삭제",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
+                    textAlign = TextAlign.Center
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "액션 바")
+@Composable
+private fun MemorialPlaylistActionBarPreview() {
+    MainPageLightTheme {
+        Box(
+            modifier = Modifier
+                .size(width = 360.dp, height = 160.dp)
+                .background(Color(0xFFB3D9FF))
+        ) {
+            MemorialPlaylistActionBar(
+                modifier = Modifier.align(Alignment.Center),
+                onDeleteAllClick = {},
+                onDeleteSelectedClick = {}
+            )
+        }
     }
 }
 
@@ -307,6 +366,26 @@ private fun MemorialPlaylistRouteScreenPreview() {
             playlistStateHolder = holder,
             onBackClick = {},
             onNavigateToAddSong = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "선택 모드")
+@Composable
+private fun MemorialPlaylistRouteScreenSelectionModePreview() {
+    MainPageLightTheme {
+        val holder = MemorialPlaylistStateHolder().apply {
+            initializeSongs(
+                (1..4).map {
+                    Song(id = "$it", title = "노래 제목 $it", artist = "가수 이름")
+                }
+            )
+        }
+        MemorialPlaylistRouteScreen(
+            playlistStateHolder = holder,
+            onBackClick = {},
+            onNavigateToAddSong = {},
+            initialSelectedSongIds = setOf("1", "3")
         )
     }
 }
