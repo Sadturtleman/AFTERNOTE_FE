@@ -39,10 +39,7 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("회원가입 화면", "dev_signup"),
         ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
         ScreenInfo("지문 로그인 화면", "fingerprint_login"),
-        ScreenInfo("마음의기록 메인 화면","record_main"),
-        ScreenInfo("마음의기록 deep","record_deep"),
-        ScreenInfo("마음의기록 diary","record_diary"),
-        ScreenInfo("마음의기록 report","record_report")
+        ScreenInfo("마음의기록 메인 화면","record_main")
     )
 
     NavHost(
@@ -149,19 +146,13 @@ fun NavGraph(navHostController: NavHostController) {
         }
         composable("record_main"){
             RecordMainScreen(
-                onDiaryClick = { navHostController.navigate("record_diary") },
-                onDeepMindClick = { navHostController.navigate("record_deep")},
+                onDiaryClick = { navHostController.navigate(RecordRoute.ListRoute) },
+                onDeepMindClick = { navHostController.navigate(RecordRoute.ListRoute)},
                 onWeekendReportClick = { navHostController.navigate("record_report")},
-                onQuestionClick = { }
+                onQuestionClick = { navHostController.navigate(RecordRoute.QuestionRouteList) }
             )
         }
 
-        composable("record_deep") {
-            RecordDeepMindScreen()
-        }
-        composable("record_diary"){
-            RecordDiaryScreen()
-        }
 
         composable("record_report") {
             RecordWeekendReportScreen()

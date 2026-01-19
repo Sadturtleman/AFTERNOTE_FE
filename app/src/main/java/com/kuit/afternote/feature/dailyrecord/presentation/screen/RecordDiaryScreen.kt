@@ -27,7 +27,10 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTo
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RecordDiaryScreen(modifier: Modifier = Modifier) {
+fun RecordDiaryScreen(
+    modifier: Modifier = Modifier,
+    onLeftClick: () -> Unit
+) {
     Scaffold(
 
     ) { paddingValues ->
@@ -38,7 +41,11 @@ fun RecordDiaryScreen(modifier: Modifier = Modifier) {
 
         ) {
             item {
-                RecordSubTopbar(text = "일기 기록하기")
+                RecordSubTopbar(
+                    text = "일기 기록하기",
+                    onLeftClock = onLeftClick,
+                    onRightClick = {}
+                    )
             }
 
             item {
@@ -57,5 +64,5 @@ fun RecordDiaryScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun RecordDailyScreenPrev() {
-    RecordDiaryScreen()
+    //RecordDiaryScreen()
 }

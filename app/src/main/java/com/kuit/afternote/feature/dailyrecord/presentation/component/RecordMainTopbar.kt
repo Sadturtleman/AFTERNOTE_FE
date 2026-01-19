@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.Black
+import com.kuit.afternote.ui.theme.Gray1
+import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
@@ -35,21 +38,21 @@ import com.kuit.afternote.ui.theme.Sansneo
  */
 @Composable
 fun RecordMainTopbar(
-    modifier: Modifier = Modifier,
-    text: String = "나의 모든 기록",
+    modifier: Modifier = Modifier
+        .background(Gray1),
+    text: String,
     //왼쪽 화살표 버튼
     showLeftArrow: Boolean = false,
-    onLeftClock: () -> Unit = {},
+    onLeftClock: () -> Unit,
 
     //스타일
-    backgroundColor: Color = Color.White,
     contentColor: Color = Black,
 
-) {
+    ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 12.dp)
+            .padding(top = 30.dp,start = 20.dp)
             .height(40.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -72,10 +75,10 @@ fun RecordMainTopbar(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_left),
+                    painter = painterResource(id = R.drawable.ic_sub_left_foreground),
                     contentDescription = "화살표",
-                    modifier = Modifier.size(20.dp)
-                        .clickable{/*뒤로가기*/}
+                    modifier = Modifier.size(24.dp)
+                        .clickable{ onLeftClock }
                 )
             }
         }
@@ -89,7 +92,7 @@ private fun RecordMainTopbarPrev() {
     RecordMainTopbar(
         text = "나의 모든 기록",
         showLeftArrow = true,
-
+        onLeftClock = {}
     )
     
 }

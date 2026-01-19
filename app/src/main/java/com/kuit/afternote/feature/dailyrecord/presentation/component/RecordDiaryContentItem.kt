@@ -103,6 +103,7 @@ fun RecordDiaryContentItem(
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
+                
 
 
                 Image(
@@ -132,57 +133,57 @@ fun RecordDiaryContentItem(
 
             }
             Divider(color = Color.LightGray, thickness = 0.8.dp)
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
-                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
-            ) {
-                if (isEditing) {
-                    TextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                } else {
-                    Text(
-                        text = "제목",
-                        color = Gray5,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
-            }
-
-            Divider(color = Color.LightGray, thickness = 0.8.dp)
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp)
-                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
-            ) {
-                if (isEditing) {
-                    TextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                } else {
-                    Text(
-                        text = "당신의 오늘을 기록해보세요",
-                        color = Gray5,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
+                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
+        ) {
+            if (isEditing) {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+            } else {
+                Text(
+                    text = "제목",
+                    color = Gray5,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
+
+        Divider(color = Color.LightGray, thickness = 0.8.dp)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp)
+                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
+        ) {
+            if (isEditing) {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+            } else {
+                Text(
+                    text = "당신의 오늘을 기록해보세요",
+                    color = Gray5,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
     }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

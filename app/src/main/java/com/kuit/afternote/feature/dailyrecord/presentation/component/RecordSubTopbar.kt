@@ -37,8 +37,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun RecordSubTopbar(
     modifier: Modifier = Modifier,
     text: String,
-    onLeftClock: () -> Unit = {},
-    onRightClick: () -> Unit = {},
+    onLeftClock: () -> Unit,
+    onRightClick: () -> Unit,
 
     ) {
     Box(
@@ -92,7 +92,7 @@ fun RecordSubTopbar(
 @Preview(showBackground = true)
 @Composable
 private fun RecordSubTopbarPrev() {
-    RecordSubTopbar(
-        text = "일기 작성하기"
-    )
+//    RecordSubTopbar(
+//        text = "일기 작성하기"
+//    )
 }

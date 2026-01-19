@@ -14,7 +14,12 @@ sealed interface RecordRoute {
 
     @Serializable
     data object DeepMindRoute : RecordRoute
+    @Serializable
+    data object QuestionRouteList : RecordRoute
 
+
+    @Serializable
+    data object ListRoute : RecordRoute
     @Serializable
     data object WeekendReportRoute : RecordRoute
 }
