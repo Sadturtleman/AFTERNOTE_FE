@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/h"
+
+./gradlew --no-daemon ktlintCheck
+./gradlew --no-daemon detekt
+

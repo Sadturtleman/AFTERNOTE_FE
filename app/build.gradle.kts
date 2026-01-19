@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
+
 detekt {
     buildUponDefaultConfig = true
     allRules = false
@@ -69,6 +70,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -86,6 +88,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.room.common.jvm)
+    // Core Library Desugaring (Java 8+ API 지원)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -107,6 +113,8 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.navigation.compose)
+    // Wheel Picker
+    implementation("com.github.zj565061763:compose-wheel-picker:1.0.0-beta05")
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
