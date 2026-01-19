@@ -1,11 +1,11 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
-import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -24,35 +24,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 
-/**
- * 일기, 깊은 생각하기로 넘어가면 먼저뜨는 리스트형 창
- * - 상단 : 제목
- * - 중간 : 리스트
- * - 하단 : FAB 바
- */
 @Composable
-fun RecordFirstDiaryListScreen(
+fun RecordDailyQuestionScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
     onPlusRecordClick: () -> Unit
-    ) {
+) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
 
     Scaffold(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
@@ -61,7 +52,7 @@ fun RecordFirstDiaryListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onPlusRecordClick ,
+                onClick =  onPlusRecordClick ,
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -83,7 +74,7 @@ fun RecordFirstDiaryListScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "새 애프터노트 추가",
+                        contentDescription = "새 기록 추가",
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -92,10 +83,11 @@ fun RecordFirstDiaryListScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-
-            ) {
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+        ) {
             RecordMainTopbar(
-                text = "일기",
+                text = "데일리 질문 답변",
                 showLeftArrow = true,
                 onLeftClock = onLeftClick
             )
@@ -105,8 +97,8 @@ fun RecordFirstDiaryListScreen(
                 }
                 item {
                     RecordListItem(
-                        title = "오늘 하루, 누구에게 가장 고마웠나요?",
-                        content = "아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다."
+                        title = "가",
+                        content = "나"
                     )
                 }
                 item {
@@ -124,13 +116,4 @@ fun RecordFirstDiaryListScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun RePrev() {
-    RecordFirstDiaryListScreen(
-        onLeftClick = {},
-        onPlusRecordClick = {}
-    )
 }

@@ -47,7 +47,7 @@ fun RecordItem(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -104,7 +104,7 @@ fun RecordItem(
                     .background(B2)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_arrow_forward),
+                    painter = painterResource(R.drawable.ic_arrow_right_tab),
                     contentDescription = null,
                     modifier = Modifier
                         .size(6.dp, 12.dp)

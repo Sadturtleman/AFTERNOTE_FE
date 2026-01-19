@@ -15,11 +15,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +36,7 @@ import com.kuit.afternote.ui.theme.Gray5
 
 @Composable
 fun RecordListSort(modifier: Modifier = Modifier) {
+    var isClicked by remember { mutableStateOf(true) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,8 +59,13 @@ fun RecordListSort(modifier: Modifier = Modifier) {
                     painter = painterResource(id = R.drawable.ic_list_fore_foreground),
                     contentDescription = "리스트 정렬",
                     modifier = Modifier
-                        .size(24.dp)
-                        .clickable { /* 리스트 정렬 동작 */ }
+                        .size(30.dp)
+                        .clickable { isClicked = !isClicked } ,
+                    colorFilter = if (isClicked) {
+                        ColorFilter.tint(Color(0xFF328BFF))   // 클릭되었을 때 빨간색
+                    } else {
+                        ColorFilter.tint(Color.Gray)  // 기본 색상
+                    }
                 )
                 Text(
                     text = "|",
@@ -66,8 +77,13 @@ fun RecordListSort(modifier: Modifier = Modifier) {
                     painter = painterResource(id = R.drawable.ic_calendar_fore_foreground),
                     contentDescription = "달력 선택 정렬",
                     modifier = Modifier
-                        .size(24.dp)
-                        .clickable { /* 달력 선택 정렬 동작 */ }
+                        .size(30.dp)
+                        .clickable { isClicked = !isClicked },
+                    colorFilter = if (!isClicked) {
+                        ColorFilter.tint(Color(0xFF328BFF))   // 클릭되었을 때 빨간색
+                    } else {
+                        ColorFilter.tint(Color.Gray)  // 기본 색상
+                    }
                 )
             }
         }

@@ -68,7 +68,7 @@ fun RecordMainScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: 새 애프터노트 생성 */ },
+                onClick = {  },
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -106,7 +106,8 @@ fun RecordMainScreen(
             //샹단 제목
             RecordMainTopbar(modifier = modifier,
                 "나의 모든 기록",
-                showLeftArrow = false
+                showLeftArrow = false,
+                onLeftClock = {}
             )
             //리스트
             val allItems = listOf(
@@ -126,20 +127,23 @@ fun RecordMainScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
 
             ) {
-                items(allItems){ (title, subtitle) ->
+                items(allItems) { (title, subtitle) ->
+                    val clickAction: () -> Unit = when (title) {
+                        "데일리 질문답변" -> { onQuestionClick }
+                        "일기" -> { onDiaryClick }
+                        "깊은 생각" -> { onDeepMindClick }
+                        "주간 리포트" -> { onWeekendReportClick }
+                        else -> { {} } // 아무 것도 안 하는 빈 람다
+                    }
+
                     RecordItem(
                         title = title,
                         subtitle = subtitle,
-                        modifier = Modifier.clickable {
-                            when (title) {
-                                "데일리 질문답변" -> onQuestionClick()
-                                "일기" -> onDiaryClick()
-                                "깊은 생각" -> onDeepMindClick()
-                                "주간 리포트" -> onWeekendReportClick()
-                            }
-                        }
+                        onClick = clickAction
                     )
                 }
+
+
             }
         }
 

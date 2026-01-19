@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 fun DropdownSelector(label: String, options: List<Int>, selected: Int, onSelect: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
-
-
     Box {
         Text(
             text = "$selected $label",
