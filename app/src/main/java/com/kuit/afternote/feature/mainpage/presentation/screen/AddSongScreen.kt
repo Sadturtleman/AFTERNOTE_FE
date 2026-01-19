@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +16,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,30 +36,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.CustomRadioButton
-import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.PlaylistSongItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
-import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.White
 
 /**
  * 노래 추가 화면의 콜백
@@ -67,14 +74,13 @@ data class AddSongCallbacks(
  *
  * 피그마 디자인 기반:
  * - 헤더 (뒤로가기, "추모 플레이리스트 추가" 타이틀)
- * - 노래 검색/선택 목록
+ * - 노래 검색창, 검색 결과 선택 목록
  * - 하단 네비게이션 바
  */
 @Composable
 fun AddSongScreen(
     modifier: Modifier = Modifier,
-    availableSongs: List<Song> = rememberAvailableSongs(),
-    currentPlaylistCount: Int? = null,
+    availableSongs: List<Song> = rememberSearchResultSongs(),
     callbacks: AddSongCallbacks
 ) {
     var selectedSongIds by remember { mutableStateOf<Set<String>>(emptySet()) }
@@ -82,7 +88,6 @@ fun AddSongScreen(
     AddSongScaffold(
         modifier = modifier,
         availableSongs = availableSongs,
-        currentPlaylistCount = currentPlaylistCount,
         selectedSongIds = selectedSongIds,
         onSongToggle = { songId ->
             selectedSongIds = if (selectedSongIds.contains(songId)) {
@@ -99,19 +104,22 @@ fun AddSongScreen(
     )
 }
 
+/**
+ * 검색 결과용 목업. 플레이리스트 곡과 구분되도록 "검색 곡 N", "검색 가수 X" 형식.
+ */
 @Composable
-private fun rememberAvailableSongs(): List<Song> {
+private fun rememberSearchResultSongs(): List<Song> {
     return remember {
         listOf(
-            Song(id = "10", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "11", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "12", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "13", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "14", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "15", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "16", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "17", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "18", title = "노래 제목", artist = "가수 이름")
+            Song(id = "s1", title = "검색 곡 1", artist = "검색 가수 A"),
+            Song(id = "s2", title = "검색 곡 2", artist = "검색 가수 B"),
+            Song(id = "s3", title = "검색 곡 3", artist = "검색 가수 C"),
+            Song(id = "s4", title = "검색 곡 4", artist = "검색 가수 D"),
+            Song(id = "s5", title = "검색 곡 5", artist = "검색 가수 E"),
+            Song(id = "s6", title = "검색 곡 6", artist = "검색 가수 F"),
+            Song(id = "s7", title = "검색 곡 7", artist = "검색 가수 G"),
+            Song(id = "s8", title = "검색 곡 8", artist = "검색 가수 H"),
+            Song(id = "s9", title = "검색 곡 9", artist = "검색 가수 I")
         )
     }
 }
@@ -120,7 +128,6 @@ private fun rememberAvailableSongs(): List<Song> {
 private fun AddSongScaffold(
     modifier: Modifier,
     availableSongs: List<Song>,
-    currentPlaylistCount: Int?,
     selectedSongIds: Set<String>,
     onSongToggle: (String) -> Unit,
     onAddClick: () -> Unit,
@@ -143,13 +150,72 @@ private fun AddSongScaffold(
             )
         }
     ) { paddingValues ->
-        AddSongContent(
-            modifier = Modifier.padding(paddingValues),
-            availableSongs = availableSongs,
-            currentPlaylistCount = currentPlaylistCount,
-            selectedSongIds = selectedSongIds,
-            onSongToggle = onSongToggle,
-            onAddClick = onAddClick
+        Box(modifier = Modifier.padding(paddingValues)) {
+            AddSongContent(
+                modifier = Modifier.fillMaxSize(),
+                availableSongs = availableSongs,
+                selectedSongIds = selectedSongIds,
+                onSongToggle = onSongToggle,
+                extraBottomPadding = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
+            )
+            if (selectedSongIds.isNotEmpty()) {
+                AddButton(
+                    count = selectedSongIds.size,
+                    onClick = onAddClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 선택 시에만 노출되는 추가하기 버튼 (피그마 1518-11274).
+ * - 연한 회색 배경, 왼쪽에 파란 원형 뱃지(선택 개수), 오른쪽 "추가하기"
+ */
+@Composable
+private fun AddButton(
+    count: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .background(color = Gray2, shape = RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .background(color = B2, shape = RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "$count",
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = White
+                )
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(R.string.add_button),
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = Gray9
+            )
         )
     }
 }
@@ -158,18 +224,16 @@ private fun AddSongScaffold(
 private fun AddSongContent(
     modifier: Modifier,
     availableSongs: List<Song>,
-    currentPlaylistCount: Int?,
     selectedSongIds: Set<String>,
     onSongToggle: (String) -> Unit,
-    onAddClick: () -> Unit
+    extraBottomPadding: Dp = 0.dp
 ) {
     AddSongList(
         modifier = modifier,
         songs = availableSongs,
-        currentPlaylistCount = currentPlaylistCount,
         selectedSongIds = selectedSongIds,
         onSongClick = { onSongToggle(it) },
-        onAddClick = onAddClick
+        extraBottomPadding = extraBottomPadding
     )
 }
 
@@ -177,178 +241,84 @@ private fun AddSongContent(
 private fun AddSongList(
     modifier: Modifier = Modifier,
     songs: List<Song>,
-    currentPlaylistCount: Int?,
     selectedSongIds: Set<String>,
     onSongClick: (String) -> Unit,
-    onAddClick: () -> Unit
+    extraBottomPadding: Dp = 0.dp
 ) {
-    val displayCount = currentPlaylistCount ?: songs.size
+    val searchQueryState = rememberTextFieldState()
 
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 20.dp)
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 0.dp, bottom = extraBottomPadding)
     ) {
-        // 상단: 총 곡 수와 노래 추가하기 버튼 (작성 화면 플레이리스트 개수와 일치)
+        // 검색창 (피그마 1518-11257: 노래 검색 라벨 + 입력창만, 총 곡 수·노래 추가하기 버튼 없음)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // 왼쪽: 총 곡 수 (currentPlaylistCount 있으면 플레이리스트 기준, 없으면 추가 가능 목록 기준)
-                Column {
-                    Spacer(modifier = Modifier.height(25.dp))
-                    Text(
-                        text = "총 ${displayCount}곡",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Color(color = 0xFF000000)
-                        )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = stringResource(R.string.song_search_label),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-                
-                // 오른쪽: 노래 추가하기 버튼
-                Column {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier
-                            .background(
-                                color = B3,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable(onClick = onAddClick),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row {
-                                Text(
-                                    text = "노래 추가하기",
-                                    style = TextStyle(
-                                        fontSize = 12.sp,
-                                        lineHeight = 18.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Gray9
-                                    )
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                RightArrowIcon(
-                                    iconSpec = ArrowIconSpec(
-                                        iconRes = R.drawable.ic_arrow_right_playlist,
-                                        contentDescription = "추가"
-                                    ),
-                                    backgroundColor = B1,
-                                    size = 12.dp
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                    }
-                    Spacer(modifier = Modifier.height(11.dp))
-                }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    state = searchQueryState,
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.song_search_placeholder),
+                            fontSize = 16.sp,
+                            fontFamily = Sansneo,
+                            color = Gray4
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.song_search_label),
+                            tint = Gray4,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Gray2,
+                        focusedContainerColor = Gray2,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    textStyle = TextStyle(fontSize = 16.sp, fontFamily = Sansneo, color = Gray9)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-
         // 노래 목록 (1부터 차례대로 숫자 표시)
         itemsIndexed(songs) { index, song ->
-            SongListItem(
+            PlaylistSongItem(
                 song = song,
                 displayIndex = index + 1,
-                isSelected = selectedSongIds.contains(song.id),
-                onClick = { onSongClick(song.id) }
-            )
-        }
-    }
-}
-
-@Composable
-private fun SongListItem(
-    song: Song,
-    displayIndex: Int,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // 앨범 커버 (개발 편의: 1부터 차례대로 숫자 적힌 placeholder 이미지)
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(4.dp))
-            ) {
-                val placeholderResId = when (((displayIndex - 1) % 12) + 1) {
-                    1 -> R.drawable.img_placeholder_1
-                    2 -> R.drawable.img_placeholder_2
-                    3 -> R.drawable.img_placeholder_3
-                    4 -> R.drawable.img_placeholder_4
-                    5 -> R.drawable.img_placeholder_5
-                    6 -> R.drawable.img_placeholder_6
-                    7 -> R.drawable.img_placeholder_7
-                    8 -> R.drawable.img_placeholder_8
-                    9 -> R.drawable.img_placeholder_9
-                    10 -> R.drawable.img_placeholder_10
-                    11 -> R.drawable.img_placeholder_11
-                    else -> R.drawable.img_placeholder_12
+                onClick = { onSongClick(song.id) },
+                trailingContent = {
+                    CustomRadioButton(
+                        selected = selectedSongIds.contains(song.id),
+                        onClick = null,
+                        buttonSize = 24.dp,
+                        selectedColor = B2,
+                        unselectedColor = Gray4
+                    )
                 }
-                Image(
-                    painter = painterResource(id = placeholderResId),
-                    contentDescription = "$displayIndex",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
-                )
-            }
-
-        // 노래 정보
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = song.title,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
-            )
-            Text(
-                text = song.artist,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray9
-                )
             )
         }
-
-        // 체크박스
-        CustomRadioButton(
-            selected = isSelected,
-            onClick = null,
-            buttonSize = 24.dp,
-            selectedColor = B2,
-            unselectedColor = Gray4
-        )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 

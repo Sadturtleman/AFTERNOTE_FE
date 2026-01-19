@@ -47,7 +47,15 @@ class MemorialPlaylistStateHolder {
         songs.removeAll { it.id == songId }
         onSongCountChanged?.invoke()
     }
-    
+
+    /**
+     * 선택된 곡 ID 집합에 해당하는 곡들을 일괄 삭제합니다.
+     */
+    fun removeSongs(ids: Set<String>) {
+        songs.removeAll { it.id in ids }
+        onSongCountChanged?.invoke()
+    }
+
     fun clearAllSongs() {
         songs.clear()
         onSongCountChanged?.invoke()

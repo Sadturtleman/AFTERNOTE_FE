@@ -17,6 +17,7 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScre
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.mainpage.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
@@ -123,18 +124,28 @@ fun NavGraph(navHostController: NavHostController) {
                 AfternoteEditScreen(
                     onBackClick = { navHostController.popBackStack() },
                     onRegisterClick = { /* TODO: 등록 처리 */ },
-                    onNavigateToAddSong = { navHostController.navigate("add_song") },
+                    onNavigateToAddSong = { navHostController.navigate("memorial_playlist") },
                     state = editState,
                     playlistStateHolder = playlistStateHolder
                 )
             }
         }
 
-        // 노래 추가 화면 (작성 화면 플레이리스트 곡 수와 일치하도록 전달)
+        // 추모 플레이리스트 (헤더 "추모 플레이리스트", 노래 추가하기 → add_song)
+        composable("memorial_playlist") {
+            AfternoteTheme(darkTheme = false) {
+                MemorialPlaylistRouteScreen(
+                    playlistStateHolder = playlistStateHolder,
+                    onBackClick = { navHostController.popBackStack() },
+                    onNavigateToAddSong = { navHostController.navigate("add_song") }
+                )
+            }
+        }
+
+        // 추모 플레이리스트 추가 (헤더 "추모 플레이리스트 추가", 검색+선택 후 담기)
         composable("add_song") {
             AfternoteTheme(darkTheme = false) {
                 AddSongScreen(
-                    currentPlaylistCount = playlistStateHolder.songs.size,
                     callbacks = AddSongCallbacks(
                         onBackClick = { navHostController.popBackStack() },
                         onSongsAdded = { songs: List<Song> ->
