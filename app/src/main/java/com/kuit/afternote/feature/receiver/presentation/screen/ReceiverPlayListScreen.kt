@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -37,7 +36,6 @@ import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.PlaylistSongItem
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -119,15 +117,12 @@ fun MemorialPlaylistScreen() {
                 contentPadding = PaddingValues(bottom = 10.dp)
             ) {
                 itemsIndexed(songList) { index, display ->
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        PlaylistSongItem(
-                            song = display,
-                            displayIndex = index + 1,
-                            onClick = null,
-                            trailingContent = null
-                        )
-                        HorizontalDivider(thickness = 1.dp, color = Gray6, modifier = Modifier.padding(horizontal = 20.dp))
-                    }
+                    PlaylistSongItem(
+                        song = display,
+                        displayIndex = index + 1,
+                        onClick = null,
+                        trailingContent = null
+                    )
                 }
             }
         }
