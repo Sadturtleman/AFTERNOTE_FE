@@ -9,28 +9,43 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LoginViewModel
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray9
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = viewModel(),
     onBackClick: () -> Unit,
-    onLoginClick: () -> Unit,
     onSignUpClick: () -> Unit,
     onFindIdClick: () -> Unit,
+    onLoginSuccess: () -> Unit
 ) {
     val email = rememberTextFieldState()
     val pw = rememberTextFieldState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.loginSuccess) {
+        if (uiState.loginSuccess) {
+            onLoginSuccess()
+            viewModel.clearLoginSuccess()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -60,11 +75,25 @@ fun LoginScreen(
                 label = "비밀번호"
             )
 
+            if (uiState.errorMessage != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = uiState.errorMessage!!,
+                    color = Gray9
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             ClickButton(
                 title = "로그인",
-                onButtonClick = onLoginClick,
+                onButtonClick = {
+                    viewModel.login(
+                        email.text.toString().trim(),
+                        pw.text.toString()
+                    )
+                },
                 color = B2
             )
 
@@ -99,7 +128,7 @@ private fun LoginScreenPreview() {
     LoginScreen(
         onBackClick = {},
         onFindIdClick = {},
-        onLoginClick = {},
+        onLoginSuccess = {},
         onSignUpClick = {}
     )
 }

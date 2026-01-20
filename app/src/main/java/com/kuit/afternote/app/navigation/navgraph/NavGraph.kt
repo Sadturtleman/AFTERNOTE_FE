@@ -12,7 +12,6 @@ import com.kuit.afternote.app.navigation.navigator.MainPageNavigatorImpl
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
-<<<<<<< HEAD
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
@@ -132,9 +131,9 @@ fun NavGraph(navHostController: NavHostController) {
         composable("dev_login") {
             LoginScreen(
                 onBackClick = { navHostController.popBackStack() },
-                onLoginClick = {},
                 onSignUpClick = { navHostController.navigate("dev_signup") },
-                onFindIdClick = {}
+                onFindIdClick = {},
+                onLoginSuccess = { navHostController.navigate(MainPageRoute.MainEmptyRoute) }
             )
         }
 
