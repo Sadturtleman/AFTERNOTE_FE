@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 개발 편의용: 숫자 11이 적힌 placeholder 이미지 (실제 앨범커버로 교체) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#E8E8E8"
+        android:pathData="M8,0 L56,0 Q64,0 64,8 L64,56 Q64,64 56,64 L8,64 Q0,64 0,56 L0,8 Q0,0 8,0 Z" />
+    <path
+        android:fillColor="#666666"
+        android:pathData="M18,10 L26,10 L26,54 L18,54 Z" />
+    <path
+        android:fillColor="#666666"
+        android:pathData="M38,10 L46,10 L46,54 L38,54 Z" />
+</vector>

@@ -7,18 +7,60 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdownState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+
+/**
+ * 추모 플레이리스트 상태 홀더
+ */
+@Stable
+class MemorialPlaylistStateHolder {
+    val songs: SnapshotStateList<Song> = mutableStateListOf()
+    
+    var onSongCountChanged: (() -> Unit)? = null
+    
+    fun initializeSongs(initialSongs: List<Song>) {
+        if (songs.isEmpty()) {
+            songs.addAll(initialSongs)
+        }
+    }
+    
+    fun addSong(song: Song) {
+        songs.add(song)
+        onSongCountChanged?.invoke()
+    }
+    
+    fun removeSong(songId: String) {
+        songs.removeAll { it.id == songId }
+        onSongCountChanged?.invoke()
+    }
+
+    /**
+     * 선택된 곡 ID 집합에 해당하는 곡들을 일괄 삭제합니다.
+     */
+    fun removeSongs(ids: Set<String>) {
+        songs.removeAll { it.id in ids }
+        onSongCountChanged?.invoke()
+    }
+
+    fun clearAllSongs() {
+        songs.clear()
+        onSongCountChanged?.invoke()
+    }
+}
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CUSTOM_ADD_OPTION = "직접 추가하기"
@@ -128,18 +170,15 @@ class AfternoteEditState(
 
     // Dropdown States
     var categoryDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
     var serviceDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
     var relationshipDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
 

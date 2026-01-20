@@ -12,9 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AccountProcessingRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodListParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.AccountProcessingRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.ui.theme.AfternoteTheme

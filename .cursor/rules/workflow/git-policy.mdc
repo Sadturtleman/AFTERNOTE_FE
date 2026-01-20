@@ -110,6 +110,7 @@ alwaysApply: true
 커밋 메시지는 아래 형식을 따릅니다:
 `type(scope): subject`
 
+- **PR 제목**: Pull Request 생성 시에도 동일한 `type(scope): subject` 형식을 사용합니다. (`pull-request-review.mdc` 참고)
 - **Types**:
   - `feat`: 새로운 기능 추가
   - `fix`: 버그 수정

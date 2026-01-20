@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.FuneralVideoUpload
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastMomentQuestion
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishesRadioGroup
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.MemorialPhotoUpload
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.MemorialPlaylist
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishesRadioGroup
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.MemorialPlaylist
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.FuneralVideoUpload
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.MemorialPhotoUpload
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
