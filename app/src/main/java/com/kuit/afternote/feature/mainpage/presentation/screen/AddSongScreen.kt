@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -59,7 +58,6 @@ import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray4
-import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
@@ -325,30 +323,23 @@ private fun AddSongList(
                 )
             }
         }
-        // 노래 목록 (receiver 스타일 + 라디오·HorizontalDivider)
+        // 노래 목록 (receiver 스타일 + 라디오, 구분선은 PlaylistSongItem 내부)
         itemsIndexed(songs) { index, song ->
             val display = PlaylistSongDisplay(id = song.id, title = song.title, artist = song.artist)
-            Column(modifier = Modifier.fillMaxWidth()) {
-                PlaylistSongItem(
-                    song = display,
-                    displayIndex = index + 1,
-                    onClick = { onSongClick(song.id) },
-                    trailingContent = {
-                        CustomRadioButton(
-                            selected = selectedSongIds.contains(song.id),
-                            onClick = null,
-                            buttonSize = 24.dp,
-                            selectedColor = B2,
-                            unselectedColor = Gray4
-                        )
-                    }
-                )
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = Gray6,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
-            }
+            PlaylistSongItem(
+                song = display,
+                displayIndex = index + 1,
+                onClick = { onSongClick(song.id) },
+                trailingContent = {
+                    CustomRadioButton(
+                        selected = selectedSongIds.contains(song.id),
+                        onClick = null,
+                        buttonSize = 24.dp,
+                        selectedColor = B2,
+                        unselectedColor = Gray4
+                    )
+                }
+            )
         }
     }
 }

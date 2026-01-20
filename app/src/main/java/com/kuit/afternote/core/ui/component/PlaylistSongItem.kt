@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,8 +33,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 /**
  * 추모 플레이리스트·노래 추가 등에서 공통으로 쓰는 노래 한 줄 아이템.
  *
- * UI: 앨범 48dp(DarkGray placeholder), 제목 Bold 14sp Gray9, 가수 12sp Gray6.
- * 구분선은 상위에서 [androidx.compose.material3.HorizontalDivider]로 처리.
+ * UI: 앨범 48dp(DarkGray placeholder), 제목 Bold 14sp Gray9, 가수 12sp Gray6, 하단 Gray6 1dp 구분선.
  *
  * - [onClick]이 있으면 클릭 가능, [trailingContent]로 라디오 버튼 등 오른쪽 UI 삽입 (없으면 null)
  *
@@ -98,6 +98,11 @@ fun PlaylistSongItem(
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Gray6,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
     }
 }
 
