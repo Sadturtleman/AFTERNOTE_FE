@@ -45,6 +45,8 @@ gen-external-apklibs
 ### Kotlin ###
 # Compiled class file
 *.class
+# Kotlin Script cache (Kotlin 2.x, .gradle 밖에 생성될 수 있음)
+*.kcp
 
 # Log file
 
@@ -241,6 +243,7 @@ ktlint-report.html
 ktlint-report.txt
 site/
 docs/generated/
+.scannerwork/
 
 # VS Code / Cursor
 .vscode/
