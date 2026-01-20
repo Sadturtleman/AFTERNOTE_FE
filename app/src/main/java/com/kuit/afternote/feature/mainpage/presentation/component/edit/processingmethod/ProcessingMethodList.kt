@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlay
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White
@@ -47,7 +49,7 @@ fun ProcessingMethodList(
     val focusManager = LocalFocusManager.current
 
     // 초기화: 아이템들의 expanded 상태 설정
-    androidx.compose.runtime.LaunchedEffect(items, params.initialExpandedItemId) {
+    LaunchedEffect(items, params.initialExpandedItemId) {
         state.initializeExpandedStates(items, params.initialExpandedItemId)
     }
 

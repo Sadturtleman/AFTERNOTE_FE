@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.upload
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +42,6 @@ fun MemorialPhotoUpload(
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(space = 16.dp),
-//        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = label,
@@ -55,10 +54,6 @@ fun MemorialPhotoUpload(
             )
         )
 
-//        Box(
-//            modifier = Modifier.size(120.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
         // 큰 원형 배경
         // 프로필 아이콘 (이미지가 없을 때만 표시)
         if (imageUrl == null) {
@@ -72,7 +67,6 @@ fun MemorialPhotoUpload(
         } else {
             // TODO: 실제 이미지 로드 (Coil 등 사용)
         }
-//        }
     }
 }
 
@@ -81,7 +75,6 @@ fun MemorialPhotoUpload(
 private fun MemorialPhotoUploadPreview() {
     AfternoteTheme {
         Column(
-//            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             // 이미지 없음

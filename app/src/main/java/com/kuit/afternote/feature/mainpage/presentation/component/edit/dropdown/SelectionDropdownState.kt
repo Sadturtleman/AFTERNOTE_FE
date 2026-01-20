@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

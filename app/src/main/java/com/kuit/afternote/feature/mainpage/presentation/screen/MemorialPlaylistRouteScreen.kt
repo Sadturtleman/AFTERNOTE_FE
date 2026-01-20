@@ -47,9 +47,10 @@ import com.kuit.afternote.core.ui.component.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.CustomRadioButton
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.PlaylistSongItem
 import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.PlaylistSongItem
+import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
@@ -247,8 +248,9 @@ private fun MemorialPlaylistList(
             }
         }
         itemsIndexed(songs) { index, song ->
+            val display = PlaylistSongDisplay(id = song.id, title = song.title, artist = song.artist)
             PlaylistSongItem(
-                song = song,
+                song = display,
                 displayIndex = index + 1,
                 onClick = { onSongToggle(song.id) },
                 trailingContent = {

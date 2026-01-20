@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,16 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
- * 정보 처리 방법 라디오 버튼 컴포넌트 (갤러리 및 파일용)
+ * 계정 처리 방법 라디오 버튼 컴포넌트
  */
 @Composable
-fun InformationProcessingRadioButton(
+fun AccountProcessingRadioButton(
     modifier: Modifier = Modifier,
-    method: InformationProcessingMethod,
+    method: AccountProcessingMethod,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -25,23 +25,29 @@ fun InformationProcessingRadioButton(
         option = method,
         selected = selected,
         onClick = onClick,
-        height = 110.dp
+        height = 102.dp
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun InformationProcessingRadioButtonPreview() {
+private fun AccountProcessingRadioButtonPreview() {
     AfternoteTheme {
         Column {
-            InformationProcessingRadioButton(
-                method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+            AccountProcessingRadioButton(
+                method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
                 selected = true,
                 onClick = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
-            InformationProcessingRadioButton(
-                method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+            AccountProcessingRadioButton(
+                method = AccountProcessingMethod.PERMANENT_DELETE,
+                selected = false,
+                onClick = {}
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            AccountProcessingRadioButton(
+                method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
                 selected = false,
                 onClick = {}
             )

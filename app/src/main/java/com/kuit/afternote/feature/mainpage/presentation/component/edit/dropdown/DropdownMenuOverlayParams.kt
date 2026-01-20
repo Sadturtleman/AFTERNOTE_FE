@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
