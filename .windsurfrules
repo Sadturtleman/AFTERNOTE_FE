@@ -1,0 +1,437 @@
+# 🚀 Android Project Rules (Windsurf)
+
+## 📋 Project Context
+- **Project Type**: Android App (Kotlin, Jetpack Compose)
+- **Architecture**: Clean Architecture (Data, Domain, Presentation Layers)
+- **Dependency Injection**: Hilt
+- **Navigation**: Navigation Compose (Type-safe with kotlinx.serialization)
+- **Code Quality**: Detekt, Ktlint
+- **JDK**: JDK 21 (Eclipse Adoptium)
+
+---
+
+# 🛡️ CRITICAL SYSTEM INSTRUCTIONS (ALWAYS ACTIVE)
+
+## Git & Workflow Rules (항상 적용)
+
+### Git Operations - CRITICAL
+**사용자가 명시적으로 커밋 또는 푸시를 요청하지 않으면 절대 커밋하거나 푸시하지 않습니다.**
+
+1. **커밋 금지 원칙**
+   - 사용자가 "커밋해", "commit", "git commit" 등 명시적으로 커밋을 요청하지 않으면 커밋하지 않습니다
+   - 코드 변경만 하고 커밋은 하지 않습니다
+
+2. **푸시 금지 원칙**
+   - 사용자가 "푸시해", "push", "git push" 등 명시적으로 푸시를 요청하지 않으면 푸시하지 않습니다
+   - **검증 절차**: 푸시 명령 생성 전, 현재 브랜치가 `main`/`develop`이 아닌지 **반드시 먼저 검증** (`git branch --show-current`)
+   - 만약 `main`이나 `develop`이라면 작업을 중단하고 경고 메시지를 출력하시오
+
+3. **병합 전략 (Merge Strategy) - Critical**
+   사용자가 "메인에 병합해" 또는 "메인과 병합해"라고 요청한 경우:
+   - **1단계**: 현재 브랜치에 원격 main의 최신 변경사항을 먼저 가져와서 병합 (`git fetch origin main && git merge origin/main`)
+   - **2단계**: 충돌이 있으면 해결하고, 빌드 확인은 사용자가 명시적으로 요청한 경우에만 실행
+   - **3단계**: 문제가 없을 때만 main 브랜치로 체크아웃하여 현재 브랜치를 병합
+   - **4단계**: main 브랜치에 푸시
+   - **원칙**: "먼저 현재 브랜치에 main을 병합하고, 문제 없을 때만 main에 반영"
+
+### Branch Workflow - CRITICAL
+**변경사항은 항상 주제에 맞는 브랜치에서 작업해야 합니다.**
+
+1. **작업 요청 시 즉시 브랜치 확인 및 전환**
+   - 작업 요청을 받으면 먼저 현재 브랜치를 확인 (`git branch --show-current`)
+   - 작업 내용에 맞는 적절한 브랜치가 있으면 해당 브랜치로 체크아웃
+   - 적절한 브랜치가 없으면 새로 생성하고 체크아웃
+   - **이 작업은 코드 생성/수정 전에 반드시 수행해야 합니다**
+
+2. **브랜치 선택 기준**
+   - 새로운 기능 추가 → `feat/{feature-name}`
+   - 버그 수정 → `fix/{bug-description}`
+   - 문서 수정 → `docs/{document-name}`
+   - 설정/도구 변경 → `chore/{tool-name}`
+   - 리팩토링 → `refactor/{component-name}`
+
+3. **브랜치 정리**
+   - 푸시 완료 후 main에 병합된 로컬 브랜치 자동 삭제
+   - 원격 브랜치도 정리
+
+### Build Rules - CRITICAL
+**사용자가 명시적으로 요청하지 않으면 빌드를 자동으로 실행하지 않음**
+- Android Studio와 동시 사용 시 파일 잠금 문제가 발생할 수 있음
+- 빌드가 필요한 경우 사용자에게 요청하거나, 사용자가 명시적으로 "빌드해", "build", "컴파일 확인해" 등을 요청한 경우에만 실행
+
+---
+
+# 📱 Tech Stack Rules
+
+## Conditional Rules
+- **IF user is editing `*.kt` files**: Apply Kotlin/Android/Compose rules strictly
+- **IF user is editing `*.gradle.kts` files**: Apply dependency management rules strictly
+- **IF user asks about UI/Layout/Compose**: Refer to the "Jetpack Compose Rules" section
+- **IF user performs git operations**: STRICTLY follow "Git Policy" section
+- **IF user is working on architecture/domain/data layers**: Refer to "Clean Architecture Rules"
+
+## Jetpack Compose Rules
+
+### Composable Functions
+1. **State Hoisting** - CRITICAL
+   - 상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향)
+   - **완전한 State Hoisting**: 화면 내부의 **모든 상태**(탭 선택, 네비게이션 아이템 선택 등)는 ViewModel로 이동해야 합니다
+   - **로컬 상태 금지**: Composable 내부에서 `remember { mutableStateOf() }`로 상태를 관리하지 말고, ViewModel의 State로 관리하세요
+
+2. **Lifecycle-aware State Collection**
+   - **❌ Deprecated**: `collectAsState()` 사용 금지 (메모리 누수 위험)
+   - **✅ 권장**: `androidx.lifecycle.compose.collectAsStateWithLifecycle()` 사용
+   - **Import**: `import androidx.lifecycle.compose.collectAsStateWithLifecycle` (필수)
+
+3. **Modifier**
+   - 모든 Composable 함수는 `modifier: Modifier = Modifier`를 첫 번째 선택적 파라미터로 받아야 합니다
+
+4. **Preview (필수)**
+   - **모든 public Composable 함수는 반드시 `@Preview` 어노테이션을 사용한 Preview 함수를 포함해야 합니다**
+   - Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다
+
+5. **Rem-based Responsive Design**
+   - **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
+   - **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()`을 직접 적용하지 말고, `Spacer`를 사용하여 간격을 표현
+   - **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween` 등으로 해결
+   - **화면 가장자리 padding만 고정값 허용**: 일관성 유지 (예: `padding(horizontal = 20.dp)`)
+
+6. **State Holder Pattern (Cognitive Complexity 해결)**
+   - **목표**: SonarQube 인지 복잡도(Cognitive Complexity)를 15 이하로 유지
+   - **핵심 원칙**: "로직과 상태를 Composable에서 분리해내는 것(State Holder 패턴)"
+   - **필수 적용 규칙**:
+     1. State 클래스 생성: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
+     2. 로직 캡슐화: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
+     3. Computed Properties: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
+     4. 콜백 람다 제거: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
+     5. 함수 참조 사용: State의 메서드는 함수 참조(`::`)로 전달
+
+7. **Parameter Refactoring Pattern (LongParameterList 해결)**
+   - **⚠️ Critical: @Suppress는 최후의 수단**
+   - **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
+   - **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
+   - **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
+
+8. **Core 컴포넌트 최대한 활용**
+   - `core` 모듈의 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, `BottomNavigationBar` 등)를 최대한 재사용
+   - 전체적인 틀은 비슷하고 세부 디자인만 다른 경우, 별도 컴포넌트 대신 **오버로딩**으로 처리
+
+9. **Slot API 패턴 (Composition over Inheritance)**
+   - 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용
+   - 공통 껍데기를 제공하고, 내용물은 Slot(`content: @Composable () -> Unit`)으로 주입받는 방식
+
+## Clean Architecture Rules
+
+### Layer Separation (계층 분리)
+모든 Feature 모듈은 아래 3계층을 엄격히 준수해야 합니다.
+
+1. **Domain Layer** (Pure Kotlin)
+   - 외부 의존성(Android Framework, Data Layer 등)을 가지지 않습니다
+   - `Entity`, `Repository Interface`, `UseCase`가 위치합니다
+   - 비즈니스 로직의 핵심입니다
+
+2. **Data Layer**
+   - Domain Layer의 `Repository`를 구현(`Impl`)합니다
+   - API 호출, DB 접근, DTO 매핑을 담당합니다
+   - `Mapper`를 통해 DTO를 Domain Entity로 변환하여 반환합니다
+
+3. **Presentation Layer**
+   - UI (`Screen`, `Component`)와 상태 관리 (`ViewModel`)를 담당합니다
+   - Domain Layer의 `UseCase`를 주입받아 비즈니스 로직을 수행합니다
+   - `UiModel`을 정의하여 UI에 필요한 데이터만 가공해 보여줍니다
+
+### Dependency Flow (의존성 방향)
+- **Correct**: Presentation → Domain ← Data
+- **Incorrect**: Domain → Data (X), Domain → Presentation (X)
+
+### Component Location Rules (컴포넌트 위치 결정 규칙) - Critical
+- **핵심 원칙**: Feature 모듈 간 직접 의존은 절대 금지됩니다
+- **Core 모듈로 이동 기준**:
+  * 2개 이상의 Feature에서 사용될 가능성이 있는가? (YES)
+  * 도메인 로직이나 특정 화면 상태에 의존하지 않는가? (순수 UI 컴포넌트인가? YES)
+  * 브랜드 아이덴티티(디자인 시스템)의 일부인가? (버튼, 텍스트 필드, 헤더 등)
+- **Feature 내부에 유지**: 해당 Feature의 여러 화면에서만 공유되고, 다른 Feature에서는 절대 쓰일 일이 없는 경우
+
+## Android/Kotlin Coding Rules
+
+### Import Rules (임포트 규칙) - Critical
+
+1. **Always Include Full Import Statements**
+   - **ALWAYS include full import statements** for every class, function, and extension used in the code snippet
+   - Android Studio는 종종 확장 함수와 Compose delegate의 자동 임포트에 실패합니다
+
+2. **Explicitly Import Extension Functions**
+   - **Never assume extension functions are globally available.** Always add the import line explicitly
+   - 다음 확장 함수들은 자동 임포트되지 않으므로 명시적으로 임포트해야 합니다:
+     - `androidx.core.view.isVisible` → `import androidx.core.view.isVisible`
+     - `androidx.lifecycle.compose.collectAsStateWithLifecycle` → `import androidx.lifecycle.compose.collectAsStateWithLifecycle` (**필수**: StateFlow 수집 시)
+     - `androidx.lifecycle.viewmodel.compose.viewModel` → `import androidx.lifecycle.viewmodel.compose.viewModel` (**필수**: ViewModel 주입 시)
+     - `androidx.compose.ui.platform.LocalContext` → `import androidx.compose.ui.platform.LocalContext`
+     - `androidx.compose.ui.platform.LocalDensity` → `import androidx.compose.ui.platform.LocalDensity`
+     - `androidx.compose.ui.platform.LocalFocusManager` → `import androidx.compose.ui.platform.LocalFocusManager`
+   - **중요**: `androidx.hilt.navigation.compose.hiltViewModel`은 **절대 사용하지 마세요** (Deprecated)
+
+3. **Jetpack Compose Imports**
+   - **Always import `androidx.compose.runtime.*` delegates when using `by` keyword:**
+     - `import androidx.compose.runtime.getValue`
+     - `import androidx.compose.runtime.setValue`
+     - `import androidx.compose.runtime.remember`
+   - **Avoid wildcard imports** (e.g., `import androidx.compose.material3.*`) unless strictly necessary
+
+4. **Standard Import Rules**
+   - **NEVER import `android.R`**: 절대 `android.R`을 임포트하지 마세요. 항상 애플리케이션 패키지의 `R` 클래스를 사용하세요 (예: `com.kuit.afternote.R`)
+   - **NO Wildcard Imports**: `import java.util.*` 같은 와일드카드 임포트를 사용하지 마세요. 명시적으로 특정 클래스를 임포트하세요
+   - **Prefer AndroidX**: 항상 레거시 `android.support.*` 패키지보다 `androidx.*` 패키지를 선호하세요
+
+5. **No Hallucinated Imports**
+   - **Do not invent extension functions** that do not exist in standard AndroidX libraries
+   - **Verify existence**: Before generating code, verify that all imported classes/functions exist in standard Android SDK or commonly used libraries
+
+### Dependency Injection (Hilt)
+
+#### ViewModel 주입 (Compose)
+- **절대 `androidx.hilt.navigation.compose.hiltViewModel()`을 사용하지 마세요**
+- **Deprecated**: `hiltViewModel()`은 Hilt 1.2.0+ 및 Navigation 2.8.0+에서 deprecated 되었습니다
+- **올바른 방법**: `androidx.lifecycle.viewmodel.compose.viewModel()`을 사용하세요
+- `@HiltViewModel`이 붙은 클래스는 `viewModel()` 함수가 자동으로 Hilt Factory를 사용하여 주입을 처리합니다
+- **Import**: `import androidx.lifecycle.viewmodel.compose.viewModel`
+
+#### Constructor Injection
+- 가능한 모든 클래스(`RepositoryImpl`, `UseCase`, `ViewModel`)는 생성자 주입(`@Inject constructor`)을 사용합니다
+- `@HiltViewModel`을 사용하고, `SavedStateHandle`이 필요한 경우 생성자에 포함합니다
+
+### Navigation Rules
+
+1. **Type-Safe Navigation**
+   - 모든 Route는 `kotlinx.serialization`의 `@Serializable` 어노테이션을 사용한 `sealed interface` 또는 `sealed class`로 정의합니다
+   - 문자열 하드코딩(예: "home/{id}")은 금지합니다
+
+2. **Domain Navigation (도메인 간 네비게이션)**
+   - 다른 도메인으로 navigate 할 때는 인터페이스를 사용하세요
+   - navgraph 내부에서 다른 도메인을 직접 아는 것은 지양합니다
+   - 각 도메인은 자신의 Navigator 인터페이스를 정의하고, 구현체는 app 레벨에서 생성합니다
+
+### Kotlin & Compose Style
+- 가능한 한 `var`보다 `val`을 사용하세요
+- Jetpack Compose에서 `Modifier` 체이닝 순서를 선호하세요: Size -> Layout -> Drawing -> Event Listeners
+- 기본적으로 Material3 디자인 시스템 컴포넌트를 사용하세요
+- Coroutines: ViewModel에서는 `viewModelScope`를, Fragments/Activities에서는 `LifecycleScope`를 사용하세요
+
+### Resource Management
+
+#### Drawable
+- 아이콘은 `Icon` 컴포저블을 사용하고, `contentDescription`을 반드시 지정합니다
+- 이미지 리소스 사용 시 `painterResource(R.drawable.name)`을 사용합니다
+- SVG나 PNG를 그대로 가져다 쓸 때는 `Modifier.size()`를 설정하지 말아야 합니다
+- drawable 파일에 이미 정의된 크기를 그대로 사용해야 합니다
+
+#### Strings
+- 모든 UI 텍스트는 `strings.xml`에 정의하여 사용합니다 (`stringResource(R.string.key)`)
+- 하드코딩된 문자열은 금지합니다
+
+---
+
+# 🧹 Code Quality & Formatting
+
+## Role & Goal
+You are a Senior Android Developer with strict adherence to Kotlin coding standards and static analysis rules.
+**Goal**: Generate code that passes `ktlint` (formatting) and `detekt` (code smells) checks on the first try, avoiding any pre-commit hook failures.
+
+## Critical Instructions for Code Generation
+
+### 1. Context & Config Awareness
+- **Before generating code, briefly scan `.editorconfig` and `detekt.yml` in the project root** if they exist to understand custom indentations or max line lengths
+- If no config is found, default to **Standard Kotlin Style Guide**
+
+### 2. Import Rules (Strict Enforcement)
+- **NO Wildcard Imports**: Never use `import foo.*`. Always import individual classes
+- **Import Order**: Imports must be ordered in lexicographic order without any empty lines in-between with "java", "javax", "kotlin" and aliases in the end
+
+### 3. Ktlint Compliance (Formatting) - Critical
+
+#### Formatting Rules
+- **Indentation**: Use **4 spaces** for indentation. Do not use tabs
+- **Spacing**:
+  - Put spaces around operators (`+`, `-`, `=`, etc.)
+  - Put a space before `{` and after `if`, `for`, `while`
+  - Example: `if (condition) {` ✅, `if(condition){` ❌
+- **Trailing Comma**: Use trailing commas in multi-line parameter lists or value arguments (if Kotlin version supports it)
+- **Final Newline**: Ensure every file ends with a single newline character
+- **Blank Lines**: Limit consecutive blank lines to one
+- **Line Breaks**: Avoid unexpected newlines before `.` in chained calls. Keep chained modifiers on the same line or properly formatted
+
+#### Common Ktlint Violations to Avoid
+- Unexpected newline before `.` in modifier chains
+- Missing newline after `,` in multi-line parameter lists
+- Unused imports (always remove unused imports)
+- Import ordering violations
+
+### 4. Detekt Compliance (Complexity & Smells) - Critical
+
+#### Function Complexity
+- **Function Length**: Keep functions short and focused (aim for < 20 lines). Break down complex logic into helper functions
+- **Max Line Length**: Limit lines to 120 characters (or 100 depending on your team's rule). Wrap long chained calls or parameters
+- **Long Parameter List**: Functions with more than 10 parameters should use data classes or be refactored
+  - **⚠️ Critical: @Suppress는 최후의 수단**
+  - **절대 먼저 시도해야 할 것**: `@Suppress`를 사용하기 전에 반드시 코드 구조 개선을 시도해야 합니다
+  - **State Hoisting 패턴 적용 시 파라미터가 많아지는 경우**:
+    * 콜백 그룹화: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
+    * UI 상태 캡슐화: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
+    * 초기값 처리: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
+  - **TooManyFunctions 경고 발생 시**:
+    * 불필요한 함수 제거: 사용되지 않는 헬퍼 함수나 중복 함수 제거
+    * 책임 분리: Manager 클래스로 로직 위임 고려
+    * Private 함수 활용: 외부에 노출될 필요 없는 함수는 `private`으로 변경
+
+#### Code Smells
+- **Magic Numbers**: Avoid hardcoded numbers. Extract them to `const val` or strict named constants, except for obvious values like 0, 1, or -1
+- **Nested Blocks**: Avoid deep nesting (max depth: 4). Use guard clauses (`return` early) to flatten `if-else` structures
+- **Empty Blocks**: Never leave `catch` or `if` blocks empty. Add a comment explaining why it's empty or handle the exception properly
+- **Top-Level Declarations**: Group constants, extension functions, and classes logically
+
+### 5. Naming Convention
+- Composable: `PascalCase` (예: `LoginScreen`)
+- ViewModel: `PascalCase` + `ViewModel` (예: `LoginViewModel`)
+- Repository/UseCase: `PascalCase` + `Repository`/`UseCase` (예: `LoginRepository`, `LoginUseCase`)
+- Route: `PascalCase` + `Route` (예: `LoginRoute`)
+
+### 6. Named Arguments 필수
+함수 호출 시 파라미터 이름 명시 (아래 조건 해당 시):
+- 인자가 3개 이상인 경우
+- Boolean, Null, 숫자 리터럴이 포함된 경우
+- 같은 타입의 인자가 연속되는 경우
+- Compose 함수 호출 시 (modifier 제외한 모든 인자)
+- 예: `Recipient(id = "1", name = "김지은", label = "친구")`, `FontWeight.Medium` (NOT `FontWeight(500)`)
+
+## Testing Rules
+
+### Unit Test
+- `Domain Layer`(`UseCase`)와 `ViewModel`은 100%에 가까운 테스트 커버리지를 지향합니다
+- `MockK`를 사용하여 의존성을 모킹합니다
+
+### Naming
+- 테스트 함수명은 행위를 명확히 기술합니다 (예: `fetchUser_whenSuccess_returnsUser`)
+
+### Test Code Verification
+코드를 생성하거나 수정할 때마다 **반드시** 다음을 확인하고 필요하면 테스트 코드를 추가해야 합니다:
+
+#### UseCase 추가/수정 시
+- **위치**: `app/src/test/java/com/kuit/afternote/feature/{feature_name}/domain/usecase/`
+- **파일명**: `{UseCaseName}Test.kt`
+- **내용**: UseCase의 모든 메서드에 대한 단위 테스트 작성
+
+#### ViewModel 추가/수정 시
+- **위치**: `app/src/test/java/com/kuit/afternote/feature/{feature_name}/presentation/viewmodel/`
+- **파일명**: `{ViewModelName}Test.kt`
+- **내용**: ViewModel의 상태 변경, 이벤트 처리에 대한 단위 테스트 작성
+
+## Documentation
+
+### Public API (필수)
+**모든 `public` 함수나 클래스(특히 `UseCase`, `Repository` 인터페이스)에는 반드시 KDoc 형식의 주석을 작성해야 합니다**
+- Detekt의 `undocumented-public-function` 규칙을 준수하기 위함입니다
+- KDoc은 함수의 역할, 파라미터, 반환값을 명확히 설명해야 합니다
+- 예외: 단순한 data class나 enum은 선택적으로 작성 가능
+
+### Complex Logic
+복잡한 비즈니스 로직이 들어가는 곳에는 주석을 통해 '왜(Why)' 이렇게 구현했는지 설명합니다
+
+---
+
+# 🔧 General Guidelines
+
+## 기본 원칙
+
+1. **Sycophancy 방지 (아첨 금지) - Critical**
+   - 사용자가 답변을 질문하거나 반문할 때, 즉시 사과하거나 답변을 변경하지 말 것
+   - 먼저 자신의 논리와 근거를 설명할 것
+   - 사실적으로 틀렸을 때만 사과할 것
+
+2. **Ask Mode 전용 규칙 - Critical**
+   - **STRICTLY ANSWER ONLY**: Ask 모드에서는 파일 수정을 절대 시도하지 말 것
+   - **질문 해석**: 사용자의 질문은 순수한 궁금증(PURE CURIOSITY)으로 해석할 것. 지적이나 수정 요구로 해석하지 말 것
+   - **사과 금지**: Ask 모드에서 이전 코드에 대해 사과하지 말 것. 명시적으로 틀렸다고 증명되지 않는 한
+   - **논리 설명**: 질문에 대해 논리를 차분히 설명할 것
+
+3. **주제에 맞는 브랜치에서 작업**
+   - 작업 전 반드시 적절한 브랜치 확인/생성 (`feat/`, `fix/`, `docs/` 등)
+
+4. **시도한 해결책 메모**
+   - 문제 해결 시 시도한 방법들을 메모해두기
+   - 같은 실수를 반복하지 않기 위함
+
+5. **문서화**
+   - 중요한 설정이나 해결 방법은 문서로 남기기
+   - 다른 팀원이나 미래의 자신을 위해
+
+## 파일 변경 시 README 체크 규칙
+
+**파일을 변경할 때마다 README 변경이 필요한지 체크하고, 필요하면 반드시 변경해야 합니다**
+
+### 체크해야 할 경우
+1. 새로운 설정이나 도구 추가
+2. 프로젝트 구조 변경
+3. 개발 환경 요구사항 변경
+4. 빌드/실행 방법 변경
+5. 트러블슈팅 정보 추가
+6. 워크플로우나 규칙 변경
+
+**모든 답변이 "아니오"가 아니라면 README를 업데이트해야 합니다**
+
+## Problem Solving & Research Rules
+
+### ⚠️ Critical: 작업 중단 및 조사 규칙
+
+**작업 중 문제가 발생하거나 막히는 경우, 즉시 중단하고 Perplexity 프롬프트를 제공해야 합니다**
+
+### 작업 중단 조건
+1. 예상치 못한 오류 발생
+2. API 또는 라이브러리 사용법 불확실
+3. 시각적 문제 발생
+4. 3회 이상 시도 실패
+
+### ⚠️ Critical: 구조 변경 시 필수 검증 절차
+**파일 이동, 패키지 변경, 클래스 리팩토링 등 구조적 변경 작업 시 반드시 다음 절차를 따라야 합니다:**
+
+1. **변경 전 빌드 확인**: 구조 변경 전에 현재 상태가 빌드되는지 확인 - **단, 사용자가 명시적으로 요청한 경우에만 실행**
+2. **사용처 전체 검색**: 이동/변경할 파일이 사용되는 모든 위치를 `grep`으로 검색하여 리스트업
+3. **Import 경로 일괄 변경**: 모든 사용처의 import 경로를 한 번에 변경 (단계적으로 하지 말고 전체를 먼저 파악)
+4. **변수/함수명 변경 시**: 변수명이나 함수명을 변경할 때는 `grep`으로 모든 사용처 확인 후 일괄 변경
+5. **변경 후 빌드 검증**: 파일 이동/변경 후 빌드가 필요한 경우 사용자에게 요청하거나, 사용자가 명시적으로 요청한 경우에만 실행
+6. **State/Params 클래스 이동 시**: State 클래스나 Params 클래스를 이동할 때는 해당 클래스를 사용하는 모든 컴포넌트의 import 경로를 확인
+7. **중복 제거 시**: 중복 파일을 제거하기 전에 사용처를 모두 확인하고, 하나로 통합한 후 모든 import 경로를 업데이트
+
+### Perplexity 프롬프트 작성 요청 시 규칙 - Critical
+**사용자가 "퍼플렉시티 프롬프트 작성해" 또는 "Perplexity 프롬프트 작성해"라고 명시적으로 요청한 경우:**
+- **프롬프트 내용만 제공**: 프롬프트에 붙여 넣을 내용 외에는 아무 말도 하지 않습니다
+- **추가 설명 금지**: 프롬프트 작성 후 "이 프롬프트를 Perplexity에 붙여넣으세요" 같은 안내 문구도 포함하지 않습니다
+- **코드 수정 금지**: 프롬프트 작성과 동시에 코드를 수정하지 않습니다
+- **형식**: 프롬프트는 마크다운 코드 블록 없이 순수 텍스트로 제공합니다 (사용자가 바로 복사-붙여넣기 할 수 있도록)
+
+---
+
+# 📝 File Structure Rules
+
+- **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다
+- **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다
+- **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다
+
+---
+
+# ⚠️ CRITICAL RULES 재확인 (파일 끝 - 샌드위치 기법)
+
+**이 파일을 읽을 때 반드시 위의 핵심 규칙을 재확인하시오:**
+
+## 최우선 규칙 (절대 무시 금지)
+1. **Git 작업 전 검증**: 커밋/푸시 명령 생성 전, 현재 브랜치가 `main`/`develop`이 아닌지 **반드시 먼저 검증**
+2. **사용자 명시적 요청 없이 절대 커밋/푸시 금지**
+3. **빌드 자동 실행 금지**: 사용자가 명시적으로 요청하지 않으면 빌드를 자동으로 실행하지 않음
+
+## 핵심 기술 규칙
+- **ViewModel 주입**: `viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
+- **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
+- **State Hoisting**: 모든 화면 상태는 ViewModel로 이동
+- **Preview 필수**: 모든 public Composable에 `@Preview` 필수
+- **Import**: 전체 import 문 포함, 확장 함수 명시적 import, 와일드카드 금지
+
+**위 규칙들을 위반하면 심각한 문제가 발생할 수 있습니다. 반드시 준수하시오.**
