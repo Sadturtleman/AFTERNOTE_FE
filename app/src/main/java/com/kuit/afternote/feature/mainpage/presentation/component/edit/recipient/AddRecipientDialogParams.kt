@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable

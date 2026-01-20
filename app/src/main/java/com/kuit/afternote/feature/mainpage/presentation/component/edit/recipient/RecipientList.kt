@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlay
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -57,7 +59,7 @@ fun RecipientList(
     val focusManager = LocalFocusManager.current
 
     // 초기화: 수신자들의 expanded 상태 설정
-    androidx.compose.runtime.LaunchedEffect(recipients) {
+    LaunchedEffect(recipients) {
         state.initializeExpandedStates(recipients, null)
     }
 
@@ -167,7 +169,6 @@ private fun RecipientItem(
         // 이름과 라벨
         Column(
             modifier = Modifier.weight(1f),
-//            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = recipient.name,

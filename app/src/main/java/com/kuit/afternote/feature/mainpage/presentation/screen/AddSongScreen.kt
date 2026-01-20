@@ -1,10 +1,6 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,13 +12,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,11 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -49,13 +49,17 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.CustomRadioButton
+import com.kuit.afternote.core.ui.component.PlaylistSongItem
 import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.PlaylistSongItem
+import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
+import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
+import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray4
+import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
@@ -76,14 +80,17 @@ data class AddSongCallbacks(
  * - 헤더 (뒤로가기, "추모 플레이리스트 추가" 타이틀)
  * - 노래 검색창, 검색 결과 선택 목록
  * - 하단 네비게이션 바
+ *
+ * @param initialSelectedSongIds Preview용. 넣으면 해당 ID가 선택된 상태로 시작해 추가하기 버튼이 노출됨 (기본 null)
  */
 @Composable
 fun AddSongScreen(
     modifier: Modifier = Modifier,
     availableSongs: List<Song> = rememberSearchResultSongs(),
-    callbacks: AddSongCallbacks
+    callbacks: AddSongCallbacks,
+    initialSelectedSongIds: Set<String>? = null
 ) {
-    var selectedSongIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var selectedSongIds by remember { mutableStateOf<Set<String>>(initialSelectedSongIds ?: emptySet()) }
 
     AddSongScaffold(
         modifier = modifier,
@@ -152,21 +159,24 @@ private fun AddSongScaffold(
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             AddSongContent(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 availableSongs = availableSongs,
                 selectedSongIds = selectedSongIds,
                 onSongToggle = onSongToggle,
                 extraBottomPadding = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
             )
             if (selectedSongIds.isNotEmpty()) {
-                AddButton(
-                    count = selectedSongIds.size,
-                    onClick = onAddClick,
+                Row(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 16.dp)
-                )
+                        .padding(start = 20.dp, end = 20.dp, bottom = 24.dp)
+                ) {
+                    AddButton(
+                        count = selectedSongIds.size,
+                        onClick = onAddClick
+                    )
+                }
             }
         }
     }
@@ -182,41 +192,53 @@ private fun AddButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val addButtonShape = RoundedCornerShape(8.dp)
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
-            .background(color = Gray2, shape = RoundedCornerShape(12.dp))
+            .shadow(
+                elevation = 5.dp,
+                shape = addButtonShape,
+                clip = false,
+                ambientColor = Color(0x26000000),
+                spotColor = Color(0x26000000)
+            )
+            .background(color = Gray1, shape = addButtonShape)
+            .clip(addButtonShape)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(24.dp)
-                .background(color = B2, shape = RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center
-        ) {
+        Row {
+
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .background(color = B1, shape = RoundedCornerShape(40.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$count",
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = White
+                    )
+                )
+            }
+            Spacer(Modifier.width(16.dp))
             Text(
-                text = "$count",
+                text = stringResource(R.string.add_button),
                 style = TextStyle(
-                    fontSize = 12.sp,
+                    fontSize = 16.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
-                    color = White
+                    color = Gray9
                 )
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = stringResource(R.string.add_button),
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            )
-        )
     }
 }
 
@@ -245,16 +267,19 @@ private fun AddSongList(
     onSongClick: (String) -> Unit,
     extraBottomPadding: Dp = 0.dp
 ) {
-    val searchQueryState = rememberTextFieldState()
+    var searchQuery by remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 0.dp, bottom = extraBottomPadding)
     ) {
-        // 검색창 (피그마 1518-11257: 노래 검색 라벨 + 입력창만, 총 곡 수·노래 추가하기 버튼 없음)
+        // 검색 영역 (receiver MemorialPlaylistScreen 스타일)
         item {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.song_search_label),
                     style = TextStyle(
@@ -263,61 +288,67 @@ private fun AddSongList(
                         fontFamily = Sansneo,
                         fontWeight = FontWeight.Medium,
                         color = Gray9
-                    )
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
-                    state = searchQueryState,
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
                             text = stringResource(R.string.song_search_placeholder),
-                            fontSize = 16.sp,
-                            fontFamily = Sansneo,
-                            color = Gray4
+                            color = Gray4,
+                            fontSize = 14.sp
                         )
                     },
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.song_search_label),
-                            tint = Gray4,
-                            modifier = Modifier.size(24.dp)
+                            tint = Gray9
                         )
                     },
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Gray2,
-                        focusedContainerColor = Gray2,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent
+                        focusedContainerColor = White,
+                        unfocusedContainerColor = White,
+                        focusedBorderColor = B1,
+                        unfocusedBorderColor = Gray2,
+                        cursorColor = B1
                     ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    textStyle = TextStyle(fontSize = 16.sp, fontFamily = Sansneo, color = Gray9)
+                    singleLine = true,
+                    textStyle = TextStyle(fontSize = 14.sp, fontFamily = Sansneo, color = Gray9),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
-        // 노래 목록 (1부터 차례대로 숫자 표시)
+        // 노래 목록 (receiver 스타일 + 라디오·HorizontalDivider)
         itemsIndexed(songs) { index, song ->
-            PlaylistSongItem(
-                song = song,
-                displayIndex = index + 1,
-                onClick = { onSongClick(song.id) },
-                trailingContent = {
-                    CustomRadioButton(
-                        selected = selectedSongIds.contains(song.id),
-                        onClick = null,
-                        buttonSize = 24.dp,
-                        selectedColor = B2,
-                        unselectedColor = Gray4
-                    )
-                }
-            )
+            val display = PlaylistSongDisplay(id = song.id, title = song.title, artist = song.artist)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                PlaylistSongItem(
+                    song = display,
+                    displayIndex = index + 1,
+                    onClick = { onSongClick(song.id) },
+                    trailingContent = {
+                        CustomRadioButton(
+                            selected = selectedSongIds.contains(song.id),
+                            onClick = null,
+                            buttonSize = 24.dp,
+                            selectedColor = B2,
+                            unselectedColor = Gray4
+                        )
+                    }
+                )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = Gray6,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+            }
         }
     }
 }
@@ -331,6 +362,20 @@ private fun AddSongScreenPreview() {
                 onBackClick = {},
                 onSongsAdded = {}
             )
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "추가하기 버튼 노출")
+@Composable
+private fun AddSongScreenAddButtonPreview() {
+    MainPageLightTheme {
+        AddSongScreen(
+            callbacks = AddSongCallbacks(
+                onBackClick = {},
+                onSongsAdded = {}
+            ),
+            initialSelectedSongIds = setOf("s1", "s3")
         )
     }
 }

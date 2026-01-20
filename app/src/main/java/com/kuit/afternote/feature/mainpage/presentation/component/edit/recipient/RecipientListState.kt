@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -9,13 +9,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 
 /**
- * ProcessingMethodList의 상태를 관리하는 State Holder
+ * RecipientList의 상태를 관리하는 State Holder
  */
 @Stable
-class ProcessingMethodListState(
+class RecipientListState(
     initialShowTextField: Boolean = false,
     initialExpandedItemId: String? = null
 ) {
@@ -32,15 +32,15 @@ class ProcessingMethodListState(
         private set
 
     /**
-     * 초기화: 아이템들의 expanded 상태 설정
+     * 초기화: 수신자들의 expanded 상태 설정
      */
     fun initializeExpandedStates(
-        items: List<ProcessingMethodItem>,
+        recipients: List<Recipient>,
         initialExpandedItemId: String?
     ) {
-        items.forEach { item ->
-            if (!expandedStates.containsKey(item.id)) {
-                expandedStates[item.id] = initialExpandedItemId == item.id
+        recipients.forEach { recipient ->
+            if (!expandedStates.containsKey(recipient.id)) {
+                expandedStates[recipient.id] = initialExpandedItemId == recipient.id
             }
         }
     }
@@ -102,15 +102,15 @@ class ProcessingMethodListState(
 }
 
 /**
- * ProcessingMethodListState를 생성하는 Composable 함수
+ * RecipientListState를 생성하는 Composable 함수
  */
 @Composable
-fun rememberProcessingMethodListState(
+fun rememberRecipientListState(
     initialShowTextField: Boolean = false,
     initialExpandedItemId: String? = null
-): ProcessingMethodListState =
+): RecipientListState =
     remember {
-        ProcessingMethodListState(
+        RecipientListState(
             initialShowTextField = initialShowTextField,
             initialExpandedItemId = initialExpandedItemId
         )

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod
 
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 

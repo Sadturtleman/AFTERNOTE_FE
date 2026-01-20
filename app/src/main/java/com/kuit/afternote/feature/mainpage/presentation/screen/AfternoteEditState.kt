@@ -12,9 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdownState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
@@ -170,18 +170,15 @@ class AfternoteEditState(
 
     // Dropdown States
     var categoryDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
     var serviceDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
     var relationshipDropdownState by mutableStateOf(
-        com.kuit.afternote.feature.mainpage.presentation.component.edit
-            .SelectionDropdownState()
+        SelectionDropdownState()
     )
         private set
 

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,16 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
- * 계정 처리 방법 라디오 버튼 컴포넌트
+ * 정보 처리 방법 라디오 버튼 컴포넌트 (갤러리 및 파일용)
  */
 @Composable
-fun AccountProcessingRadioButton(
+fun InformationProcessingRadioButton(
     modifier: Modifier = Modifier,
-    method: AccountProcessingMethod,
+    method: InformationProcessingMethod,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -25,29 +25,23 @@ fun AccountProcessingRadioButton(
         option = method,
         selected = selected,
         onClick = onClick,
-        height = 102.dp
+        height = 110.dp
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun AccountProcessingRadioButtonPreview() {
+private fun InformationProcessingRadioButtonPreview() {
     AfternoteTheme {
         Column {
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
+            InformationProcessingRadioButton(
+                method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
                 selected = true,
                 onClick = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.PERMANENT_DELETE,
-                selected = false,
-                onClick = {}
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            AccountProcessingRadioButton(
-                method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
+            InformationProcessingRadioButton(
+                method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
                 selected = false,
                 onClick = {}
             )

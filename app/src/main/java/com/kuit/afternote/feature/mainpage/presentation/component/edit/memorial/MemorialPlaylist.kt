@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.feature.mainpage.presentation.common.util.PlaceholderDrawables
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -115,22 +116,8 @@ fun MemorialPlaylist(
                             if (album.imageUrl != null) {
                                 // TODO: 실제 이미지 로드 (Coil 등 사용)
                             } else {
-                                val placeholderResId = when ((index % 12) + 1) {
-                                    1 -> R.drawable.img_placeholder_1
-                                    2 -> R.drawable.img_placeholder_2
-                                    3 -> R.drawable.img_placeholder_3
-                                    4 -> R.drawable.img_placeholder_4
-                                    5 -> R.drawable.img_placeholder_5
-                                    6 -> R.drawable.img_placeholder_6
-                                    7 -> R.drawable.img_placeholder_7
-                                    8 -> R.drawable.img_placeholder_8
-                                    9 -> R.drawable.img_placeholder_9
-                                    10 -> R.drawable.img_placeholder_10
-                                    11 -> R.drawable.img_placeholder_11
-                                    else -> R.drawable.img_placeholder_12
-                                }
                                 Image(
-                                    painter = painterResource(id = placeholderResId),
+                                    painter = painterResource(id = PlaceholderDrawables.forZeroBasedIndex(index)),
                                     contentDescription = "${index + 1}",
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Fit
