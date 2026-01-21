@@ -95,6 +95,20 @@ alwaysApply: true
    - 현재 브랜치의 주제와 직접 관련된 변경은 현재 브랜치에서 작업 가능
    - 긴급한 버그 수정은 별도 브랜치 생성 후 메인에 병합
 
+7. **⚠️ Critical: Main 브랜치 버전 제약 규칙 (Version Constraint Rule)**
+   - **원칙**: 작업 브랜치의 의존성 버전(예: AGP, Kotlin 등)은 main 브랜치의 버전을 초과하지 않아야 합니다.
+   - **검증 절차**: Gradle 설정 파일(`gradle/libs.versions.toml` 등)을 수정하기 전에 반드시 main 브랜치의 해당 버전을 확인합니다.
+     * `git show main:gradle/libs.versions.toml | grep "^agp"` (AGP 버전 확인)
+     * `git show main:gradle/libs.versions.toml | grep "^kotlin"` (Kotlin 버전 확인)
+   - **제약 조건**:
+     * 작업 브랜치의 버전 ≤ main 브랜치의 버전
+     * 버전을 업그레이드해야 하는 경우, 먼저 main 브랜치를 업그레이드한 후 작업 브랜치에서 동일한 버전을 사용합니다.
+   - **예외**: main 브랜치 업그레이드가 작업의 목적인 경우는 예외로 합니다 (예: `chore(gradle): upgrade AGP to X.Y.Z`).
+   - **적용 대상**: 
+     * Android Gradle Plugin (AGP)
+     * Kotlin 버전
+     * 기타 주요 빌드 도구 버전
+
 ## 예시
 
 ### ❌ 잘못된 예
