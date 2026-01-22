@@ -48,7 +48,8 @@ import com.kuit.afternote.ui.theme.White
 fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -62,12 +63,17 @@ fun OutlineTextField(
             )
         },
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Gray4
+            unfocusedBorderColor = Gray4,
+            disabledTextColor = Gray9,
+            disabledPlaceholderColor = Gray4,
+            disabledContainerColor = White
         ),
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
+        enabled = true,
+        readOnly = !enabled,
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
