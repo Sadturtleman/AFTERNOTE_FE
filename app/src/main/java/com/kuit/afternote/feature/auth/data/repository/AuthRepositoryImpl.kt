@@ -31,18 +31,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun verifyEmail(email: String, certificateCode: String): Result<EmailVerifyResult> =
         runCatching {
             val response = api.verifyEmail(VerifyEmailRequest(email, certificateCode))
-            android.util.Log.d("AuthRepositoryImpl", "verifyEmail 응답: status=${response.status}, data=${response.data}")
-            
-            // 실제 서버가 data: null을 반환하는 경우 처리
-            // 스웨거 명세에 따르면 data 구조가 미정의이므로, null인 경우도 성공으로 간주
-            val data = response.data
-            if (data == null) {
-                android.util.Log.w("AuthRepositoryImpl", "verifyEmail 응답의 data가 null입니다. 성공으로 간주합니다.")
-                // data가 null이어도 HTTP 200이면 성공으로 간주하고 기본값 사용
-                EmailVerifyResult(isVerified = true)
-            } else {
-                AuthMapper.toEmailVerifyResult(data)
-            }
+            val data = response.data ?: throw IllegalStateException("data is null")
+            AuthMapper.toEmailVerifyResult(data)
         }
 
     override suspend fun signUp(
