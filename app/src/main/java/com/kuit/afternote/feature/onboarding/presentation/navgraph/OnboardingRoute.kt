@@ -13,5 +13,8 @@ sealed interface OnboardingRoute {
     data object SignUpRoute : OnboardingRoute
 
     @Serializable
-    data object ProfileSettingRoute : OnboardingRoute
+    data class ProfileSettingRoute(
+        val email: String,
+        val password: String
+    ) : OnboardingRoute
 }
