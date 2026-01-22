@@ -40,7 +40,6 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
-        ScreenInfo("프로필 설정 화면", "dev_profile_setting"),
         ScreenInfo("지문 로그인 화면", "fingerprint_login"),
         ScreenInfo("타임레터 화면", "time_letter_main"),
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
