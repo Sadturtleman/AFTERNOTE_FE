@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,7 +53,8 @@ fun OutlineTextField(
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     enabled: Boolean = true,
-    focusRequester: FocusRequester? = null
+    focusRequester: FocusRequester? = null,
+    requestFocusOnEnabled: Boolean = false
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -81,8 +83,17 @@ fun OutlineTextField(
             .fillMaxWidth()
             .height(70.dp)
             .then(
-                if (focusRequester != null) Modifier.focusRequester(focusRequester)
-                else Modifier
+                if (focusRequester != null) {
+                    Modifier
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            if (enabled && requestFocusOnEnabled) {
+                                focusRequester.requestFocus()
+                            }
+                        }
+                } else {
+                    Modifier
+                }
             )
     )
 }

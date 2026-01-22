@@ -141,12 +141,18 @@ fun NavGraph(navHostController: NavHostController) {
         composable("dev_signup") {
             SignUpScreen(
                 onBackClick = { navHostController.popBackStack() },
-                onSettingClick = { navHostController.navigate("dev_profile_setting") }
+                onSettingClick = { email, password ->
+                    navHostController.navigate("dev_profile_setting/$email/$password")
+                }
             )
         }
 
-        composable("dev_profile_setting") {
+        composable("dev_profile_setting/{email}/{password}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val password = backStackEntry.arguments?.getString("password") ?: ""
             ProfileSettingScreen(
+                email = email,
+                password = password,
                 onFinishClick = { navHostController.navigate(MainPageRoute.MainEmptyRoute) },
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}

@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.onboarding.presentation.navgraph
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
@@ -22,7 +23,14 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
     composable<OnboardingRoute.SignUpRoute> {
         SignUpScreen(
             onBackClick = { navController.popBackStack() },
-            onSettingClick = { navController.navigate(OnboardingRoute.ProfileSettingRoute) }
+            onSettingClick = { email, password ->
+                navController.navigate(
+                    OnboardingRoute.ProfileSettingRoute(
+                        email = email,
+                        password = password
+                    )
+                )
+            }
         )
     }
 
@@ -35,8 +43,11 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
         )
     }
 
-    composable<OnboardingRoute.ProfileSettingRoute> {
+    composable<OnboardingRoute.ProfileSettingRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<OnboardingRoute.ProfileSettingRoute>()
         ProfileSettingScreen(
+            email = route.email,
+            password = route.password,
             onFinishClick = {
                 android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, MainEmptyRoute로 이동 시도")
                 navController.navigate(MainPageRoute.MainEmptyRoute)
