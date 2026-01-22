@@ -28,6 +28,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +51,8 @@ fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    focusRequester: FocusRequester? = null
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -72,11 +75,15 @@ fun OutlineTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
-        enabled = true,
-        readOnly = !enabled,
+        enabled = enabled,
+        readOnly = false,
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
+            .then(
+                if (focusRequester != null) Modifier.focusRequester(focusRequester)
+                else Modifier
+            )
     )
 }
 
@@ -345,7 +352,8 @@ private fun OutlineTextFieldBasicPreview() {
     AfternoteTheme {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
-            label = "시작"
+            label = "시작",
+            keyboardType = KeyboardType.Text
         )
     }
 }
@@ -379,6 +387,7 @@ private fun OutlineTextFieldWithFileAddPreview() {
 private fun OutlineTextFieldWithLabelPreview() {
     AfternoteTheme {
         OutlineTextField(
+            modifier = Modifier,
             label = "아이디",
             textFieldState = rememberTextFieldState()
         )
