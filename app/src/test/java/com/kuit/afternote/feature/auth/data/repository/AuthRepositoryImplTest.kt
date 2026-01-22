@@ -52,7 +52,7 @@ class AuthRepositoryImplTest {
 
     @Test
     fun verifyEmail_whenSuccess_returnsEmailVerifyResult() = runTest {
-        val response = ApiResponse(
+        val response = ApiResponse<VerifyEmailData?>(
             status = 200,
             code = 200,
             message = "Success",
@@ -80,7 +80,7 @@ class AuthRepositoryImplTest {
 
     @Test
     fun signUp_whenSuccess_returnsSignUpResult() = runTest {
-        val response = ApiResponse(
+        val response = ApiResponse<SignUpData?>(
             status = 200,
             code = 200,
             message = "Success",
@@ -99,7 +99,7 @@ class AuthRepositoryImplTest {
 
     @Test
     fun login_whenSuccess_returnsLoginResult() = runTest {
-        val response = ApiResponse(
+        val response = ApiResponse<LoginData?>(
             status = 200,
             code = 200,
             message = "Success",
@@ -116,7 +116,7 @@ class AuthRepositoryImplTest {
 
     @Test
     fun reissue_whenSuccess_returnsReissueResult() = runTest {
-        val response = ApiResponse(
+        val response = ApiResponse<ReissueData?>(
             status = 200,
             code = 200,
             message = "Success",

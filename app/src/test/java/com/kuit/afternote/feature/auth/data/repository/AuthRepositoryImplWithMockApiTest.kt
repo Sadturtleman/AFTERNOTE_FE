@@ -16,10 +16,13 @@ import com.kuit.afternote.feature.auth.domain.model.EmailVerifyResult
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.ReissueResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -61,7 +64,7 @@ class AuthRepositoryImplWithMockApiTest {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://afternote.kro.kr/")
             .client(client)
-            .addConverterFactory(json.asConverterFactory(okhttp3.MediaType.get("application/json")))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
 
         api = retrofit.create()
