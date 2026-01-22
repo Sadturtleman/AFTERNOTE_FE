@@ -28,7 +28,7 @@
 
 ---
 
-### 1-2. Auth API (4개): UseCase → ViewModel + UIModel
+### 1-2. Auth API (8개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (Auth만)**  
 **대상 API** (참고: `docs/API_SPECIFICATION.md`):
@@ -37,6 +37,10 @@
 2. 이메일 인증번호 확인 `POST /auth/email/verify`
 3. 회원 가입 `POST /auth/sign-up`
 4. 로그인 `POST /auth/login`
+5. 토큰 재발급 `POST /auth/reissue`
+6. 카카오 로그인 `POST /auth/kakao`
+7. 비밀번호 변경 `POST /auth/password/change`
+8. 로그아웃 `POST /auth/logout`
 
 **할 일**:
 | 구성요소 | 설명 |
@@ -147,11 +151,15 @@
 
 | 구분 | Data (API·DataSource·RepoImpl·Entity·Mapper) | Domain (Repository·UseCase·Model) | UI (ViewModel·View·UIModel) |
 |------|-----------------------------------------------|-----------------------------------|------------------------------|
-| **정일혁** | 29개 API 전체 | Auth 4개 (UseCase·Model) | Auth 4개 (ViewModel·UIModel) |
+| **정일혁** | 29개 API 전체 | Auth 8개 (UseCase·Model) | Auth 8개 (ViewModel·UIModel) |
 | **박경민** | — | Time-Letters 7, Received 3 (UseCase·Model) | Time-Letters 7, Received 3 (ViewModel·UIModel) |
 | **안현지** | — | Mind-Record 11, Afternote 5 (UseCase·Model) | Mind-Record 11, Afternote 5 (ViewModel·UIModel) |
 
-- **User API(4개)·No카테고리(1개)** 등 미배분 구간은 추후 팀 논의. (이유: 스웨거 미등록 상태로 최종 명세 미확정, 스웨거 등록 후 배분 예정)
+- **미배분 구간**:
+  - **User API 7개** (UseCase → ViewModel + UIModel 미배분): 프로필 조회/수정, 연결된 계정 조회/해제, 푸시 알림 설정/해제, 수신인 목록 조회 - (이유: 스웨거 미등록 상태로 최종 명세 미확정, 스웨거 등록 후 배분 예정)
+  - **No카테고리(1개)**: (내용 미확정)
+  
+  → 추후 팀 논의 후 배분 예정
 
 ---
 
