@@ -124,16 +124,17 @@ fun NavGraph(navHostController: NavHostController) {
             SplashScreen(
                 onLoginClick = { navHostController.navigate("dev_login") },
                 onStartClick = { navHostController.navigate("dev_signup") },
-                onCheckClick = {}
+                onCheckClick = {},
+                onSignUpClick = { navHostController.navigate("dev_signup") }
             )
         }
 
         composable("dev_login") {
             LoginScreen(
                 onBackClick = { navHostController.popBackStack() },
-                onLoginClick = {},
                 onSignUpClick = { navHostController.navigate("dev_signup") },
-                onFindIdClick = {}
+                onFindIdClick = {},
+                onLoginSuccess = { navHostController.navigate(MainPageRoute.MainEmptyRoute) }
             )
         }
 

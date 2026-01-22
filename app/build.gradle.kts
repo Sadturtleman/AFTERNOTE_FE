@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
-
 detekt {
     buildUponDefaultConfig = true
     allRules = false
@@ -58,6 +57,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
+        buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
     }
 
     buildTypes {
@@ -78,6 +80,7 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
         }
     }
 
@@ -123,6 +126,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("io.mockk:mockk:1.13.8")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
