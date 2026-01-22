@@ -57,6 +57,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
+        buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
     }
 
     buildTypes {

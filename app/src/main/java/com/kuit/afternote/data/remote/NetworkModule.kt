@@ -1,5 +1,6 @@
 package com.kuit.afternote.data.remote
 
+import com.kuit.afternote.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,13 +33,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
-        .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
-        .addInterceptor(
-            HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        )
-        .build()
+    fun provideOkHttpClient(
+        json: Json
+    ): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+            .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
+            .addInterceptor(
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            )
+
+        // Mock API 모드일 때 Mock Interceptor 추가
+        if (BuildConfig.USE_MOCK_API) {
+            builder.addInterceptor(MockApiInterceptor(json))
+        }
+
+        return builder.build()
+    }
 
     @Provides
     @Singleton
