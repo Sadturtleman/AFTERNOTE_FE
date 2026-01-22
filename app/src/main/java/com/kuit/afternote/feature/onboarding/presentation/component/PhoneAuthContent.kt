@@ -26,7 +26,7 @@ fun PhoneAuthContent(
         OutlineTextField(
             textFieldState = phone,
             label = "이메일 주소",
-            keyboardType = KeyboardType.Phone,
+            keyboardType = KeyboardType.Email,
             onAuthClick = onAuthClick
         )
 
