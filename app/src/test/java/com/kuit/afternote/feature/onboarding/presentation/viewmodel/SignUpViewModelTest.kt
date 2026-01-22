@@ -1,0 +1,114 @@
+package com.kuit.afternote.feature.onboarding.presentation.viewmodel
+
+import com.kuit.afternote.feature.auth.domain.model.SignUpResult
+import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
+import com.kuit.afternote.util.MainCoroutineRule
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+
+/**
+ * [SignUpViewModel] 단위 테스트.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+class SignUpViewModelTest {
+
+    @get:Rule
+    val mainRule = MainCoroutineRule()
+
+    private lateinit var signUpUseCase: SignUpUseCase
+    private lateinit var viewModel: SignUpViewModel
+
+    @Before
+    fun setUp() {
+        signUpUseCase = mockk()
+        viewModel = SignUpViewModel(signUpUseCase)
+    }
+
+    @Test
+    fun signUp_whenBlankEmail_setsErrorMessage() {
+        viewModel.signUp("", "pwd1!", "name", null)
+
+        assertEquals("이메일을 입력하세요.", viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.signUpSuccess)
+    }
+
+    @Test
+    fun signUp_whenBlankPassword_setsErrorMessage() {
+        viewModel.signUp("a@b.com", "", "name", null)
+
+        assertEquals("비밀번호를 입력하세요.", viewModel.uiState.value.errorMessage)
+    }
+
+    @Test
+    fun signUp_whenBlankName_setsErrorMessage() {
+        viewModel.signUp("a@b.com", "pwd1!", "", null)
+
+        assertEquals("이름을 입력하세요.", viewModel.uiState.value.errorMessage)
+    }
+
+    @Test
+    fun signUp_whenSuccess_setsSignUpSuccess() = runTest {
+        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+
+        viewModel.signUp("a@b.com", "pwd1!", "name", null)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.signUpSuccess)
+        assertNull(viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun signUp_withProfileUrl_callsUseCaseWithProfileUrl() = runTest {
+        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
+
+        viewModel.signUp("b@c.com", "pwd2!", "nick", "https://img/p.jpg")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.signUpSuccess)
+    }
+
+    @Test
+    fun signUp_whenFailure_setsErrorMessage() = runTest {
+        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(RuntimeException("email exists"))
+
+        viewModel.signUp("a@b.com", "pwd", "n", null)
+        advanceUntilIdle()
+
+        assertEquals("email exists", viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.signUpSuccess)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun clearSignUpSuccess_resetsSignUpSuccess() = runTest {
+        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+        viewModel.signUp("a@b.com", "pwd", "n", null)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.signUpSuccess)
+
+        viewModel.clearSignUpSuccess()
+
+        assertFalse(viewModel.uiState.value.signUpSuccess)
+    }
+
+    @Test
+    fun clearError_clearsErrorMessage() {
+        viewModel.signUp("", "pwd", "n", null)
+        assertEquals("이메일을 입력하세요.", viewModel.uiState.value.errorMessage)
+
+        viewModel.clearError()
+
+        assertNull(viewModel.uiState.value.errorMessage)
+    }
+}

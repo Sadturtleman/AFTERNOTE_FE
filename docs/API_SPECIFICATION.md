@@ -1,308 +1,229 @@
-# API 기본 명세서 - 상세 정리
+# API 기본 명세서
 
-## Auth (인증) - 4개 API
+> **기준**: 스웨거(OpenAPI) 우선. 이 문서는 스웨거와 동기화 목적.
+>
+> - **Swagger UI**: https://afternote.kro.kr/swagger-ui/index.html
+> - **OpenAPI JSON**: https://afternote.kro.kr/v3/api-docs (동일 내용 로컬: `docs/openapi.json`)
 
-### 1. 이메일 인증번호 보내기
+---
+
+## Auth (인증) — 스웨거 기준 7개
+
+인증 필요 API: `Authorization: Bearer {accessToken}` (security: bearer-key)
+
+---
+
+### 1. 이메일 인증번호 발송
+
 - **Method**: POST
 - **URL**: `/auth/email/send`
-- **설명**: 이메일로 인증 번호를 보냅니다.
-- **백엔드 관리자**: 황규운
+- **설명**: 이메일을 입력해 인증번호를 발송한다.
 
-**Request**
+**Request** `EmailSendRequest`
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| email | string | O | 이메일 주소 |
+
 ```json
-{
-  "email": "gka365@naver.com"
-}
+{ "email": "user@example.com" }
 ```
 
-**Response**
-```json
-{
-  "status": 200,
-  "code": 0,
-  "message": "6자리 인증코드가 발송되었습니다.",
-  "data": null
-}
-```
+**Response** `ApiResponse` &lt;object&gt; (data: null 또는 object)
 
-**Status**
-- 200: "6자리 인증코드가 발송되었습니다."
-- 400: (내용 미정)
-
-***
+---
 
 ### 2. 이메일 인증번호 확인
+
 - **Method**: POST
 - **URL**: `/auth/email/verify`
-- **설명**: 받은 인증 번호로 인증을 합니다.
-- **백엔드 관리자**: 황규운
+- **설명**: 이메일과 인증코드로 확인한다.
 
-**Request**
+**Request** `EmailVerifyRequest`
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| email | string | O | 이메일 주소 |
+| certificateCode | string | O | 인증번호 (스웨거: `certificateCode`) |
+
 ```json
-{
-  "email": "gka365@naver.com",
-  "certificationCode": "123456"
-}
+{ "email": "user@example.com", "certificateCode": "123456" }
 ```
 
-**Response**
-```json
-{
-  "status": 200,
-  "code": 0,
-  "message": "휴대폰 번호 인증에 성공하였습니다.",
-  "data": {
-    "isVerified": true
-  }
-}
-```
+**Response** `ApiResponse` &lt;object&gt; (data 구조는 스웨거 미정의, 실제 응답 확인)
 
-**Status**
-- 200: "휴대폰 번호 인증에 성공하였습니다."
-- 400: (내용 미정)
+---
 
-***
+### 3. 회원가입
 
-### 3. 회원 가입
 - **Method**: POST
 - **URL**: `/auth/sign-up`
-- **설명**: 이메일, 비밀 번호, 휴대폰 번호로 회원가입을 합니다.
-- **백엔드 관리자**: 황규운
-- **비고**: 비밀번호 확인은 프론트 측에서 처리 가능한 걸로 아는데 그걸로 부탁드립니다.
+- **설명**: 회원가입을 한다.
 
-**Request**
+**Request** `SignupRequest`
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| email | string | O | 이메일 주소 |
+| password | string | O | 8~20자, 영문+숫자+특수문자(@$!%*#?&) 각 1자 이상 |
+| name | string | O | 이름 (스웨거: `name`) |
+| profileUrl | string | - | 프로필 이미지 URL (스웨거: `profileUrl`) |
+
 ```json
 {
   "email": "user@example.com",
-  "password": "strongPassword123!",
-  "nickname": "멋진개발자",
-  "profileImageUrl": "https://s3.ap-northeast-2.amazonaws.com/bucket/profile/image.jpg"
+  "password": "password123!",
+  "name": "홍길동",
+  "profileUrl": "https://s3.~~"
 }
 ```
 
-**Response**
-```json
-{
-  "status": 200,
-  "code": 0,
-  "message": "회원가입이 완료되었습니다.",
-  "data": {
-    "memberId": 1,
-    "email": "user@example.com"
-  }
-}
-```
+**Response** `ApiResponse` &lt;SignupResponse&gt;
 
-**Status**
-- 200: (성공)
-- 400: (내용 미정)
+| data 필드 | 타입 | 설명 |
+|-----------|------|------|
+| userId | int64 | 가입한 회원 ID (스웨거: `userId`) |
+| email | string | 가입 이메일 |
 
-***
+---
 
 ### 4. 로그인
+
 - **Method**: POST
 - **URL**: `/auth/login`
-- **설명**: email과 비밀 번호로 로그인 합니다.
-- **백엔드 관리자**: 황규운
+- **설명**: 로그인한다.
 
-***
+**Request** `LoginRequest`
 
-## User (사용자) - 4개 API
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| email | string | O | 이메일 |
+| password | string | O | 비밀번호 |
 
-### 1. 프로필 조회
-- **Method**: GET
-- **URL**: `/users/me`
-- **백엔드 관리자**: 김소희
+**Response** `ApiResponse` &lt;LoginResponse&gt;
 
-### 2. 프로필 이름/닉네임 수정
-- **Method**: PATCH
-- **URL**: `/users/me/profile`
-- **백엔드 관리자**: 김소희
+| data 필드 | 타입 | 설명 |
+|-----------|------|------|
+| accessToken | string | 액세스 토큰 |
+| refreshToken | string | 리프레시 토큰 |
 
-### 3. 이메일 주소 확인
-- **Method**: GET
-- **URL**: `/users/me/email`
-- **백엔드 관리자**: 김소희
+---
 
-### 4. 비밀번호 변경
-- **Method**: PATCH
-- **URL**: `/users/me/password`
-- **백엔드 관리자**: 김소희
+### 5. 토큰 재발급
 
-***
-
-## Afternote - 5개 API
-
-### 1. 모든 afternote 목록
-- **Method**: GET
-- **URL**: `/afternotes?category=SOCIAL?page=0&size=10`
-- **설명**: category 없으면 전체
-- **백엔드 관리자**: 황규운
-
-### 2. afternote 상세 목록
-- **Method**: GET
-- **URL**: `/afternotes/{afternote_id}`
-- **설명**: 상세 목록
-- **백엔드 관리자**: 황규운
-
-### 3. afternote 생성
 - **Method**: POST
-- **URL**: `/afternotes/{afternote_id}`
+- **URL**: `/auth/reissue`
+- **설명**: 리프레시 토큰을 넣어 재발급을 한다.
 
-### 4. afternote 수정
-- **Method**: PATCH
-- **URL**: `/afternotes/{afternote_id}`
-- **백엔드 관리자**: 황규운
+**Request** `ReissueRequest`
 
-### 5. afternote 삭제
-- **Method**: DELETE
-- **URL**: `/afternotes/{afternote_id}`
-- **백엔드 관리자**: 황규운
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| refreshToken | string | O | 리프레시 토큰 |
 
-***
+**Response** `ApiResponse` &lt;ReissueResponse&gt;
 
-## Time-Letters - 7개 API
+| data 필드 | 타입 | 설명 |
+|-----------|------|------|
+| accessToken | string | 액세스 토큰 |
+| refreshToken | string | 리프레시 토큰 |
 
-### 1. 전체 조회
-- **Method**: GET
-- **URL**: `/time-letters`
-- **응답**: List<TimeLetterInfoResponse>
-- **백엔드 관리자**: 영탁 조
+---
 
-### 2. 단일 조회, 임시저장 불러오기
-- **Method**: GET
-- **URL**: `/time-letters/{timeLetterId}`
-- **백엔드 관리자**: 영탁 조
+### 6. 로그아웃
 
-### 3. 등록
 - **Method**: POST
-- **URL**: `/time-letters`
-- **내용**: 날짜, 시간, 제목, 내용, 첨부파일, 임시저장여부, 수신자
-- **백엔드 관리자**: 영탁 조
+- **URL**: `/auth/logout`
+- **설명**: 리프레시 토큰을 입력한다.
 
-### 4. 임시저장 전체 조회
-- **Method**: GET
-- **URL**: `/time-letters/temporary`
-- **응답**: List<TimeLetterInfoResponse>
-- **백엔드 관리자**: 영탁 조
+**Request** `LogoutRequest`
 
-### 5. 단일, 다건 (종류 무관) 삭제
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| refreshToken | string | O | 리프레시 토큰 |
+
+**Response** `ApiResponse` &lt;object&gt;
+
+---
+
+### 7. 비밀번호 변경
+
 - **Method**: POST
-- **URL**: `/time-letters/delete`
-- **Body**: List<TimeLetterId>
-- **백엔드 관리자**: 영탁 조
+- **URL**: `/auth/password/change`
+- **설명**: 현재 비밀번호와 새 비밀번호를 입력한다.
 
-### 6. 임시저장 전체 삭제
-- **Method**: DELETE
-- **URL**: `/time-letters/temporary`
-- **백엔드 관리자**: 영탁 조
+**Request** `PasswordChangeRequest`
 
-### 7. 수정
-- **Method**: PATCH
-- **URL**: `/time-letters/{timeLetterId}`
-- **백엔드 관리자**: 영탁 조
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| currentPassword | string | O | 현재 비밀번호 |
+| newPassword | string | O | 새 비밀번호 (형식: sign-up과 동일) |
 
-***
+**Response** `ApiResponse` &lt;object&gt;
 
-## Received - 3개 API
+---
 
-### 1. Mind-Record 조회
-- **Method**: GET
-- **URL**: `receiver/mind-records/{등록자Id}`
-- **비고**: 
-  - 등록자 id가 필요한지 아닌지는 user 설계를 어떻게 하냐에 따라 달라짐
-  - receiver가 하나의 recorder와 연결되어 있다면 등록자 id가 필요없고
-  - 여러명과 연결된다면 id가 필요
-- **응답**: List<MindRecordIReceiverResponse>
+## User (사용자) — 4개 API
 
-### 2. Time-Letter 조회
-- **Method**: GET
-- **URL**: `receiver/time-letters/{등록자Id}`
-- **비고**: 이하동문
-- **응답**: List<TimeLetterReceiverInfoResponse>
+> 스웨거 미등록. 아래는 이전 명세. 스웨거 등록 후 확인·보완.
 
-### 3. After-Note 조회
-- **Method**: GET
-- **URL**: `receiver/afternotes/{등록자Id}`
-- **비고**: 이하동문
-- **응답**: List<AfternoteReceiverInfoResponse>
+- GET `/users/me` — 프로필 조회
+- PATCH `/users/me/profile` — 프로필 이름/닉네임 수정
+- GET `/users/me/email` — 이메일 주소 확인
+- PATCH `/users/me/password` — 비밀번호 변경 (스웨거에는 Auth에 POST `/auth/password/change` 있음)
 
-***
+---
 
-## Mind-Record - 11개 API
+## Afternote — 5개 API
 
-### 1. 나의 모든 기록 조회
-- **Method**: GET
-- **URL**: `/mind-records`
-- **응답**: 리스트형
-- **백엔드 관리자**: 김소희
+> 스웨거 미등록. 이전 명세.
 
-### 2. 월별 캘린더 조회
-- **Method**: GET
-- **URL**: `/mind-records/calendar`
-- **백엔드 관리자**: 김소희
+- GET `/afternotes?category=&page=&size=` — 목록 (category 없으면 전체)
+- GET `/afternotes/{afternote_id}` — 상세
+- POST `/afternotes` (또는 `/{id}`) — 생성
+- PATCH `/afternotes/{afternote_id}` — 수정
+- DELETE `/afternotes/{afternote_id}` — 삭제
 
-### 3. 데일리 질문 조회
-- **Method**: GET
-- **URL**: `/mind-records/daily-question`
-- **백엔드 관리자**: 김소희
+---
 
-### 4. 데일리 질문 작성
-- **Method**: POST
-- **URL**: `/mind-records/daily-question`
-- **백엔드 관리자**: 김소희
+## Time-Letters — 7개 API
 
-### 5. 데일리 질문 답변 수정
-- **Method**: PATCH
-- **URL**: `/mind-records/daily-question`
-- **백엔드 관리자**: 김소희
+> 스웨거 미등록. 이전 명세.
 
-### 6. 데일리 질문 답변 삭제
-- **Method**: DELETE
-- **URL**: `/mind-records/daily-question`
-- **백엔드 관리자**: 김소희
+- GET `/time-letters` — 전체 조회
+- GET `/time-letters/{timeLetterId}` — 단일 조회
+- POST `/time-letters` — 등록
+- GET `/time-letters/temporary` — 임시저장 목록
+- POST `/time-letters/delete` (Body: List&lt;TimeLetterId&gt;) — 삭제
+- DELETE `/time-letters/temporary` — 임시저장 전체 삭제
+- PATCH `/time-letters/{timeLetterId}` — 수정
 
-### 7. 일기 조회
-- **Method**: GET
-- **URL**: `/mind-records/diaries`
-- **백엔드 관리자**: 김소희
+---
 
-### 8. 일기 작성
-- **Method**: POST
-- **URL**: `/mind-records/diaries`
-- **백엔드 관리자**: 김소희
+## Received — 3개 API
 
-### 9. 일기 수정
-- **Method**: PATCH
-- **URL**: `/mind-records/diaries`
-- **백엔드 관리자**: 김소희
+> 스웨거 미등록. 이전 명세.
 
-### 10. 일기 삭제
-- **Method**: DELETE
-- **URL**: `/mind-records/diaries`
-- **백엔드 관리자**: 김소희
+- GET `receiver/mind-records/{등록자Id}` — Mind-Record 조회
+- GET `receiver/time-letters/{등록자Id}` — Time-Letter 조회
+- GET `receiver/afternotes/{등록자Id}` — After-Note 조회
 
-### 11. 주간리포트 조회
-- **Method**: GET
-- **URL**: `/mind-records/weekly-report`
+---
 
-***
+## Mind-Record — 11개 API
 
-## No 카테고리 - 1개 API
+> 스웨거 미등록. 이전 명세.
 
-### 1. new Endpoint
-- 세부 내용 미정
+- GET `/mind-records` — 나의 모든 기록
+- GET `/mind-records/calendar` — 월별 캘린더
+- GET/POST/PATCH/DELETE `/mind-records/daily-question` — 데일리 질문
+- GET/POST/PATCH/DELETE `/mind-records/diaries` — 일기
+- GET `/mind-records/weekly-report` — 주간리포트
 
-***
+---
 
-## 참고 사항
+## 공통 응답 형식
 
-- **공통 오류 응답**: 별도 페이지에 정리되어 있음
-- **파트 나누기**: 관련 정보 존재
-- **erd**: ERD 문서 링크 존재
-- **사용 예시 및 사용법**: 별도 섹션 존재
-
-모든 API의 기본 구조는 다음과 같은 응답 형식을 따름:
 ```json
 {
   "status": [HTTP 상태 코드],
@@ -311,5 +232,3 @@
   "data": [데이터 객체 또는 null]
 }
 ```
-
-
