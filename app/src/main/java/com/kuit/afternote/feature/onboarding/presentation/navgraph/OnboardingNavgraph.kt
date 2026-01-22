@@ -30,7 +30,8 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
         SplashScreen(
             onLoginClick = { navController.navigate(OnboardingRoute.LoginRoute) },
             onCheckClick = {},
-            onStartClick = {}
+            onStartClick = {},
+            onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
         )
     }
 
