@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,14 +66,16 @@ fun LoginScreen(
 
             OutlineTextField(
                 textFieldState = email,
-                label = "아이디(이메일)"
+                label = "아이디(이메일)",
+                keyboardType = KeyboardType.Email
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlineTextField(
                 textFieldState = pw,
-                label = "비밀번호"
+                label = "비밀번호",
+                keyboardType = KeyboardType.Password
             )
 
             if (uiState.errorMessage != null) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -23,14 +24,16 @@ fun PwInputContent(
     ) {
         OutlineTextField(
             textFieldState = pw,
-            label = "비밀번호"
+            label = "비밀번호",
+            keyboardType = KeyboardType.Password
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlineTextField(
             textFieldState = pwRe,
-            label = "비밀번호 확인"
+            label = "비밀번호 확인",
+            keyboardType = KeyboardType.Password
         )
     }
 }

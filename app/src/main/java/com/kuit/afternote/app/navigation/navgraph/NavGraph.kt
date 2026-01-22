@@ -147,7 +147,7 @@ fun NavGraph(navHostController: NavHostController) {
 
         composable("dev_profile_setting") {
             ProfileSettingScreen(
-                onFinishClick = {},
+                onFinishClick = { navHostController.navigate(MainPageRoute.MainEmptyRoute) },
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}
             )

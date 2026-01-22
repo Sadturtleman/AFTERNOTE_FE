@@ -37,7 +37,11 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
 
     composable<OnboardingRoute.ProfileSettingRoute> {
         ProfileSettingScreen(
-            onFinishClick = { },
+            onFinishClick = {
+                android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, MainEmptyRoute로 이동 시도")
+                navController.navigate(MainPageRoute.MainEmptyRoute)
+                android.util.Log.d("OnboardingNavGraph", "navigate 호출 완료")
+            },
             onBackClick = { navController.popBackStack() },
             onAddProfileAvatarClick = { }
         )

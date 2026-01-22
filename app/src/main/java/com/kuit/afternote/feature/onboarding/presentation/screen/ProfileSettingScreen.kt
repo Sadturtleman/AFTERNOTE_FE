@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
@@ -60,7 +61,8 @@ fun ProfileSettingScreen(
 
             OutlineTextField(
                 textFieldState = name,
-                label = "이름을 지정해주세요."
+                label = "이름을 지정해주세요.",
+                keyboardType = KeyboardType.Text
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -70,7 +72,10 @@ fun ProfileSettingScreen(
             ClickButton(
                 color = B2,
                 title = "회원 가입 완료",
-                onButtonClick = onFinishClick
+                onButtonClick = {
+                    android.util.Log.d("ProfileSettingScreen", "회원 가입 완료 버튼 클릭됨")
+                    onFinishClick()
+                }
             )
 
             Spacer(modifier = Modifier.weight(0.7f))
