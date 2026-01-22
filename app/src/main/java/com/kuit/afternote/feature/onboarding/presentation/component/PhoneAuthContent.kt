@@ -18,7 +18,8 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun PhoneAuthContent(
     phone: TextFieldState,
     authCode: TextFieldState,
-    onAuthClick: () -> Unit
+    onAuthClick: () -> Unit,
+    isAuthCodeEnabled: Boolean = false
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -35,7 +36,8 @@ fun PhoneAuthContent(
         OutlineTextField(
             textFieldState = authCode,
             label = "인증번호",
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.Number,
+            enabled = isAuthCodeEnabled
         )
     }
 }

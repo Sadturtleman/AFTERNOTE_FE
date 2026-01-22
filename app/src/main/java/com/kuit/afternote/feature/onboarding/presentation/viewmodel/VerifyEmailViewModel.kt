@@ -30,19 +30,24 @@ class VerifyEmailViewModel @Inject constructor(
      * 성공 시 verifySuccess=true, 실패 시 errorMessage 설정.
      */
     fun verifyEmail(email: String, certificateCode: String) {
+        android.util.Log.d("VerifyEmailViewModel", "verifyEmail 호출: email=$email, code=$certificateCode")
         if (email.isBlank() || certificateCode.isBlank()) {
+            android.util.Log.w("VerifyEmailViewModel", "이메일 또는 인증번호가 비어있음")
             _uiState.update { it.copy(errorMessage = "이메일과 인증번호를 입력하세요.") }
             return
         }
         viewModelScope.launch {
+            android.util.Log.d("VerifyEmailViewModel", "인증번호 검증 시작")
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             verifyEmailUseCase(email, certificateCode)
                 .onSuccess {
+                    android.util.Log.d("VerifyEmailViewModel", "인증번호 검증 성공: verifySuccess=true")
                     _uiState.update {
                         it.copy(isLoading = false, errorMessage = null, verifySuccess = true)
                     }
                 }
                 .onFailure { e ->
+                    android.util.Log.e("VerifyEmailViewModel", "인증번호 검증 실패: ${e.message}", e)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
