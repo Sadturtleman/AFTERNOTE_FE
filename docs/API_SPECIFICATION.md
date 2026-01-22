@@ -4,20 +4,25 @@
 >
 > - **Swagger UI**: https://afternote.kro.kr/swagger-ui/index.html
 > - **OpenAPI JSON**: https://afternote.kro.kr/v3/api-docs (동일 내용 로컬: `docs/openapi.json`)
+> - **API Base URL**: https://afternote.kro.kr/
 
 ---
 
-## Auth (인증) — 스웨거 기준 7개
+## AUTH ENDPOINTS (8개)
 
 인증 필요 API: `Authorization: Bearer {accessToken}` (security: bearer-key)
 
 ---
 
-### 1. 이메일 인증번호 발송
+### 1. 이메일 인증번호 보내기 (Send Email Verification Code)
 
 - **Method**: POST
 - **URL**: `/auth/email/send`
-- **설명**: 이메일을 입력해 인증번호를 발송한다.
+- **Header Required**: No (포함 X)
+- **Description**: 이메일로 인증 번호를 보냅니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `EmailSendRequest`
 
@@ -26,18 +31,35 @@
 | email | string | O | 이메일 주소 |
 
 ```json
-{ "email": "user@example.com" }
+{ "email": "gka365@naver.com" }
 ```
 
-**Response** `ApiResponse` &lt;object&gt; (data: null 또는 object)
+**Response**
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "6자리 인증코드가 발송되었습니다.",
+  "data": null
+}
+```
+
+**HTTP Status Codes**:
+- 200: 6자리 인증코드가 발송되었습니다.
+- 400: (Error status)
 
 ---
 
-### 2. 이메일 인증번호 확인
+### 2. 이메일 인증번호 확인 (Verify Email Code)
 
 - **Method**: POST
 - **URL**: `/auth/email/verify`
-- **설명**: 이메일과 인증코드로 확인한다.
+- **Header Required**: No (포함 X)
+- **Description**: 받은 인증 번호로 인증을 합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `EmailVerifyRequest`
 
@@ -47,18 +69,35 @@
 | certificateCode | string | O | 인증번호 (스웨거: `certificateCode`) |
 
 ```json
-{ "email": "user@example.com", "certificateCode": "123456" }
+{ "email": "gka365@naver.com", "certificateCode": "123456" }
 ```
 
-**Response** `ApiResponse` &lt;object&gt; (data 구조는 스웨거 미정의, 실제 응답 확인)
+**Response**
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "유대로 변호 인증에 성공하였습니다.",
+  "data": null
+}
+```
+
+**HTTP Status Codes**:
+- 200: 유대로 변호 인증에 성공하였습니다.
+- 400: (Error status)
 
 ---
 
-### 3. 회원가입
+### 3. 회원 가입 (Sign Up)
 
 - **Method**: POST
 - **URL**: `/auth/sign-up`
-- **설명**: 회원가입을 한다.
+- **Header Required**: No (포함 X)
+- **Description**: 이메일, 비밀 번호, 휴대폰 번호로 회원가입을 합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `SignupRequest`
 
@@ -78,7 +117,7 @@
 }
 ```
 
-**Response** `ApiResponse` &lt;SignupResponse&gt;
+**Response** `ApiResponse` <SignupResponse>
 
 | data 필드 | 타입 | 설명 |
 |-----------|------|------|
@@ -87,11 +126,15 @@
 
 ---
 
-### 4. 로그인
+### 4. 로그인 (Login)
 
 - **Method**: POST
 - **URL**: `/auth/login`
-- **설명**: 로그인한다.
+- **Header Required**: No (포함 X)
+- **Description**: email과 비밀 번호로 로그인 합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `LoginRequest`
 
@@ -100,7 +143,7 @@
 | email | string | O | 이메일 |
 | password | string | O | 비밀번호 |
 
-**Response** `ApiResponse` &lt;LoginResponse&gt;
+**Response** `ApiResponse` <LoginResponse>
 
 | data 필드 | 타입 | 설명 |
 |-----------|------|------|
@@ -109,11 +152,15 @@
 
 ---
 
-### 5. 토큰 재발급
+### 5. 토큰 재발급 (Token Reissue)
 
 - **Method**: POST
 - **URL**: `/auth/reissue`
-- **설명**: 리프레시 토큰을 넣어 재발급을 한다.
+- **Header Required**: No (포함 X)
+- **Description**: 토큰을 다시 받습니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `ReissueRequest`
 
@@ -121,7 +168,7 @@
 |------|------|------|------|
 | refreshToken | string | O | 리프레시 토큰 |
 
-**Response** `ApiResponse` &lt;ReissueResponse&gt;
+**Response** `ApiResponse` <ReissueResponse>
 
 | data 필드 | 타입 | 설명 |
 |-----------|------|------|
@@ -130,27 +177,27 @@
 
 ---
 
-### 6. 로그아웃
+### 6. 카카오 로그인 (Kakao Login)
 
 - **Method**: POST
-- **URL**: `/auth/logout`
-- **설명**: 리프레시 토큰을 입력한다.
-
-**Request** `LogoutRequest`
-
-| 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| refreshToken | string | O | 리프레시 토큰 |
-
-**Response** `ApiResponse` &lt;object&gt;
+- **URL**: `/auth/kakao`
+- **Header Required**: No (포함 X)
+- **Description**: 카카오 로그인
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 ---
 
-### 7. 비밀번호 변경
+### 7. 비밀번호 변경 (Change Password)
 
 - **Method**: POST
 - **URL**: `/auth/password/change`
-- **설명**: 현재 비밀번호와 새 비밀번호를 입력한다.
+- **Header Required**: Yes (포함 O)
+- **Description**: 비밀번호를 변경합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
 
 **Request** `PasswordChangeRequest`
 
@@ -159,66 +206,267 @@
 | currentPassword | string | O | 현재 비밀번호 |
 | newPassword | string | O | 새 비밀번호 (형식: sign-up과 동일) |
 
-**Response** `ApiResponse` &lt;object&gt;
+**Response** `ApiResponse` <object>
 
 ---
 
-## User (사용자) — 4개 API
+### 8. 로그아웃 (Logout)
 
-> 스웨거 미등록. 아래는 이전 명세. 스웨거 등록 후 확인·보완.
+- **Method**: POST
+- **URL**: `/auth/logout`
+- **Header Required**: Yes (포함 O)
+- **Description**: 로그아웃합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: (Not specified)
+- **Frontend Manager**: (Not specified)
 
-- GET `/users/me` — 프로필 조회
-- PATCH `/users/me/profile` — 프로필 이름/닉네임 수정
-- GET `/users/me/email` — 이메일 주소 확인
-- PATCH `/users/me/password` — 비밀번호 변경 (스웨거에는 Auth에 POST `/auth/password/change` 있음)
+**Request** `LogoutRequest`
 
----
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| refreshToken | string | O | 리프레시 토큰 |
 
-## Afternote — 5개 API
-
-> 스웨거 미등록. 이전 명세.
-
-- GET `/afternotes?category=&page=&size=` — 목록 (category 없으면 전체)
-- GET `/afternotes/{afternote_id}` — 상세
-- POST `/afternotes` (또는 `/{id}`) — 생성
-- PATCH `/afternotes/{afternote_id}` — 수정
-- DELETE `/afternotes/{afternote_id}` — 삭제
+**Response** `ApiResponse` <object>
 
 ---
 
-## Time-Letters — 7개 API
-
-> 스웨거 미등록. 이전 명세.
-
-- GET `/time-letters` — 전체 조회
-- GET `/time-letters/{timeLetterId}` — 단일 조회
-- POST `/time-letters` — 등록
-- GET `/time-letters/temporary` — 임시저장 목록
-- POST `/time-letters/delete` (Body: List&lt;TimeLetterId&gt;) — 삭제
-- DELETE `/time-letters/temporary` — 임시저장 전체 삭제
-- PATCH `/time-letters/{timeLetterId}` — 수정
+## USER ENDPOINTS (7개)
 
 ---
 
-## Received — 3개 API
+### 1. 프로필 조회 (Get Profile)
 
-> 스웨거 미등록. 이전 명세.
-
-- GET `receiver/mind-records/{등록자Id}` — Mind-Record 조회
-- GET `receiver/time-letters/{등록자Id}` — Time-Letter 조회
-- GET `receiver/afternotes/{등록자Id}` — After-Note 조회
+- **Method**: GET
+- **URL**: `/users/me`
+- **Header Required**: Yes (포함 O)
+- **Description**: 프로필 수정 진입 시 기존 정보를 표시합니다.
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
 
 ---
 
-## Mind-Record — 11개 API
+### 2. 프로필 수정 (Update Profile)
 
-> 스웨거 미등록. 이전 명세.
+- **Method**: PATCH
+- **URL**: `/users/me`
+- **Header Required**: Yes (포함 O)
+- **Description**: 프로필을 수정합니다.
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
 
-- GET `/mind-records` — 나의 모든 기록
-- GET `/mind-records/calendar` — 월별 캘린더
-- GET/POST/PATCH/DELETE `/mind-records/daily-question` — 데일리 질문
-- GET/POST/PATCH/DELETE `/mind-records/diaries` — 일기
-- GET `/mind-records/weekly-report` — 주간리포트
+---
+
+### 3. 연결된 계정 조회 (Get Connected Accounts)
+
+- **Method**: GET
+- **URL**: `/users/connected-accounts`
+- **Header Required**: Yes (포함 O)
+- **Description**: 연결된 계정을 조회합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+---
+
+### 4. 연결된 계정 해제 (Disconnect Account)
+
+- **Method**: DELETE
+- **URL**: `/users/connected-accounts/{provider}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 연결된 계정을 해제합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+---
+
+### 5. 푸시 알림 설정 (Push Notification Settings)
+
+- **Method**: GET
+- **URL**: `/users/push-settings`
+- **Header Required**: Yes (포함 O)
+- **Description**: 푸시 알림 설정을 조회합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+---
+
+### 6. 푸시 알림 해제 (Disable Push Notifications)
+
+- **Method**: (Not specified)
+- **URL**: (Not specified)
+- **Header Required**: Yes (포함 O)
+- **Description**: 푸시 알림을 해제합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: (Not specified)
+- **Frontend Manager**: (Not specified)
+
+---
+
+### 7. 수신인 목록 조회 (Get Recipient List)
+
+- **Method**: (Not specified)
+- **URL**: (Not specified)
+- **Header Required**: Yes (포함 O)
+- **Description**: 수신인 목록을 조회합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: (Not specified)
+- **Frontend Manager**: (Not specified)
+
+---
+
+## AFTERNOTE ENDPOINTS (5개)
+
+---
+
+### 1. 모든 afternote 목록 (Get All Afternotes)
+
+- **Method**: GET
+- **URL**: `/afternotes?category=SOCIAL&page=0&size=10`
+- **Header Required**: Yes (포함 O)
+- **Description**: category 없으면 전체
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+---
+
+### 2. afternote 상세 목록 (Get Afternote Details)
+
+- **Method**: GET
+- **URL**: `/afternotes/{afternote_id}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 상세 목록
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+---
+
+### 3. afternote 생성 (Create Afternote)
+
+- **Method**: POST
+- **URL**: `/afternotes`
+- **Header Required**: Yes (포함 O)
+- **Description**: afternote를 생성합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+---
+
+### 4. afternote 수정 (Update Afternote)
+
+- **Method**: PATCH
+- **URL**: `/afternotes/{afternote_id}`
+- **Header Required**: Yes (포함 O)
+- **Description**: afternote를 수정합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+---
+
+### 5. afternote 삭제 (Delete Afternote)
+
+- **Method**: DELETE
+- **URL**: `/afternotes/{afternote_id}`
+- **Header Required**: Yes (포함 O)
+- **Description**: afternote를 삭제합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+---
+
+## TIME-LETTERS ENDPOINTS (7개)
+
+---
+
+### 1. 전체 조회 (Get All Time-Letters)
+
+- **Method**: GET
+- **URL**: `/time-letters`
+- **Header Required**: Yes (포함 O)
+- **Description**: List<TimeLetterInfoResponse>
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+
+---
+
+### 2. 단일 조회, 임시저장 불러오기 (Get Single, Load Draft)
+
+- **Method**: GET
+- **URL**: `/time-letters/{timeLetterId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 단일 조회 또는 임시저장 불러오기
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+
+---
+
+### 3. 등록 (Create)
+
+- **Method**: POST
+- **URL**: `/time-letters`
+- **Header Required**: Yes (포함 O)
+- **Description**: 날짜, 시간, 제목, 내용, 첨부파일, 임시저장여부, 수신자
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+
+---
+
+### 4. 임시저장 전체 조회 (Get All Drafts)
+
+- **Method**: GET
+- **URL**: `/time-letters/temporary`
+- **Header Required**: Yes (포함 O)
+- **Description**: List<TimeLetterInfoResponse>
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+
+---
+
+### 5. 단일, 다건 (종류 무관) 삭제 (Delete - Single or Multiple)
+
+- **Method**: POST
+- **URL**: `/time-letters/delete`
+- **Header Required**: Yes (포함 O)
+- **Description**: Body: List<TimeLetterId>
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+
+---
+
+### 6. 임시저장 전체 삭제 (Delete All Drafts)
+
+- **Method**: DELETE
+- **URL**: `/time-letters/temporary`
+- **Header Required**: Yes (포함 O)
+- **Description**: 임시저장 전체 삭제
+- **Status**: (Not specified)
+- **Backend Manager**: (Not specified)
+- **Frontend Manager**: (Not specified)
+
+---
+
+### 7. 수정 (Update)
+
+- **Method**: PATCH
+- **URL**: `/time-letters/{timeLetterId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: time-letter를 수정합니다.
+- **Status**: (Not specified)
+- **Backend Manager**: (Not specified)
+- **Frontend Manager**: (Not specified)
 
 ---
 
@@ -232,3 +480,10 @@
   "data": [데이터 객체 또는 null]
 }
 ```
+
+---
+
+## 참고
+
+- **Received API**와 **Mind-Record API**는 새 명세서에 포함되지 않았으나, 기존 명세는 유지됩니다.
+- 스웨거 미등록 API는 스웨거 등록 후 확인·보완 예정입니다.

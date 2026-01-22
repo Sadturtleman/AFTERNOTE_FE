@@ -151,7 +151,7 @@
 | **박경민** | — | Time-Letters 7, Received 3 (UseCase·Model) | Time-Letters 7, Received 3 (ViewModel·UIModel) |
 | **안현지** | — | Mind-Record 11, Afternote 5 (UseCase·Model) | Mind-Record 11, Afternote 5 (ViewModel·UIModel) |
 
-- **User API(4개)·No카테고리(1개)** 등 미배분 구간은 추후 팀 논의.
+- **User API(4개)·No카테고리(1개)** 등 미배분 구간은 추후 팀 논의. (이유: 스웨거 미등록 상태로 최종 명세 미확정, 스웨거 등록 후 배분 예정)
 
 ---
 
@@ -160,3 +160,20 @@
 - **API 상세**: `docs/API_SPECIFICATION.md`
 - **아키텍처·의존성**: `.cursor/rules/tech-stack/architecture.mdc`
 - **백엔드 명세가 잘 되어, 여러 Repository 조합이 필요 없으면** UseCase를 건너뛰고 ViewModel+UIModel만 분배하는 경우도 팀 합의 하에 가능.
+
+---
+
+## 6. API 구현 기준 및 배포 관련
+
+### API 구현 기준
+- **스웨거(OpenAPI)가 가장 정확한 기준**: 스웨거가 준비되면 스웨거를 기준으로 구현합니다.
+- **명세서는 보조 자료**: `docs/API_SPECIFICATION.md`는 스웨거를 참고하여 작성한 문서로, 스웨거와 불일치 시 스웨거를 우선합니다.
+- **스웨거 테스트**: 스웨거 UI에서 직접 API 테스트가 가능하므로 구현 전 테스트 권장.
+
+### 프론트엔드 배포 URL 제공
+- **배포 시 백엔드에 프론트엔드 배포 URL 제공 필요**
+- **사용 목적**:
+  - **CORS 설정**: 백엔드에서 프론트엔드 도메인을 허용 목록에 추가
+  - **OAuth 리다이렉트**: 카카오 로그인 등 OAuth 인증 후 프론트엔드로 리다이렉트
+  - **이메일 인증 링크**: 이메일 인증 완료 후 프론트엔드로 리다이렉트
+- **제공 시기**: 프론트엔드 배포 완료 후 백엔드 담당자에게 전달
