@@ -87,6 +87,10 @@ android {
     }
 }
 
+// Java Toolchain 설정 제거: Foojay Resolver 플러그인과의 호환성 문제로 제거
+// compileOptions에서 Java 11을 명시적으로 설정하여 동일한 효과 달성
+// 필요시 각 개발자는 ~/.gradle/gradle.properties에 org.gradle.java.home 설정
+
 dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.room.common.jvm)
