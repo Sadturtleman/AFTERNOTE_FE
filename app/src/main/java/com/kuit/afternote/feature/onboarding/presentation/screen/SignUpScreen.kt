@@ -32,6 +32,7 @@ import com.kuit.afternote.feature.onboarding.presentation.component.PhoneAuthCon
 import com.kuit.afternote.feature.onboarding.presentation.component.PwInputContent
 import com.kuit.afternote.feature.onboarding.presentation.component.SignUpEndContent
 import com.kuit.afternote.feature.onboarding.presentation.uimodel.SignUpStep
+import com.kuit.afternote.feature.onboarding.presentation.util.PasswordValidator
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.SendEmailCodeViewModel
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.VerifyEmailViewModel
 import com.kuit.afternote.ui.theme.Gray9
@@ -40,7 +41,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun SignUpScreen(
     onBackClick: () -> Unit,
-    onSettingClick: () -> Unit,
+    onSettingClick: (email: String, password: String) -> Unit,
     sendEmailCodeViewModel: SendEmailCodeViewModel = hiltViewModel(),
     verifyEmailViewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
@@ -189,7 +190,20 @@ fun SignUpScreen(
 
                     SignUpStep.PW_INPUT -> {
                         SignUpContentButton(
-                            onNextClick = { step = SignUpStep.END }
+                            onNextClick = {
+                                val passwordText = pw.text.toString().trim()
+                                val passwordConfirmText = pwRe.text.toString().trim()
+
+                                val passwordError = PasswordValidator.validate(passwordText)
+                                val isPasswordMatch = PasswordValidator.matches(
+                                    passwordText,
+                                    passwordConfirmText
+                                )
+
+                                if (passwordError == null && isPasswordMatch) {
+                                    step = SignUpStep.END
+                                }
+                            }
                         ) {
 
                             Text(
@@ -210,7 +224,10 @@ fun SignUpScreen(
 
                     SignUpStep.END -> {
                         SignUpEndContent {
-                            onSettingClick()
+                            onSettingClick(
+                                phone.text.toString().trim(),
+                                pw.text.toString()
+                            )
                         }
                     }
                 }
@@ -222,5 +239,5 @@ fun SignUpScreen(
 @Preview
 @Composable
 private fun SignUpScreenPreview() {
-    SignUpScreen(onBackClick = {}, onSettingClick = {})
+    SignUpScreen(onBackClick = {}, onSettingClick = { _, _ -> })
 }

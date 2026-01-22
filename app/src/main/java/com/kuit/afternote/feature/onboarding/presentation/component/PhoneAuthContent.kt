@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -26,12 +25,6 @@ fun PhoneAuthContent(
 ) {
     val authCodeFocusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(isAuthCodeEnabled) {
-        if (isAuthCodeEnabled) {
-            authCodeFocusRequester.requestFocus()
-        }
-    }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -49,7 +42,8 @@ fun PhoneAuthContent(
             label = "인증번호",
             keyboardType = KeyboardType.Number,
             enabled = isAuthCodeEnabled,
-            focusRequester = authCodeFocusRequester
+            focusRequester = authCodeFocusRequester,
+            requestFocusOnEnabled = isAuthCodeEnabled
         )
     }
 }
