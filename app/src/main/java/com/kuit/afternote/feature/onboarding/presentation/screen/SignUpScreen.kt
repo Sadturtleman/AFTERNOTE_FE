@@ -47,9 +47,7 @@ fun SignUpScreen(
 ) {
     val phone = rememberTextFieldState()
     val authCode = rememberTextFieldState()
-    var firstPart by remember { mutableStateOf("") }
-    var secondPart by remember { mutableStateOf("") }
-    val email = rememberTextFieldState()
+    val memberCode = rememberTextFieldState()
     val pw = rememberTextFieldState()
     val pwRe = rememberTextFieldState()
 
@@ -180,10 +178,7 @@ fun SignUpScreen(
                             Spacer(modifier = Modifier.height(10.dp))
 
                             IdentifyInputContent(
-                                firstPart = firstPart,
-                                onFirstPartChange = { firstPart = it },
-                                secondPart = secondPart,
-                                onSecondPartChange = { secondPart = it }
+                                memberCode
                             )
                         }
                     }
