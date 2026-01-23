@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.feature.setting.presentation.screen.PasswordChangeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.PostDeliveryConditionScreen
+import com.kuit.afternote.feature.setting.presentation.screen.ProfileEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.ProfileEditScreen
 import com.kuit.afternote.feature.setting.presentation.screen.ReceiverListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.ReceiverRegisterScreen
@@ -30,7 +31,14 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.ProfileEditRoute> {
         ProfileEditScreen(
-            onBackClick = { navController.popBackStack() }
+            callbacks = ProfileEditCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onRegisterClick = { /* TODO: 프로필 수정 저장 */ },
+                onProfileImageClick = { /* TODO: 프로필 이미지 변경 */ },
+                onEditProfileClick = { /* TODO: 프로필 정보 수정 */ },
+                onChangeEmailClick = { /* TODO: 이메일 변경 */ },
+                onWithdrawClick = { /* TODO: 회원 탈퇴 */ }
+            )
         )
     }
 

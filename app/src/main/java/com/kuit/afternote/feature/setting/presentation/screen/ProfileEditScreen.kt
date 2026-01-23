@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -41,18 +42,27 @@ import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
+private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
+
+/**
+ * 프로필 수정 화면 콜백 그룹
+ */
+data class ProfileEditCallbacks(
+    val onBackClick: () -> Unit = {},
+    val onRegisterClick: () -> Unit = {},
+    val onProfileImageClick: () -> Unit = {},
+    val onEditProfileClick: () -> Unit = {},
+    val onChangeEmailClick: () -> Unit = {},
+    val onWithdrawClick: () -> Unit = {}
+)
+
 @Composable
 fun ProfileEditScreen(
     modifier: Modifier = Modifier,
     nameState: TextFieldState = rememberTextFieldState(),
     contactState: TextFieldState = rememberTextFieldState(),
     emailState: TextFieldState = rememberTextFieldState(),
-    onBackClick: () -> Unit = {},
-    onRegisterClick: () -> Unit = {},
-    onProfileImageClick: () -> Unit = {},
-    onEditProfileClick: () -> Unit = {},
-    onChangeEmailClick: () -> Unit = {},
-    onWithdrawClick: () -> Unit = {}
+    callbacks: ProfileEditCallbacks = ProfileEditCallbacks()
 ) {
     val scrollState = rememberScrollState()
 
@@ -60,8 +70,8 @@ fun ProfileEditScreen(
         topBar = {
             TopBar(
                 title = "프로필 수정",
-                onBackClick = onBackClick,
-                onActionClick = onRegisterClick,
+                onBackClick = callbacks.onBackClick,
+                onActionClick = callbacks.onRegisterClick,
                 actionText = "등록"
             )
         }
@@ -74,7 +84,7 @@ fun ProfileEditScreen(
         ) {
             // 프로필 섹션
             ProfileSection(
-                onProfileImageClick = onProfileImageClick
+                onProfileImageClick = callbacks.onProfileImageClick
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -83,7 +93,7 @@ fun ProfileEditScreen(
             ProfileInfoSection(
                 nameState = nameState,
                 contactState = contactState,
-                onEditClick = onEditProfileClick
+                onEditClick = callbacks.onEditProfileClick
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -100,7 +110,7 @@ fun ProfileEditScreen(
             // 이메일 섹션
             EmailSection(
                 emailState = emailState,
-                onChangeClick = onChangeEmailClick
+                onChangeClick = callbacks.onChangeEmailClick
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -112,17 +122,26 @@ fun ProfileEditScreen(
                     .padding(bottom = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "회원 탈퇴하기",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray4
-                    ),
-                    modifier = Modifier.clickable { onWithdrawClick() }
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "회원 탈퇴하기",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray4
+                        ),
+                        modifier = Modifier.clickable { callbacks.onWithdrawClick() }
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.width(93.dp),
+                        thickness = 1.dp,
+                        color = Gray3
+                    )
+                }
             }
         }
     }
@@ -184,7 +203,7 @@ private fun ProfileInfoSection(
             modifier = Modifier.fillMaxWidth(),
             label = "이름",
             textFieldState = nameState,
-            placeholder = "Text Field",
+            placeholder = PLACEHOLDER_TEXT_FIELD,
             keyboardType = KeyboardType.Text
         )
 
@@ -192,7 +211,7 @@ private fun ProfileInfoSection(
             modifier = Modifier.fillMaxWidth(),
             label = "연락처",
             textFieldState = contactState,
-            placeholder = "Text Field",
+            placeholder = PLACEHOLDER_TEXT_FIELD,
             keyboardType = KeyboardType.Phone
         )
 
@@ -224,7 +243,7 @@ private fun EmailSection(
             modifier = Modifier.fillMaxWidth(),
             label = "이메일",
             textFieldState = emailState,
-            placeholder = "Text Field",
+            placeholder = PLACEHOLDER_TEXT_FIELD,
             keyboardType = KeyboardType.Email
         )
 
