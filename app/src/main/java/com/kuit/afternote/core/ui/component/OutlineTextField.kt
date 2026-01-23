@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.model.RrnVisualTransformation
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray4
@@ -186,38 +185,7 @@ fun OutlineTextField(
     )
 }
 
-@Composable
-fun OutlineTextField(
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = { input ->
-            // 1. 보안 및 유효성 검사: 숫자만 허용하며 최대 7자 제한
-            if (input.length <= 7 && input.all { it.isDigit() }) {
-                onValueChange(input)
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        // 2. 이미지의 좌측 레이아웃 재현 (Prefix 활용)
-        prefix = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("주민번호", color = Color.Gray, fontSize = 14.sp)
-                Text(" — ", color = Color.Black)
-                Text("T ", color = Color.Gray)
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-        },
-        visualTransformation = RrnVisualTransformation(), // 3. 마스킹 및 하이픈 로직 분리
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        singleLine = true,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.LightGray
-        )
-    )
-}
+
 /**
  * 라벨이 있는 텍스트 필드 컴포넌트 (LabeledTextField 호환)
  *
