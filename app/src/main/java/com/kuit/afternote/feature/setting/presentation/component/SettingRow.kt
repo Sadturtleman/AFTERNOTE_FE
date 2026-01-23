@@ -33,7 +33,7 @@ fun SettingRow(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .clickable { item.onClick() }
+            .clickable { onClick(item.title) }
     ) {
         Row(
             modifier = Modifier
@@ -63,9 +63,8 @@ fun SettingRow(
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = Color(0xFFCCCCCC),
-                    modifier = Modifier.clickable{onClick(item.title)}
+                    contentDescription = "이동",
+                    tint = Color(0xFFCCCCCC)
                 )
             }
         }
