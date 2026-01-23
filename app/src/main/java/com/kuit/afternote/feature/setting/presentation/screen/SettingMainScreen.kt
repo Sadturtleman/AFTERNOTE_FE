@@ -23,7 +23,10 @@ import com.kuit.afternote.feature.setting.presentation.uimodel.SettingSection
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun SettingMainScreen(onClick: (String) -> Unit) {
+fun SettingMainScreen(
+    modifier: Modifier = Modifier,
+    onClick: (String) -> Unit
+) {
     val sections = listOf(
         SettingSection(
             "계정", listOf(
@@ -67,7 +70,7 @@ fun SettingMainScreen(onClick: (String) -> Unit) {
         bottomBar = { BottomNavigationBar(selectedItem = BottomNavItem.HOME) { } }
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .padding(paddingValues)
         ) {
             sections.forEach { section ->
@@ -105,5 +108,5 @@ fun SettingMainScreen(onClick: (String) -> Unit) {
 @Preview
 @Composable
 private fun SettingMainScreenPreview() {
-    SettingMainScreen({})
+    SettingMainScreen(onClick = {})
 }
