@@ -11,12 +11,21 @@ mkdir -p "$GIT_HOOKS_DIR"
 # Create pre-commit hook
 cat > "$PRE_COMMIT_HOOK" << 'EOF'
 #!/bin/bash
-# Pre-commit hook: Sync Cursor rules to CLAUDE.md
+# Pre-commit hook: Sync Cursor rules to CLAUDE.md and check gradle.properties
 
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
 SYNC_SCRIPT="$PROJECT_ROOT/scripts/sync_rules.py"
+PRE_COMMIT_CHECK="$PROJECT_ROOT/scripts/pre-commit-check.sh"
 
-# Check if sync script exists
+# 1. Check gradle.properties for OS-specific paths (must pass)
+if [ -f "$PRE_COMMIT_CHECK" ]; then
+    bash "$PRE_COMMIT_CHECK"
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+fi
+
+# 2. Sync Cursor rules to CLAUDE.md (warning only)
 if [ ! -f "$SYNC_SCRIPT" ]; then
     echo "⚠️  Warning: sync_rules.py not found. Skipping rules sync."
     exit 0

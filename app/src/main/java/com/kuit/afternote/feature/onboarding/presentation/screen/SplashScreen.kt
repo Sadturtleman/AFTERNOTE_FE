@@ -39,7 +39,8 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
     onStartClick: () -> Unit,
-    onCheckClick: () -> Unit
+    onCheckClick: () -> Unit,
+    onSignUpClick: () -> Unit = onLoginClick
 ) {
     Scaffold(
         modifier = modifier
@@ -101,6 +102,14 @@ fun SplashScreen(
                 color = B3,
                 onButtonClick = onCheckClick,
                 title = "전달 받은 기록 확인하기"
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ClickButton(
+                color = B3,
+                onButtonClick = onSignUpClick,
+                title = "회원가입 (테스트용)"
             )
 
             Spacer(modifier = Modifier.height(24.dp))
