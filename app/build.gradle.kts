@@ -64,7 +64,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -95,11 +95,17 @@ android {
 // 필요시 각 개발자는 ~/.gradle/gradle.properties에 org.gradle.java.home 설정
 
 dependencies {
+    // ---------------------------------------------------------------
+    // Core Library Desugaring
+    // ---------------------------------------------------------------
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // ---------------------------------------------------------------
+    // Implementation (Main)
+    // ---------------------------------------------------------------
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.compose.foundation)
-    // Core Library Desugaring (Java 8+ API 지원)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -121,19 +127,30 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.navigation.compose)
-    // Wheel Picker
-    implementation("com.github.zj565061763:compose-wheel-picker:1.0.0-beta05")
+    implementation(libs.compose.wheel.picker)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.androidx.appcompat)
+
+    // ---------------------------------------------------------------
+    // Test Implementation (Unit Tests)
+    // ---------------------------------------------------------------
     testImplementation(libs.junit)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+
+    // ---------------------------------------------------------------
+    // Android Test Implementation (Instrumentation Tests)
+    // ---------------------------------------------------------------
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // ---------------------------------------------------------------
+    // Debug Implementation
+    // ---------------------------------------------------------------
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation("androidx.appcompat:appcompat:1.6.1")
 }
