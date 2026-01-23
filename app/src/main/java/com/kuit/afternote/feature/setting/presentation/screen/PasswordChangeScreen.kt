@@ -1,39 +1,55 @@
 package com.kuit.afternote.feature.setting.presentation.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.ClickButton
-import kotlinx.coroutines.launch
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.PasswordChangeViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.B2
+import com.kuit.afternote.ui.theme.B1
+import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
+import kotlinx.coroutines.launch
+
+private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 
 @Composable
 fun PasswordChangeScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    onBackClick: () -> Unit = {},
     viewModel: PasswordChangeViewModel = hiltViewModel()
 ) {
     val currentPasswordState = rememberTextFieldState()
@@ -59,6 +75,37 @@ fun PasswordChangeScreen(
         }
     }
 
+    PasswordChangeContent(
+        modifier = modifier,
+        currentPasswordState = currentPasswordState,
+        newPasswordState = newPasswordState,
+        confirmPasswordState = confirmPasswordState,
+        snackbarHostState = snackbarHostState,
+        onBackClick = onBackClick,
+        onChangePasswordClick = { currentPassword, newPassword, confirmPassword ->
+            if (newPassword != confirmPassword) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("새 비밀번호가 일치하지 않습니다.")
+                }
+                return@PasswordChangeContent
+            }
+            viewModel.changePassword(currentPassword, newPassword)
+        }
+    )
+}
+
+@Composable
+private fun PasswordChangeContent(
+    modifier: Modifier = Modifier,
+    currentPasswordState: TextFieldState,
+    newPasswordState: TextFieldState,
+    confirmPasswordState: TextFieldState,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onBackClick: () -> Unit = {},
+    onChangePasswordClick: (currentPassword: String, newPassword: String, confirmPassword: String) -> Unit = { _, _, _ -> }
+) {
+    val scrollState = rememberScrollState()
+
     Scaffold(
         topBar = {
             TopBar(
@@ -72,57 +119,32 @@ fun PasswordChangeScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            // 안내 문구 섹션
+            PasswordGuideSection()
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlineTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "현재 비밀번호",
-                    textFieldState = currentPasswordState,
-                    placeholder = "현재 비밀번호를 입력하세요",
-                    keyboardType = KeyboardType.Password
-                )
+            Spacer(modifier = Modifier.height(24.dp))
 
-                OutlineTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "새 비밀번호",
-                    textFieldState = newPasswordState,
-                    placeholder = "새 비밀번호를 입력하세요",
-                    keyboardType = KeyboardType.Password
-                )
-
-                OutlineTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "새 비밀번호 확인",
-                    textFieldState = confirmPasswordState,
-                    placeholder = "새 비밀번호를 다시 입력하세요",
-                    keyboardType = KeyboardType.Password
-                )
-            }
+            // 비밀번호 입력 필드들
+            PasswordFieldsSection(
+                currentPasswordState = currentPasswordState,
+                newPasswordState = newPasswordState,
+                confirmPasswordState = confirmPasswordState
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // 비밀번호 변경하기 버튼
             ClickButton(
-                color = B2,
-                title = "변경하기",
+                modifier = Modifier.padding(horizontal = 20.dp),
+                color = B3,
+                title = "비밀번호 변경하기",
                 onButtonClick = {
                     val currentPassword = currentPasswordState.text.toString()
                     val newPassword = newPasswordState.text.toString()
                     val confirmPassword = confirmPasswordState.text.toString()
-
-                    if (newPassword != confirmPassword) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("새 비밀번호가 일치하지 않습니다.")
-                        }
-                        return@ClickButton
-                    }
-
-                    viewModel.changePassword(currentPassword, newPassword)
+                    onChangePasswordClick(currentPassword, newPassword, confirmPassword)
                 }
             )
 
@@ -131,12 +153,126 @@ fun PasswordChangeScreen(
     }
 }
 
+@Composable
+private fun PasswordGuideSection(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        // 메인 안내 문구
+        Text(
+            text = "안전한 비밀번호로 내 정보를 보호하세요.",
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = Gray9
+            )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 비밀번호 요구사항 목록
+        PasswordRequirementItem(
+            text = "8 ~ 16자의 영문 대소문자, 숫자, 특수문자를 조합하여 설정해 주세요."
+        )
+        PasswordRequirementItem(
+            text = "이전에 사용한 적 없는 비밀번호가 안전합니다."
+        )
+    }
+}
+
+@Composable
+private fun PasswordRequirementItem(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
+    ) {
+        // 파란 점 (Bullet)
+        Canvas(
+            modifier = Modifier
+                .padding(top = 7.dp)
+                .size(4.dp)
+        ) {
+            drawCircle(color = B1)
+        }
+
+        Text(
+            text = text,
+            style = TextStyle(
+                fontSize = 12.sp,
+                lineHeight = 18.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
+                color = B1
+            )
+        )
+    }
+}
+
+@Composable
+private fun PasswordFieldsSection(
+    modifier: Modifier = Modifier,
+    currentPasswordState: TextFieldState,
+    newPasswordState: TextFieldState,
+    confirmPasswordState: TextFieldState
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(space = 20.dp)
+    ) {
+        OutlineTextField(
+            modifier = Modifier.fillMaxWidth(),
+            label = "현재 비밀번호",
+            textFieldState = currentPasswordState,
+            placeholder = PLACEHOLDER_TEXT_FIELD,
+            keyboardType = KeyboardType.Password
+        )
+
+        OutlineTextField(
+            modifier = Modifier.fillMaxWidth(),
+            label = "새 비밀번호",
+            textFieldState = newPasswordState,
+            placeholder = PLACEHOLDER_TEXT_FIELD,
+            keyboardType = KeyboardType.Password
+        )
+
+        OutlineTextField(
+            modifier = Modifier.fillMaxWidth(),
+            label = "새 비밀번호 확인",
+            textFieldState = confirmPasswordState,
+            placeholder = PLACEHOLDER_TEXT_FIELD,
+            keyboardType = KeyboardType.Password
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PasswordChangeScreenPreview() {
     AfternoteTheme {
-        PasswordChangeScreen(
-            onBackClick = {}
+        PasswordChangeContent(
+            currentPasswordState = rememberTextFieldState(),
+            newPasswordState = rememberTextFieldState(),
+            confirmPasswordState = rememberTextFieldState()
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PasswordGuideSectionPreview() {
+    AfternoteTheme {
+        PasswordGuideSection()
     }
 }
