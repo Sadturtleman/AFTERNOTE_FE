@@ -28,7 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.model.RrnVisualTransformation
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray4
@@ -48,7 +50,10 @@ import com.kuit.afternote.ui.theme.White
 fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true,
+    focusRequester: FocusRequester? = null,
+    requestFocusOnEnabled: Boolean = false
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -62,15 +67,33 @@ fun OutlineTextField(
             )
         },
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Gray4
+            unfocusedBorderColor = Gray4,
+            disabledTextColor = Gray9,
+            disabledPlaceholderColor = Gray4,
+            disabledContainerColor = White
         ),
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
+        enabled = enabled,
+        readOnly = false,
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
+            .then(
+                if (focusRequester != null) {
+                    Modifier
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            if (enabled && requestFocusOnEnabled) {
+                                focusRequester.requestFocus()
+                            }
+                        }
+                } else {
+                    Modifier
+                }
+            )
     )
 }
 
@@ -162,38 +185,7 @@ fun OutlineTextField(
     )
 }
 
-@Composable
-fun OutlineTextField(
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = { input ->
-            // 1. 보안 및 유효성 검사: 숫자만 허용하며 최대 7자 제한
-            if (input.length <= 7 && input.all { it.isDigit() }) {
-                onValueChange(input)
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        // 2. 이미지의 좌측 레이아웃 재현 (Prefix 활용)
-        prefix = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("주민번호", color = Color.Gray, fontSize = 14.sp)
-                Text(" — ", color = Color.Black)
-                Text("T ", color = Color.Gray)
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-        },
-        visualTransformation = RrnVisualTransformation(), // 3. 마스킹 및 하이픈 로직 분리
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        singleLine = true,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.LightGray
-        )
-    )
-}
+
 /**
  * 라벨이 있는 텍스트 필드 컴포넌트 (LabeledTextField 호환)
  *
@@ -339,7 +331,8 @@ private fun OutlineTextFieldBasicPreview() {
     AfternoteTheme {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
-            label = "시작"
+            label = "시작",
+            keyboardType = KeyboardType.Text
         )
     }
 }
@@ -373,6 +366,7 @@ private fun OutlineTextFieldWithFileAddPreview() {
 private fun OutlineTextFieldWithLabelPreview() {
     AfternoteTheme {
         OutlineTextField(
+            modifier = Modifier,
             label = "아이디",
             textFieldState = rememberTextFieldState()
         )

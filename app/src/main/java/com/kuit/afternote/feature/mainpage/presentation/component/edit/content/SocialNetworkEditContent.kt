@@ -34,6 +34,7 @@ fun SocialNetworkEditContent(
     Spacer(modifier = Modifier.height(Spacing.m))
 
     OutlineTextField(
+        modifier = Modifier,
         label = "아이디",
         textFieldState = params.accountSection.idState
     )
@@ -41,6 +42,7 @@ fun SocialNetworkEditContent(
     Spacer(modifier = Modifier.height(10.dp))
 
     OutlineTextField(
+        modifier = Modifier,
         label = "비밀번호",
         textFieldState = params.accountSection.passwordState,
         keyboardType = androidx.compose.ui.text.input.KeyboardType.Password

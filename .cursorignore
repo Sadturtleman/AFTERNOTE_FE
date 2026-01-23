@@ -6,7 +6,10 @@ build/
 app/build/
 **/build/
 .gradle/
-gradle/
+# gradle/ 폴더 내 빌드 아티팩트만 무시 (설정 파일은 제외)
+gradle/wrapper/gradle-wrapper.jar
+gradle/caches/
+gradle/daemon/
 **/intermediates/
 **/intermediates/**
 
