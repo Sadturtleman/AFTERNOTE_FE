@@ -36,7 +36,7 @@ jobs:
       # ✅ [추가됨] Secret에서 google-services.json 파일 생성
       - name: Create google-services.json
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" | base64 --decode > app/google-services.json
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
