@@ -23,6 +23,8 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
+import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
+import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 
@@ -45,7 +47,8 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
         ScreenInfo("임시저장 화면", "draft_letter"),
         ScreenInfo("수신자 목록 화면", "receive_list"),
-        ScreenInfo("타임레터 빈 화면", "letter_empty")
+        ScreenInfo("타임레터 빈 화면", "letter_empty"),
+        ScreenInfo("설정 화면", "setting_main")
     )
 
     NavHost(
@@ -73,6 +76,10 @@ fun NavGraph(navHostController: NavHostController) {
             navController = navHostController
         )
 
+        settingNavGraph(
+            navController = navHostController
+        )
+
         // 개발자 모드 화면 (기본 시작 화면)
         composable("dev") {
             DevModeScreen(
@@ -92,6 +99,7 @@ fun NavGraph(navHostController: NavHostController) {
                     "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
                     "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
                     "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
+                    "setting_main" -> navHostController.navigate(SettingRoute.SettingMainRoute)
                     else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
                 }
             },

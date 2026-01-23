@@ -25,6 +25,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.Step
 import com.kuit.afternote.feature.onboarding.presentation.component.StepProgressBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +98,8 @@ fun TopBar(
                     text = actionText,
                     fontSize = 14.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    color = Gray5
                 )
             }
         },
