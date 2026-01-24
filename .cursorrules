@@ -48,7 +48,7 @@ Before executing ANY git write command, verify:
    - **완전한 State Hoisting**: 화면 내부의 모든 상태(탭, 네비게이션 등)는 ViewModel로 이동
 8. **Architecture**: Presentation → Domain ← Data (엄격한 계층 분리)
 9. **Error Handling**: 3회 이상 실패 시 중단하고 Perplexity 프롬프트 제공
-10. **ViewModel 주입**: `androidx.lifecycle.viewmodel.compose.viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
+10. **ViewModel 주입**: `@HiltViewModel` ViewModel은 `hiltViewModel()` 사용, 일반 ViewModel은 `viewModel()` 사용
 11. **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
 12. **`.cursorrules` 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
 13. **Named Arguments 필수**: 함수 호출 시 파라미터 이름 명시 (아래 조건 해당 시)
@@ -67,7 +67,7 @@ Before executing ANY git write command, verify:
 6. 설명 없이 코드만 생성 (사용자 요청 시 제외)
 7. **Sycophancy (아첨)**: 사용자가 답변을 질문하거나 반문할 때, 즉시 사과하거나 답변을 변경하지 말 것. 먼저 자신의 논리를 설명하고, 사실적으로 틀렸을 때만 사과할 것.
 8. **Ask Mode에서 파일 수정 시도**: Ask 모드에서는 STRICTLY ANSWER ONLY. 파일 수정을 시도하지 말 것. 질문은 순수한 궁금증으로 해석하고, 지적이나 수정 요구로 해석하지 말 것.
-9. **Deprecated API 사용**: `androidx.hilt.navigation.compose.hiltViewModel()` 사용 금지
+9. **ViewModel 주입 혼동**: `@HiltViewModel` ViewModel에 `viewModel()` 사용 금지 (런타임 에러 발생)
 10. **비 Lifecycle-aware State 수집**: `collectAsState()` 사용 금지 (메모리 누수 위험)
 11. **로컬 상태 관리**: Composable 내부에서 `remember { mutableStateOf() }`로 화면 상태 관리 금지 (ViewModel로 이동)
 
@@ -265,7 +265,7 @@ Before executing ANY git write command, verify:
 3. **`.cursorrules` 길이 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
 
 ## 핵심 기술 규칙
-- **ViewModel 주입**: `viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
+- **ViewModel 주입**: `@HiltViewModel`은 `hiltViewModel()` 사용
 - **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
 - **State Hoisting**: 모든 화면 상태는 ViewModel로 이동
 - **Preview 필수**: 모든 public Composable에 `@Preview` 필수

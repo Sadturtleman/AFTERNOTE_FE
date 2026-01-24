@@ -17,11 +17,10 @@ alwaysApply: true
 - 다음 확장 함수들은 자동 임포트되지 않으므로 명시적으로 임포트해야 합니다:
   - `androidx.core.view.isVisible` → `import androidx.core.view.isVisible`
   - `androidx.lifecycle.compose.collectAsStateWithLifecycle` → `import androidx.lifecycle.compose.collectAsStateWithLifecycle` (**필수**: StateFlow 수집 시)
-  - `androidx.lifecycle.viewmodel.compose.viewModel` → `import androidx.lifecycle.viewmodel.compose.viewModel` (**필수**: ViewModel 주입 시, `hiltViewModel()` 대신 사용)
+  - `androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel` → `import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel` (**필수**: `@HiltViewModel` ViewModel 주입 시)
   - `androidx.compose.ui.platform.LocalContext` → `import androidx.compose.ui.platform.LocalContext`
   - `androidx.compose.ui.platform.LocalDensity` → `import androidx.compose.ui.platform.LocalDensity`
   - `androidx.compose.ui.platform.LocalFocusManager` → `import androidx.compose.ui.platform.LocalFocusManager`
-- **중요**: `androidx.hilt.navigation.compose.hiltViewModel`은 **절대 사용하지 마세요** (Deprecated).
 
 ### 3. Jetpack Compose Imports
 - **Always import `androidx.compose.runtime.*` delegates when using `by` keyword:**
@@ -44,28 +43,28 @@ alwaysApply: true
 ## Dependency Injection (Hilt)
 
 ### ViewModel 주입 (Compose)
-- **절대 `androidx.hilt.navigation.compose.hiltViewModel()`을 사용하지 마세요.**
-- **Deprecated**: `hiltViewModel()`은 Hilt 1.2.0+ 및 Navigation 2.8.0+에서 deprecated 되었습니다.
-- **올바른 방법**: `androidx.lifecycle.viewmodel.compose.viewModel()`을 사용하세요.
-- `@HiltViewModel`이 붙은 클래스는 `viewModel()` 함수가 자동으로 Hilt Factory를 사용하여 주입을 처리합니다.
-- **Import**: `import androidx.lifecycle.viewmodel.compose.viewModel`
+- **`@HiltViewModel` ViewModel**: `hiltViewModel()`을 사용하세요.
+- **일반 ViewModel** (DI 없음): `viewModel()`을 사용하세요.
+- **중요**: `@HiltViewModel`로 정의된 ViewModel은 반드시 `hiltViewModel()`으로 주입해야 합니다. `viewModel()`은 Hilt Factory를 사용하지 않습니다.
+- **Import**: `import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel`
+- **참고**: `androidx.hilt.navigation.compose.hiltViewModel`은 deprecated됨 (2025+)
 
 <rule id="hilt_viewmodel_injection">
-<description>Hilt ViewModel 주입은 viewModel() 함수를 사용하세요. hiltViewModel()은 deprecated입니다.</description>
+<description>@HiltViewModel ViewModel 주입은 hiltViewModel() 함수를 사용하세요.</description>
 <bad_example>
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel // Deprecated!
 
 @Composable
-fun MyRoute(viewModel: MyViewModel = hiltViewModel()) {
-    // Deprecated API 사용
+fun MyRoute(viewModel: MyHiltViewModel = hiltViewModel()) {
+    // Deprecated import 사용
 }
 </bad_example>
 <good_example>
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
-fun MyRoute(viewModel: MyViewModel = viewModel()) {
-    // 최신 API 사용
+fun MyRoute(viewModel: MyHiltViewModel = hiltViewModel()) {
+    // 최신 import 사용 - 올바른 방법
 }
 </good_example>
 </rule>
