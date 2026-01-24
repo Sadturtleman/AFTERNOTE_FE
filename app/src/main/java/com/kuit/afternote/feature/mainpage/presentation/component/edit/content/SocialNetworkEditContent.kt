@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -28,6 +29,9 @@ fun SocialNetworkEditContent(
     modifier: Modifier = Modifier,
     params: SocialNetworkEditContentParams
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
     // 계정 정보 섹션
     RequiredLabel(text = "계정 정보", offsetY = 4f)
 
@@ -104,8 +108,8 @@ fun SocialNetworkEditContent(
         isMultiline = true
     )
 
-    // 소셜네트워크 탭 하단 여백 (81dp)
-    Spacer(modifier = Modifier.height(Spacing.socialNetworkBottom))
+    // 소셜네트워크 탭 하단 여백 (화면 높이의 10%, 800dp 기준 약 80dp)
+    Spacer(modifier = Modifier.height(screenHeight * 0.1f))
 }
 
 @Preview(showBackground = true)
