@@ -60,6 +60,12 @@ android {
 
         val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
         buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
+
+        // Test credentials from local.properties (not committed to git)
+        val testEmail = project.findProperty("TEST_EMAIL") as? String ?: ""
+        val testPassword = project.findProperty("TEST_PASSWORD") as? String ?: ""
+        buildConfigField("String", "TEST_EMAIL", "\"$testEmail\"")
+        buildConfigField("String", "TEST_PASSWORD", "\"$testPassword\"")
     }
 
     buildTypes {
@@ -87,6 +93,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
     }
 }
 
@@ -133,6 +145,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.datastore.preferences)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)
