@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -31,6 +32,9 @@ fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
     // 정보 처리 방법 섹션
     RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
@@ -91,8 +95,8 @@ fun GalleryAndFileEditContent(
         isMultiline = true
     )
 
-    // 갤러리 및 파일 탭 하단 여백 (459dp)
-    Spacer(modifier = Modifier.height(Spacing.galleryAndFileBottom))
+    // 갤러리 및 파일 탭 하단 여백 (화면 높이의 57%, 800dp 기준 약 456dp)
+    Spacer(modifier = Modifier.height(screenHeight * 0.57f))
 }
 
 @Preview(showBackground = true)

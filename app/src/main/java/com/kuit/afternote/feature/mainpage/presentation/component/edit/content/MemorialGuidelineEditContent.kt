@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
@@ -25,6 +27,9 @@ fun MemorialGuidelineEditContent(
     modifier: Modifier = Modifier,
     params: MemorialGuidelineEditContentParams
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -65,8 +70,8 @@ fun MemorialGuidelineEditContent(
             onAddVideoClick = params.onVideoAddClick
         )
 
-        // 추모 가이드라인 탭 하단 여백 (272dp)
-        Spacer(modifier = Modifier.height(Spacing.memorialGuidelineBottom))
+        // 추모 가이드라인 탭 하단 여백 (화면 높이의 34%, 800dp 기준 약 272dp)
+        Spacer(modifier = Modifier.height(screenHeight * 0.34f))
     }
 }
 
