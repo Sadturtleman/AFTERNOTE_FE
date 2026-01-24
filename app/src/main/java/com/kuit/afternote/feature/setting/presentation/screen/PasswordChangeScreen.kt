@@ -29,10 +29,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
@@ -50,7 +51,7 @@ private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 fun PasswordChangeScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: PasswordChangeViewModel = hiltViewModel()
+    viewModel: PasswordChangeViewModel = viewModel()
 ) {
     val currentPasswordState = rememberTextFieldState()
     val newPasswordState = rememberTextFieldState()
@@ -105,6 +106,8 @@ private fun PasswordChangeContent(
     onChangePasswordClick: (currentPassword: String, newPassword: String, confirmPassword: String) -> Unit = { _, _, _ -> }
 ) {
     val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
     Scaffold(
         topBar = {
@@ -133,7 +136,8 @@ private fun PasswordChangeContent(
                 confirmPasswordState = confirmPasswordState
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            // 화면 높이의 10% (800dp 화면 기준 약 80dp)
+            Spacer(modifier = Modifier.height(screenHeight * 0.1f))
 
             // 비밀번호 변경하기 버튼
             ClickButton(
@@ -147,8 +151,6 @@ private fun PasswordChangeContent(
                     onChangePasswordClick(currentPassword, newPassword, confirmPassword)
                 }
             )
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

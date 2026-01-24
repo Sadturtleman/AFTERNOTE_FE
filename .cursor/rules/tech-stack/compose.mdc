@@ -74,12 +74,76 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 
 ### 적용 우선순위
 1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
-   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없으므로 `Spacer(Modifier.height())` 사용
+   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
 2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
 3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)
 4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지, 예: `padding(horizontal = 20.dp)`)
 5. **컴포넌트 크기**: 항상 고정 dp 값 사용
 6. **컴포넌트 간 간격**: `Arrangement.spacedBy()` 사용 권장
+
+### 스크롤 컨테이너 반응형 간격 (Scrollable Container Responsive Spacing)
+스크롤 가능한 컨테이너(`verticalScroll`, `LazyColumn` 등) 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
+대신 다음 방법들을 사용하여 반응형 간격을 구현할 수 있습니다.
+
+#### 1. LocalConfiguration 사용 (권장)
+화면 높이를 기준으로 비율 기반 간격을 설정합니다.
+- **Import**: `import android.content.res.Configuration` 및 `import androidx.compose.ui.platform.LocalConfiguration`
+
+```kotlin
+val configuration = LocalConfiguration.current
+val screenHeight = configuration.screenHeightDp.dp
+
+Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+) {
+    // Content...
+    
+    // 화면 높이의 10% (800dp 화면 기준 약 80dp)
+    Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+    
+    Button(...)
+}
+```
+
+#### 2. BoxWithConstraints 사용 (특정 영역 기준)
+부모 컨테이너의 크기를 기준으로 간격을 설정해야 할 때 사용합니다.
+
+```kotlin
+BoxWithConstraints {
+    val parentHeight = maxHeight
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Content...
+        Spacer(modifier = Modifier.height(parentHeight * 0.15f))
+        Button(...)
+    }
+}
+```
+
+#### 3. LazyColumn + fillParentMaxHeight (복잡한 리스트)
+`LazyColumn`에서는 `fillParentMaxHeight()`를 사용하여 비율 기반 높이를 설정할 수 있습니다.
+
+```kotlin
+LazyColumn(modifier = Modifier.fillMaxSize()) {
+    item { /* Content */ }
+    item { Spacer(modifier = Modifier.fillParentMaxHeight(0.2f)) }
+    item { Button(...) }
+}
+```
+
+#### 선택 기준
+| 상황 | 권장 방법 |
+|------|----------|
+| 전체 화면 기준 반응형 간격 | `LocalConfiguration` |
+| 특정 영역(다이얼로그, 탭 등) 기준 | `BoxWithConstraints` |
+| 복잡한 리스트 | `LazyColumn` + `fillParentMaxHeight()` |
+| 작은 간격 (24dp 미만) | 고정 `Spacer(Modifier.height())` 허용 |
 
 ### 패딩 대신 Spacer 사용 예시
 <rule id="spacer_instead_of_padding">
