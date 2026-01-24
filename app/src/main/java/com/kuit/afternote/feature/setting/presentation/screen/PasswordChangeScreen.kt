@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.setting.presentation.screen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,20 +22,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
@@ -42,9 +44,9 @@ import com.kuit.afternote.feature.onboarding.presentation.viewmodel.PasswordChan
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.ErrorRed
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import kotlinx.coroutines.launch
 
 private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 
@@ -60,7 +62,7 @@ fun PasswordChangeScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    var passwordMismatchError by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.passwordChangeSuccess) {
         if (uiState.passwordChangeSuccess) {
@@ -83,14 +85,14 @@ fun PasswordChangeScreen(
         newPasswordState = newPasswordState,
         confirmPasswordState = confirmPasswordState,
         snackbarHostState = snackbarHostState,
+        passwordMismatchError = passwordMismatchError,
         onBackClick = onBackClick,
         onChangePasswordClick = { currentPassword, newPassword, confirmPassword ->
             if (newPassword != confirmPassword) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("새 비밀번호가 일치하지 않습니다.")
-                }
+                passwordMismatchError = true
                 return@PasswordChangeContent
             }
+            passwordMismatchError = false
             viewModel.changePassword(currentPassword, newPassword)
         }
     )
@@ -103,6 +105,7 @@ private fun PasswordChangeContent(
     newPasswordState: TextFieldState,
     confirmPasswordState: TextFieldState,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    passwordMismatchError: Boolean = false,
     onBackClick: () -> Unit = {},
     onChangePasswordClick: (currentPassword: String, newPassword: String, confirmPassword: String) -> Unit = { _, _, _ -> }
 ) {
@@ -138,8 +141,28 @@ private fun PasswordChangeContent(
                 confirmPasswordState = confirmPasswordState
             )
 
-            // 화면 높이의 10% (800dp 화면 기준 약 80dp)
-            Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+            // 에러 메시지 영역 (고정 높이 26dp = 8dp 상단 여백 + 18dp 텍스트 높이)
+            Box(
+                modifier = Modifier
+                    .height(26.dp)
+                    .padding(start = 20.dp, top = 8.dp)
+            ) {
+                if (passwordMismatchError) {
+                    Text(
+                        text = "비밀번호가 일치하지 않습니다. 다시 시도해 주세요.",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = ErrorRed
+                        )
+                    )
+                }
+            }
+
+            // 화면 높이의 10% (800dp 화면 기준 약 80dp) - 에러 메시지 영역 제외
+            Spacer(modifier = Modifier.height(screenHeight * 0.1f - 26.dp))
 
             // 비밀번호 변경하기 버튼
             ClickButton(
@@ -269,6 +292,19 @@ private fun PasswordChangeScreenPreview() {
             currentPasswordState = rememberTextFieldState(),
             newPasswordState = rememberTextFieldState(),
             confirmPasswordState = rememberTextFieldState()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PasswordChangeScreenWithErrorPreview() {
+    AfternoteTheme {
+        PasswordChangeContent(
+            currentPasswordState = rememberTextFieldState(),
+            newPasswordState = rememberTextFieldState(),
+            confirmPasswordState = rememberTextFieldState(),
+            passwordMismatchError = true
         )
     }
 }
