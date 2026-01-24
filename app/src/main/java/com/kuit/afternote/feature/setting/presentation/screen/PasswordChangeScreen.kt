@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
@@ -52,7 +52,7 @@ private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 fun PasswordChangeScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    viewModel: PasswordChangeViewModel = viewModel()
+    viewModel: PasswordChangeViewModel = hiltViewModel()
 ) {
     val currentPasswordState = rememberTextFieldState()
     val newPasswordState = rememberTextFieldState()
