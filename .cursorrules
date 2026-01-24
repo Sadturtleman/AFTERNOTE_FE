@@ -57,6 +57,10 @@ Before executing ANY git write command, verify:
    - 같은 타입의 인자가 연속되는 경우
    - Compose 함수 호출 시 (modifier 제외한 모든 인자)
    - 예: `Recipient(id = "1", name = "김지은", label = "친구")`, `FontWeight.Medium` (NOT `FontWeight(500)`)
+14. **HTTP Status Code 테스트 필수**: 스웨거에 문서화된 API를 사용하는 ViewModel은 HTTP 에러 테스트 필수
+   - 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error
+   - Network Error (IOException)
+   - 상세 규칙은 `.cursor/rules/quality/code-quality.mdc` 참조
 
 ## MUST NOT DO (절대 금지)
 1. 커밋/푸시 자동 실행

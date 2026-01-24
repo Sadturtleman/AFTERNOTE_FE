@@ -44,6 +44,19 @@ Windows에서 Git Bash를 통해 pre-commit hook을 실행할 때, Android Studi
 
 자세한 내용은 [트러블슈팅 문서](docs/troubleshooting-gradle-java-issues.md)를 참고하세요.
 
+## 개발자 모드 테스트 계정 설정
+
+개발자 모드에서 빠른 로그인 기능을 사용하려면 `local.properties`에 테스트 계정 정보를 설정해야 합니다.
+
+**프로젝트 루트의 `local.properties` 파일에 추가:**
+```properties
+# Test credentials for DevMode quick login
+TEST_EMAIL=your_test_email@example.com
+TEST_PASSWORD=your_test_password
+```
+
+> **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다.
+
 ### ⚠️ 중요: OS별 경로 하드코딩 금지
 
 **절대 `gradle.properties`에 `org.gradle.java.home`을 커밋하지 마세요!**
