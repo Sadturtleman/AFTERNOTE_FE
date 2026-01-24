@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
@@ -9,6 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -24,20 +30,32 @@ class PasswordChangeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PasswordChangeUiState())
     val uiState: StateFlow<PasswordChangeUiState> = _uiState.asStateFlow()
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
+
     /**
      * 비밀번호 변경 시도.
      *
      * 성공 시 passwordChangeSuccess=true, 실패 시 errorMessage 설정.
      */
     fun changePassword(currentPassword: String, newPassword: String) {
+        Log.d(TAG, "changePassword called")
+        Log.d(TAG, "currentPassword length: ${currentPassword.length}")
+        Log.d(TAG, "newPassword length: ${newPassword.length}")
+
         when {
             currentPassword.isBlank() -> {
+                Log.w(TAG, "Validation failed: currentPassword is blank")
                 _uiState.update { it.copy(errorMessage = "현재 비밀번호를 입력하세요.") }
             }
             newPassword.isBlank() -> {
+                Log.w(TAG, "Validation failed: newPassword is blank")
                 _uiState.update { it.copy(errorMessage = "새 비밀번호를 입력하세요.") }
             }
             else -> {
+                Log.d(TAG, "Validation passed, calling UseCase")
                 runPasswordChange(currentPassword, newPassword)
             }
         }
@@ -45,21 +63,113 @@ class PasswordChangeViewModel @Inject constructor(
 
     private fun runPasswordChange(currentPassword: String, newPassword: String) {
         viewModelScope.launch {
+            Log.d(TAG, "runPasswordChange started")
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
             passwordChangeUseCase(currentPassword, newPassword)
                 .onSuccess {
+                    Log.d(TAG, "Password change SUCCESS")
                     _uiState.update {
                         it.copy(isLoading = false, errorMessage = null, passwordChangeSuccess = true)
                     }
                 }
                 .onFailure { e ->
+                    Log.e(TAG, "Password change FAILED", e)
+                    Log.e(TAG, "Error message: ${e.message}")
+                    Log.e(TAG, "Error class: ${e::class.java.simpleName}")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = e.message ?: "비밀번호 변경에 실패했습니다."
+                            errorMessage = mapErrorToUserMessage(e)
                         )
                     }
                 }
+        }
+    }
+
+    /**
+     * 예외를 사용자 친화적인 메시지로 변환합니다.
+     */
+    private fun mapErrorToUserMessage(e: Throwable): String {
+        return when (e) {
+            is HttpException -> parseHttpError(e)
+            is IOException -> "네트워크 연결을 확인해주세요."
+            else -> e.message ?: "비밀번호 변경에 실패했습니다."
+        }
+    }
+
+    /**
+     * HTTP 에러 응답을 파싱하여 서버 메시지를 추출합니다.
+     */
+    private fun parseHttpError(e: HttpException): String {
+        return try {
+            val errorBody = e.response()?.errorBody()?.string()
+            Log.d(TAG, "Error body: $errorBody")
+
+            if (errorBody != null) {
+                val errorResponse = json.decodeFromString<ErrorResponse>(errorBody)
+                val serverMessage = errorResponse.message
+
+                // 서버 메시지가 있으면 한글로 변환, 없으면 상태 코드 기반 메시지
+                if (!serverMessage.isNullOrBlank()) {
+                    mapServerMessageToKorean(serverMessage, e.code())
+                } else {
+                    mapHttpCodeToMessage(e.code())
+                }
+            } else {
+                mapHttpCodeToMessage(e.code())
+            }
+        } catch (parseException: Exception) {
+            Log.e(TAG, "Failed to parse error body", parseException)
+            mapHttpCodeToMessage(e.code())
+        }
+    }
+
+    /**
+     * 서버 메시지를 사용자 친화적인 한글 메시지로 변환합니다.
+     */
+    private fun mapServerMessageToKorean(serverMessage: String, code: Int): String {
+        // 서버 메시지에서 키워드를 찾아 적절한 한글 메시지 반환
+        return when {
+            serverMessage.contains("current", ignoreCase = true) &&
+                serverMessage.contains("password", ignoreCase = true) ->
+                "현재 비밀번호가 일치하지 않습니다."
+
+            serverMessage.contains("wrong", ignoreCase = true) ||
+                serverMessage.contains("incorrect", ignoreCase = true) ||
+                serverMessage.contains("invalid", ignoreCase = true) ->
+                "현재 비밀번호가 일치하지 않습니다."
+
+            serverMessage.contains("format", ignoreCase = true) ||
+                serverMessage.contains("pattern", ignoreCase = true) ->
+                "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다."
+
+            serverMessage.contains("same", ignoreCase = true) ->
+                "새 비밀번호가 현재 비밀번호와 동일합니다."
+
+            serverMessage.contains("expired", ignoreCase = true) ||
+                serverMessage.contains("token", ignoreCase = true) ->
+                "로그인이 만료되었습니다. 다시 로그인해주세요."
+
+            // 서버 메시지가 한글이면 그대로 사용
+            serverMessage.any { it in '\uAC00'..'\uD7A3' } -> serverMessage
+
+            // 기타: 상태 코드 기반 메시지
+            else -> mapHttpCodeToMessage(code)
+        }
+    }
+
+    /**
+     * HTTP 상태 코드를 사용자 친화적인 메시지로 변환합니다.
+     */
+    private fun mapHttpCodeToMessage(code: Int): String {
+        return when (code) {
+            400 -> "입력 정보를 확인해주세요."
+            401 -> "인증이 만료되었습니다. 다시 로그인해주세요."
+            403 -> "비밀번호 변경 권한이 없습니다."
+            404 -> "사용자 정보를 찾을 수 없습니다."
+            500, 502, 503 -> "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+            else -> "비밀번호 변경에 실패했습니다. (오류 코드: $code)"
         }
     }
 
@@ -76,4 +186,18 @@ class PasswordChangeViewModel @Inject constructor(
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }
+
+    companion object {
+        private const val TAG = "PasswordChangeVM"
+    }
 }
+
+/**
+ * 서버 에러 응답 파싱용 데이터 클래스.
+ */
+@Serializable
+private data class ErrorResponse(
+    @SerialName("status") val status: Int? = null,
+    @SerialName("code") val code: Int? = null,
+    @SerialName("message") val message: String? = null
+)
