@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -29,87 +30,91 @@ fun SocialNetworkEditContent(
     modifier: Modifier = Modifier,
     params: SocialNetworkEditContentParams
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
 
-    // 계정 정보 섹션
-    RequiredLabel(text = "계정 정보", offsetY = 4f)
+    Column(modifier = modifier) {
+        // 계정 정보 섹션
+        RequiredLabel(text = "계정 정보", offsetY = 4f)
 
-    Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(Spacing.m))
 
-    OutlineTextField(
-        modifier = Modifier,
-        label = "아이디",
-        textFieldState = params.accountSection.idState
-    )
-
-    Spacer(modifier = Modifier.height(10.dp))
-
-    OutlineTextField(
-        modifier = Modifier,
-        label = "비밀번호",
-        textFieldState = params.accountSection.passwordState,
-        keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.xl))
-
-    // 계정 처리 방법 섹션
-    RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
-
-    Spacer(modifier = Modifier.height(Spacing.m))
-
-    AccountProcessingRadioButton(
-        method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
-        selected = params.accountSection.selectedMethod == AccountProcessingMethod.MEMORIAL_ACCOUNT,
-        onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.s))
-
-    AccountProcessingRadioButton(
-        method = AccountProcessingMethod.PERMANENT_DELETE,
-        selected = params.accountSection.selectedMethod == AccountProcessingMethod.PERMANENT_DELETE,
-        onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) }
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.s))
-
-    AccountProcessingRadioButton(
-        method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
-        selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
-        onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECIPIENT) }
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.xl))
-    // 처리 방법 리스트 섹션
-    RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
-
-    Spacer(modifier = Modifier.height(Spacing.m))
-
-    ProcessingMethodList(
-        params = ProcessingMethodListParams(
-            items = params.processingMethodSection.items,
-            onAddClick = params.processingMethodSection.callbacks.onAddClick,
-            onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
-            onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
-            onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
-            onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
+        OutlineTextField(
+            modifier = Modifier,
+            label = "아이디",
+            textFieldState = params.accountSection.idState
         )
-    )
 
-    Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(10.dp))
 
-    // 남기실 말씀
-    OutlineTextField(
-        label = "남기실 말씀",
-        textFieldState = params.messageState,
-        isMultiline = true
-    )
+        OutlineTextField(
+            modifier = Modifier,
+            label = "비밀번호",
+            textFieldState = params.accountSection.passwordState,
+            keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
+        )
 
-    // 소셜네트워크 탭 하단 여백 (화면 높이의 10%, 800dp 기준 약 80dp)
-    Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        // 계정 처리 방법 섹션
+        RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
+
+        Spacer(modifier = Modifier.height(Spacing.m))
+
+        AccountProcessingRadioButton(
+            method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
+            selected = params.accountSection.selectedMethod == AccountProcessingMethod.MEMORIAL_ACCOUNT,
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
+        )
+
+        Spacer(modifier = Modifier.height(Spacing.s))
+
+        AccountProcessingRadioButton(
+            method = AccountProcessingMethod.PERMANENT_DELETE,
+            selected = params.accountSection.selectedMethod == AccountProcessingMethod.PERMANENT_DELETE,
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) }
+        )
+
+        Spacer(modifier = Modifier.height(Spacing.s))
+
+        AccountProcessingRadioButton(
+            method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
+            selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECIPIENT) }
+        )
+
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        // 처리 방법 리스트 섹션
+        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
+
+        Spacer(modifier = Modifier.height(Spacing.m))
+
+        ProcessingMethodList(
+            params = ProcessingMethodListParams(
+                items = params.processingMethodSection.items,
+                onAddClick = params.processingMethodSection.callbacks.onAddClick,
+                onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
+                onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
+                onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
+                onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
+                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
+            )
+        )
+
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        // 남기실 말씀
+        OutlineTextField(
+            label = "남기실 말씀",
+            textFieldState = params.messageState,
+            isMultiline = true
+        )
+
+        // 소셜네트워크 탭 하단 여백 (화면 높이의 10%, 800dp 기준 약 80dp)
+        Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+    }
 }
 
 @Preview(showBackground = true)
