@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
@@ -40,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.feature.onboarding.presentation.util.PasswordValidator
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.PasswordChangeViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -50,19 +52,59 @@ import com.kuit.afternote.ui.theme.Sansneo
 
 private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 
+/**
+ * 비밀번호 유효성을 검증하고 에러 상태를 반환합니다.
+ *
+ * @param newPassword 새 비밀번호
+ * @param confirmPassword 비밀번호 확인
+ * @return 검증 결과에 따른 에러 상태
+ */
+private fun validatePassword(newPassword: String, confirmPassword: String): PasswordErrorState {
+    // 비밀번호 요구사항 검증
+    if (PasswordValidator.validate(newPassword) != null) {
+        return PasswordErrorState(requirementError = true)
+    }
+
+    // 비밀번호 일치 검증
+    if (newPassword != confirmPassword) {
+        return PasswordErrorState(mismatchError = true)
+    }
+
+    return PasswordErrorState()
+}
+
+/**
+ * 비밀번호 입력 필드 상태를 그룹화한 데이터 클래스.
+ */
+private data class PasswordFieldStates(
+    val currentPassword: TextFieldState,
+    val newPassword: TextFieldState,
+    val confirmPassword: TextFieldState
+)
+
+/**
+ * 비밀번호 에러 상태를 그룹화한 데이터 클래스.
+ */
+private data class PasswordErrorState(
+    val mismatchError: Boolean = false,
+    val requirementError: Boolean = false
+)
+
 @Composable
 fun PasswordChangeScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     viewModel: PasswordChangeViewModel = hiltViewModel()
 ) {
-    val currentPasswordState = rememberTextFieldState()
-    val newPasswordState = rememberTextFieldState()
-    val confirmPasswordState = rememberTextFieldState()
+    val fieldStates = PasswordFieldStates(
+        currentPassword = rememberTextFieldState(),
+        newPassword = rememberTextFieldState(),
+        confirmPassword = rememberTextFieldState()
+    )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    var passwordMismatchError by remember { mutableStateOf(false) }
+    var errorState by remember { mutableStateOf(PasswordErrorState()) }
 
     LaunchedEffect(uiState.passwordChangeSuccess) {
         if (uiState.passwordChangeSuccess) {
@@ -81,19 +123,18 @@ fun PasswordChangeScreen(
 
     PasswordChangeContent(
         modifier = modifier,
-        currentPasswordState = currentPasswordState,
-        newPasswordState = newPasswordState,
-        confirmPasswordState = confirmPasswordState,
+        fieldStates = fieldStates,
         snackbarHostState = snackbarHostState,
-        passwordMismatchError = passwordMismatchError,
+        errorState = errorState,
         onBackClick = onBackClick,
         onChangePasswordClick = { currentPassword, newPassword, confirmPassword ->
-            if (newPassword != confirmPassword) {
-                passwordMismatchError = true
-                return@PasswordChangeContent
+            // 비밀번호 검증 및 에러 상태 업데이트
+            errorState = validatePassword(newPassword, confirmPassword)
+
+            // 에러가 없으면 비밀번호 변경 요청
+            if (!errorState.requirementError && !errorState.mismatchError) {
+                viewModel.changePassword(currentPassword, newPassword)
             }
-            passwordMismatchError = false
-            viewModel.changePassword(currentPassword, newPassword)
         }
     )
 }
@@ -101,11 +142,9 @@ fun PasswordChangeScreen(
 @Composable
 private fun PasswordChangeContent(
     modifier: Modifier = Modifier,
-    currentPasswordState: TextFieldState,
-    newPasswordState: TextFieldState,
-    confirmPasswordState: TextFieldState,
+    fieldStates: PasswordFieldStates,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    passwordMismatchError: Boolean = false,
+    errorState: PasswordErrorState = PasswordErrorState(),
     onBackClick: () -> Unit = {},
     onChangePasswordClick: (currentPassword: String, newPassword: String, confirmPassword: String) -> Unit = { _, _, _ -> }
 ) {
@@ -130,15 +169,18 @@ private fun PasswordChangeContent(
                 .verticalScroll(scrollState)
         ) {
             // 안내 문구 섹션
-            PasswordGuideSection()
+            PasswordGuideSection(
+                passwordRequirementError = errorState.requirementError
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // 비밀번호 입력 필드들
             PasswordFieldsSection(
-                currentPasswordState = currentPasswordState,
-                newPasswordState = newPasswordState,
-                confirmPasswordState = confirmPasswordState
+                currentPasswordState = fieldStates.currentPassword,
+                newPasswordState = fieldStates.newPassword,
+                confirmPasswordState = fieldStates.confirmPassword,
+                newPasswordError = errorState.requirementError
             )
 
             // 에러 메시지 영역 (고정 높이 26dp = 8dp 상단 여백 + 18dp 텍스트 높이)
@@ -147,7 +189,7 @@ private fun PasswordChangeContent(
                     .height(26.dp)
                     .padding(start = 20.dp, top = 8.dp)
             ) {
-                if (passwordMismatchError) {
+                if (errorState.mismatchError) {
                     Text(
                         text = "비밀번호가 일치하지 않습니다. 다시 시도해 주세요.",
                         style = TextStyle(
@@ -170,9 +212,9 @@ private fun PasswordChangeContent(
                 color = B3,
                 title = "비밀번호 변경하기",
                 onButtonClick = {
-                    val currentPassword = currentPasswordState.text.toString()
-                    val newPassword = newPasswordState.text.toString()
-                    val confirmPassword = confirmPasswordState.text.toString()
+                    val currentPassword = fieldStates.currentPassword.text.toString()
+                    val newPassword = fieldStates.newPassword.text.toString()
+                    val confirmPassword = fieldStates.confirmPassword.text.toString()
                     onChangePasswordClick(currentPassword, newPassword, confirmPassword)
                 }
             )
@@ -182,7 +224,8 @@ private fun PasswordChangeContent(
 
 @Composable
 private fun PasswordGuideSection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    passwordRequirementError: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -205,10 +248,12 @@ private fun PasswordGuideSection(
 
         // 비밀번호 요구사항 목록
         PasswordRequirementItem(
-            text = "8 ~ 16자의 영문 대소문자, 숫자, 특수문자를 조합하여 설정해 주세요."
+            text = "8 ~ 16자의 영문 대소문자, 숫자, 특수문자를 조합하여 설정해 주세요.",
+            color = if (passwordRequirementError) ErrorRed else B1
         )
         PasswordRequirementItem(
-            text = "이전에 사용한 적 없는 비밀번호가 안전합니다."
+            text = "이전에 사용한 적 없는 비밀번호가 안전합니다.",
+            color = B1
         )
     }
 }
@@ -216,20 +261,21 @@ private fun PasswordGuideSection(
 @Composable
 private fun PasswordRequirementItem(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    color: Color = B1
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
     ) {
-        // 파란 점 (Bullet)
+        // Bullet 점 - 텍스트 첫 줄 중앙에 맞춤 (fontSize 12sp 기준, 약 7dp 위치)
         Canvas(
             modifier = Modifier
-                .padding(top = 7.dp)
                 .size(4.dp)
+                .align(Alignment.CenterVertically)
         ) {
-            drawCircle(color = B1)
+            drawCircle(color = color)
         }
 
         Text(
@@ -239,7 +285,7 @@ private fun PasswordRequirementItem(
                 lineHeight = 18.sp,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Normal,
-                color = B1
+                color = color
             )
         )
     }
@@ -250,7 +296,8 @@ private fun PasswordFieldsSection(
     modifier: Modifier = Modifier,
     currentPasswordState: TextFieldState,
     newPasswordState: TextFieldState,
-    confirmPasswordState: TextFieldState
+    confirmPasswordState: TextFieldState,
+    newPasswordError: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -271,7 +318,8 @@ private fun PasswordFieldsSection(
             label = "새 비밀번호",
             textFieldState = newPasswordState,
             placeholder = PLACEHOLDER_TEXT_FIELD,
-            keyboardType = KeyboardType.Password
+            keyboardType = KeyboardType.Password,
+            isError = newPasswordError
         )
 
         OutlineTextField(
@@ -289,22 +337,41 @@ private fun PasswordFieldsSection(
 private fun PasswordChangeScreenPreview() {
     AfternoteTheme {
         PasswordChangeContent(
-            currentPasswordState = rememberTextFieldState(),
-            newPasswordState = rememberTextFieldState(),
-            confirmPasswordState = rememberTextFieldState()
+            fieldStates = PasswordFieldStates(
+                currentPassword = rememberTextFieldState(),
+                newPassword = rememberTextFieldState(),
+                confirmPassword = rememberTextFieldState()
+            )
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PasswordChangeScreenWithErrorPreview() {
+private fun PasswordChangeScreenWithMismatchErrorPreview() {
     AfternoteTheme {
         PasswordChangeContent(
-            currentPasswordState = rememberTextFieldState(),
-            newPasswordState = rememberTextFieldState(),
-            confirmPasswordState = rememberTextFieldState(),
-            passwordMismatchError = true
+            fieldStates = PasswordFieldStates(
+                currentPassword = rememberTextFieldState(),
+                newPassword = rememberTextFieldState(),
+                confirmPassword = rememberTextFieldState()
+            ),
+            errorState = PasswordErrorState(mismatchError = true)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PasswordChangeScreenWithRequirementErrorPreview() {
+    AfternoteTheme {
+        PasswordChangeContent(
+            fieldStates = PasswordFieldStates(
+                currentPassword = rememberTextFieldState(),
+                newPassword = rememberTextFieldState(),
+                confirmPassword = rememberTextFieldState()
+            ),
+            errorState = PasswordErrorState(requirementError = true)
         )
     }
 }
@@ -314,5 +381,13 @@ private fun PasswordChangeScreenWithErrorPreview() {
 private fun PasswordGuideSectionPreview() {
     AfternoteTheme {
         PasswordGuideSection()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PasswordGuideSectionWithErrorPreview() {
+    AfternoteTheme {
+        PasswordGuideSection(passwordRequirementError = true)
     }
 }

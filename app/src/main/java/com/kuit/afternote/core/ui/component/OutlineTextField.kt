@@ -1,17 +1,16 @@
 package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -25,7 +24,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -41,10 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
+import com.kuit.afternote.ui.theme.ErrorRed
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
+
+private const val DEFAULT_PLACEHOLDER = "Text Field"
 
 @Composable
 fun OutlineTextField(
@@ -202,7 +203,7 @@ fun OutlineTextField(
     modifier: Modifier = Modifier,
     label: String,
     textFieldState: TextFieldState,
-    placeholder: String = "Text Field",
+    placeholder: String = DEFAULT_PLACEHOLDER,
     keyboardType: KeyboardType = KeyboardType.Text,
     containerColor: Color = White,
     labelSpacing: Dp = 6.dp
@@ -261,6 +262,89 @@ fun OutlineTextField(
 }
 
 /**
+ * 라벨이 있는 텍스트 필드 컴포넌트 - 에러 상태 지원 버전
+ *
+ * @param modifier Modifier (기본: Modifier)
+ * @param label 라벨 텍스트
+ * @param textFieldState 텍스트 필드 상태
+ * @param placeholder 플레이스홀더 텍스트 (기본: "Text Field")
+ * @param keyboardType 키보드 타입 (기본: KeyboardType.Text)
+ * @param isError 에러 상태 여부 - true일 경우 1dp 빨간 테두리 표시
+ */
+@Composable
+fun OutlineTextField(
+    modifier: Modifier = Modifier,
+    label: String,
+    textFieldState: TextFieldState,
+    placeholder: String = DEFAULT_PLACEHOLDER,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isError: Boolean
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(space = 6.dp)
+    ) {
+        Text(
+            text = label,
+            style = TextStyle(
+                fontSize = 12.sp,
+                lineHeight = 18.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
+                color = Gray9
+            )
+        )
+
+        OutlinedTextField(
+            contentPadding = PaddingValues(
+                vertical = 16.dp,
+                horizontal = 24.dp
+            ),
+            state = textFieldState,
+            lineLimits = TextFieldLineLimits.SingleLine,
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray4
+                )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                unfocusedContainerColor = White,
+                focusedContainerColor = White
+            ),
+            shape = RoundedCornerShape(8.dp),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(White, RoundedCornerShape(8.dp))
+                .then(
+                    if (isError) {
+                        Modifier.border(
+                            width = 1.dp,
+                            color = ErrorRed,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                    } else {
+                        Modifier
+                    }
+                ),
+            textStyle = TextStyle(
+                color = Gray9
+            )
+        )
+    }
+}
+
+/**
  * 멀티라인 텍스트 필드 컴포넌트 (MessageTextField 호환)
  *
  * @param modifier Modifier (기본: Modifier)
@@ -273,7 +357,7 @@ fun OutlineTextField(
     modifier: Modifier = Modifier,
     label: String = "남기실 말씀",
     textFieldState: TextFieldState,
-    placeholder: String = "Text Field",
+    placeholder: String = DEFAULT_PLACEHOLDER,
     isMultiline: Boolean = true
 ) {
     if (isMultiline) {
