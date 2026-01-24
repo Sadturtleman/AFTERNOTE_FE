@@ -1,12 +1,19 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
+import android.util.Log
 import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -14,6 +21,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 
 /**
  * [PasswordChangeViewModel] 단위 테스트.
@@ -29,8 +38,19 @@ class PasswordChangeViewModelTest {
 
     @Before
     fun setUp() {
+        mockkStatic(Log::class)
+        every { Log.d(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
+
         passwordChangeUseCase = mockk()
         viewModel = PasswordChangeViewModel(passwordChangeUseCase)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(Log::class)
     }
 
     @Test
@@ -95,5 +115,65 @@ class PasswordChangeViewModelTest {
         viewModel.clearError()
 
         assertNull(viewModel.uiState.value.errorMessage)
+    }
+
+    // ========== HTTP Error Cases ==========
+
+    @Test
+    fun changePassword_when400BadRequest_setsErrorMessage() = runTest {
+        val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<Unit>(400, errorBody))
+        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+
+        viewModel.changePassword("currentPwd!", "weak")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
+        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun changePassword_when401Unauthorized_setsErrorMessage() = runTest {
+        val errorBody = """{"status":401,"code":401,"message":"Current password is incorrect"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<Unit>(401, errorBody))
+        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+
+        viewModel.changePassword("wrongPwd!", "newPwd123!")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("401") == true)
+        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+    }
+
+    @Test
+    fun changePassword_when500ServerError_setsErrorMessage() = runTest {
+        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<Unit>(500, errorBody))
+        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+
+        viewModel.changePassword("currentPwd!", "newPwd123!")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
+        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+    }
+
+    // ========== Network Error Cases ==========
+
+    @Test
+    fun changePassword_whenNetworkError_setsErrorMessage() = runTest {
+        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
+            java.io.IOException("Network unavailable")
+        )
+
+        viewModel.changePassword("currentPwd!", "newPwd123!")
+        advanceUntilIdle()
+
+        assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
     }
 }

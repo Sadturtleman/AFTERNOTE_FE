@@ -8,6 +8,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -15,6 +17,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 
 /**
  * [ReissueViewModel] 단위 테스트.
@@ -88,5 +92,65 @@ class ReissueViewModelTest {
         viewModel.clearError()
 
         assertNull(viewModel.uiState.value.errorMessage)
+    }
+
+    // ========== HTTP Error Cases ==========
+
+    @Test
+    fun reissue_when401Unauthorized_setsErrorMessage() = runTest {
+        val errorBody = """{"status":401,"code":401,"message":"Token expired"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<ReissueResult>(401, errorBody))
+        coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
+
+        viewModel.reissue("expiredToken")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("401") == true)
+        assertFalse(viewModel.uiState.value.reissueSuccess)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun reissue_when400BadRequest_setsErrorMessage() = runTest {
+        val errorBody = """{"status":400,"code":400,"message":"Invalid token format"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<ReissueResult>(400, errorBody))
+        coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
+
+        viewModel.reissue("invalidToken")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
+        assertFalse(viewModel.uiState.value.reissueSuccess)
+    }
+
+    @Test
+    fun reissue_when500ServerError_setsErrorMessage() = runTest {
+        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+            .toResponseBody("application/json".toMediaType())
+        val httpException = HttpException(Response.error<ReissueResult>(500, errorBody))
+        coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
+
+        viewModel.reissue("validToken")
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
+        assertFalse(viewModel.uiState.value.reissueSuccess)
+    }
+
+    // ========== Network Error Cases ==========
+
+    @Test
+    fun reissue_whenNetworkError_setsErrorMessage() = runTest {
+        coEvery { reissueUseCase(any()) } returns Result.failure(
+            java.io.IOException("Network unavailable")
+        )
+
+        viewModel.reissue("validToken")
+        advanceUntilIdle()
+
+        assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.reissueSuccess)
     }
 }
