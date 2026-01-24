@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -32,71 +33,76 @@ fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
 
-    // 정보 처리 방법 섹션
-    RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
+    Column(modifier = modifier) {
+        // 정보 처리 방법 섹션
+        RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
-    Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(Spacing.m))
 
-    InformationProcessingRadioButton(
-        method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-        selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-        onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
-    )
+        InformationProcessingRadioButton(
+            method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
+        )
 
-    Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(Spacing.s))
 
-    InformationProcessingRadioButton(
-        method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-        selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-        onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
-    )
+        InformationProcessingRadioButton(
+            method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
+        )
 
-    // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
-    params.recipientSection?.let { recipientSection ->
+        // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
+        params.recipientSection?.let { recipientSection ->
+            Spacer(modifier = Modifier.height(Spacing.xl))
+
+            // 수신자 추가 섹션 제목
+            RequiredLabel(text = "수신자 추가", offsetY = 3f)
+
+            Spacer(modifier = Modifier.height(9.dp))
+
+            RecipientList(
+                recipients = recipientSection.recipients,
+                events = recipientSection.callbacks
+            )
+        }
+
         Spacer(modifier = Modifier.height(Spacing.xl))
 
-        // 수신자 추가 섹션 제목
-        RequiredLabel(text = "수신자 추가", offsetY = 3f)
+        // 처리 방법 리스트 섹션
+        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(9.dp))
+        Spacer(modifier = Modifier.height(Spacing.m))
 
-        RecipientList(
-            recipients = recipientSection.recipients,
-            events = recipientSection.callbacks
+        ProcessingMethodList(
+            params = ProcessingMethodListParams(
+                items = params.processingMethodSection.items,
+                onAddClick = params.processingMethodSection.callbacks.onAddClick,
+                onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
+                onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
+                onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
+                onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
+                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
+            )
         )
+
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        // 남기실 말씀
+        OutlineTextField(
+            label = "남기실 말씀",
+            textFieldState = params.messageState,
+            isMultiline = true
+        )
+
+        // 갤러리 및 파일 탭 하단 여백 (화면 높이의 57%, 800dp 기준 약 456dp)
+        Spacer(modifier = Modifier.height(screenHeight * 0.57f))
     }
-    Spacer(modifier = Modifier.height(Spacing.xl))
-    // 처리 방법 리스트 섹션
-    RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
-
-    Spacer(modifier = Modifier.height(Spacing.m))
-
-    ProcessingMethodList(
-        params = ProcessingMethodListParams(
-            items = params.processingMethodSection.items,
-            onAddClick = params.processingMethodSection.callbacks.onAddClick,
-            onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
-            onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
-            onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
-            onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
-        )
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.xl))
-
-    // 남기실 말씀
-    OutlineTextField(
-        label = "남기실 말씀",
-        textFieldState = params.messageState,
-        isMultiline = true
-    )
-
-    // 갤러리 및 파일 탭 하단 여백 (화면 높이의 57%, 800dp 기준 약 456dp)
-    Spacer(modifier = Modifier.height(screenHeight * 0.57f))
 }
 
 @Preview(showBackground = true)

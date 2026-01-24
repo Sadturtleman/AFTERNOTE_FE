@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
@@ -27,8 +27,9 @@ fun MemorialGuidelineEditContent(
     modifier: Modifier = Modifier,
     params: MemorialGuidelineEditContentParams
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
 
     Column(
         modifier = modifier.fillMaxWidth()

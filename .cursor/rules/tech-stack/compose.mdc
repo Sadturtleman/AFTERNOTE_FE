@@ -85,13 +85,15 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 스크롤 가능한 컨테이너(`verticalScroll`, `LazyColumn` 등) 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
 대신 다음 방법들을 사용하여 반응형 간격을 구현할 수 있습니다.
 
-#### 1. LocalConfiguration 사용 (권장)
+#### 1. LocalWindowInfo 사용 (권장)
 화면 높이를 기준으로 비율 기반 간격을 설정합니다.
-- **Import**: `import android.content.res.Configuration` 및 `import androidx.compose.ui.platform.LocalConfiguration`
+- **Import**: `import androidx.compose.ui.platform.LocalDensity` 및 `import androidx.compose.ui.platform.LocalWindowInfo`
+- **주의**: `LocalConfiguration.screenHeightDp`는 deprecated이므로 `LocalWindowInfo.current.containerSize`를 사용합니다.
 
 ```kotlin
-val configuration = LocalConfiguration.current
-val screenHeight = configuration.screenHeightDp.dp
+val density = LocalDensity.current
+val windowInfo = LocalWindowInfo.current
+val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
 
 Column(
     modifier = Modifier
@@ -140,7 +142,7 @@ LazyColumn(modifier = Modifier.fillMaxSize()) {
 #### 선택 기준
 | 상황 | 권장 방법 |
 |------|----------|
-| 전체 화면 기준 반응형 간격 | `LocalConfiguration` |
+| 전체 화면 기준 반응형 간격 | `LocalWindowInfo` |
 | 특정 영역(다이얼로그, 탭 등) 기준 | `BoxWithConstraints` |
 | 복잡한 리스트 | `LazyColumn` + `fillParentMaxHeight()` |
 | 작은 간격 (24dp 미만) | 고정 `Spacer(Modifier.height())` 허용 |
