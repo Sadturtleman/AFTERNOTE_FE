@@ -1,0 +1,375 @@
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.navgraph\n\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.navigation.NavController\nimport androidx.navigation.NavGraphBuilder\nimport androidx.navigation.compose.composable\nimport com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen\n\n\n@RequiresApi(Build.VERSION_CODES.O)\nfun NavGraphBuilder.recordNavGraph(navController: NavController) {\n    composable(\"record_main\") {\n        RecordMainScreen(\n            onDiaryClick = {navController.navigate(RecordRoute.DiaryRoute) },\n            onQuestionClick = {navController.navigate(RecordRoute.QuestionRoute)},\n            onDeepMindClick = {navController.navigate(RecordRoute.DeepMindRoute)},\n            onWeekendReportClick = {navController.navigate(RecordRoute.WeekendReportRoute)}\n        )\n    }\n    composable<RecordRoute.DiaryRoute>{\n        RecordDiaryScreen()\n    }\n    composable<RecordRoute.QuestionRoute> {\n        RecordDiaryScreen()\n    }\n    composable<RecordRoute.DeepMindRoute> {\n        RecordDeepMindScreen()\n    }\n    composable<RecordRoute.WeekendReportRoute> {\n        RecordWeekendReportScreen()\n    }\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt	(date 1768802785199)
+@@ -23,13 +23,19 @@
+         )
+     }
+     composable<RecordRoute.DiaryRoute>{
+-        RecordDiaryScreen()
++        RecordDiaryScreen(
++            onLeftClick = { navController.popBackStack() }
++        )
+     }
+     composable<RecordRoute.QuestionRoute> {
+-        RecordDiaryScreen()
++        RecordDiaryScreen(
++            onLeftClick = { navController.popBackStack() }
++        )
+     }
+     composable<RecordRoute.DeepMindRoute> {
+-        RecordDeepMindScreen()
++        RecordDeepMindScreen(
++            onLeftClick = {navController.popBackStack()}
++        )
+     }
+     composable<RecordRoute.WeekendReportRoute> {
+         RecordWeekendReportScreen()
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordMainScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.screen\n\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.WindowInsets\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.statusBars\nimport androidx.compose.foundation.layout.windowInsetsPadding\nimport androidx.compose.foundation.lazy.LazyColumn\nimport androidx.compose.foundation.lazy.items\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material.icons.filled.Add\nimport androidx.compose.material3.FloatingActionButton\nimport androidx.compose.material3.Icon\nimport androidx.compose.material3.Scaffold\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.clip\nimport androidx.compose.ui.graphics.Brush\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport androidx.navigation.NavHostController\nimport com.kuit.afternote.core.BottomNavItem\nimport com.kuit.afternote.core.BottomNavigationBar\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar\nimport com.kuit.afternote.ui.theme.Gray1\n\n/**\n * 에프터노트 마음기록 메인 화면\n *\n * 피그마 디자인 기반으로 구현\n * - 상단 텍스트\n * - 마음기록 리스트\n * - 하단 FAB 버튼\n */\n@Composable\nfun RecordMainScreen(\n    modifier: Modifier = Modifier,\n    onDiaryClick: () -> Unit,\n    onDeepMindClick: () -> Unit,\n    onWeekendReportClick: () -> Unit,\n    onQuestionClick: () -> Unit\n) {\n\n    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }\n    Scaffold(\n        modifier = modifier.fillMaxSize(),\n        containerColor = Gray1,\n        bottomBar = {\n            BottomNavigationBar(\n                selectedItem = selectedBottomNavItem,\n                onItemSelected = { selectedBottomNavItem = it }\n            )\n        },\n        floatingActionButton = {\n            FloatingActionButton(\n                onClick = { /* TODO: 새 애프터노트 생성 */ },\n                modifier = Modifier.size(56.dp),\n                containerColor = Color.Transparent,\n                contentColor = Color.White,\n                shape = CircleShape\n            ) {\n                Box(\n                    modifier = Modifier\n                        .fillMaxSize()\n                        .clip(CircleShape)\n                        .background(\n                            brush = Brush.linearGradient(\n                                colors = listOf(\n                                    Color(0xFFBDE0FF), // B3\n                                    Color(0xFFFFE1CC) // 주황색 계열\n                                )\n                            )\n                        ),\n                    contentAlignment = Alignment.Center\n                ) {\n                    Icon(\n                        imageVector = Icons.Default.Add,\n                        contentDescription = \"새 애프터노트 추가\",\n                        modifier = Modifier.size(24.dp)\n                    )\n                }\n            }\n        }\n    ) { paddingValues ->\n\n        Column(\n            modifier = Modifier\n                .fillMaxWidth()\n                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록\n        ) {\n            //샹단 제목\n            RecordMainTopbar(modifier = modifier,\n                \"나의 모든 기록\",\n                showLeftArrow = false\n            )\n            //리스트\n            val allItems = listOf(\n                \"데일리 질문답변\" to \"매일 다른 질문들에 나를 남겨보세요\",\n                \"일기\" to \"나의 매일을 기록하세요.\",\n                \"깊은 생각\" to \"오늘은 무엇을 생각하고 있나요?\",\n                \"주간 리포트\" to \"이번주 나의 기록들을 확인해보세요.\"\n            )\n\n            LazyColumn(\n                modifier = Modifier.fillMaxWidth(),\n                contentPadding = PaddingValues(\n                    start = 20.dp,\n                    top = 8.dp,\n                    end = 20.dp\n                ),\n                verticalArrangement = Arrangement.spacedBy(8.dp)\n\n            ) {\n                items(allItems){ (title, subtitle) ->\n                    RecordItem(\n                        title = title,\n                        subtitle = subtitle,\n                        modifier = Modifier.clickable {\n                            when (title) {\n                                \"데일리 질문답변\" -> onQuestionClick()\n                                \"일기\" -> onDiaryClick()\n                                \"깊은 생각\" -> onDeepMindClick()\n                                \"주간 리포트\" -> onWeekendReportClick()\n                            }\n                        }\n                    )\n                }\n            }\n        }\n\n\n\n    }\n}\n\n@Preview(\n    showBackground = true\n)\n@Composable\nprivate fun RecordMainScreenPrev() {\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordMainScreen.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordMainScreen.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordMainScreen.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordMainScreen.kt	(date 1768803930971)
+@@ -126,20 +126,23 @@
+                 verticalArrangement = Arrangement.spacedBy(8.dp)
+ 
+             ) {
+-                items(allItems){ (title, subtitle) ->
++                items(allItems) { (title, subtitle) ->
++                    val clickAction: () -> Unit = when (title) {
++                        "데일리 질문답변" -> { onQuestionClick }
++                        "일기" -> { onDiaryClick }
++                        "깊은 생각" -> { onDeepMindClick }
++                        "주간 리포트" -> { onWeekendReportClick }
++                        else -> { {} } // 아무 것도 안 하는 빈 람다
++                    }
++
+                     RecordItem(
+                         title = title,
+                         subtitle = subtitle,
+-                        modifier = Modifier.clickable {
+-                            when (title) {
+-                                "데일리 질문답변" -> onQuestionClick()
+-                                "일기" -> onDiaryClick()
+-                                "깊은 생각" -> onDeepMindClick()
+-                                "주간 리포트" -> onWeekendReportClick()
+-                            }
+-                        }
++                        onClick = clickAction
+                     )
+                 }
++
++
+             }
+         }
+ 
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDeepMindScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.screen\n\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.compose.foundation.layout.WindowInsets\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.statusBars\nimport androidx.compose.foundation.layout.windowInsetsPadding\nimport androidx.compose.foundation.lazy.LazyColumn\nimport androidx.compose.material3.Scaffold\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.tooling.preview.Preview\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Composable\nfun RecordDeepMindScreen(modifier: Modifier = Modifier) {\n    Scaffold(\n\n    ) { paddingValues ->\n        LazyColumn(\n            modifier = Modifier\n                .fillMaxWidth()\n                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록\n\n        ) {\n            item {\n                RecordSubTopbar(text = \"깊은 생각 기록하기\")\n            }\n\n            item {\n                RecordDiaryContentItem(\n                    standard = \"깊은 생각 기록하기\",\n                    onTitleChange = {},\n                    onDateSelected = { _, _, _ -> }\n\n                )\n            }\n        }\n\n    }\n}\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Preview(showBackground = true)\n@Composable\nprivate fun RecordDeepMindPrev() {\n    RecordDeepMindScreen()\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDeepMindScreen.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDeepMindScreen.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDeepMindScreen.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDeepMindScreen.kt	(date 1768802533504)
+@@ -16,7 +16,10 @@
+ 
+ @RequiresApi(Build.VERSION_CODES.O)
+ @Composable
+-fun RecordDeepMindScreen(modifier: Modifier = Modifier) {
++fun RecordDeepMindScreen(
++    modifier: Modifier = Modifier,
++    onLeftClick: () -> Unit
++) {
+     Scaffold(
+ 
+     ) { paddingValues ->
+@@ -27,7 +30,10 @@
+ 
+         ) {
+             item {
+-                RecordSubTopbar(text = "깊은 생각 기록하기")
++                RecordSubTopbar(
++                    text = "깊은 생각 기록하기",
++                    onLeftClock = onLeftClick
++                    )
+             }
+ 
+             item {
+@@ -47,5 +53,5 @@
+ @Preview(showBackground = true)
+ @Composable
+ private fun RecordDeepMindPrev() {
+-    RecordDeepMindScreen()
++    //RecordDeepMindScreen()
+ }
+Index: app/src/main/java/com/kuit/afternote/app/navigation/navgraph/NavGraph.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.app.navigation.navgraph\n\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.compose.runtime.Composable\nimport androidx.navigation.NavHostController\nimport androidx.navigation.compose.NavHost\nimport androidx.navigation.compose.composable\nimport com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph\nimport com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen\nimport com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen\nimport com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen\nimport com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo\nimport com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen\nimport com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen\nimport com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen\nimport com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen\nimport com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute\nimport com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph\nimport com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen\nimport com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen\nimport com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen\nimport com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Composable\nfun NavGraph(navHostController: NavHostController) {\n    val devModeScreens = listOf(\n//        ScreenInfo(\"메인 화면 (빈 상태)\", \"main_empty\"),\n//        ScreenInfo(\"메인 화면 (목록 있음)\", \"main_with_items\"),\n        ScreenInfo(\"애프터노트 상세 화면\", \"afternote_detail\"),\n        ScreenInfo(\"애프터노트 수정 화면\", \"afternote_edit\"),\n        ScreenInfo(\"스플래시 화면\", \"dev_splash\"),\n        ScreenInfo(\"로그인 화면\", \"dev_login\"),\n        ScreenInfo(\"회원가입 화면\", \"dev_signup\"),\n        ScreenInfo(\"프로필 설정 화면\", \"dev_profile_setting\"),\n        ScreenInfo(\"지문 로그인 화면\", \"fingerprint_login\"),\n        ScreenInfo(\"마음의기록 메인 화면\",\"record_main\"),\n        ScreenInfo(\"마음의기록 deep\",\"record_deep\"),\n        ScreenInfo(\"마음의기록 diary\",\"record_diary\"),\n        ScreenInfo(\"마음의기록 report\",\"record_report\")\n    )\n\n    NavHost(\n        navController = navHostController,\n        startDestination = \"dev\"\n    ) {\n        // 모드 선택 화면 (사용하지 않음, 개발자 모드에서 직접 사용자 모드로 이동 가능)\n        composable(\"mode_selection\") {\n            ModeSelectionScreen(\n                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) },\n                onDevModeClick = { navHostController.navigate(\"dev\") }\n            )\n        }\n\n        onboardingNavGraph(navHostController)\n\n        recordNavGraph(navHostController)\n\n\n        // 개발자 모드 화면 (기본 시작 화면)\n        composable(\"dev\") {\n            DevModeScreen(\n                screens = devModeScreens,\n                onScreenClick = { route -> navHostController.navigate(route) },\n                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) }\n            )\n        }\n\n        // 메인 화면 - 빈 상태 (개발용)\n        composable(\"main_empty\") {\n//            AfternoteMainScreen(\n//                afternoteItems = emptyList(),\n//                onItemClick = { navHostController.navigate(\"afternote_detail\") }\n//            )\n        }\n\n        // 메인 화면 - 목록 있음 (개발용)\n        composable(\"main_with_items\") {\n//            AfternoteMainScreen(\n//                afternoteItems = listOf(\n//                    \"인스타그램\" to \"2023.11.24\",\n//                    \"갤러리\" to \"2023.11.25\",\n//                    \"갤러리\" to \"2023.11.26\",\n//                    \"인스타그램\" to \"2023.11.27\"\n//                ),\n//                onItemClick = { navHostController.navigate(\"afternote_detail\") }\n//            )\n        }\n\n        // 애프터노트 상세 화면\n        composable(\"afternote_detail\") {\n            AfternoteDetailScreen(\n                onBackClick = { navHostController.popBackStack() },\n                onEditClick = { navHostController.navigate(\"afternote_edit\") }\n            )\n        }\n\n        // 애프터노트 수정 화면\n        composable(\"afternote_edit\") {\n            AfternoteEditScreen(\n                onBackClick = { navHostController.popBackStack() },\n                onRegisterClick = { /* TODO: 등록 처리 */ }\n            )\n        }\n\n        // 개발자 모드용 화면들\n        composable(\"dev_splash\") {\n            SplashScreen(\n                onLoginClick = { navHostController.navigate(\"dev_login\") },\n                onStartClick = { navHostController.navigate(\"dev_signup\") },\n                onCheckClick = {}\n            )\n        }\n\n        composable(\"dev_login\") {\n            LoginScreen(\n                onBackClick = { navHostController.popBackStack() },\n                onLoginClick = {},\n                onSignUpClick = { navHostController.navigate(\"dev_signup\") },\n                onFindIdClick = {}\n            )\n        }\n\n        composable(\"dev_signup\") {\n            SignUpScreen(\n                onBackClick = { navHostController.popBackStack() },\n                onSettingClick = { navHostController.navigate(\"dev_profile_setting\") }\n            )\n        }\n\n        composable(\"dev_profile_setting\") {\n            ProfileSettingScreen(\n                onFinishClick = {},\n                onBackClick = { navHostController.popBackStack() },\n                onAddProfileAvatarClick = {}\n            )\n        }\n\n        // 지문 로그인 화면\n        composable(\"fingerprint_login\") {\n            FingerprintLoginScreen(\n                onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }\n            )\n        }\n        composable(\"record_main\"){\n            RecordMainScreen(\n                onDiaryClick = { navHostController.navigate(\"record_diary\") },\n                onDeepMindClick = { navHostController.navigate(\"record_deep\")},\n                onWeekendReportClick = { navHostController.navigate(\"record_report\")},\n                onQuestionClick = { }\n            )\n        }\n\n        composable(\"record_deep\") {\n            RecordDeepMindScreen()\n        }\n        composable(\"record_diary\"){\n            RecordDiaryScreen()\n        }\n\n        composable(\"record_report\") {\n            RecordWeekendReportScreen()\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/app/navigation/navgraph/NavGraph.kt b/app/src/main/java/com/kuit/afternote/app/navigation/navgraph/NavGraph.kt
+--- a/app/src/main/java/com/kuit/afternote/app/navigation/navgraph/NavGraph.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/app/navigation/navgraph/NavGraph.kt	(date 1768802785179)
+@@ -7,7 +7,6 @@
+ import androidx.navigation.compose.NavHost
+ import androidx.navigation.compose.composable
+ import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
+-import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
+ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
+ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
+ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
+@@ -17,7 +16,6 @@
+ import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
+ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
+ import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
+-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainScreen
+ import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
+ import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
+ import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
+@@ -157,10 +155,14 @@
+         }
+ 
+         composable("record_deep") {
+-            RecordDeepMindScreen()
++            RecordDeepMindScreen(
++                onLeftClick = { navHostController.popBackStack() }
++            )
+         }
+         composable("record_diary"){
+-            RecordDiaryScreen()
++            RecordDiaryScreen(
++                onLeftClick = { navHostController.popBackStack() }
++            )
+         }
+ 
+         composable("record_report") {
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDiaryScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.screen\n\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.compose.foundation.layout.WindowInsets\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.statusBars\nimport androidx.compose.foundation.layout.windowInsetsPadding\nimport androidx.compose.foundation.lazy.LazyColumn\nimport androidx.compose.material3.Scaffold\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem\nimport com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar\n\n/**\n * 애프터노트 일기 기록하기 화면\n *\n * 피그마 디자인 기반 구현\n * - 상단 제목\n * - 텍스트 필드 컴포넌트\n * - 하단 FAB 버튼\n */\n@RequiresApi(Build.VERSION_CODES.O)\n@Composable\nfun RecordDiaryScreen(modifier: Modifier = Modifier) {\n    Scaffold(\n\n    ) { paddingValues ->\n        LazyColumn(\n            modifier = Modifier\n                .fillMaxWidth()\n                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록\n\n        ) {\n            item {\n                RecordSubTopbar(text = \"일기 기록하기\")\n            }\n\n            item {\n                RecordDiaryContentItem(\n                    standard = \"일기 기록하기\",\n                    onTitleChange = {},\n                    onDateSelected = { _, _, _ -> }\n                )\n            }\n        }\n\n    }\n}\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Preview(showBackground = true)\n@Composable\nprivate fun RecordDailyScreenPrev() {\n    RecordDiaryScreen()\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDiaryScreen.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDiaryScreen.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDiaryScreen.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/RecordDiaryScreen.kt	(date 1768802785190)
+@@ -27,7 +27,10 @@
+  */
+ @RequiresApi(Build.VERSION_CODES.O)
+ @Composable
+-fun RecordDiaryScreen(modifier: Modifier = Modifier) {
++fun RecordDiaryScreen(
++    modifier: Modifier = Modifier,
++    onLeftClick: () -> Unit
++) {
+     Scaffold(
+ 
+     ) { paddingValues ->
+@@ -38,7 +41,10 @@
+ 
+         ) {
+             item {
+-                RecordSubTopbar(text = "일기 기록하기")
++                RecordSubTopbar(
++                    text = "일기 기록하기",
++                    onLeftClock = onLeftClick
++                    )
+             }
+ 
+             item {
+@@ -57,5 +63,5 @@
+ @Preview(showBackground = true)
+ @Composable
+ private fun RecordDailyScreenPrev() {
+-    RecordDiaryScreen()
++    //RecordDiaryScreen()
+ }
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.component\n\nimport androidx.compose.foundation.Image\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Row\nimport androidx.compose.foundation.layout.Spacer\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.foundation.layout.offset\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.width\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material3.Text\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.clip\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.text.style.TextOverflow\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.max\nimport androidx.compose.ui.unit.sp\nimport com.kuit.afternote.R\nimport com.kuit.afternote.ui.expand.dropShadow\nimport com.kuit.afternote.ui.theme.B2\nimport com.kuit.afternote.ui.theme.Black\nimport com.kuit.afternote.ui.theme.Gray5\nimport com.kuit.afternote.ui.theme.Sansneo\n\n/**\n * 마음기록 리스트 아이템 컴포넌트\n *\n * 피그마 디자인:\n * - 흰색 배경, 둥근 모서리 8dp\n * - 왼쪽: 제목, 부연 설명\n * - 오른쪽: 화살표 버튼 (24x24, 파란색)\n */\n@Composable\nfun RecordItem(\n    modifier: Modifier = Modifier,\n    title: String,\n    subtitle: String,\n    onClick: () -> Unit = {}\n) {\n    Box(\n        modifier = modifier\n            .fillMaxWidth()\n            .height(80.dp)\n            .dropShadow(\n                shape = RoundedCornerShape(16.dp),\n                color = Color.Black.copy(alpha = 0.05f),\n                blur = 5.dp,\n                offsetY = 2.dp,\n                offsetX = 0.dp,\n                spread = 0.dp\n            )\n            .clip(RoundedCornerShape(8.dp))\n            .background(Color.White)\n            .clickable(onClick = onClick)\n            .padding(horizontal = 20.dp)\n    ){\n        Row(\n            modifier = Modifier\n                .fillMaxWidth()\n                .padding(vertical = 16.dp),\n            verticalAlignment = Alignment.CenterVertically\n        ){\n            Column(\n                modifier = Modifier\n                    .weight(1f)\n            ) {\n                Text(\n                    text = title,\n                    color = Black,\n                    fontFamily = Sansneo,\n                    fontSize = 18.sp,\n                    fontWeight = FontWeight.Bold,\n                    maxLines = 1, // 텍스트가 최대 한 줄로 표시\n                    overflow = TextOverflow.Ellipsis //한 줄 안에 못 들어가면, 잘린 부분을 ..으로 표시\n                )\n                Spacer(modifier = Modifier.height(4.dp))\n                Text(\n                    text = subtitle,\n                    color = Gray5,\n                    fontSize = 12.sp,\n                    fontFamily = Sansneo,\n                    maxLines = 1,\n                    overflow = TextOverflow.Ellipsis,\n                    modifier = Modifier.fillMaxWidth()\n                )\n            }\n\n            Box(\n                modifier = Modifier\n                    .size(24.dp)\n                    .clip(RoundedCornerShape(12.dp))\n                    .background(B2)\n            ) {\n                Image(\n                    painter = painterResource(R.drawable.ic_arrow_forward),\n                    contentDescription = null,\n                    modifier = Modifier\n                        .size(6.dp, 12.dp)\n                        .offset(x = 9.9.dp, y = 6.dp)\n                )\n            }\n        }\n    }\n}\n@Preview(showBackground = true)\n@Composable fun RecordItemPreview()\n{\n    Column {\n        RecordItem(\n            title = \"데일리 질문 답변\",\n            subtitle = \"매일 다른 질문들에 나를 남겨 보세요.\",\n            onClick = {}\n        )\n        Spacer(modifier = Modifier\n            .width(8.dp)\n        )\n        RecordItem(\n            title = \"일기\",\n            subtitle = \"나의 매일을 기록하세요\",\n            onClick = {}\n        )\n        RecordItem(\n            title = \"깊은 생각\",\n            subtitle = \"오늘은 어떤 생각을 하고 있나요?\",\n            onClick = {}\n        )\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordItem.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordItem.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordItem.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordItem.kt	(date 1768803656974)
+@@ -47,7 +47,7 @@
+     modifier: Modifier = Modifier,
+     title: String,
+     subtitle: String,
+-    onClick: () -> Unit = {}
++    onClick: () -> Unit
+ ) {
+     Box(
+         modifier = modifier
+@@ -104,7 +104,7 @@
+                     .background(B2)
+             ) {
+                 Image(
+-                    painter = painterResource(R.drawable.ic_arrow_forward),
++                    painter = painterResource(R.drawable.ic_arrow_right_tab),
+                     contentDescription = null,
+                     modifier = Modifier
+                         .size(6.dp, 12.dp)
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordDiaryContentItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.component\n\nimport RecordCustomDateSelector\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.compose.foundation.Image\nimport androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Row\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.material3.DatePickerDialog\nimport androidx.compose.material3.Divider\nimport androidx.compose.material3.Text\nimport androidx.compose.material3.TextField\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\n\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.sp\nimport androidx.compose.ui.viewinterop.AndroidView\nimport androidx.compose.ui.window.Dialog\nimport com.kuit.afternote.R\nimport com.kuit.afternote.ui.theme.Black\nimport com.kuit.afternote.ui.theme.Gray5\nimport com.kuit.afternote.ui.theme.Sansneo\nimport java.time.LocalDate\nimport java.time.format.DateTimeFormatter\n\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Composable\nfun RecordDiaryContentItem(\n    modifier: Modifier = Modifier,\n    standard: String,\n    onTitleChange: (String) -> Unit,\n    onDateSelected: (Int, Int, Int) -> Unit\n    ) {\n    var title by remember { mutableStateOf(\"\") }\n    var content by remember { mutableStateOf(\"\") }\n    var isEditing by remember { mutableStateOf(false) }\n\n    //오늘 날짜 기준으로 받아오기\n    val today = LocalDate.now()\n    val formatter = DateTimeFormatter.ofPattern(\"yyyy년 MM월 dd일\")\n    val formattedDate = today.format(formatter)\n\n    //아래로 화살표 누르면 날짜 선택 가능하도록\n    val context = LocalContext.current\n    val showDialog = remember { mutableStateOf(false) }\n\n    var s = \" \"\n    if (standard.equals(\"일기 기록하기\")) s = \"작성 날짜\"\n    else s = \"기록 주제\"\n    Column(\n        modifier = Modifier\n            .padding(top = 24.dp, start = 20.dp, end = 20.dp)\n\n    ) {\n        Text(\n            text = s,\n            color = Black,\n            fontSize = 12.sp,\n            fontWeight = FontWeight.SemiBold,\n            fontFamily = Sansneo\n        )\n\n\n        Box(\n            modifier = Modifier\n                .padding(all = 8.dp)\n        ) {\n            Row(\n                modifier = Modifier.fillMaxWidth(),\n                horizontalArrangement = Arrangement.SpaceBetween,\n                verticalAlignment = Alignment.CenterVertically\n\n            ) {\n                if (s.equals(\"작성 날짜\")) {\n                    Text(\n                        text = formattedDate,\n                        fontSize = 12.sp,\n                        modifier = Modifier.padding(vertical = 8.dp)\n                    )\n                } else if (s.equals(\"기록 주제\")) {\n                    Text(\n                        text = \"나의 가치관\",\n                        fontSize = 12.sp,\n                        modifier = Modifier.padding(vertical = 8.dp)\n                    )\n                }\n\n\n                Image(\n                    painter = painterResource(id = R.drawable.ic_under),\n                    contentDescription = \"밑 화살표\",\n                    modifier = Modifier\n                        .size(24.dp)\n                        .clickable { showDialog.value = true }\n                )\n                //다이얼로그\n                if (showDialog.value) {\n                    LaunchedEffect(Unit) {\n                        android.app.DatePickerDialog(\n                            context,\n                            R.style.SpinnerDatePickerStyle,\n                            { _, year, month, dayOfMonth ->\n                                onDateSelected(year, month + 1, dayOfMonth)\n                                showDialog.value = false\n                            },\n                            today.year,\n                            today.monthValue - 1,\n                            today.dayOfMonth\n                        ).show()\n                    }\n                }\n\n\n            }\n            Divider(color = Color.LightGray, thickness = 0.8.dp)\n\n            Box(\n                modifier = Modifier\n                    .fillMaxWidth()\n                    .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)\n                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환\n            ) {\n                if (isEditing) {\n                    TextField(\n                        value = title,\n                        onValueChange = { title = it },\n                        modifier = Modifier.fillMaxWidth(),\n                        singleLine = true\n                    )\n                } else {\n                    Text(\n                        text = \"제목\",\n                        color = Gray5,\n                        fontSize = 18.sp,\n                        fontWeight = FontWeight.Normal\n                    )\n                }\n            }\n\n            Divider(color = Color.LightGray, thickness = 0.8.dp)\n\n            Box(\n                modifier = Modifier\n                    .fillMaxWidth()\n                    .padding(top = 40.dp)\n                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환\n            ) {\n                if (isEditing) {\n                    TextField(\n                        value = title,\n                        onValueChange = { title = it },\n                        modifier = Modifier.fillMaxWidth(),\n                        singleLine = true\n                    )\n                } else {\n                    Text(\n                        text = \"당신의 오늘을 기록해보세요\",\n                        color = Gray5,\n                        fontSize = 16.sp,\n                        fontWeight = FontWeight.Medium\n                    )\n                }\n            }\n\n        }\n    }\n}\n\n@RequiresApi(Build.VERSION_CODES.O)\n@Preview(showBackground = true)\n@Composable\nprivate fun RecordView () {\n    RecordDiaryContentItem(\n        standard = \"일기 기록하기\",\n        onTitleChange = {},\n        onDateSelected = { _, _, _ -> }\n    )\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordDiaryContentItem.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordDiaryContentItem.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordDiaryContentItem.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/RecordDiaryContentItem.kt	(date 1768802062678)
+@@ -132,57 +132,57 @@
+ 
+             }
+             Divider(color = Color.LightGray, thickness = 0.8.dp)
+-
+-            Box(
+-                modifier = Modifier
+-                    .fillMaxWidth()
+-                    .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
+-                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
+-            ) {
+-                if (isEditing) {
+-                    TextField(
+-                        value = title,
+-                        onValueChange = { title = it },
+-                        modifier = Modifier.fillMaxWidth(),
+-                        singleLine = true
+-                    )
+-                } else {
+-                    Text(
+-                        text = "제목",
+-                        color = Gray5,
+-                        fontSize = 18.sp,
+-                        fontWeight = FontWeight.Normal
+-                    )
+-                }
+-            }
++        }
++        Box(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
++                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
++        ) {
++            if (isEditing) {
++                TextField(
++                    value = title,
++                    onValueChange = { title = it },
++                    modifier = Modifier.fillMaxWidth(),
++                    singleLine = true
++                )
++            } else {
++                Text(
++                    text = "제목",
++                    color = Gray5,
++                    fontSize = 18.sp,
++                    fontWeight = FontWeight.Normal
++                )
++            }
++        }
+ 
+-            Divider(color = Color.LightGray, thickness = 0.8.dp)
++        Divider(color = Color.LightGray, thickness = 0.8.dp)
+ 
+-            Box(
+-                modifier = Modifier
+-                    .fillMaxWidth()
+-                    .padding(top = 40.dp)
+-                    .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
+-            ) {
+-                if (isEditing) {
+-                    TextField(
+-                        value = title,
+-                        onValueChange = { title = it },
+-                        modifier = Modifier.fillMaxWidth(),
+-                        singleLine = true
+-                    )
+-                } else {
+-                    Text(
+-                        text = "당신의 오늘을 기록해보세요",
+-                        color = Gray5,
+-                        fontSize = 16.sp,
+-                        fontWeight = FontWeight.Medium
+-                    )
+-                }
+-            }
++        Box(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(top = 40.dp)
++                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
++        ) {
++            if (isEditing) {
++                TextField(
++                    value = title,
++                    onValueChange = { title = it },
++                    modifier = Modifier.fillMaxWidth(),
++                    singleLine = true
++                )
++            } else {
++                Text(
++                    text = "당신의 오늘을 기록해보세요",
++                    color = Gray5,
++                    fontSize = 16.sp,
++                    fontWeight = FontWeight.Medium
++                )
++            }
++        }
+ 
+-        }
+     }
++
+ }
+ 
+ @RequiresApi(Build.VERSION_CODES.O)
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/DropdownSeletor.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.component\n\nimport androidx.compose.foundation.clickable\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.material3.DropdownMenu\nimport androidx.compose.material3.DropdownMenuItem\nimport androidx.compose.material3.Text\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\n\n@Composable\nfun DropdownSelector(label: String, options: List<Int>, selected: Int, onSelect: (Int) -> Unit) {\n    var expanded by remember { mutableStateOf(false) }\n\n\n\n    Box {\n        Text(\n            text = \"$selected $label\",\n            modifier = Modifier.clickable { expanded = true }\n        )\n        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {\n            options.forEach { option ->\n                DropdownMenuItem(\n                    text = { Text(\"$option $label\") },\n                    onClick = {\n                        onSelect(option)\n                        expanded = false\n                    }\n                )\n            }\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/DropdownSeletor.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/DropdownSeletor.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/DropdownSeletor.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/component/DropdownSeletor.kt	(date 1768803160945)
+@@ -16,8 +16,6 @@
+ fun DropdownSelector(label: String, options: List<Int>, selected: Int, onSelect: (Int) -> Unit) {
+     var expanded by remember { mutableStateOf(false) }
+ 
+-
+-
+     Box {
+         Text(
+             text = "$selected $label",
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/DailyQuestionScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/DailyQuestionScreen.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/DailyQuestionScreen.kt
+new file mode 100644
+--- /dev/null	(date 1768804202638)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/screen/DailyQuestionScreen.kt	(date 1768804202638)
+@@ -0,0 +1,2 @@
++package com.kuit.afternote.feature.dailyrecord.presentation.screen
++
