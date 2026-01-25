@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
@@ -20,6 +24,8 @@ fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit
 ) {
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
     Scaffold(
 
     ) { paddingValues ->
@@ -40,9 +46,11 @@ fun RecordDeepMindScreen(
             item {
                 RecordDiaryContentItem(
                     standard = "깊은 생각 기록하기",
-                    onTitleChange = {},
-                    onDateSelected = { _, _, _ -> }
-
+                    onDateSelected = { _, _, _ -> },
+                    title = title,
+                    onTitleChange = { title = it },
+                    content = content,
+                    onContentChange = { content = it }
                 )
             }
         }

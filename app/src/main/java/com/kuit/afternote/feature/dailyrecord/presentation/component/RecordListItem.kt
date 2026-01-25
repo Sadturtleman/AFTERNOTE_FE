@@ -107,6 +107,8 @@ fun RecordListItem(
                 )
 
                 Box(
+                    modifier = Modifier
+                        .clickable{showDialog = true}
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_three_jum_fore_foreground),
@@ -114,7 +116,6 @@ fun RecordListItem(
                         modifier = Modifier
                             .size(30.dp)
                             .padding(start = 8.dp)
-                            .clickable { showDialog = true }
                             .offset(x = 164.dp, y = 2.dp)
 
                     )

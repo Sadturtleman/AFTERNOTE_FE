@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryQuestionContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
@@ -14,8 +18,11 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTo
 @Composable
 fun RecordQuestionScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit
-    ) {
+    onLeftClick: () -> Unit,
+    onCreateRight: () -> Unit
+) {
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
     Scaffold(
 
     ) { paddingValues ->
@@ -29,12 +36,17 @@ fun RecordQuestionScreen(
                 RecordSubTopbar(
                     text = "데일리 질문 답변",
                     onLeftClock = onLeftClick,
-                    onRightClick = {}
+                    onRightClick = { onCreateRight }
                 )
             }
 
             item {
-                RecordDiaryQuestionContentItem()
+                RecordDiaryQuestionContentItem(
+                    title = title,
+                    onTitleChange = { title = it },
+                    content = content,
+                    onContentChange = { content = it }
+                )
             }
         }
 
