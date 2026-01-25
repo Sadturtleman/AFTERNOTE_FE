@@ -1,0 +1,19 @@
+Index: app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.kuit.afternote.feature.dailyrecord.presentation.navgraph\n\nimport android.os.Build\nimport androidx.annotation.RequiresApi\nimport androidx.navigation.NavController\nimport androidx.navigation.NavGraphBuilder\nimport androidx.navigation.compose.composable\nimport com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen\nimport com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen\n\n\n@RequiresApi(Build.VERSION_CODES.O)\nfun NavGraphBuilder.recordNavGraph(navController: NavController) {\n    composable(\"record_main\") {\n        RecordMainScreen(\n            onDiaryClick = {navController.navigate(RecordRoute.DiaryRoute) },\n            onQuestionClick = {navController.navigate(RecordRoute.QuestionRoute)},\n            onDeepMindClick = {navController.navigate(RecordRoute.DeepMindRoute)},\n            onWeekendReportClick = {navController.navigate(RecordRoute.WeekendReportRoute)}\n        )\n    }\n    composable<RecordRoute.DiaryRoute>{\n        RecordDiaryScreen()\n    }\n    composable<RecordRoute.QuestionRoute> {\n        RecordDiaryScreen()\n    }\n    composable<RecordRoute.DeepMindRoute> {\n        RecordDeepMindScreen()\n    }\n    composable<RecordRoute.WeekendReportRoute> {\n        RecordWeekendReportScreen()\n    }\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt
+--- a/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt	(revision 462277d23edd3ea81b8c486ae5e0ac2953d7fa06)
++++ b/app/src/main/java/com/kuit/afternote/feature/dailyrecord/presentation/navigiation/RecordNavgraph.kt	(date 1768657607621)
+@@ -14,7 +14,7 @@
+ 
+ @RequiresApi(Build.VERSION_CODES.O)
+ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
+-    composable("record_main") {
++    composable<RecordRoute.MainRoute>{
+         RecordMainScreen(
+             onDiaryClick = {navController.navigate(RecordRoute.DiaryRoute) },
+             onQuestionClick = {navController.navigate(RecordRoute.QuestionRoute)},
