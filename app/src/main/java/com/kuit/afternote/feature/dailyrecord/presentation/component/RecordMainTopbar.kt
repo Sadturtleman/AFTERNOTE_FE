@@ -78,7 +78,6 @@ fun RecordMainTopbar(
                     painter = painterResource(id = R.drawable.ic_sub_left_foreground),
                     contentDescription = "화살표",
                     modifier = Modifier.size(24.dp)
-                        .clickable{ onLeftClock }
                 )
             }
         }

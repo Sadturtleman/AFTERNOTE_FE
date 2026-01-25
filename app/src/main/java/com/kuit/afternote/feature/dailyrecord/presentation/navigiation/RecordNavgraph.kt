@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.dailyrecord.presentation.navgraph
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -44,7 +45,8 @@ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
     }
     composable<RecordRoute.QuestionRoute> {
         RecordQuestionScreen(
-            onLeftClick = { navController.popBackStack() }
+            onLeftClick = { navController.popBackStack() },
+            onCreateRight = { navController.popBackStack() }
         )
     }
     composable<RecordRoute.DeepMindRoute> {
@@ -53,7 +55,9 @@ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
         )
     }
     composable<RecordRoute.WeekendReportRoute> {
-        RecordWeekendReportScreen()
+        RecordWeekendReportScreen(
+            onLeftClick = {navController.popBackStack()}
+        )
     }
 }
 

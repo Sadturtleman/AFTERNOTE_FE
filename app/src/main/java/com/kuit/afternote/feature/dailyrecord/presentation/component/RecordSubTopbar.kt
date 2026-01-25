@@ -39,7 +39,6 @@ fun RecordSubTopbar(
     text: String,
     onLeftClock: () -> Unit,
     onRightClick: () -> Unit,
-
     ) {
     Box(
         modifier = Modifier

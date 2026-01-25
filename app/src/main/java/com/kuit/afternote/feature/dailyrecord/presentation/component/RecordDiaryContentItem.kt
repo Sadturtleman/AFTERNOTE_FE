@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -47,11 +48,15 @@ import java.time.format.DateTimeFormatter
 fun RecordDiaryContentItem(
     modifier: Modifier = Modifier,
     standard: String,
+    onDateSelected: (Int, Int, Int) -> Unit,
+
+    title: String,
     onTitleChange: (String) -> Unit,
-    onDateSelected: (Int, Int, Int) -> Unit
+    content: String,
+    onContentChange: (String) -> Unit
     ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") } //제목
+    var content by remember { mutableStateOf("") } //내용
     var isEditing by remember { mutableStateOf(false) }
 
     //오늘 날짜 기준으로 받아오기
@@ -134,65 +139,57 @@ fun RecordDiaryContentItem(
             }
             Divider(color = Color.LightGray, thickness = 0.8.dp)
         }
-        Box(
+        BasicTextField(
+            value = title,
+            onValueChange = { title = it },
+            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
-                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
-        ) {
-            if (isEditing) {
-                TextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            } else {
-                Text(
-                    text = "제목",
-                    color = Gray5,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Normal
-                )
+                .padding(start = 8.dp, top = 16.dp, bottom = 8.dp),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 18.sp,
+                color = Black
+            ),
+            decorationBox = { innerTextField ->
+                if (title.isEmpty()) {
+                    Text(
+                        text = "제목",
+                        color = Gray5,
+                        fontSize = 16.sp
+                    )
+                }
+                innerTextField()
             }
-        }
+        )
 
         Divider(color = Color.LightGray, thickness = 0.8.dp)
 
-        Box(
+        BasicTextField(
+            value = content,
+            onValueChange = { title = it },
+            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp)
-                .clickable { isEditing = true } // 클릭하면 편집 모드로 전환
-        ) {
-            if (isEditing) {
-                TextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            } else {
-                Text(
-                    text = "당신의 오늘을 기록해보세요",
-                    color = Gray5,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                .padding(top = 40.dp),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontSize = 18.sp,
+                color = Black
+            ),
+            decorationBox = { innerTextField ->
+                if (content.isEmpty()) {
+                    Text(
+                        text = "당신의 오늘을 기록해보세요",
+                        color = Gray5,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+                innerTextField()
             }
-        }
+        )
+
 
     }
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-private fun RecordView () {
-    RecordDiaryContentItem(
-        standard = "일기 기록하기",
-        onTitleChange = {},
-        onDateSelected = { _, _, _ -> }
-    )
-}

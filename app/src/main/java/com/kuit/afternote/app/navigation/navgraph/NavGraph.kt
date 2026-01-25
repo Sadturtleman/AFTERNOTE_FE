@@ -148,14 +148,10 @@ fun NavGraph(navHostController: NavHostController) {
             RecordMainScreen(
                 onDiaryClick = { navHostController.navigate(RecordRoute.ListRoute) },
                 onDeepMindClick = { navHostController.navigate(RecordRoute.ListRoute)},
-                onWeekendReportClick = { navHostController.navigate("record_report")},
+                onWeekendReportClick = { navHostController.navigate(RecordRoute.WeekendReportRoute)},
                 onQuestionClick = { navHostController.navigate(RecordRoute.QuestionRouteList) }
             )
         }
 
-
-        composable("record_report") {
-            RecordWeekendReportScreen()
-        }
     }
 }
