@@ -110,6 +110,8 @@ fun SignUpScreen(
                                 authCode = authCode,
                                 onAuthClick = {
                                     val emailText = phone.text.toString().trim()
+                                    // Optimistic UI update: enable field immediately
+                                    isAuthCodeEnabled = true
                                     sendEmailCodeViewModel.sendEmailCode(emailText)
                                 },
                                 isAuthCodeEnabled = isAuthCodeEnabled
@@ -125,10 +127,17 @@ fun SignUpScreen(
                                 )
                             }
 
+                            // Disable field if API call fails (rollback optimistic update)
+                            LaunchedEffect(sendEmailCodeUiState.errorMessage) {
+                                if (sendEmailCodeUiState.errorMessage != null) {
+                                    isAuthCodeEnabled = false
+                                }
+                            }
+
                             LaunchedEffect(sendEmailCodeUiState.sendSuccess) {
                                 if (sendEmailCodeUiState.sendSuccess) {
                                     sendEmailCodeViewModel.clearSendSuccess()
-                                    isAuthCodeEnabled = true
+                                    // Field is already enabled from optimistic update
                                 }
                             }
 
