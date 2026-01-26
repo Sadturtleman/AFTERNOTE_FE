@@ -24,12 +24,14 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import kotlinx.coroutines.delay
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,6 +58,18 @@ fun OutlineTextField(
     focusRequester: FocusRequester? = null,
     requestFocusOnEnabled: Boolean = false
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    if (focusRequester != null) {
+        LaunchedEffect(requestFocusOnEnabled) {
+            if (requestFocusOnEnabled) {
+                delay(50)
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
+        }
+    }
+
     OutlinedTextField(
         state = textFieldState,
         lineLimits = TextFieldLineLimits.SingleLine,
@@ -69,28 +83,22 @@ fun OutlineTextField(
         },
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Gray4,
-            disabledTextColor = Gray9,
-            disabledPlaceholderColor = Gray4,
-            disabledContainerColor = White
+            unfocusedTextColor = if (enabled) Gray9 else Gray4,
+            unfocusedPlaceholderColor = Gray4,
+            unfocusedContainerColor = White
         ),
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
-        enabled = enabled,
-        readOnly = false,
+        enabled = true,
+        readOnly = !enabled,
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
             .then(
                 if (focusRequester != null) {
-                    Modifier
-                        .focusRequester(focusRequester)
-                        .onGloballyPositioned {
-                            if (enabled && requestFocusOnEnabled) {
-                                focusRequester.requestFocus()
-                            }
-                        }
+                    Modifier.focusRequester(focusRequester)
                 } else {
                     Modifier
                 }
