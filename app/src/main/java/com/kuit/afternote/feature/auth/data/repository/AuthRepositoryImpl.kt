@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.auth.data.repository
 
 import android.util.Log
+import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
@@ -36,8 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
             Log.d(TAG, "verifyEmail: email=$email, code=$certificateCode")
             val response = api.verifyEmail(VerifyEmailRequest(email, certificateCode))
             Log.d(TAG, "verifyEmail: response=$response")
-            val data = response.data ?: throw IllegalStateException("data is null")
-            AuthMapper.toEmailVerifyResult(data)
+            AuthMapper.toEmailVerifyResult(response.requireData())
         }
 
     override suspend fun signUp(
@@ -49,24 +49,21 @@ class AuthRepositoryImpl @Inject constructor(
         Log.d(TAG, "signUp: email=$email, name=$name")
         val response = api.signUp(SignUpRequest(email, password, name, profileUrl))
         Log.d(TAG, "signUp: response=$response")
-        val data = response.data ?: throw IllegalStateException("data is null")
-        AuthMapper.toSignUpResult(data)
+        AuthMapper.toSignUpResult(response.requireData())
     }
 
     override suspend fun login(email: String, password: String): Result<LoginResult> = runCatching {
         Log.d(TAG, "login: email=$email")
         val response = api.login(LoginRequest(email, password))
         Log.d(TAG, "login: response status=${response.status}, message=${response.message}")
-        val data = response.data ?: throw IllegalStateException("data is null")
-        AuthMapper.toLoginResult(data)
+        AuthMapper.toLoginResult(response.requireData())
     }
 
     override suspend fun reissue(refreshToken: String): Result<ReissueResult> = runCatching {
         Log.d(TAG, "reissue: refreshToken=${refreshToken.take(n = 20)}...")
         val response = api.reissue(ReissueRequest(refreshToken))
         Log.d(TAG, "reissue: response=$response")
-        val data = response.data ?: throw IllegalStateException("data is null")
-        AuthMapper.toReissueResult(data)
+        AuthMapper.toReissueResult(response.requireData())
     }
 
     override suspend fun logout(refreshToken: String): Result<Unit> = runCatching {

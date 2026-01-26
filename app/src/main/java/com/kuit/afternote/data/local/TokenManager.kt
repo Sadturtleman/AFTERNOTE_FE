@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.kuit.afternote.util.JwtDecoder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -114,5 +115,19 @@ class TokenManager @Inject constructor(
      */
     suspend fun isLoggedIn(): Boolean {
         return !getAccessToken().isNullOrEmpty()
+    }
+
+    /**
+     * JWT 토큰에서 userId를 추출합니다.
+     *
+     * @return userId (Long) 또는 null (토큰이 없거나 userId를 찾을 수 없는 경우)
+     */
+    suspend fun getUserId(): Long? {
+        val accessToken = getAccessToken()
+        return if (!accessToken.isNullOrEmpty()) {
+            JwtDecoder.getUserId(accessToken)
+        } else {
+            null
+        }
     }
 }
