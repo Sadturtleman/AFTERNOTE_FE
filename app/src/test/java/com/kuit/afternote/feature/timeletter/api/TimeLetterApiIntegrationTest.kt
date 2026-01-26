@@ -218,6 +218,7 @@ class TimeLetterApiIntegrationTest {
             println("==> Get time letter returns HTTP ${e.code()}")
             assertTrue("Expected 200 or 404", e.code() == 200 || e.code() == 404)
         }
+        Unit
     }
 
     @Test
@@ -231,6 +232,7 @@ class TimeLetterApiIntegrationTest {
             println("==> Invalid time letter ID returns HTTP ${e.code()}")
             assertEquals("Expected 404 for invalid ID", 404, e.code())
         }
+        Unit
     }
 
     // ========== Get Temporary Time Letters API Tests ==========

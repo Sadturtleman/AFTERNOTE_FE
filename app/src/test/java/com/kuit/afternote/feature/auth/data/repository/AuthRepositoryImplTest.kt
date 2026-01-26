@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.auth.data.repository
 
+import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.LoginData
@@ -79,7 +80,7 @@ class AuthRepositoryImplTest {
         val result = repository.verifyEmail("test@example.com", "123456")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is IllegalStateException)
+        assertTrue(result.exceptionOrNull() is ApiException)
     }
 
     @Test

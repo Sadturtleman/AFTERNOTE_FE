@@ -131,6 +131,10 @@ class PasswordChangeViewModel @Inject constructor(
     private fun mapServerMessageToKorean(serverMessage: String, code: Int): String {
         // 서버 메시지에서 키워드를 찾아 적절한 한글 메시지 반환
         return when {
+            serverMessage.contains("format", ignoreCase = true) ||
+                serverMessage.contains("pattern", ignoreCase = true) ->
+                "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다."
+
             serverMessage.contains("current", ignoreCase = true) &&
                 serverMessage.contains("password", ignoreCase = true) ->
                 "현재 비밀번호가 일치하지 않습니다."
@@ -139,10 +143,6 @@ class PasswordChangeViewModel @Inject constructor(
                 serverMessage.contains("incorrect", ignoreCase = true) ||
                 serverMessage.contains("invalid", ignoreCase = true) ->
                 "현재 비밀번호가 일치하지 않습니다."
-
-            serverMessage.contains("format", ignoreCase = true) ||
-                serverMessage.contains("pattern", ignoreCase = true) ->
-                "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다."
 
             serverMessage.contains("same", ignoreCase = true) ->
                 "새 비밀번호가 현재 비밀번호와 동일합니다."
