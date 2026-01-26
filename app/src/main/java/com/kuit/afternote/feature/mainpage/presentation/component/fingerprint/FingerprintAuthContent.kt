@@ -37,7 +37,9 @@ fun FingerprintAuthContent(
     onFingerprintAuthClick: () -> Unit = {}
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
@@ -76,9 +78,7 @@ fun FingerprintAuthContent(
             title = "지문 인증하기",
             onButtonClick = onFingerprintAuthClick,
             color = B3,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 44.dp)
+            modifier = Modifier.fillMaxWidth()
         )
         
         Spacer(modifier = Modifier.weight(1f))
