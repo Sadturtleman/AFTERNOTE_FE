@@ -24,7 +24,7 @@ data class ApiResponse<T>(
  * @return non-null data
  * @throws ApiException 서버가 에러 응답을 반환한 경우
  */
-fun <T> ApiResponse<T>.requireData(): T {
+fun <T> ApiResponse<T>.requireData(): T & Any {
     if (status != 200) {
         throw ApiException(status = status, code = code, message = message)
     }
