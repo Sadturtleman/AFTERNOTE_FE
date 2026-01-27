@@ -116,7 +116,7 @@ fun AfternoteEditScreen(
             EditContent(
                 state = state,
                 onNavigateToAddSong = onNavigateToAddSong,
-                bottomPadding = paddingValues.calculateBottomPadding()
+                bottomPadding = paddingValues
             )
 
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
