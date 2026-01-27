@@ -77,12 +77,12 @@ fun updateSomething() {
     viewModelScope.launch {
         val requestId = ++currentRequestId
         val previousState = _uiState.value // 이전 상태 스냅샷 저장
-        
+
         // Optimistic: 즉시 성공 상태로 설정
-        _uiState.update { 
-            it.copy(success = true, needsRollback = false) 
+        _uiState.update {
+            it.copy(success = true, needsRollback = false)
         }
-        
+
         // 백그라운드에서 실제 API 호출
         useCase.update()
             .onSuccess {
