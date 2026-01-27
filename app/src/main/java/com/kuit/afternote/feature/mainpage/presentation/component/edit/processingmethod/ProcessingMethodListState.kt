@@ -7,8 +7,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.IntSize
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 
 /**
@@ -26,10 +24,6 @@ class ProcessingMethodListState(
         private set
 
     val expandedStates = mutableStateMapOf<String, Boolean>()
-    val itemPositions = mutableStateMapOf<String, Offset>()
-    val itemSizes = mutableStateMapOf<String, IntSize>()
-    var boxPositionInRoot by mutableStateOf(Offset.Zero)
-        private set
 
     /**
      * 초기화: 아이템들의 expanded 상태 설정
@@ -60,37 +54,10 @@ class ProcessingMethodListState(
     }
 
     /**
-     * 박스 위치 업데이트
-     */
-    fun updateBoxPosition(offset: Offset) {
-        boxPositionInRoot = offset
-    }
-
-    /**
      * 아이템 expanded 상태 토글
      */
     fun toggleItemExpanded(itemId: String) {
         expandedStates[itemId] = !(expandedStates[itemId] ?: false)
-    }
-
-    /**
-     * 아이템 위치 업데이트
-     */
-    fun updateItemPosition(
-        itemId: String,
-        offset: Offset
-    ) {
-        itemPositions[itemId] = offset
-    }
-
-    /**
-     * 아이템 크기 업데이트
-     */
-    fun updateItemSize(
-        itemId: String,
-        size: IntSize
-    ) {
-        itemSizes[itemId] = size
     }
 
     /**

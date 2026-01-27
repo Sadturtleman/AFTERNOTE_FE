@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.mainpage.presentation.component.edit.processi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.CheckCircleIcon
+import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
@@ -35,8 +37,12 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ProcessingMethodCheckbox(
     modifier: Modifier = Modifier,
     item: ProcessingMethodItem,
+    expanded: Boolean = false,
     onClick: (() -> Unit)? = null,
-    onMoreClick: () -> Unit = {}
+    onMoreClick: () -> Unit = {},
+    onDismissDropdown: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -62,12 +68,20 @@ fun ProcessingMethodCheckbox(
                 .weight(1f)
         )
 
-        Image(
-            painter = painterResource(R.drawable.ic_more_horizontal_1),
-            contentDescription = "더보기",
-            modifier = Modifier
-                .clickable(onClick = onMoreClick)
-        )
+        Box {
+            Image(
+                painter = painterResource(R.drawable.ic_more_horizontal_1),
+                contentDescription = "더보기",
+                modifier = Modifier
+                    .clickable(onClick = onMoreClick)
+            )
+            EditDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = onDismissDropdown,
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick
+            )
+        }
     }
 }
 

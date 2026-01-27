@@ -1,7 +1,5 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -255,32 +252,19 @@ fun AfternoteDetailScreen(
                 }
             }
 
-            if (state.showDropdownMenu) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { state.hideDropdownMenu() }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(end = 20.dp)
+            ) {
+                EditDropdownMenu(
+                    expanded = state.showDropdownMenu,
+                    onDismissRequest = state::hideDropdownMenu,
+                    onEditClick = onEditClick,
+                    onDeleteClick = {
+                        state.showDeleteDialog()
+                    }
                 )
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .offset(x = (-20).dp, y = 48.dp)
-                ) {
-                    EditDropdownMenu(
-                        onEditClick = {
-                            state.hideDropdownMenu()
-                            onEditClick()
-                        },
-                        onDeleteClick = {
-                            state.hideDropdownMenu()
-                            state.showDeleteDialog()
-                        }
-                    )
-                }
             }
         }
     }
