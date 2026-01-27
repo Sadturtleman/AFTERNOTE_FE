@@ -26,8 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar

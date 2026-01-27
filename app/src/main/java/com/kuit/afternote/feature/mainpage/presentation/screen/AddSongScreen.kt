@@ -88,21 +88,22 @@ fun AddSongScreen(
     callbacks: AddSongCallbacks,
     initialSelectedSongIds: Set<String>? = null
 ) {
-    var selectedSongIds by remember { mutableStateOf<Set<String>>(initialSelectedSongIds ?: emptySet()) }
+    val selectedSongIdsState = remember { mutableStateOf(initialSelectedSongIds ?: emptySet<String>()) }
 
     AddSongScaffold(
         modifier = modifier,
         availableSongs = availableSongs,
-        selectedSongIds = selectedSongIds,
+        selectedSongIds = selectedSongIdsState.value,
         onSongToggle = { songId ->
-            selectedSongIds = if (selectedSongIds.contains(songId)) {
-                selectedSongIds - songId
+            val current = selectedSongIdsState.value
+            selectedSongIdsState.value = if (current.contains(songId)) {
+                current - songId
             } else {
-                selectedSongIds + songId
+                current + songId
             }
         },
         onAddClick = {
-            val selectedSongs = availableSongs.filter { it.id in selectedSongIds }
+            val selectedSongs = availableSongs.filter { it.id in selectedSongIdsState.value }
             callbacks.onSongsAdded(selectedSongs)
         },
         callbacks = callbacks
@@ -138,7 +139,7 @@ private fun AddSongScaffold(
     onAddClick: () -> Unit,
     callbacks: AddSongCallbacks
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    val selectedBottomNavItemState = remember { mutableStateOf(BottomNavItem.HOME) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -150,8 +151,8 @@ private fun AddSongScaffold(
         },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = selectedBottomNavItemState.value,
+                onItemSelected = { selectedBottomNavItemState.value = it }
             )
         }
     ) { paddingValues ->
@@ -294,9 +295,14 @@ private fun AddSongList(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.song_search_placeholder),
-                            color = Gray4,
-                            fontSize = 14.sp
+                            text = "Text Field",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray4,
+                            )
                         )
                     },
                     trailingIcon = {
@@ -324,11 +330,11 @@ private fun AddSongList(
             }
         }
         // 노래 목록 (receiver 스타일 + 라디오, 구분선은 PlaylistSongItem 내부)
-        itemsIndexed(songs) { index, song ->
+        itemsIndexed(songs) { _, song ->
             val display = PlaylistSongDisplay(id = song.id, title = song.title, artist = song.artist)
             PlaylistSongItem(
                 song = display,
-                displayIndex = index + 1,
+//                displayIndex = index + 1,
                 onClick = { onSongClick(song.id) },
                 trailingContent = {
                     CustomRadioButton(

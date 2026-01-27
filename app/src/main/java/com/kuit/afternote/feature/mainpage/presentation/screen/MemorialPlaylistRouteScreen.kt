@@ -1,11 +1,11 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -36,8 +36,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -45,8 +45,8 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.CustomRadioButton
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.CustomRadioButton
 import com.kuit.afternote.core.ui.component.PlaylistSongItem
 import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
@@ -75,7 +75,7 @@ fun MemorialPlaylistRouteScreen(
     onNavigateToAddSong: () -> Unit,
     initialSelectedSongIds: Set<String>? = null
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    val selectedBottomNavItemState = remember { mutableStateOf(BottomNavItem.HOME) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -87,13 +87,13 @@ fun MemorialPlaylistRouteScreen(
         },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = selectedBottomNavItemState.value,
+                onItemSelected = { selectedBottomNavItemState.value = it }
             )
         }
     ) { paddingValues ->
         var selectedSongIds by remember {
-            mutableStateOf<Set<String>>(initialSelectedSongIds ?: emptySet())
+            mutableStateOf(initialSelectedSongIds ?: emptySet())
         }
         val actionBarHeight = 80.dp
         val gapAboveNavBar = 24.dp
@@ -247,11 +247,11 @@ private fun MemorialPlaylistList(
                 }
             }
         }
-        itemsIndexed(songs) { index, song ->
+        itemsIndexed(songs) { _, song ->
             val display = PlaylistSongDisplay(id = song.id, title = song.title, artist = song.artist)
             PlaylistSongItem(
                 song = display,
-                displayIndex = index + 1,
+//                displayIndex = index + 1,
                 onClick = { onSongToggle(song.id) },
                 trailingContent = {
                     CustomRadioButton(
