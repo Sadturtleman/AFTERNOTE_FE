@@ -30,20 +30,26 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.BuildConfig
@@ -86,7 +92,11 @@ fun DevModeScreen(
                     viewModel.quickLogin(email, password)
                 }
             },
-            onLogoutClick = { viewModel.logout() }
+            onLogoutClick = { viewModel.logout() },
+            onCreateQuickTestAccountClick = { viewModel.createQuickTestAccount() },
+            onPasswordCycleClick = { currentPassword, newPassword ->
+                viewModel.cyclePassword(newPassword, currentPassword)
+            }
         )
 
         SnackbarHost(
@@ -103,7 +113,9 @@ private fun DevModeContent(
     onScreenClick: (String) -> Unit,
     onUserModeClick: () -> Unit,
     onQuickLoginClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onCreateQuickTestAccountClick: () -> Unit,
+    onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
@@ -128,7 +140,9 @@ private fun DevModeContent(
             LoginStatusCard(
                 uiState = uiState,
                 onQuickLoginClick = onQuickLoginClick,
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                onCreateQuickTestAccountClick = onCreateQuickTestAccountClick,
+                onPasswordCycleClick = onPasswordCycleClick
             )
         }
 
@@ -179,6 +193,8 @@ private fun LoginStatusCard(
     uiState: DevModeUiState,
     onQuickLoginClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onCreateQuickTestAccountClick: () -> Unit,
+    onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (uiState.isLoggedIn) LoggedInBackgroundColor else LoggedOutBackgroundColor
@@ -198,7 +214,9 @@ private fun LoginStatusCard(
             LoginActionButton(
                 uiState = uiState,
                 onQuickLoginClick = onQuickLoginClick,
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                onCreateQuickTestAccountClick = onCreateQuickTestAccountClick,
+                onPasswordCycleClick = onPasswordCycleClick
             )
             TestAccountInfo(isLoggedIn = uiState.isLoggedIn)
         }
@@ -263,8 +281,12 @@ private fun LoadingIndicator(isLoading: Boolean) {
 private fun LoginActionButton(
     uiState: DevModeUiState,
     onQuickLoginClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onCreateQuickTestAccountClick: () -> Unit,
+    onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit
 ) {
+    var showPasswordCycleDialog by remember { mutableStateOf(false) }
+    
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
@@ -274,12 +296,30 @@ private fun LoginActionButton(
                 isLoading = uiState.isLoading,
                 onClick = onLogoutClick
             )
+            PasswordCycleButton(
+                isLoading = uiState.isLoading,
+                onClick = { showPasswordCycleDialog = true }
+            )
         } else {
             QuickLoginButton(
                 isLoading = uiState.isLoading,
                 onClick = onQuickLoginClick
             )
+            CreateQuickTestAccountButton(
+                isLoading = uiState.isLoading,
+                onClick = onCreateQuickTestAccountClick
+            )
         }
+    }
+    
+    if (showPasswordCycleDialog) {
+        PasswordCycleDialog(
+            onDismiss = { showPasswordCycleDialog = false },
+            onConfirm = { currentPassword, newPassword ->
+                onPasswordCycleClick(currentPassword, newPassword)
+                showPasswordCycleDialog = false
+            }
+        )
     }
 }
 
@@ -314,12 +354,124 @@ private fun RowScope.QuickLoginButton(
 }
 
 @Composable
+private fun RowScope.CreateQuickTestAccountButton(
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.weight(1f),
+        enabled = !isLoading
+    ) {
+        Text("빠른 테스트 계정")
+    }
+}
+
+@Composable
+private fun RowScope.PasswordCycleButton(
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.weight(1f),
+        enabled = !isLoading
+    ) {
+        Text("비밀번호 순환")
+    }
+}
+
+@Composable
+private fun PasswordCycleDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (currentPassword: String?, newPassword: String) -> Unit
+) {
+    val currentPasswordState = rememberTextFieldState()
+    val newPasswordState = rememberTextFieldState()
+    
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "비밀번호 순환 (개발 모드)",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    text = "현재 비밀번호를 입력하거나 비워두면 저장된 값(또는 기본값)을 사용합니다.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                OutlineTextField(
+                    label = "현재 비밀번호 (선택)",
+                    textFieldState = currentPasswordState,
+                    keyboardType = KeyboardType.Password,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = "비워두면 저장된 값 사용"
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlineTextField(
+                    label = "새 비밀번호",
+                    textFieldState = newPasswordState,
+                    keyboardType = KeyboardType.Password,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("취소")
+                    }
+                    Button(
+                        onClick = {
+                            if (newPasswordState.text.toString().isNotBlank()) {
+                                val currentPassword = currentPasswordState.text.toString().takeIf { it.isNotBlank() }
+                                onConfirm(currentPassword, newPasswordState.text.toString())
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = newPasswordState.text.toString().isNotBlank()
+                    ) {
+                        Text("확인")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun TestAccountInfo(isLoggedIn: Boolean) {
     if (isLoggedIn) return
 
     Spacer(modifier = Modifier.height(8.dp))
     val testEmail = BuildConfig.TEST_EMAIL
-    if (testEmail.isNotEmpty()) {
+    val testPassword = BuildConfig.TEST_PASSWORD
+    if (testEmail.isNotEmpty() && testPassword.isNotEmpty()) {
         Text(
             text = "테스트 계정: $testEmail",
             fontSize = 10.sp,
@@ -327,9 +479,9 @@ private fun TestAccountInfo(isLoggedIn: Boolean) {
         )
     } else {
         Text(
-            text = "local.properties에 TEST_EMAIL, TEST_PASSWORD 설정 필요",
+            text = "local.properties에 TEST_EMAIL, TEST_PASSWORD 설정 후 앱 재빌드 필요",
             fontSize = 10.sp,
-            color = Color.Red
+            color = Color.Gray
         )
     }
 }
@@ -349,7 +501,9 @@ private fun DevModeScreenLoggedOutPreview() {
             onScreenClick = {},
             onUserModeClick = {},
             onQuickLoginClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onCreateQuickTestAccountClick = {},
+            onPasswordCycleClick = { _, _ -> }
         )
     }
 }
@@ -372,7 +526,9 @@ private fun DevModeScreenLoggedInPreview() {
             onScreenClick = {},
             onUserModeClick = {},
             onQuickLoginClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onCreateQuickTestAccountClick = {},
+            onPasswordCycleClick = { _, _ -> }
         )
     }
 }
@@ -384,7 +540,9 @@ private fun LoginStatusCardLoggedOutPreview() {
         LoginStatusCard(
             uiState = DevModeUiState(isLoggedIn = false),
             onQuickLoginClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onCreateQuickTestAccountClick = {},
+            onPasswordCycleClick = { _, _ -> }
         )
     }
 }
@@ -399,7 +557,9 @@ private fun LoginStatusCardLoggedInPreview() {
                 userEmail = "test@example.com"
             ),
             onQuickLoginClick = {},
-            onLogoutClick = {}
+            onLogoutClick = {},
+            onCreateQuickTestAccountClick = {},
+            onPasswordCycleClick = { _, _ -> }
         )
     }
 }

@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
+import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -33,14 +34,17 @@ class LoginViewModelTest {
 
     private lateinit var loginUseCase: LoginUseCase
     private lateinit var tokenManager: TokenManager
+    private lateinit var testAccountManager: TestAccountManager
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setUp() {
         loginUseCase = mockk()
         tokenManager = mockk()
+        testAccountManager = mockk()
         coJustRun { tokenManager.saveTokens(any(), any(), any()) }
-        viewModel = LoginViewModel(loginUseCase, tokenManager)
+        coJustRun { testAccountManager.updateStoredPassword(any()) }
+        viewModel = LoginViewModel(loginUseCase, tokenManager, testAccountManager)
     }
 
     @Test

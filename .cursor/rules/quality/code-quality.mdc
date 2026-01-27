@@ -1,5 +1,5 @@
 ---
-description: 코드 품질, 포맷팅, 테스트 규칙
+description: Code quality, formatting, and test rules
 globs: **/*.kt
 alwaysApply: true
 ---

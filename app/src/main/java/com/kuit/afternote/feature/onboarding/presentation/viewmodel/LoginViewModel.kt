@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
+import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val testAccountManager: TestAccountManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -49,6 +51,9 @@ class LoginViewModel @Inject constructor(
                             refreshToken = refreshToken,
                             email = email
                         )
+                        // Cycle Password strategy: Automatically save password on successful login
+                        // This allows password recovery even if forgotten later
+                        testAccountManager.updateStoredPassword(password)
                     }
                     _uiState.update {
                         it.copy(isLoading = false, errorMessage = null, loginSuccess = true)
