@@ -15,6 +15,6 @@ data class DropdownMenuOverlayParams(
     val onItemEditClick: (String) -> Unit,
     val onItemDeleteClick: (String) -> Unit,
     val onExpandedStateChanged: (String, Boolean) -> Unit,
-    val menuOffsetX: Float = -91f,
+    val menuOffsetX: Float = -110f,
     val menuOffsetY: Float = -2f
 )

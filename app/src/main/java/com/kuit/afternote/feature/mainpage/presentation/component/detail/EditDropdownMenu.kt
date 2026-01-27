@@ -34,7 +34,7 @@ fun EditDropdownMenu(
     val shape = RoundedCornerShape(8.dp)
     Column(
         modifier = modifier
-            .width(91.dp)
+            .width(110.dp)
             .shadow(elevation = 4.dp, shape = shape, clip = false)
             .clip(shape)
             .background(Color.White),

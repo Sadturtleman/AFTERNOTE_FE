@@ -320,3 +320,24 @@ private fun AfternoteDetailScreenWithDeleteDialogPreview() {
         )
     }
 }
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "AfternoteDetailScreen with Edit Dropdown Menu"
+)
+@Composable
+private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
+    MainPageLightTheme {
+        val stateWithDropdown = remember {
+            AfternoteDetailState().apply {
+                toggleDropdownMenu()
+            }
+        }
+        AfternoteDetailScreen(
+            onBackClick = {},
+            onEditClick = {},
+            state = stateWithDropdown
+        )
+    }
+}

@@ -40,12 +40,9 @@ fun ProcessingMethodList(
     )
 ) {
     val items = params.items
-    val onAddClick = params.onAddClick
-    val onItemMoreClick = params.onItemMoreClick
     val onItemEditClick = params.onItemEditClick
     val onItemDeleteClick = params.onItemDeleteClick
     val onItemAdded = params.onItemAdded
-    val onTextFieldVisibilityChanged = params.onTextFieldVisibilityChanged
     val focusManager = LocalFocusManager.current
 
     // 초기화: 아이템들의 expanded 상태 설정
@@ -67,9 +64,7 @@ fun ProcessingMethodList(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items.forEachIndexed { index, item ->
-                val expanded = state.expandedStates[item.id] ?: false
-
+            items.forEach { item ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -101,7 +96,7 @@ fun ProcessingMethodList(
                 onItemAdded = onItemAdded,
                 onVisibilityChanged = { isVisible ->
                     state.setTextFieldVisible(isVisible)
-                    onTextFieldVisibilityChanged(isVisible)
+                    params.onTextFieldVisibilityChanged(isVisible)
                 },
                 previousFocusedState = state.previousFocusedState,
                 onPreviousFocusedStateChange = state::updatePreviousFocusedState
@@ -116,7 +111,7 @@ fun ProcessingMethodList(
                 modifier = Modifier
                     .clickable(onClick = {
                         state.toggleTextField()
-                        onAddClick()
+                        params.onAddClick()
                     })
             )
         }
