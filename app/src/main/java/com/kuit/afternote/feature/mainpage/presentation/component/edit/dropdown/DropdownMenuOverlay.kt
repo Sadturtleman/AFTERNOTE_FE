@@ -33,9 +33,6 @@ fun DropdownMenuOverlay(
     val itemPositions = params.itemPositions
     val itemSizes = params.itemSizes
     val boxPositionInRoot = params.boxPositionInRoot
-    val onItemEditClick = params.onItemEditClick
-    val onItemDeleteClick = params.onItemDeleteClick
-    val onExpandedStateChanged = params.onExpandedStateChanged
     val menuOffsetX = params.menuOffsetX
     val menuOffsetY = params.menuOffsetY
     val density = LocalDensity.current
@@ -66,12 +63,12 @@ fun DropdownMenuOverlay(
                 ) {
                     EditDropdownMenu(
                         onEditClick = {
-                            onExpandedStateChanged(itemId, false)
-                            onItemEditClick(itemId)
+                            params.onExpandedStateChanged(itemId, false)
+                            params.onItemEditClick(itemId)
                         },
                         onDeleteClick = {
-                            onExpandedStateChanged(itemId, false)
-                            onItemDeleteClick(itemId)
+                            params.onExpandedStateChanged(itemId, false)
+                            params.onItemDeleteClick(itemId)
                         }
                     )
                 }
@@ -90,7 +87,7 @@ fun DropdownMenuOverlay(
                     ) {
                         // 모든 드롭다운 닫기
                         expandedStates.keys.forEach { key ->
-                            onExpandedStateChanged(key, false)
+                            params.onExpandedStateChanged(key, false)
                         }
                     }
             )
