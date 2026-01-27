@@ -71,7 +71,7 @@ fun AfterNoteListScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
                 .fillMaxSize()
         ) {
             Box(
@@ -115,9 +115,8 @@ fun AfterNoteListScreen() {
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF8F9FA)),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(noteItems) { item ->

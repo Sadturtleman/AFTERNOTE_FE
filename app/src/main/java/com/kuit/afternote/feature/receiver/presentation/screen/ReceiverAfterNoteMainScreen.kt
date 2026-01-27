@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -106,46 +108,58 @@ fun AfterNoteMainScreen(title: String) {
                 )
                 Spacer(modifier = Modifier.height(30.dp))
             }
-
             item {
                 SectionHeader(title = "추모 플레이리스트")
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "현재 16개의 노래가 담겨 있습니다.",
-                        fontSize = 14.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal
-                    )
-                    RightArrowIcon(
-                        color = B1,
-                        size = 16.dp
-                    )
-                }
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(4) {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color.LightGray)
-                        ) {
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
             }
 
             item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "현재 16개의 노래가 담겨 있습니다.",
+                            fontSize = 14.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal
+                        )
+                        RightArrowIcon(
+                            color = B1,
+                            size = 16.dp
+                        )
+                    }
+
+                    LazyRow(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(4) {
+                            Box(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color.LightGray)
+                            ) {
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
+
+            item {
+                Spacer(modifier = Modifier.height(32    .dp))
                 SectionHeader(title = "남기고 싶은 당부")
                 Spacer(modifier = Modifier.height(8.dp))
 
