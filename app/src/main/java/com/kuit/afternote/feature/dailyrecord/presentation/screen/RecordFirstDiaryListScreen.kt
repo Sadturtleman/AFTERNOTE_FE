@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
-import android.content.ClipData
+import android.icu.util.LocaleData
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,16 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
+import java.time.LocalDate
 
 /**
  * 일기, 깊은 생각하기로 넘어가면 먼저뜨는 리스트형 창
@@ -41,14 +42,16 @@ import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
  * - 중간 : 리스트
  * - 하단 : FAB 바
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
-    onPlusRecordClick: () -> Unit
-    ) {
+    onPlusRecordClick: () -> Unit,
+) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    val today = LocalDate.now()
 
     Scaffold(
         modifier = Modifier
@@ -97,11 +100,14 @@ fun RecordFirstDiaryListScreen(
             RecordMainTopbar(
                 text = "일기",
                 showLeftArrow = true,
-                onLeftClock = onLeftClick
+                onLeftClock = onLeftClick,
+
             )
             LazyColumn{
                 item {
-                    RecordListSort()
+                    RecordListSort(
+                        today = today
+                    )
                 }
                 item {
                     RecordListItem(
@@ -126,11 +132,11 @@ fun RecordFirstDiaryListScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun RePrev() {
-    RecordFirstDiaryListScreen(
-        onLeftClick = {},
-        onPlusRecordClick = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun RePrev() {
+//    RecordFirstDiaryListScreen(
+//        onLeftClick = {},
+//        onPlusRecordClick = {}
+//    )
+//}

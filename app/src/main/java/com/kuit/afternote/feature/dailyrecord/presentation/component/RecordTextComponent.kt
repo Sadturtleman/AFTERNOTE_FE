@@ -17,14 +17,13 @@ import com.kuit.afternote.ui.theme.Sansneo
  *
  */
 @Composable
-fun RecordOneEyeLook(
+fun RecordTextComponent(
     modifier: Modifier = Modifier,
     title: String
     ) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
 
     ) {
         Text(
@@ -40,5 +39,5 @@ fun RecordOneEyeLook(
 @Preview(showBackground = true)
 @Composable
 private fun Recordrev() {
-    RecordOneEyeLook(title = "활동 한 눈에 보기")
+    RecordTextComponent(title = "활동 한 눈에 보기")
 }

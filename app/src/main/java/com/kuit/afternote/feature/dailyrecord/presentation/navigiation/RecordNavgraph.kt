@@ -29,7 +29,8 @@ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
     composable<RecordRoute.ListRoute> {
         RecordFirstDiaryListScreen(
             onLeftClick = {navController.popBackStack()},
-            onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute)}
+            onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute)},
+
         )
     }
     composable<RecordRoute.QuestionRouteList> {

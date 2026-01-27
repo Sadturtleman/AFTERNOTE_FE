@@ -114,30 +114,30 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-//        composable("dev_login") {
-//            LoginScreen(
-//                onBackClick = { navHostController.popBackStack() },
-//                onLoginClick = {},
-//                onSignUpClick = { navHostController.navigate("dev_signup") },
-//                onFindIdClick = {}
-//            )
-//        }
-//
-//        composable("dev_signup") {
-//            SignUpScreen(
-//                onBackClick = { navHostController.popBackStack() },
-//                onSettingClick = { navHostController.navigate("dev_profile_setting") }
-//            )
-//        }
-//
-//        composable("dev_profile_setting") {
-//            ProfileSettingScreen(
-//                onFinishClick = {},
-//                onBackClick = { navHostController.popBackStack() },
-//                onAddProfileAvatarClick = {}
-//            )
-//        }
-//
+        composable("dev_login") {
+            LoginScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onLoginClick = {},
+                onSignUpClick = { navHostController.navigate("dev_signup") },
+                onFindIdClick = {}
+            )
+        }
+
+        composable("dev_signup") {
+            SignUpScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onSettingClick = { navHostController.navigate("dev_profile_setting") }
+            )
+        }
+
+        composable("dev_profile_setting") {
+            ProfileSettingScreen(
+                onFinishClick = {},
+                onBackClick = { navHostController.popBackStack() },
+                onAddProfileAvatarClick = {}
+            )
+        }
+
         // 지문 로그인 화면
         composable("fingerprint_login") {
             FingerprintLoginScreen(

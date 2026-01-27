@@ -52,7 +52,7 @@ fun RecordMainTopbar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 30.dp,start = 20.dp)
+            .padding(top = 30.dp,start = 10.dp)
             .height(40.dp),
         contentAlignment = Alignment.Center
     ) {
