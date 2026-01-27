@@ -104,6 +104,7 @@ fun RecordItem(
                     .background(B2)
             ) {
                 Image(
+
                     painter = painterResource(R.drawable.ic_arrow_right_tab),
                     contentDescription = null,
                     modifier = Modifier

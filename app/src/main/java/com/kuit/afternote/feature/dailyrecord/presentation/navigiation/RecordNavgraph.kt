@@ -10,9 +10,11 @@ import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRou
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDailyQuestionScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
+
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordFirstDiaryListScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordQuestionScreen
+
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
 
 

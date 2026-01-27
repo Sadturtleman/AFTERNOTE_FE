@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,16 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,21 +33,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 fun TimeLetterScreen() {
@@ -58,8 +59,9 @@ fun TimeLetterScreen() {
     Scaffold(
         topBar = {
             TopBar(
-                title = "타임 레터"
-            ) { }
+                title = "타임 레터",
+                onBackClick = { }
+            )
         },
         bottomBar = {
             BottomNavigationBar(
@@ -87,10 +89,11 @@ fun TimeLetterScreen() {
                         text = "오늘의 타임 레터",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        color = Gray9
+                        color = Gray9,
+                        fontFamily = Sansneo
                     )
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Go",
                         tint = B3
                     )
@@ -110,13 +113,13 @@ fun TimeLetterScreen() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = Gray9,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    fontFamily = Sansneo
                 )
                 TimeLetterActionCard(
                     desc = "고인이 작성한 편지를 날짜 순서로 확인합니다.",
                     subDesc = "9개의 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기",
-                    iconTint = Color(0xFFE3F2FD) // Light Blue tint
+                    btnText = "타임 레터 확인하러 가기",// Light Blue tint
                 )
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -128,13 +131,13 @@ fun TimeLetterScreen() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = Gray9,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    fontFamily = Sansneo
                 )
                 TimeLetterActionCard(
                     desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
                     subDesc = "5개의 읽지 않은 타임 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기",
-                    iconTint = Color(0xFFFFF3E0) // Light Orange tint
+                    btnText = "타임 레터 확인하러 가기"// Light Orange tint
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -229,8 +232,7 @@ val CardBgGradientEnd = Color(0xFFF0F7FF)
 fun TimeLetterActionCard(
     desc: String,
     subDesc: String,
-    btnText: String,
-    iconTint: Color
+    btnText: String
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -240,6 +242,7 @@ fun TimeLetterActionCard(
     ) {
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .background(
                     Brush.linearGradient(
                         colors = listOf(CardBgGradientStart, CardBgGradientEnd)
@@ -247,16 +250,12 @@ fun TimeLetterActionCard(
                 )
         ) {
             // Background Decoration Icon (편지 모양)
-            Icon(
-                imageVector = Icons.Outlined.Email,
+            Image(
+                painter = painterResource(R.drawable.timeletter),
                 contentDescription = null,
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = 20.dp, y = 20.dp) // 살짝 잘리게 배치
-                    .size(120.dp)
-                    .rotate(-15f)
-                    .alpha(0.1f), // 투명도 조절
-                tint = Color.Black
+                    .align(Alignment.BottomEnd) // 살짝 잘리게 배치
+                    .size(width = 160.dp, height = 100.dp)
             )
 
             Column(
@@ -264,14 +263,14 @@ fun TimeLetterActionCard(
             ) {
                 Text(
                     text = desc,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     color = Gray9,
-                    fontSize = 15.sp
+                    fontSize = 15.sp,
+                    fontFamily = Sansneo
                 )
                 Text(
                     text = subDesc,
-                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = Sansneo,
                     color = Gray6,
                     modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
                 )
@@ -290,12 +289,7 @@ fun TimeLetterActionCard(
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp),
-                        tint = Color.Black
-                    )
+                    RightArrowIcon(B1)
                 }
             }
         }

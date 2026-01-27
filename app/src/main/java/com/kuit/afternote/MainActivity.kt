@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.app.navigation.navgraph.NavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AfternoteTheme {
+            AfternoteTheme(darkTheme = false) {
                 Column {
                     val navController = rememberNavController()
                     NavGraph(navController)

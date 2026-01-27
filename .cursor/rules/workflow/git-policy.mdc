@@ -6,9 +6,48 @@ alwaysApply: true
 
 # Git & Commit Rules (커밋 규칙)
 
-## ⚠️ Critical: 커밋 및 푸시 규칙
+## ⚠️ GIT PROTOCOL - STRICT ENFORCEMENT
 
-**사용자가 명시적으로 커밋 또는 푸시를 요청하지 않으면 절대 커밋하거나 푸시하지 않습니다.**
+<critical_instruction>
+You are prohibited from running `git commit`, `git push`, or `git add` unless the user has explicitly provided a "COMMIT_LICENSE" in the current prompt.
+Your role is a "Code Generator" with READ-ONLY git access. You can write code but cannot sign off (commit) on it without explicit permission.
+</critical_instruction>
+
+### COMMIT_LICENSE 정의
+
+| 요청 유형 | 예시 | 허용 액션 |
+|----------|------|----------|
+| **IMPLICIT (금지)** | "브랜치 만들어서 작업해", "리팩토링해줘", "새 기능 구현해", "Work on this", "Fix it" | 파일 수정만. 커밋 금지. |
+| **EXPLICIT (허용)** | "커밋해", "commit", "푸시해", "push", "커밋하고 푸시해" | Git write 명령 실행 가능 |
+
+### Stop Sequence Rule (필수)
+**모든 코드 변경 작업은 `git status`에서 종료해야 합니다.**
+
+```
+[작업 완료] → git status 실행 → "Changes applied. Ready to commit?" 출력 → 사용자 응답 대기
+```
+
+- `git status` 이후 단계(add, commit, push)는 사용자의 명시적 COMMIT_LICENSE 없이 진행 금지
+- 사용자가 "Yes", "OK" 등으로 응답해도, "커밋" 또는 "commit" 키워드가 없으면 커밋하지 않음
+
+### Pre-Commit Checklist (커밋 전 필수 확인)
+Before executing ANY git write command (`git add`, `git commit`, `git push`):
+1. **키워드 확인**: 사용자의 **직전 메시지**에 "커밋", "commit", "푸시", "push" 키워드가 있는가?
+2. **NO** → STOP. Reply: "Changes applied. Ready to commit?"
+3. **YES** → 브랜치 검증 후 진행
+
+### Allowed Commands (허용된 명령어 - 권한 불필요)
+- `git status`, `git diff`, `git log`, `git branch` (READ-ONLY)
+- `git checkout`, `git checkout -b` (브랜치 전환/생성)
+- `ls`, `cat`, `grep`, `find` (파일 탐색)
+
+### Prohibited Commands (금지된 명령어 - COMMIT_LICENSE 필수)
+- `git add` (커밋 직전에만 허용)
+- `git commit`
+- `git push`
+- `git merge` (병합 요청 시에만)
+
+---
 
 ### 1. 커밋 금지 원칙
 - 사용자가 "커밋해", "commit", "git commit" 등 명시적으로 커밋을 요청하지 않으면 커밋하지 않습니다
@@ -18,6 +57,7 @@ alwaysApply: true
 ### 2. 커밋 허용 조건
 - 사용자가 명시적으로 "커밋해", "commit", "git commit" 등을 요청한 경우에만 커밋합니다
 - 사용자가 "커밋하고 푸시해"라고 요청한 경우에만 커밋합니다
+- **COMMIT_LICENSE 키워드 필수**: 사용자 메시지에 "커밋", "commit", "푸시", "push" 키워드가 직접 포함되어야 함
 
 ### 3. 푸시 금지 원칙
 - 사용자가 "푸시해", "push", "push origin", "git push" 등 명시적으로 푸시를 요청하지 않으면 푸시하지 않습니다
@@ -39,7 +79,36 @@ alwaysApply: true
 - 실수로 커밋한 경우: `git reset --soft HEAD~1` (변경사항은 유지) 또는 `git reset --hard HEAD~1` (변경사항도 제거)
 - 실수로 푸시한 경우: `git reset --hard HEAD~1` 후 `git push origin {branch-name} --force-with-lease`로 원격에서도 제거
 
-### 7. 브랜치 정리 규칙 (Branch Cleanup Rule) - Critical
+### 7. 병합 전략 (Merge Strategy) - Critical
+**사용자가 "메인에 병합해" 또는 "메인과 병합해"라고 요청한 경우, 다음 절차를 반드시 따라야 합니다:**
+
+#### 병합 절차 (4단계)
+1. **1단계: 현재 브랜치에 원격 main 병합**
+   - 현재 브랜치 확인: `git branch --show-current`
+   - 원격 main 최신화: `git fetch origin main`
+   - 현재 브랜치에 main 병합: `git merge origin/main`
+   - 목적: 충돌을 현재 브랜치에서 먼저 해결
+
+2. **2단계: 충돌 해결 및 빌드 확인**
+   - 충돌이 있으면 해결
+   - 빌드 확인: `./gradlew :app:compileDebugKotlin`
+   - 문제가 있으면 사용자에게 알리고 중단
+
+3. **3단계: main 브랜치로 체크아웃 및 병합**
+   - 문제가 없을 때만 진행: `git checkout main`
+   - main 브랜치 최신화: `git pull origin main` (필요시)
+   - 현재 브랜치를 main에 병합: `git merge {현재브랜치}`
+
+4. **4단계: main 브랜치 푸시**
+   - 검증: 현재 브랜치가 `main`인지 확인 (`git branch --show-current`)
+   - 푸시: `git push origin main`
+
+#### 원칙
+- **"먼저 현재 브랜치에 main을 병합하고, 문제 없을 때만 main에 반영"**
+- 충돌이나 빌드 오류가 있으면 main에 병합하지 않음
+- 모든 단계에서 문제가 발생하면 사용자에게 알리고 중단
+
+### 8. 브랜치 정리 규칙 (Branch Cleanup Rule) - Critical
 **커밋/푸시 완료 후 자동으로 병합된 브랜치를 정리합니다.**
 
 #### 자동 정리 조건
@@ -81,6 +150,7 @@ alwaysApply: true
 커밋 메시지는 아래 형식을 따릅니다:
 `type(scope): subject`
 
+- **PR 제목**: Pull Request 생성 시에도 동일한 `type(scope): subject` 형식을 사용합니다. (`pull-request-review.mdc` 참고)
 - **Types**:
   - `feat`: 새로운 기능 추가
   - `fix`: 버그 수정

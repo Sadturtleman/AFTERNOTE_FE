@@ -1,46 +1,98 @@
-# ⚠️ CRITICAL RULES SUMMARY (핵심 규칙 요약) - READ FIRST
+# ⚠️ CRITICAL RULES SUMMARY - READ FIRST
 
-**이 섹션은 AI가 가장 먼저 인식해야 하는 핵심 규칙입니다. 상세 설명은 `.cursor/rules/*.mdc` 파일들을 참조하세요.**
+**This section contains the core rules that AI must recognize first. For detailed explanations, refer to `.cursor/rules/*.mdc` files.**
 
-## MUST DO (반드시 수행)
-1. **Git**: 사용자 명시적 요청 없이 절대 커밋/푸시 금지
-   - **검증 절차**: 푸시 명령 생성 전, 현재 브랜치가 `main`/`develop`이 아닌지 **반드시 먼저 검증** (`git branch --show-current`)
-   - **조건부 긍정문**: "하지 마라" 대신 "검증 절차를 먼저 수행하라"로 표현
-2. **Branch**: 작업 전 반드시 적절한 브랜치 확인/생성 (`feat/`, `fix/`, `docs/` 등)
-3. **Branch Cleanup**: 푸시 완료 후 main에 병합된 로컬 브랜치 자동 삭제
-4. **Preview**: 모든 public Composable에 `@Preview` 필수
-5. **Import**: 전체 import 문 포함, 확장 함수 명시적 import, 와일드카드 금지
-6. **Modifier**: 모든 Composable 첫 파라미터 `modifier: Modifier = Modifier`
-7. **State**: 상태는 호출부로 hoisting, Stateless composable 지향
-   - **완전한 State Hoisting**: 화면 내부의 모든 상태(탭, 네비게이션 등)는 ViewModel로 이동
-8. **Architecture**: Presentation → Domain ← Data (엄격한 계층 분리)
-9. **Error Handling**: 3회 이상 실패 시 중단하고 Perplexity 프롬프트 제공
-10. **ViewModel 주입**: `androidx.lifecycle.viewmodel.compose.viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
-11. **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
-12. **`.cursorrules` 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
+---
+# GIT PROTOCOL - STRICT ENFORCEMENT (Highest Priority)
+<critical_instruction>
+You are prohibited from running `git commit`, `git push`, or `git add` unless the user has explicitly provided a "COMMIT_LICENSE" in the current prompt.
+Your role is a "Code Generator" who requires explicit permission for Git write operations. You are NOT an "Autonomous Developer."
+</critical_instruction>
 
-## MUST NOT DO (절대 금지)
-1. 커밋/푸시 자동 실행
-2. `android.R` import
-3. 와일드카드 import (`import foo.*`)
-4. Domain Layer에 Android/Data 의존성
-5. 설명 없이 코드만 생성 (사용자 요청 시 제외)
-6. **Sycophancy (아첨)**: 사용자가 답변을 질문하거나 반문할 때, 즉시 사과하거나 답변을 변경하지 말 것. 먼저 자신의 논리를 설명하고, 사실적으로 틀렸을 때만 사과할 것.
-7. **Ask Mode에서 파일 수정 시도**: Ask 모드에서는 STRICTLY ANSWER ONLY. 파일 수정을 시도하지 말 것. 질문은 순수한 궁금증으로 해석하고, 지적이나 수정 요구로 해석하지 말 것.
-8. **Deprecated API 사용**: `androidx.hilt.navigation.compose.hiltViewModel()` 사용 금지
-9. **비 Lifecycle-aware State 수집**: `collectAsState()` 사용 금지 (메모리 누수 위험)
-10. **로컬 상태 관리**: Composable 내부에서 `remember { mutableStateOf() }`로 화면 상태 관리 금지 (ViewModel로 이동)
+## COMMIT_LICENSE Definition
+- **IMPLICIT (BANNED)**: "Work on this", "Refactor this", "Create a branch and fix it", "Done", "Save progress", "브랜치 만들어서 작업해", "리팩토링해줘"
+  → ACTION: Modify files only. DO NOT COMMIT.
+- **EXPLICIT (ALLOWED)**: "Commit this", "Push changes", "커밋해", "푸시해", "commit and push"
+  → ACTION: You may execute git write commands.
 
-## CRITICAL PATTERNS (핵심 패턴)
-- **Rem-based Design**: 큰 간격(24dp+)은 `weight`, 작은 간격(8dp 이하)은 고정값, 컴포넌트 크기는 항상 고정 dp
-- **Component Reuse**: 불확실하면 `private` 함수로, 재사용 확정되면 별도 파일
-- **File Limit**: 400줄 초과 시 분리, 폴더당 10-15개 파일 유지
-- **`.cursorrules` 최적화**: 300줄 이하 권장, 초과 시 `.cursor/rules/*.mdc`로 분리 고려
-- **Tests**: UseCase/ViewModel 변경 시 테스트 확인/추가
-- **Parameter Refactoring Pattern**: 10개 이상 파라미터가 필요한 경우, 단순히 data class로 묶지 말고 **섹션별 그룹화** 패턴 적용
-- **State Holder Pattern for Cognitive Complexity**: SonarQube 인지 복잡도 15 이하를 위해 **State Holder 패턴** 필수 적용. Composable 내부 람다 정의 금지, 모든 로직은 State 클래스로 이동
-- **Slot API Pattern (Composition over Inheritance)**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용. 공통 껍데기를 제공하고 내용물은 Slot(`content: @Composable () -> Unit`)으로 주입받는 방식
-- **Component Location Rules (컴포넌트 위치 결정 규칙)**: 공통 컴포넌트는 반드시 `core` 모듈에 위치해야 함. Feature 모듈 간 직접 의존은 금지되며, 공통 컴포넌트는 `core`에 두어야 함
+## Stop Sequence Rule
+**All code modification work must end with `git status`.**
+- After file modification → Execute `git status` → Output "Changes applied. Ready to commit?" message → Wait for user response
+- Steps after `git status` (commit, push) are prohibited without explicit user request
+
+## Pre-Commit Checklist
+Before executing ANY git write command, verify:
+1. Did the user use the exact words "커밋", "commit", "푸시", or "push" in the **immediate last message**?
+2. If NO → STOP. Reply: "Changes applied. Ready to commit?"
+3. If YES → Proceed with verification (branch check, etc.)
+
+---
+
+## MUST DO
+1. **Git**: Never commit/push without explicit user request
+   - **COMMIT_LICENSE required**: See GIT PROTOCOL above
+   - **Stop Sequence**: All work ends with `git status` and wait for user response
+   - **Verification**: Before push command, **must first verify** that current branch is not `main`/`develop` (`git branch --show-current`)
+2. **Branch**: Always check/create appropriate branch before work (`feat/`, `fix/`, `docs/`, etc.)
+3. **Branch Cleanup**: Auto-delete local branches merged to main after push
+4. **Merge Strategy - Critical**: When user requests "merge to main" or "merge with main":
+   - **Step 1**: Fetch and merge latest remote main into current branch first (`git fetch origin main && git merge origin/main`)
+   - **Step 2**: Resolve conflicts if any, build check only when user explicitly requests (`./gradlew :app:compileDebugKotlin`)
+   - **Step 3**: Only if no issues, checkout main and merge current branch (`git checkout main && git merge {current-branch}`)
+   - **Step 4**: Push to main branch (`git push origin main`)
+   - **Principle**: "Merge main into current branch first, only reflect to main if no issues"
+5. **Preview**: All public Composables must have `@Preview`
+6. **Import**: Full import statements, explicit extension function imports, no wildcards
+7. **Modifier**: All Composables first parameter `modifier: Modifier = Modifier`
+8. **State**: State hoisting to caller, Stateless composable preferred
+   - **Complete State Hoisting**: All screen states (tabs, navigation items, etc.) must move to ViewModel
+9. **Architecture**: Presentation → Domain ← Data (strict layer separation)
+10. **Error Handling**: Stop and provide Perplexity prompt after 3+ failures
+11. **ViewModel Injection**: `@HiltViewModel` uses `hiltViewModel()`, regular ViewModel uses `viewModel()`
+12. **StateFlow Collection**: Use `collectAsStateWithLifecycle()` (never use `collectAsState()`)
+13. **`.cursorrules` Management**: If this file exceeds 300 lines, consider splitting or keeping only core rules
+14. **Named Arguments Required**: Explicit parameter names when:
+    - 3+ arguments
+    - Boolean, Null, numeric literals included
+    - Same type arguments consecutive
+    - Compose function calls (all args except modifier)
+    - Example: `Recipient(id = "1", name = "김지은", label = "친구")`, `FontWeight.Medium` (NOT `FontWeight(500)`)
+15. **HTTP Status Code Tests Required**: ViewModels using Swagger-documented APIs must include HTTP error tests
+    - 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error
+    - Network Error (IOException)
+    - See `.cursor/rules/quality/code-quality.mdc` for details
+
+## MUST NOT DO
+1. Auto commit/push
+2. **Auto Build**: Do not auto-execute build (`./gradlew`, `gradle build`, etc.) unless user explicitly requests. File locking issues may occur with Android Studio. Request build from user or only when user explicitly requests "빌드해", "build", "컴파일 확인해", etc.
+3. `android.R` import
+4. Wildcard imports (`import foo.*`)
+5. Android/Data dependencies in Domain Layer
+6. Generate code without explanation (unless user requests)
+7. **Sycophancy**: When user questions or challenges response, do not immediately apologize or change answer. Explain your logic first, only apologize when factually wrong.
+8. **File Modification in Ask Mode**: In Ask mode, STRICTLY ANSWER ONLY. Do not attempt file modification. Interpret questions as pure curiosity, not criticism or modification requests.
+9. **ViewModel Injection Confusion**: Never use `viewModel()` for `@HiltViewModel` (runtime error)
+10. **Non Lifecycle-aware State Collection**: Never use `collectAsState()` (memory leak risk)
+11. **Local State Management**: Never manage screen state with `remember { mutableStateOf() }` inside Composable (move to ViewModel)
+
+## CRITICAL PATTERNS
+- **Named Arguments Pattern**: Use explicit parameter names for readability and safety. Use `FontWeight.Medium` instead of `FontWeight(500)`. No calculation expressions (`Spacing.l - 8.dp`)
+- **Rem-based Design**: Large spacing (24dp+) uses `weight` and `Arrangement`, small spacing (≤8dp) uses `Spacer`, component sizes always fixed dp
+- **Avoid Padding, Use Spacer**: Never apply `Modifier.padding()` directly to components. Express spacing with `Spacer`. Only screen edge padding is exception
+- **Maximize Core Component Reuse**: Maximize reuse of common components in `core` module (`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, etc.)
+- **Component Overloading**: When overall structure is similar but details differ, use **overloading** instead of separate components
+- **Large Spacing Handling**: For large padding values (≥24dp), use `Spacer(Modifier.weight())` or `Arrangement.SpaceBetween`, etc.
+- **Component Reuse**: If uncertain, use `private` function; if reuse confirmed, separate file
+- **File Limit**: Split if exceeds 400 lines, maintain 10-15 files per folder
+- **`.cursorrules` Optimization**: Recommend ≤300 lines, consider splitting to `.cursor/rules/*.mdc` if exceeded
+- **Tests**: Check/add tests when UseCase/ViewModel changes
+- **Parameter Refactoring Pattern**: When 10+ parameters needed, don't just wrap in data class, apply **section-based grouping** pattern
+- **State Holder Pattern for Cognitive Complexity**: Must apply **State Holder pattern** to keep SonarQube cognitive complexity ≤15. No lambda definitions inside Composable, all logic moves to State class
+- **Slot API Pattern (Composition over Inheritance)**: When unifying components with similar structure, use **composition, not inheritance**. Provide common shell and inject content via Slot (`content: @Composable () -> Unit`)
+- **Component Location Rules**: Common components must be in `core` module. Direct dependencies between Feature modules are prohibited, common components must be in `core`
+- **Code Structure Improvement Before @Suppress**: When detekt warning occurs, must try code structure improvement before using `@Suppress`. When parameters increase after State Hoisting pattern, group with Event Interface or State Class
+- **Required Verification on Structure Changes**: File moves, package changes, class refactoring must follow: pre/post build check, search all usages, batch import path changes
+- **Spacing Grouping Pattern**: No calculation expressions when mixing `Arrangement.spacedBy` and `Spacer`. Group elements with different spacing in separate `Column`
 
 ---
 
@@ -54,117 +106,179 @@
 
 ---
 
-# 규칙 파일 구조
+# Rule File Structure
 
-이 프로젝트는 `.cursor/rules/*.mdc` 파일 구조를 사용하여 규칙을 분리합니다:
+This project uses `.cursor/rules/*.mdc` file structure to separate rules:
 
-- **`.cursor/rules/workflow/git-policy.mdc`**: Git 작업 및 브랜치 관리 정책 (항상 적용: `alwaysApply: true`)
-- **`.cursor/rules/workflow/branch-workflow.mdc`**: 브랜치 작업 및 워크플로우 규칙 (항상 적용: `alwaysApply: true`)
-- **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture 및 계층 분리 규칙
-- **`.cursor/rules/tech-stack/compose.mdc`**: Jetpack Compose 코딩 규칙 및 패턴
-- **`.cursor/rules/tech-stack/android-kotlin.mdc`**: Android/Kotlin 코딩 컨벤션 및 Import 규칙
-- **`.cursor/rules/quality/code-quality.mdc`**: 코드 품질, 포맷팅, 테스트 규칙
+- **`.cursor/rules/workflow/git-policy.mdc`**: Git operations and branch management policy (always applied: `alwaysApply: true`)
+- **`.cursor/rules/workflow/branch-workflow.mdc`**: Branch work and workflow rules (always applied: `alwaysApply: true`)
+- **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules (Swagger-first)
+- **`.cursor/rules/workflow/pull-request-review.mdc`**: Pull Request and code review rules
+- **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture and layer separation rules
+- **`.cursor/rules/tech-stack/compose.mdc`**: Jetpack Compose coding rules and patterns
+- **`.cursor/rules/tech-stack/android-kotlin.mdc`**: Android/Kotlin coding conventions and Import rules
+- **`.cursor/rules/tech-stack/optimistic-updates.mdc`**: Optimistic Updates pattern
+- **`.cursor/rules/quality/code-quality.mdc`**: Code quality, formatting, test rules
 
-각 `.mdc` 파일은 `globs` 패턴을 사용하여 관련 파일을 열거나 작업할 때만 해당 규칙이 주입됩니다.
-**워크플로우 규칙(Git, 브랜치)은 모든 파일에서 적용되므로 `alwaysApply: true`로 설정되어 있습니다.**
+Each `.mdc` file uses `globs` pattern so rules are injected only when opening or working on related files.
+**Workflow rules (Git, branch) are applied to all files, so set `alwaysApply: true`.**
 
-## 물리적 제어 (Hard Constraint)
-- **Git Hook**: `scripts/pre-push-check.sh` 스크립트를 Git Hook으로 설정하여 main/develop 브랜치 직접 푸시를 시스템 레벨에서 차단합니다.
-  - 설정: `cp scripts/pre-push-check.sh .git/hooks/pre-push && chmod +x .git/hooks/pre-push`
-
----
-
-# General Guidelines (일반 작업 가이드라인)
-
-## 기본 원칙
-
-1. **Sycophancy 방지 (아첨 금지) - Critical**
-   - 사용자가 답변을 질문하거나 반문할 때, 즉시 사과하거나 답변을 변경하지 말 것
-   - 먼저 자신의 논리와 근거를 설명할 것
-   - 사실적으로 틀렸을 때만 사과할 것
-
-2. **Ask Mode 전용 규칙 - Critical**
-   - **STRICTLY ANSWER ONLY**: Ask 모드에서는 파일 수정을 절대 시도하지 말 것
-   - **질문 해석**: 사용자의 질문은 순수한 궁금증(PURE CURIOSITY)으로 해석할 것. 지적이나 수정 요구로 해석하지 말 것
-   - **사과 금지**: Ask 모드에서 이전 코드에 대해 사과하지 말 것. 명시적으로 틀렸다고 증명되지 않는 한
-   - **논리 설명**: 질문에 대해 논리를 차분히 설명할 것
-
-3. **주제에 맞는 브랜치에서 작업**
-   - 자세한 내용은 `.cursor/rules/workflow/branch-workflow.mdc` 참고
-
-4. **`.cursorrules` 파일 작성 규칙**
-   - **최상단에 Critical Rules Summary 필수**: `.cursorrules` 파일을 작성하거나 수정할 때는 반드시 최상단에 "⚠️ CRITICAL RULES SUMMARY" 섹션을 포함해야 합니다.
-   - **Summary 구조**:
-     * MUST DO (반드시 수행): 핵심 규칙을 간결하게 나열
-     * MUST NOT DO (절대 금지): 금지 사항을 명확히 표시
-     * CRITICAL PATTERNS (핵심 패턴): 중요한 패턴 요약
-   - **목적**: AI가 Context Window 초반부에서 핵심 규칙을 먼저 인식하도록 하여 규칙 무시나 환각을 방지합니다.
-
-5. **시도한 해결책 메모**
-   - 문제 해결 시 시도한 방법들을 메모해두기
-   - 같은 실수를 반복하지 않기 위함
-
-6. **문서화**
-   - 중요한 설정이나 해결 방법은 문서로 남기기
-   - 다른 팀원이나 미래의 자신을 위해
-
-7. **컴포넌트 프리뷰 필수**
-   - 모든 컴포넌트 함수는 반드시 `@Preview` 어노테이션을 사용한 프리뷰 함수를 포함해야 합니다
-   - 프리뷰는 컴포넌트의 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등)
-   - 예외: 내부 전용 컴포넌트(`internal` 함수)는 선택적으로 작성 가능
-
-## 파일 변경 시 README 체크 규칙
-
-**파일을 변경할 때마다 README 변경이 필요한지 체크하고, 필요하면 반드시 변경해야 합니다.**
-
-### 체크해야 할 경우
-1. 새로운 설정이나 도구 추가
-2. 프로젝트 구조 변경
-3. 개발 환경 요구사항 변경
-4. 빌드/실행 방법 변경
-5. 트러블슈팅 정보 추가
-6. 워크플로우나 규칙 변경
-
-**모든 답변이 "아니오"가 아니라면 README를 업데이트해야 합니다.**
-
-## Problem Solving & Research Rules (문제 해결 및 조사 규칙)
-
-### ⚠️ Critical: 작업 중단 및 조사 규칙
-
-**작업 중 문제가 발생하거나 막히는 경우, 즉시 중단하고 Perplexity 프롬프트를 제공해야 합니다.**
-
-### 작업 중단 조건
-1. 예상치 못한 오류 발생
-2. API 또는 라이브러리 사용법 불확실
-3. 시각적 문제 발생
-4. 3회 이상 시도 실패
-
-### Perplexity 프롬프트 작성 요청 시 규칙 - Critical
-**사용자가 "퍼플렉시티 프롬프트 작성해" 또는 "Perplexity 프롬프트 작성해"라고 명시적으로 요청한 경우:**
-- **프롬프트 내용만 제공**: 프롬프트에 붙여 넣을 내용 외에는 아무 말도 하지 않습니다.
-- **추가 설명 금지**: 프롬프트 작성 후 "이 프롬프트를 Perplexity에 붙여넣으세요" 같은 안내 문구도 포함하지 않습니다.
-- **코드 수정 금지**: 프롬프트 작성과 동시에 코드를 수정하지 않습니다.
-- **형식**: 프롬프트는 마크다운 코드 블록 없이 순수 텍스트로 제공합니다 (사용자가 바로 복사-붙여넣기 할 수 있도록).
+## Physical Control (Hard Constraint)
+- **Git Hook**: Set `scripts/pre-push-check.sh` as Git Hook to block direct push to main/develop at system level.
+  - Setup: `cp scripts/pre-push-check.sh .git/hooks/pre-push && chmod +x .git/hooks/pre-push`
 
 ---
 
-# ⚠️ CRITICAL RULES 재확인 (파일 끝 - 샌드위치 기법)
+# General Guidelines
 
-**이 파일을 읽을 때 반드시 위의 핵심 규칙을 재확인하시오:**
+## Basic Principles
 
-## 최우선 규칙 (절대 무시 금지)
-1. **Git 작업 전 검증**: 커밋/푸시 명령 생성 전, 현재 브랜치가 `main`/`develop`이 아닌지 **반드시 먼저 검증**
-2. **사용자 명시적 요청 없이 절대 커밋/푸시 금지**
-3. **`.cursorrules` 길이 관리**: 이 파일이 300줄을 초과하면 분리 또는 핵심 규칙만 남기는 리팩토링 고려
+1. **Prevent Sycophancy - Critical**
+   - When user questions or challenges response, do not immediately apologize or change answer
+   - Explain your logic and reasoning first
+   - Only apologize when factually wrong
 
-## 핵심 기술 규칙
-- **ViewModel 주입**: `viewModel()` 사용 (절대 `hiltViewModel()` 사용 금지)
-- **StateFlow 수집**: `collectAsStateWithLifecycle()` 사용 (절대 `collectAsState()` 사용 금지)
-- **State Hoisting**: 모든 화면 상태는 ViewModel로 이동
-- **Preview 필수**: 모든 public Composable에 `@Preview` 필수
+2. **Ask Mode Exclusive Rules - Critical**
+   - **STRICTLY ANSWER ONLY**: In Ask mode, never attempt file modification
+   - **Question Interpretation**: Interpret user questions as pure curiosity (PURE CURIOSITY), not criticism or modification requests
+   - **No Apology**: In Ask mode, do not apologize for previous code unless explicitly proven wrong
+   - **Logic Explanation**: Calmly explain logic for questions
 
-## 규칙 파일 참조
-- 세부 규칙은 `.cursor/rules/*.mdc` 파일들을 참조하세요.
-- 각 파일은 `globs` 패턴을 사용하여 관련 작업 시 자동으로 주입됩니다.
+3. **Work on Appropriate Branch**
+   - See `.cursor/rules/workflow/branch-workflow.mdc` for details
 
-**위 규칙들을 위반하면 심각한 문제가 발생할 수 있습니다. 반드시 준수하시오.**
+4. **`.cursorrules` File Writing Rules**
+   - **Critical Rules Summary Required at Top**: When writing or modifying `.cursorrules` file, must include "⚠️ CRITICAL RULES SUMMARY" section at the top
+   - **Summary Structure**:
+     * MUST DO: List core rules concisely
+     * MUST NOT DO: Clearly mark prohibited items
+     * CRITICAL PATTERNS: Important pattern summary
+   - **Purpose**: Enable AI to recognize core rules at the beginning of Context Window to prevent rule ignoring or hallucination
+
+5. **Memo of Attempted Solutions**
+   - When solving problems, memo attempted methods
+   - To avoid repeating same mistakes
+
+6. **Documentation**
+   - Document important settings or solutions
+   - For other team members or future self
+
+7. **Component Preview Required**
+   - All component functions must include Preview function with `@Preview` annotation
+   - Previews should show various states (selected/not selected, enabled/disabled, etc.)
+   - Exception: Internal-only components (`internal` functions) are optional
+
+## README Check Rule on File Changes
+
+**Check if README needs updating whenever files are changed, and update if necessary.**
+
+### Cases to Check
+1. New settings or tools added
+2. Project structure changes
+3. Development environment requirements changed
+4. Build/execution method changes
+5. Troubleshooting information added
+6. Workflow or rule changes
+
+**If any answer is not "no", README must be updated.**
+
+## Problem Solving & Research Rules
+
+### ⚠️ Critical: Work Interruption and Research Rules
+
+**When problems occur or work is blocked during tasks, immediately stop and provide Perplexity prompt.**
+
+### Work Interruption Conditions
+1. Unexpected errors occur
+2. API or library usage uncertain
+3. Visual issues occur
+4. 3+ attempts failed
+
+### ⚠️ Critical: Required Verification Procedure on Structure Changes
+**When performing structural changes (file moves, package changes, class refactoring), must follow these procedures:**
+
+1. **Pre-change Build Check**: Check if current state builds before structural changes (`./gradlew :app:compileDebugKotlin`) - **Only when user explicitly requests**
+2. **Search All Usages**: Search all locations where file to move/change is used with `grep` and list them
+3. **Batch Import Path Changes**: Change import paths at all usages at once (don't do step by step, understand whole first)
+4. **Variable/Function Name Changes**: When changing variable/function names, check all usages with `grep` then change in batch
+5. **Post-change Build Verification**: Request build from user or only when user explicitly requests after file move/change (`./gradlew :app:compileDebugKotlin`)
+6. **State/Params Class Moves**: When moving State or Params classes, check import paths of all components using that class
+7. **Duplicate Removal**: Before removing duplicate files, check all usages, unify to one, then update all import paths
+
+### ⚠️ Critical: macOS Git Index Permission Issue Resolution
+**When `fatal: .git/index: index file open failed: Operation not permitted` error occurs on macOS:**
+
+1. **Immediate Solution**: Always set `.git/index` file permissions before executing Git commands.
+   ```bash
+   chmod 666 .git/index && <git command>
+   ```
+   Example: `chmod 666 .git/index && git status`
+   Example: `chmod 666 .git/index && git add .`
+   Example: `chmod 666 .git/index && git commit -m "message"`
+
+2. **Root Cause**: Caused by macOS security policy (TCC) or extended attributes (xattr) conflicts. Setting `chmod 666` enables read/write.
+
+3. **Cautions**: 
+   - Permission setting may be needed each time Git commands are executed
+   - Can bypass sandbox restrictions using `required_permissions: ['all']`
+   - If problem persists, guide user to execute directly in terminal
+
+4. **Prevent Repetition**: When executing Git-related commands, first check `.git/index` file permissions, and if needed, execute `chmod 666 .git/index` then execute Git command
+
+### ⚠️ Critical: GitHub Authentication and PR Work Requirements
+**When GitHub CLI (`gh`) command execution results in authentication errors:**
+
+1. **Always Use `required_permissions: ['all']`**: GitHub-related work (PR creation, merge, authentication, etc.) must use `required_permissions: ['all']` to bypass sandbox restrictions.
+
+2. **GitHub CLI Authentication Check and Setup**:
+   ```bash
+   gh auth status  # Check authentication status
+   gh auth login   # Login if not authenticated
+   ```
+   - Authentication is done once and can be used continuously
+   - `gh auth login` completes authentication in web browser
+
+3. **Git Push Authentication Issue Resolution**:
+   - When `fatal: could not read Username for 'https://github.com': Device not configured` error occurs
+   - Using `required_permissions: ['all']` enables access to stored authentication info
+   - Git credential helper (`osxkeychain`) is automatically used if configured
+
+4. **PR Creation and Merge**:
+   - PR Creation: `gh pr create --title "..." --body "..." --base main`
+   - PR Merge: `gh pr merge <PR_NUMBER> --merge --delete-branch`
+   - All GitHub CLI commands execute with `required_permissions: ['all']`
+
+5. **Prevent Repetition**: 
+   - Always use `required_permissions: ['all']` for GitHub-related work
+   - On authentication errors, first check with `gh auth status`, execute `gh auth login` if needed
+   - Do not guide user to "execute directly in terminal", I will resolve directly
+
+### Perplexity Prompt Writing Request Rules - Critical
+**When user explicitly requests "퍼플렉시티 프롬프트 작성해" or "Perplexity 프롬프트 작성해":**
+- **Provide Prompt Content Only**: Provide only content to paste into prompt, nothing else
+- **No Additional Explanation**: Do not include guidance like "paste this prompt into Perplexity" after writing prompt
+- **No Code Modification**: Do not modify code simultaneously with prompt writing
+- **Format**: Provide prompt as plain text without markdown code blocks (so user can copy-paste immediately)
+
+---
+
+# ⚠️ CRITICAL RULES RE-CONFIRMATION (File End - Sandwich Technique)
+
+**When reading this file, must re-confirm the core rules above:**
+
+## Highest Priority Rules (Never Ignore)
+1. **Git Work Pre-Verification**: Before commit/push command generation, **must first verify** that current branch is not `main`/`develop`
+2. **Never commit/push without explicit user request**
+3. **`.cursorrules` Length Management**: If this file exceeds 300 lines, consider splitting or keeping only core rules
+
+## Core Technical Rules
+- **ViewModel Injection**: `@HiltViewModel` uses `hiltViewModel()`
+- **StateFlow Collection**: Use `collectAsStateWithLifecycle()` (never use `collectAsState()`)
+- **State Hoisting**: All screen states move to ViewModel
+- **Preview Required**: All public Composables must have `@Preview`
+
+## Rule File References
+- For detailed rules, refer to `.cursor/rules/*.mdc` files
+- Each file uses `globs` pattern so rules are automatically injected during related work
+
+**Violating the above rules may cause serious problems. Must comply.**
