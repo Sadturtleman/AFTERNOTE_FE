@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,8 +16,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,7 +60,7 @@ data class DropdownMenuStyle(
  *
  * 피그마 디자인 기반:
  * - 라벨: 12sp, Regular, Gray9
- * - 드롭다운 필드: 흰색 배경, 하단 보더, 36dp 높이
+ * - 드롭다운 필드: 흰색 배경, 하단 보더
  * - 선택된 값: 16sp, Regular, Gray8
  * - 드롭다운 아이콘: 오른쪽 정렬
  * - 드롭다운 메뉴 offset: 기본 4.dp
@@ -195,7 +194,11 @@ private fun SelectionDropdownPreview() {
 @Composable
 private fun ExpandedDropdownMenuPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -236,7 +239,11 @@ private fun ExpandedDropdownMenuPreview() {
 @Composable
 private fun ExpandedDropdownMenuWithElevationPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -277,7 +284,11 @@ private fun ExpandedDropdownMenuWithElevationPreview() {
 @Composable
 private fun ExpandedDropdownMenuInDialogPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -318,7 +329,11 @@ private fun ExpandedDropdownMenuInDialogPreview() {
 @Composable
 private fun ExpandedDropdownMenuLongListPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},

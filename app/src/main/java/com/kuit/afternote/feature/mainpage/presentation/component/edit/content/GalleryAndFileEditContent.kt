@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Inf
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.InformationProcessingRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
@@ -37,46 +36,46 @@ fun GalleryAndFileEditContent(
     bottomPadding: PaddingValues,
     params: GalleryAndFileEditContentParams
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val density = LocalDensity.current
-        val windowInfo = LocalWindowInfo.current
-        // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
-        val bottomPaddingDp = bottomPadding.calculateBottomPadding()
-        // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
-        // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
-        val viewportHeight = with(density) {
-            windowInfo.containerSize.height.toDp() - bottomPaddingDp
-        }
-        val spacerHeight = viewportHeight * 0.1f
-
-        GalleryAndFileEditContentContent(
-            params = params,
-            spacerHeight = spacerHeight
-        )
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
+    val bottomPaddingDp = bottomPadding.calculateBottomPadding()
+    // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
+    // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
+    val viewportHeight = with(density) {
+        windowInfo.containerSize.height.toDp() - bottomPaddingDp
     }
+    val spacerHeight = viewportHeight * 0.1f
+
+    GalleryAndFileEditContentContent(
+        modifier = modifier,
+        params = params,
+        spacerHeight = spacerHeight
+    )
 }
 
 @Composable
 private fun GalleryAndFileEditContentContent(
+    modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams,
     spacerHeight: Dp
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         // 정보 처리 방법 섹션
         RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
         Spacer(modifier = Modifier.height(Spacing.m))
 
-        InformationProcessingRadioButton(
-            method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+        ProcessingMethodRadioButton(
+            option = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
             onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
         )
 
         Spacer(modifier = Modifier.height(Spacing.s))
 
-        InformationProcessingRadioButton(
-            method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+        ProcessingMethodRadioButton(
+            option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
             onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
         )
@@ -125,7 +124,7 @@ private fun GalleryAndFileEditContentContent(
         )
 
         // 갤러리 및 파일 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
-        // BoxWithConstraints의 maxHeight를 사용하여 부모 컨테이너의 높이를 기준으로 계산
+        // LocalWindowInfo를 사용하여 창 높이를 기준으로 계산
         Spacer(modifier = Modifier.height(spacerHeight))
     }
 }

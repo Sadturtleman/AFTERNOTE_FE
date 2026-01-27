@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -35,31 +34,31 @@ fun SocialNetworkEditContent(
     bottomPadding: PaddingValues,
     params: SocialNetworkEditContentParams
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val density = LocalDensity.current
-        val windowInfo = LocalWindowInfo.current
-        // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
-        val bottomPaddingDp = bottomPadding.calculateBottomPadding()
-        // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
-        // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
-        val viewportHeight = with(density) {
-            windowInfo.containerSize.height.toDp() - bottomPaddingDp
-        }
-        val spacerHeight = viewportHeight * 0.1f
-
-        SocialNetworkEditContentContent(
-            params = params,
-            spacerHeight = spacerHeight
-        )
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
+    val bottomPaddingDp = bottomPadding.calculateBottomPadding()
+    // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
+    // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
+    val viewportHeight = with(density) {
+        windowInfo.containerSize.height.toDp() - bottomPaddingDp
     }
+    val spacerHeight = viewportHeight * 0.1f
+
+    SocialNetworkEditContentContent(
+        modifier = modifier,
+        params = params,
+        spacerHeight = spacerHeight
+    )
 }
 
 @Composable
 private fun SocialNetworkEditContentContent(
+    modifier: Modifier = Modifier,
     params: SocialNetworkEditContentParams,
     spacerHeight: Dp
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         // 계정 정보 섹션
         RequiredLabel(text = "계정 정보", offsetY = 4f)
 
@@ -139,7 +138,7 @@ private fun SocialNetworkEditContentContent(
         )
 
         // 소셜네트워크 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
-        // BoxWithConstraints의 maxHeight를 사용하여 부모 컨테이너의 높이를 기준으로 계산
+        // LocalWindowInfo를 사용하여 창 높이를 기준으로 계산
         Spacer(modifier = Modifier.height(spacerHeight))
     }
 }

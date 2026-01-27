@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,14 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
  * 하단 네비게이션 바
  *
  * 피그마 디자인 기반:
- * - 높이: 88dp
  * - 흰색 배경
  * - 4개 아이템: 홈, 기록, 타임레터, 애프터노트
  */
@@ -33,9 +30,8 @@ fun BottomNavigationBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(88.dp)
             .background(Color.White)
-            .padding(start = 32.dp, top = 19.dp, end = 32.dp, bottom = 23.dp),
+            .padding(start = 38.dp, top = 19.dp, end = 32.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 홈
