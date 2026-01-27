@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +33,10 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListI
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
+import com.kuit.afternote.ui.theme.Gray1
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordDailyQuestionScreen(
     modifier: Modifier = Modifier,
@@ -40,10 +45,12 @@ fun RecordDailyQuestionScreen(
 ) {
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    val today = LocalDate.now()
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
@@ -93,7 +100,9 @@ fun RecordDailyQuestionScreen(
             )
             LazyColumn{
                 item {
-                    RecordListSort()
+                    RecordListSort(
+                        today = today
+                    )
                 }
                 item {
                     RecordListItem(

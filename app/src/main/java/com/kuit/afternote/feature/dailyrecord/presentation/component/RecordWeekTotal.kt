@@ -44,7 +44,8 @@ fun RecordWeekTotal(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, top=32.dp)
+            .padding(top=32.dp)
+            .padding(horizontal = 20.dp)
     ) {
         Text(
             text = "이번주 박서연님은 3번의 마음을 기록하셨네요.",
@@ -54,7 +55,8 @@ fun RecordWeekTotal(
         )
         Box(
             modifier = Modifier
-                .height(100.dp)
+                .fillMaxWidth()
+                .height(90.dp)
                 .dropShadow(
                     shape = RoundedCornerShape(16.dp),
                     color = Color.Black.copy(alpha = 0.05f),
@@ -63,7 +65,7 @@ fun RecordWeekTotal(
                     offsetX = 0.dp,
                     spread = 0.dp
                 )
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
 
         ){
@@ -73,9 +75,13 @@ fun RecordWeekTotal(
                 val dayLabel = date.format(formatter) // "10", "11", ...
                 listOf("월","화","수","목","금","토","일")[offset] to dayLabel
             }
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
                 allItems.forEach { (today, day) ->
                     SubWeekCheck(
+                        modifier = Modifier.weight(1f), // 각 아이템이 동일한 너비 차지
                         today = today,
                         day = day
                     )

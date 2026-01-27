@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
 import android.content.ClipData
 import android.os.Build
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,9 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.BottomNavItem
 import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekTotal
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekendReview
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordweekendMindKeyword
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.DayOfWeek
 
@@ -125,6 +129,17 @@ fun RecordWeekendReportScreen(
                 RecordWeekTotal(
                     today = today
                 )
+            }
+            item {
+                RecordAllSeeReport(
+                    today = today
+                )
+            }
+            item{
+                RecordweekendMindKeyword()
+            }
+            item{
+                RecordWeekendReview()
             }
         }
     }
