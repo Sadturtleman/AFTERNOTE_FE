@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.Color
@@ -156,18 +155,18 @@ private fun GalleryDetailContent(
             GalleryDetailScrollableContent(detailState = detailState)
         }
 
-        GalleryDetailDropdownOverlay(
-            showDropdown = uiState.showDropdownMenu,
-            onDismiss = uiState::hideDropdownMenu,
-            onEditClick = {
-                uiState.hideDropdownMenu()
-                callbacks.onEditClick()
-            },
-            onDeleteClick = {
-                uiState.hideDropdownMenu()
-                uiState.showDeleteDialog()
-            }
-        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 20.dp)
+        ) {
+            EditDropdownMenu(
+                expanded = uiState.showDropdownMenu,
+                onDismissRequest = uiState::hideDropdownMenu,
+                onEditClick = { callbacks.onEditClick() },
+                onDeleteClick = { uiState.showDeleteDialog() }
+            )
+        }
 
         GalleryDetailDeleteDialog(
             showDialog = uiState.showDeleteDialog,
@@ -409,37 +408,6 @@ private fun MessageCard(message: String) {
             }
         }
     )
-}
-
-@Composable
-private fun GalleryDetailDropdownOverlay(
-    showDropdown: Boolean,
-    onDismiss: () -> Unit,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit
-) {
-    if (!showDropdown) return
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onDismiss() }
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = (-20).dp, y = 48.dp)
-        ) {
-            EditDropdownMenu(
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick
-            )
-        }
-    }
 }
 
 /**

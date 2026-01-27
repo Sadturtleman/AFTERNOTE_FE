@@ -21,8 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,8 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlay
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlayParams
+import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -63,70 +60,41 @@ fun RecipientList(
         state.initializeExpandedStates(recipients, null)
     }
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .onGloballyPositioned { coordinates ->
-                state.updateBoxPosition(coordinates.positionInRoot())
-            }
+            .background(color = White, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = White, shape = RoundedCornerShape(16.dp))
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            recipients.forEachIndexed { _, recipient ->
-                val expanded = state.expandedStates[recipient.id] ?: false
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onGloballyPositioned { coordinates ->
-                            state.updateItemPosition(recipient.id, coordinates.positionInRoot())
-                            state.updateItemSize(recipient.id, coordinates.size)
-                        }
-                ) {
-                    RecipientItem(
-                        recipient = recipient,
-                        onMoreClick = {
-                            focusManager.clearFocus()
-                            state.toggleItemExpanded(recipient.id)
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // 추가 버튼 (파란 원형 버튼)
-            Image(
-                painter = painterResource(R.drawable.ic_add_circle),
-                contentDescription = "수신자 추가",
-                modifier = Modifier
-                    .clickable(onClick = {
-                        state.toggleTextField()
-                        events.onAddClick()
-                    })
+        recipients.forEachIndexed { _, recipient ->
+            RecipientItem(
+                recipient = recipient,
+                expanded = state.expandedStates[recipient.id] ?: false,
+                onMoreClick = {
+                    focusManager.clearFocus()
+                    state.toggleItemExpanded(recipient.id)
+                },
+                onDismissDropdown = {
+                    state.expandedStates[recipient.id] = false
+                },
+                onEditClick = { events.onItemEditClick(recipient.id) },
+                onDeleteClick = { events.onItemDeleteClick(recipient.id) }
             )
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // 드롭다운 메뉴 오버레이
-        DropdownMenuOverlay(
-            params = DropdownMenuOverlayParams(
-                itemIds = recipients.map { it.id },
-                expandedStates = state.expandedStates,
-                itemPositions = state.itemPositions,
-                itemSizes = state.itemSizes,
-                boxPositionInRoot = state.boxPositionInRoot,
-                onItemEditClick = events.onItemEditClick,
-                onItemDeleteClick = events.onItemDeleteClick,
-                onExpandedStateChanged = { id, isExpanded ->
-                    state.expandedStates[id] = isExpanded
-                }
-            )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 추가 버튼 (파란 원형 버튼)
+        Image(
+            painter = painterResource(R.drawable.ic_add_circle),
+            contentDescription = "수신자 추가",
+            modifier = Modifier
+                .clickable(onClick = {
+                    state.toggleTextField()
+                    events.onAddClick()
+                })
         )
     }
 }
@@ -144,7 +112,11 @@ fun RecipientList(
 private fun RecipientItem(
     modifier: Modifier = Modifier,
     recipient: Recipient,
-    onMoreClick: () -> Unit = {}
+    expanded: Boolean = false,
+    onMoreClick: () -> Unit = {},
+    onDismissDropdown: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -192,13 +164,21 @@ private fun RecipientItem(
             )
         }
 
-        // 더보기 아이콘
-        Image(
-            painter = painterResource(R.drawable.ic_more_horizontal_1),
-            contentDescription = "더보기",
-            modifier = Modifier
-                .clickable(onClick = onMoreClick)
-        )
+        // 더보기 아이콘 + 드롭다운 메뉴
+        Box {
+            Image(
+                painter = painterResource(R.drawable.ic_more_horizontal_1),
+                contentDescription = "더보기",
+                modifier = Modifier
+                    .clickable(onClick = onMoreClick)
+            )
+            EditDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = onDismissDropdown,
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick
+            )
+        }
     }
 }
 

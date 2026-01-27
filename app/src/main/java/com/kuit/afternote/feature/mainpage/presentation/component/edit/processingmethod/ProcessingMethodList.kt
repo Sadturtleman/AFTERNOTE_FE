@@ -3,7 +3,6 @@ package com.kuit.afternote.feature.mainpage.presentation.component.edit.processi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,15 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlay
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuOverlayParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White
@@ -40,8 +35,6 @@ fun ProcessingMethodList(
     )
 ) {
     val items = params.items
-    val onItemEditClick = params.onItemEditClick
-    val onItemDeleteClick = params.onItemDeleteClick
     val onItemAdded = params.onItemAdded
     val focusManager = LocalFocusManager.current
 
@@ -50,86 +43,56 @@ fun ProcessingMethodList(
         state.initializeExpandedStates(items, params.initialExpandedItemId)
     }
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .onGloballyPositioned { coordinates ->
-                state.updateBoxPosition(coordinates.positionInRoot())
-            }
+            .background(color = White, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = White, shape = RoundedCornerShape(16.dp))
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            items.forEach { item ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onGloballyPositioned { coordinates ->
-                            state.updateItemPosition(item.id, coordinates.positionInRoot())
-                            state.updateItemSize(item.id, coordinates.size)
-                        }
-                ) {
-                    ProcessingMethodCheckbox(
-                        item = item,
-                        onClick = {
-                            focusManager.clearFocus()
-                            if (state.showTextField) {
-                                focusManager.clearFocus()
-                            }
-                        },
-                        onMoreClick = {
-                            focusManager.clearFocus()
-                            state.toggleItemExpanded(item.id)
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(6.dp))
-            }
-
-            // 텍스트 필드 (버튼 클릭 시 표시)
-            AddItemTextField(
-                visible = state.showTextField,
-                onItemAdded = onItemAdded,
-                onVisibilityChanged = { isVisible ->
-                    state.setTextFieldVisible(isVisible)
-                    params.onTextFieldVisibilityChanged(isVisible)
+        items.forEach { item ->
+            ProcessingMethodCheckbox(
+                item = item,
+                expanded = state.expandedStates[item.id] ?: false,
+                onClick = {
+                    focusManager.clearFocus()
                 },
-                previousFocusedState = state.previousFocusedState,
-                onPreviousFocusedStateChange = state::updatePreviousFocusedState
+                onMoreClick = {
+                    focusManager.clearFocus()
+                    state.toggleItemExpanded(item.id)
+                },
+                onDismissDropdown = {
+                    state.expandedStates[item.id] = false
+                },
+                onEditClick = { params.onItemEditClick(item.id) },
+                onDeleteClick = { params.onItemDeleteClick(item.id) }
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 추가 버튼
-            Image(
-                painter = painterResource(R.drawable.ic_add_circle),
-                contentDescription = "추가",
-                modifier = Modifier
-                    .clickable(onClick = {
-                        state.toggleTextField()
-                        params.onAddClick()
-                    })
-            )
+            Spacer(modifier = Modifier.height(6.dp))
         }
 
-        // 드롭다운 메뉴 오버레이
-        DropdownMenuOverlay(
-            params = DropdownMenuOverlayParams(
-                itemIds = items.map { it.id },
-                expandedStates = state.expandedStates,
-                itemPositions = state.itemPositions,
-                itemSizes = state.itemSizes,
-                boxPositionInRoot = state.boxPositionInRoot,
-                onItemEditClick = onItemEditClick,
-                onItemDeleteClick = onItemDeleteClick,
-                onExpandedStateChanged = { id, isExpanded ->
-                    state.expandedStates[id] = isExpanded
-                }
-            )
+        // 텍스트 필드 (버튼 클릭 시 표시)
+        AddItemTextField(
+            visible = state.showTextField,
+            onItemAdded = onItemAdded,
+            onVisibilityChanged = { isVisible ->
+                state.setTextFieldVisible(isVisible)
+                params.onTextFieldVisibilityChanged(isVisible)
+            },
+            previousFocusedState = state.previousFocusedState,
+            onPreviousFocusedStateChange = state::updatePreviousFocusedState
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 추가 버튼
+        Image(
+            painter = painterResource(R.drawable.ic_add_circle),
+            contentDescription = "추가",
+            modifier = Modifier
+                .clickable(onClick = {
+                    state.toggleTextField()
+                    params.onAddClick()
+                })
         )
     }
 }
