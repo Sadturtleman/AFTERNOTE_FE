@@ -10,15 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.AccountProcessingRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
@@ -43,7 +44,8 @@ fun SocialNetworkEditContent(
         OutlineTextField(
             modifier = Modifier,
             label = "아이디",
-            textFieldState = params.accountSection.idState
+            textFieldState = params.accountSection.idState,
+            keyboardType = KeyboardType.Text
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -52,7 +54,7 @@ fun SocialNetworkEditContent(
             modifier = Modifier,
             label = "비밀번호",
             textFieldState = params.accountSection.passwordState,
-            keyboardType = androidx.compose.ui.text.input.KeyboardType.Password
+            keyboardType = KeyboardType.Password
         )
 
         Spacer(modifier = Modifier.height(Spacing.xl))
@@ -60,7 +62,7 @@ fun SocialNetworkEditContent(
         // 계정 처리 방법 섹션
         RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(Spacing.l))
 
         AccountProcessingRadioButton(
             method = AccountProcessingMethod.MEMORIAL_ACCOUNT,

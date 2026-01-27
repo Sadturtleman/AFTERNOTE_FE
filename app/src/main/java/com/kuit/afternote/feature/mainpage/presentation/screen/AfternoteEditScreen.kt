@@ -312,9 +312,8 @@ private fun AfternoteEditScreenPreview() {
 @Composable
 private fun AfternoteEditScreenGalleryAndFilePreview() {
     MainPageLightTheme {
-        val state = rememberAfternoteEditState()
-        LaunchedEffect(Unit) {
-            state.onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+        val state = rememberAfternoteEditState().apply {
+            onCategorySelected(CATEGORY_GALLERY_AND_FILE)
         }
         AfternoteEditScreen(
             onBackClick = {},
@@ -331,9 +330,8 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 @Composable
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
     MainPageLightTheme {
-        val state = rememberAfternoteEditState()
-        LaunchedEffect(Unit) {
-            state.onCategorySelected("추모 가이드라인")
+        val state = rememberAfternoteEditState().apply {
+            onCategorySelected("추모 가이드라인")
         }
         AfternoteEditScreen(
             onBackClick = {},

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -46,6 +47,12 @@ import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 private const val DEFAULT_PLACEHOLDER = "Text Field"
+private const val PASSWORD_MASK_CHAR = '\u2022'
+
+private val PasswordOutputTransformation = OutputTransformation {
+    val originalLength = length
+    replace(0, originalLength, PASSWORD_MASK_CHAR.toString().repeat(originalLength))
+}
 
 @Composable
 fun OutlineTextField(
@@ -77,6 +84,11 @@ fun OutlineTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
+        outputTransformation = if (keyboardType == KeyboardType.Password) {
+            PasswordOutputTransformation
+        } else {
+            null
+        },
         enabled = enabled,
         readOnly = false,
         modifier = Modifier
@@ -120,6 +132,11 @@ fun OutlineTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),
+        outputTransformation = if (keyboardType == KeyboardType.Password) {
+            PasswordOutputTransformation
+        } else {
+            null
+        },
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = Gray4
         ),
@@ -224,12 +241,12 @@ fun OutlineTextField(
         )
 
         OutlinedTextField(
+            state = textFieldState,
+            lineLimits = TextFieldLineLimits.SingleLine,
             contentPadding = PaddingValues(
                 vertical = 16.dp,
                 horizontal = 24.dp
             ),
-            state = textFieldState,
-            lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = {
                 Text(
                     text = placeholder,
@@ -250,11 +267,20 @@ fun OutlineTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             ),
+            outputTransformation = if (keyboardType == KeyboardType.Password) {
+                PasswordOutputTransformation
+            } else {
+                null
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
                 .background(containerColor, RoundedCornerShape(8.dp)),
             textStyle = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray9
             )
         )
@@ -296,12 +322,12 @@ fun OutlineTextField(
         )
 
         OutlinedTextField(
+            state = textFieldState,
+            lineLimits = TextFieldLineLimits.SingleLine,
             contentPadding = PaddingValues(
                 vertical = 16.dp,
                 horizontal = 24.dp
             ),
-            state = textFieldState,
-            lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = {
                 Text(
                     text = placeholder,
@@ -322,6 +348,11 @@ fun OutlineTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             ),
+            outputTransformation = if (keyboardType == KeyboardType.Password) {
+                PasswordOutputTransformation
+            } else {
+                null
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
@@ -338,6 +369,10 @@ fun OutlineTextField(
                     }
                 ),
             textStyle = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
                 color = Gray9
             )
         )
@@ -355,10 +390,10 @@ fun OutlineTextField(
 @Composable
 fun OutlineTextField(
     modifier: Modifier = Modifier,
-    label: String = "남기실 말씀",
+    label: String,
     textFieldState: TextFieldState,
     placeholder: String = DEFAULT_PLACEHOLDER,
-    isMultiline: Boolean = true
+    isMultiline: Boolean
 ) {
     if (isMultiline) {
         Column(
@@ -378,6 +413,7 @@ fun OutlineTextField(
 
             OutlinedTextField(
                 state = textFieldState,
+                lineLimits = TextFieldLineLimits.MultiLine(),
                 placeholder = {
                     Text(
                         text = placeholder,
@@ -402,6 +438,10 @@ fun OutlineTextField(
                     .background(White, RoundedCornerShape(16.dp)),
                 contentPadding = PaddingValues(all = 16.dp),
                 textStyle = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
                     color = Gray9
                 )
             )
@@ -466,5 +506,32 @@ private fun OutlineTextFieldMultilinePreview() {
             textFieldState = rememberTextFieldState(),
             isMultiline = true
         )
+    }
+}
+
+@Preview(showBackground = true, name = "ID와 Password 비교")
+@Composable
+private fun OutlineTextFieldIdPasswordComparisonPreview() {
+    AfternoteTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            OutlineTextField(
+                modifier = Modifier,
+                label = "아이디",
+                textFieldState = rememberTextFieldState(),
+                keyboardType = KeyboardType.Text
+            )
+
+            OutlineTextField(
+                modifier = Modifier,
+                label = "비밀번호",
+                textFieldState = rememberTextFieldState(),
+                keyboardType = KeyboardType.Password
+            )
+        }
     }
 }
