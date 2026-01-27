@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,6 +46,7 @@ import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
+private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
 /**
  * 애프터노트 수정/작성 화면
@@ -113,7 +115,8 @@ fun AfternoteEditScreen(
         ) {
             EditContent(
                 state = state,
-                onNavigateToAddSong = onNavigateToAddSong
+                onNavigateToAddSong = onNavigateToAddSong,
+                bottomPadding = paddingValues.calculateBottomPadding()
             )
 
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
@@ -131,7 +134,7 @@ fun AfternoteEditScreen(
                                     onAddClick = state::onAddRecipient,
                                     onRelationshipSelected = state::onRelationshipSelected,
                                     onImportContactsClick = {
-                                        // TODO: 연락처 가져오기 로직
+                                        // 연락처 가져오기 기능은 추후 구현 예정
                                     }
                                 )
                             )
@@ -158,7 +161,8 @@ fun AfternoteEditScreen(
 @Composable
 private fun EditContent(
     state: AfternoteEditState,
-    onNavigateToAddSong: () -> Unit
+    onNavigateToAddSong: () -> Unit,
+    bottomPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -187,7 +191,7 @@ private fun EditContent(
             )
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
-            if (state.selectedCategory != "추모 가이드라인") {
+            if (state.selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) {
                 Spacer(modifier = Modifier.height(Spacing.m))
 
                 SelectionDropdown(
@@ -208,7 +212,8 @@ private fun EditContent(
             // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
             CategoryContent(
                 state = state,
-                onNavigateToAddSong = onNavigateToAddSong
+                onNavigateToAddSong = onNavigateToAddSong,
+                bottomPadding = bottomPadding
             )
         }
     }
@@ -217,14 +222,16 @@ private fun EditContent(
 @Composable
 private fun CategoryContent(
     state: AfternoteEditState,
-    onNavigateToAddSong: () -> Unit
+    onNavigateToAddSong: () -> Unit,
+    bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
-        "추모 가이드라인" -> {
+        CATEGORY_MEMORIAL_GUIDELINE -> {
             val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
                 (1..songs.size).map { AlbumCover(id = "$it") }
             } ?: state.playlistAlbumCovers
             MemorialGuidelineEditContent(
+                bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
                     memorialPhotoUrl = state.memorialPhotoUrl,
                     playlistSongCount = state.playlistSongCount,
@@ -246,6 +253,7 @@ private fun CategoryContent(
 
         CATEGORY_GALLERY_AND_FILE -> {
             GalleryAndFileEditContent(
+                bottomPadding = bottomPadding,
                 params = GalleryAndFileEditContentParams(
                     messageState = state.messageState,
                     infoMethodSection = InfoMethodSection(
@@ -273,6 +281,7 @@ private fun CategoryContent(
 
         else -> {
             SocialNetworkEditContent(
+                bottomPadding = bottomPadding,
                 params = SocialNetworkEditContentParams(
                     messageState = state.messageState,
                     accountSection = AccountSection(
@@ -331,7 +340,7 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
     MainPageLightTheme {
         val state = rememberAfternoteEditState().apply {
-            onCategorySelected("추모 가이드라인")
+            onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
         }
         AfternoteEditScreen(
             onBackClick = {},

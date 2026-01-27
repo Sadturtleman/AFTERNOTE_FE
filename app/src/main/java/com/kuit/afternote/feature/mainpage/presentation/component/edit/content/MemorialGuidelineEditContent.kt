@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
@@ -25,14 +29,35 @@ import com.kuit.afternote.ui.theme.Spacing
 @Composable
 fun MemorialGuidelineEditContent(
     modifier: Modifier = Modifier,
+    bottomPadding: PaddingValues,
     params: MemorialGuidelineEditContentParams
 ) {
-    val density = LocalDensity.current
-    val windowInfo = LocalWindowInfo.current
-    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
+    BoxWithConstraints(modifier = modifier) {
+        val density = LocalDensity.current
+        val windowInfo = LocalWindowInfo.current
+        // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
+        val bottomPaddingDp = bottomPadding.calculateBottomPadding()
+        // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
+        // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
+        val viewportHeight = with(density) {
+            windowInfo.containerSize.height.toDp() - bottomPaddingDp
+        }
+        val spacerHeight = viewportHeight * 0.1f
 
+        MemorialGuidelineEditContentContent(
+            params = params,
+            spacerHeight = spacerHeight
+        )
+    }
+}
+
+@Composable
+private fun MemorialGuidelineEditContentContent(
+    params: MemorialGuidelineEditContentParams,
+    spacerHeight: Dp
+) {
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         // 마지막 순간 질문
         LastMomentQuestion()
@@ -71,8 +96,9 @@ fun MemorialGuidelineEditContent(
             onAddVideoClick = params.onVideoAddClick
         )
 
-        // 추모 가이드라인 탭 하단 여백 (화면 높이의 34%, 800dp 기준 약 272dp)
-        Spacer(modifier = Modifier.height(screenHeight * 0.34f))
+        // 추모 가이드라인 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
+        // BoxWithConstraints의 maxHeight를 사용하여 부모 컨테이너의 높이를 기준으로 계산
+        Spacer(modifier = Modifier.height(spacerHeight))
     }
 }
 
@@ -96,6 +122,7 @@ private fun MemorialGuidelineEditContentPreview() {
         )
 
         MemorialGuidelineEditContent(
+            bottomPadding = PaddingValues(bottom = 88.dp),
             params = MemorialGuidelineEditContentParams(
                 memorialPhotoUrl = null,
                 playlistSongCount = 16,
