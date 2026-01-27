@@ -1,7 +1,7 @@
 ---
-description: Clean Architecture 및 계층 분리 규칙
-globs: **/*.kt
-alwaysApply: true
+description: Clean Architecture and layer separation rules
+globs: **/domain/**/*.kt, **/data/**/*.kt, **/presentation/**/*.kt
+alwaysApply: false
 ---
 
 # Architecture Rules (아키텍처 규칙)

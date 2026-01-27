@@ -1,5 +1,5 @@
 ---
-description: Android/Kotlin 코딩 컨벤션 및 Import 규칙
+description: Android/Kotlin coding conventions and Import rules
 globs: **/*.kt
 alwaysApply: true
 ---

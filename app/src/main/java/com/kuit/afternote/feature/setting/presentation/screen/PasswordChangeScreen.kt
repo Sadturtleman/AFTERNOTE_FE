@@ -106,8 +106,17 @@ fun PasswordChangeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var errorState by remember { mutableStateOf(PasswordErrorState()) }
 
-    LaunchedEffect(uiState.passwordChangeSuccess) {
-        if (uiState.passwordChangeSuccess) {
+    LaunchedEffect(uiState.passwordChangeSuccess, uiState.needsRollback) {
+        // Optimistic update 실패 시 navigation 취소
+        if (uiState.needsRollback) {
+            // Rollback: 성공 상태 취소 (navigation 방지)
+            viewModel.clearPasswordChangeSuccess()
+            viewModel.clearRollback()
+            return@LaunchedEffect
+        }
+        
+        // 성공 시에만 navigation
+        if (uiState.passwordChangeSuccess && !uiState.needsRollback) {
             snackbarHostState.showSnackbar("비밀번호가 변경되었습니다.")
             viewModel.clearPasswordChangeSuccess()
             onBackClick()

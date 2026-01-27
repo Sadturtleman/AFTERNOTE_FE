@@ -43,9 +43,13 @@ class UserApiIntegrationTest {
     companion object {
         private const val BASE_URL = "https://afternote.kro.kr/"
 
-        // 테스트용 계정 (실제 테스트 계정)
-        private const val TEST_EMAIL = "dnfjddk2@gmail.com"
-        private const val TEST_PASSWORD = "Qwerty12@"
+        // 테스트용 계정
+        // local.properties의 TEST_EMAIL, TEST_PASSWORD를 우선 사용
+        // 설정되지 않은 경우 하드코딩된 기본값 사용 (fallback)
+        private val TEST_EMAIL = System.getProperty("TEST_EMAIL")
+            ?: "dnfjddk2@gmail.com"
+        private val TEST_PASSWORD = System.getProperty("TEST_PASSWORD")
+            ?: "Qwerty12@"
     }
 
     private val json = Json {

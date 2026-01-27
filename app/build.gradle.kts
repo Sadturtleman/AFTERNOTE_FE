@@ -62,8 +62,8 @@ android {
         buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
 
         // Test credentials from local.properties (not committed to git)
-        val testEmail = project.findProperty("TEST_EMAIL") as? String ?: ""
-        val testPassword = project.findProperty("TEST_PASSWORD") as? String ?: ""
+        val testEmail = properties["TEST_EMAIL"] as? String ?: ""
+        val testPassword = properties["TEST_PASSWORD"] as? String ?: ""
         buildConfigField("String", "TEST_EMAIL", "\"$testEmail\"")
         buildConfigField("String", "TEST_PASSWORD", "\"$testPassword\"")
     }
@@ -99,6 +99,14 @@ android {
         unitTests {
             isReturnDefaultValues = true
         }
+    }
+
+    // Pass test credentials from local.properties to unit tests
+    tasks.withType<Test>().configureEach {
+        val testEmail = properties["TEST_EMAIL"] as? String ?: ""
+        val testPassword = properties["TEST_PASSWORD"] as? String ?: ""
+        systemProperty("TEST_EMAIL", testEmail)
+        systemProperty("TEST_PASSWORD", testPassword)
     }
 }
 

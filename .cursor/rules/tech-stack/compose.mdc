@@ -1,27 +1,27 @@
 ---
-description: Jetpack Compose 코딩 규칙 및 패턴
-globs: **/*.kt
-alwaysApply: true
+description: Jetpack Compose coding rules and patterns
+globs: **/presentation/**/*.kt, **/ui/**/*.kt, **/component/**/*.kt
+alwaysApply: false
 ---
 
-# Jetpack Compose Rules (Compose 규칙)
+# Jetpack Compose Rules
 
 ## Composable Functions
 
 ### 1. State Hoisting
-상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향).
-- **완전한 State Hoisting**: 화면 내부의 **모든 상태**(탭 선택, 네비게이션 아이템 선택 등)는 ViewModel로 이동해야 합니다.
-- **로컬 상태 금지**: Composable 내부에서 `remember { mutableStateOf() }`로 상태를 관리하지 말고, ViewModel의 State로 관리하세요.
-- **하단 네비게이션 상태도 ViewModel로**: `BottomNavigationBar`의 `selectedItem` 상태도 ViewModel의 `UiState`에 포함시켜야 합니다.
+State must be hoisted to the caller, and Composables should receive state as parameters (Stateless preferred).
+- **Complete State Hoisting**: **All states** inside screens (tab selection, navigation item selection, etc.) must move to ViewModel.
+- **No Local State**: Do not manage state with `remember { mutableStateOf() }` inside Composable, manage with ViewModel's State.
+- **Bottom Navigation State to ViewModel**: `BottomNavigationBar`'s `selectedItem` state must also be included in ViewModel's `UiState`.
 
 <rule id="compose_state_hoisting">
-<description>상태 호이스팅을 통해 컴포저블을 재사용 가능하게 만드세요.</description>
+<description>Make composables reusable through state hoisting.</description>
 <bad_example>
 @Composable
 fun MyScreen() {
     var selectedTab by remember { mutableStateOf(Tab.ALL) }
     var selectedNavItem by remember { mutableStateOf(NavItem.HOME) }
-    // 로컬 상태 사용 - 재사용 불가능
+    // Local state usage - not reusable
 }
 </bad_example>
 <good_example>
@@ -33,7 +33,7 @@ fun MyRoute(viewModel: MyViewModel = viewModel()) {
 
 @Composable
 fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
-    // 모든 상태는 파라미터로 받음 - 재사용 가능
+    // All states received as parameters - reusable
 }
 </good_example>
 </rule>
@@ -259,7 +259,17 @@ Column(
 - **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.
 - **원칙**: "공통 껍데기를 제공하고, 내용물은 호출부에서 주입받는다"
 - **구현 방법**:
-  1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
-  2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
-  3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
-  4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지
+ 1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
+ 2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
+ 3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
+ 4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지
+
+## Optimistic Updates Pattern (낙관적 업데이트 패턴)
+
+Optimistic Updates 패턴에 대한 상세 규칙은 `.cursor/rules/tech-stack/optimistic-updates.mdc`를 참조하세요.
+
+**핵심 원칙:**
+- StateFlow 기반 UiState로 단방향 데이터 흐름(UDF) 유지
+- Optimistic update 실패 시 `needsRollback` 플래그로 롤백 처리
+- Screen에서 rollback 시 navigation 취소
+- Race condition 고려 (연속 요청 시 이전 상태 스냅샷 + 요청 ID 추적)
