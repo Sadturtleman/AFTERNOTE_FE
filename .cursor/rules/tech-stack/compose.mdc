@@ -1,27 +1,27 @@
 ---
-description: Jetpack Compose 코딩 규칙 및 패턴
-globs: **/*.kt
-alwaysApply: true
+description: Jetpack Compose coding rules and patterns
+globs: **/presentation/**/*.kt, **/ui/**/*.kt, **/component/**/*.kt
+alwaysApply: false
 ---
 
-# Jetpack Compose Rules (Compose 규칙)
+# Jetpack Compose Rules
 
 ## Composable Functions
 
 ### 1. State Hoisting
-상태(`State`)는 호출부로 끌어올리고, Composable은 상태를 인자로 받아야 합니다 (Stateless 지향).
-- **완전한 State Hoisting**: 화면 내부의 **모든 상태**(탭 선택, 네비게이션 아이템 선택 등)는 ViewModel로 이동해야 합니다.
-- **로컬 상태 금지**: Composable 내부에서 `remember { mutableStateOf() }`로 상태를 관리하지 말고, ViewModel의 State로 관리하세요.
-- **하단 네비게이션 상태도 ViewModel로**: `BottomNavigationBar`의 `selectedItem` 상태도 ViewModel의 `UiState`에 포함시켜야 합니다.
+State must be hoisted to the caller, and Composables should receive state as parameters (Stateless preferred).
+- **Complete State Hoisting**: **All states** inside screens (tab selection, navigation item selection, etc.) must move to ViewModel.
+- **No Local State**: Do not manage state with `remember { mutableStateOf() }` inside Composable, manage with ViewModel's State.
+- **Bottom Navigation State to ViewModel**: `BottomNavigationBar`'s `selectedItem` state must also be included in ViewModel's `UiState`.
 
 <rule id="compose_state_hoisting">
-<description>상태 호이스팅을 통해 컴포저블을 재사용 가능하게 만드세요.</description>
+<description>Make composables reusable through state hoisting.</description>
 <bad_example>
 @Composable
 fun MyScreen() {
     var selectedTab by remember { mutableStateOf(Tab.ALL) }
     var selectedNavItem by remember { mutableStateOf(NavItem.HOME) }
-    // 로컬 상태 사용 - 재사용 불가능
+    // Local state usage - not reusable
 }
 </bad_example>
 <good_example>
@@ -33,7 +33,7 @@ fun MyRoute(viewModel: MyViewModel = viewModel()) {
 
 @Composable
 fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
-    // 모든 상태는 파라미터로 받음 - 재사용 가능
+    // All states received as parameters - reusable
 }
 </good_example>
 </rule>
@@ -60,46 +60,216 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 
 ### 핵심 규칙
 1. **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
-2. **Padding과 Spacing**: `weight`을 사용한 가변 패딩/간격 적용
-   - 화면 가장자리 padding: 고정값 허용 (예: `padding(horizontal = 20.dp)`)
-   - **내부 간격**: `Spacer(Modifier.weight())` 사용하여 화면 크기에 따라 동적 조정
-   - 작은 간격(8dp 이하): 고정값 허용 (예: `Spacer(Modifier.height(8.dp))`)
-3. **공통 컴포넌트 오버로딩**: 비슷한 컴포넌트는 오버로딩으로 재사용
+2. **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()`을 직접 적용하지 말고, `Spacer`를 사용하여 간격을 표현
+   - **❌ 금지**: `Column(modifier = Modifier.padding(vertical = 16.dp)) { ... }`
+   - **✅ 권장**: `Column { Spacer(Modifier.height(16.dp)); ... }`
+   - **예외**: 화면 가장자리 padding만 고정값 허용 (예: `padding(horizontal = 20.dp)`)
+3. **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween`, `Arrangement.SpaceEvenly` 등을 사용
+   - **❌ 금지**: `padding(top = 100.dp)` 같은 큰 padding 값
+   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(1f))`
+4. **공통 컴포넌트 최대한 활용**: `core` 모듈에 있는 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, `BottomNavigationBar` 등)를 최대한 재사용
+5. **컴포넌트 오버로딩**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 **오버로딩**으로 처리
+   - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
+   - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
 ### 적용 우선순위
-1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 사용
-   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
-2. **중간 간격 (8-24dp)**: 상황에 따라 weight 또는 고정값
-3. **작은 간격 (8dp 이하)**: 고정값 허용
-4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지)
+1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
+   - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
+2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
+3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)
+4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지, 예: `padding(horizontal = 20.dp)`)
 5. **컴포넌트 크기**: 항상 고정 dp 값 사용
+6. **컴포넌트 간 간격**: `Arrangement.spacedBy()` 사용 권장
+
+### 스크롤 컨테이너 반응형 간격 (Scrollable Container Responsive Spacing)
+스크롤 가능한 컨테이너(`verticalScroll`, `LazyColumn` 등) 내부에서는 `Modifier.weight()`를 사용할 수 없습니다.
+대신 다음 방법들을 사용하여 반응형 간격을 구현할 수 있습니다.
+
+#### 1. LocalWindowInfo 사용 (권장)
+화면 높이를 기준으로 비율 기반 간격을 설정합니다.
+- **Import**: `import androidx.compose.ui.platform.LocalDensity` 및 `import androidx.compose.ui.platform.LocalWindowInfo`
+- **주의**: `LocalConfiguration.screenHeightDp`는 deprecated이므로 `LocalWindowInfo.current.containerSize`를 사용합니다.
+
+```kotlin
+val density = LocalDensity.current
+val windowInfo = LocalWindowInfo.current
+val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
+
+Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+) {
+    // Content...
+    
+    // 화면 높이의 10% (800dp 화면 기준 약 80dp)
+    Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+    
+    Button(...)
+}
+```
+
+#### 2. BoxWithConstraints 사용 (특정 영역 기준)
+부모 컨테이너의 크기를 기준으로 간격을 설정해야 할 때 사용합니다.
+
+```kotlin
+BoxWithConstraints {
+    val parentHeight = maxHeight
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Content...
+        Spacer(modifier = Modifier.height(parentHeight * 0.15f))
+        Button(...)
+    }
+}
+```
+
+#### 3. LazyColumn + fillParentMaxHeight (복잡한 리스트)
+`LazyColumn`에서는 `fillParentMaxHeight()`를 사용하여 비율 기반 높이를 설정할 수 있습니다.
+
+```kotlin
+LazyColumn(modifier = Modifier.fillMaxSize()) {
+    item { /* Content */ }
+    item { Spacer(modifier = Modifier.fillParentMaxHeight(0.2f)) }
+    item { Button(...) }
+}
+```
+
+#### 선택 기준
+| 상황 | 권장 방법 |
+|------|----------|
+| 전체 화면 기준 반응형 간격 | `LocalWindowInfo` |
+| 특정 영역(다이얼로그, 탭 등) 기준 | `BoxWithConstraints` |
+| 복잡한 리스트 | `LazyColumn` + `fillParentMaxHeight()` |
+| 작은 간격 (24dp 미만) | 고정 `Spacer(Modifier.height())` 허용 |
+
+### 패딩 대신 Spacer 사용 예시
+<rule id="spacer_instead_of_padding">
+<description>컴포넌트 패딩 대신 Spacer를 사용하여 간격을 표현하세요.</description>
+<bad_example>
+Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 16.dp, horizontal = 20.dp)
+) {
+    Text("Title")
+    Text("Content")
+}
+</bad_example>
+<good_example>
+Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 20.dp)
+) {
+    Spacer(Modifier.height(16.dp))
+    Text("Title")
+    Spacer(Modifier.height(16.dp))
+    Text("Content")
+    Spacer(Modifier.height(16.dp))
+}
+</good_example>
+</rule>
+
+### 큰 간격 처리 예시
+<rule id="large_spacing_with_arrangement">
+<description>큰 간격은 Arrangement나 weight을 사용하여 처리하세요.</description>
+<bad_example>
+Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 100.dp, bottom = 50.dp)
+) {
+    // Content
+}
+</bad_example>
+<good_example>
+Column(
+    modifier = Modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.SpaceBetween
+) {
+    Spacer(Modifier.weight(1f))
+    // Content
+    Spacer(Modifier.weight(1f))
+}
+</good_example>
+</rule>
 
 ## State Holder 패턴 (Cognitive Complexity 해결) - Critical
 - **목표**: SonarQube 인지 복잡도(Cognitive Complexity)를 15 이하로 유지
 - **핵심 원칙**: "로직과 상태를 Composable에서 분리해내는 것(State Holder 패턴)"
+- **⚠️ Critical: TooManyFunctions 경고 해결**
+  - State Holder 패턴 적용 후 `TooManyFunctions` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - **불필요한 함수 제거**: 사용되지 않는 헬퍼 함수나 중복 함수 제거
+    * 예: 드롭다운 상태 관리 함수들이 State Class로 이동하면서 불필요해진 경우 제거
+  - **책임 분리**: Manager 클래스로 로직 위임 고려
+    * 예: `RecipientManager`, `CategoryManager`, `ProcessingMethodManager`로 분리
+    * 함수 24개 → 16개로 감소 가능
+  - **Private 함수 활용**: 외부에 노출될 필요 없는 함수는 `private`으로 변경
+    * detekt 설정에서 `ignorePrivate: true`인 경우 카운트에서 제외됨
 - **필수 적용 규칙**:
-  1. **State 클래스 생성**: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
-  2. **로직 캡슐화**: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
-  3. **Computed Properties**: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
-  4. **콜백 람다 제거**: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
-  5. **함수 참조 사용**: State의 메서드는 함수 참조(`::`)로 전달
-  6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
-  7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
+ 1. **State 클래스 생성**: 모든 상태 변수와 로직을 `@Stable` 클래스로 그룹화
+ 2. **로직 캡슐화**: Composable 내부의 조건문, 람다 내부 중첩 조건문을 State 클래스의 멤버 함수로 이동
+ 3. **Computed Properties**: UI 내 삼항 연산자나 조건문을 State 클래스의 computed property로 이동
+ 4. **콜백 람다 제거**: Composable 내부에서 `val create...Callbacks = { ... }` 같은 람다 정의 금지
+ 5. **함수 참조 사용**: State의 메서드는 함수 참조(`::`)로 전달
+ 6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
+ 7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
 
 ## Parameter Refactoring Pattern (LongParameterList 해결) - Critical
 - **문제**: Composable 함수에 10개 이상의 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것은 부족함
+- **⚠️ Critical: @Suppress는 최후의 수단**
+  - State Hoisting 패턴 적용 후 `LongParameterList` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
+    * 예: `RecipientCallbacks`, `ProcessingMethodCallbacks` 같은 인터페이스/데이터 클래스 사용
+    * 파라미터 11개 → 4개로 감소 가능 (콜백 5개를 1개로 그룹화)
+  - **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
+    * 예: `SelectionDropdownState` 클래스 생성
+    * 파라미터 10개 → 7개로 감소 가능
+  - **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
+    * UI 컴포넌트는 초기값을 직접 알 필요 없이 완성된 `state`만 받으면 됨
 - **올바른 접근**: 다음 패턴을 순서대로 적용
-  1. **공통 섹션 추출**: 여러 화면에서 동일하게 사용되는 섹션은 별도 클래스로 추출
-  2. **섹션별 그룹화**: UI 섹션 단위로 상태(State)와 액션(Actions)을 함께 묶기
-  3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
-  4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
-  5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
+ 1. **공통 섹션 추출**: 여러 화면에서 동일하게 사용되는 섹션은 별도 클래스로 추출
+ 2. **섹션별 그룹화**: UI 섹션 단위로 상태(State)와 액션(Actions)을 함께 묶기
+ 3. **콜백 그룹화**: 관련 콜백들을 별도 data class로 묶기
+ 4. **Nullable 활용**: 조건부로 표시되는 섹션은 nullable로 처리
+ 5. **최종 Params 클래스**: 섹션들을 조합하여 최종 파라미터 클래스 구성 (4개 이하 필드 목표)
+
+## Core 컴포넌트 최대한 활용 - Critical
+- **원칙**: `core` 모듈에 있는 공통 컴포넌트를 최대한 재사용하여 코드 중복을 방지하고 일관성을 유지합니다.
+- **사용 가능한 Core 컴포넌트**:
+  - `Header`: 화면 상단 헤더 (오버로딩 지원)
+  - `LabeledTextField`: 라벨이 있는 텍스트 필드
+  - `MessageTextField`: 멀티라인 메시지 입력 필드
+  - `CustomRadioButton`: 커스텀 라디오 버튼
+  - `BottomNavigationBar`: 하단 네비게이션 바
+  - `RequiredLabel`: 필수 입력 표시 라벨
+  - `CircleArrowIcon`: 원형 화살표 아이콘
+  - `SelectableRadioCard`: 선택 가능한 라디오 카드
+- **사용 전 확인**: 새로운 컴포넌트를 만들기 전에 `core` 모듈에 유사한 컴포넌트가 있는지 반드시 확인
+- **오버로딩 활용**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 기존 컴포넌트의 **오버로딩**을 활용
+  - **예시**: `Header` 컴포넌트는 `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(onBackClick: () -> Unit, onEditClick: () -> Unit)` 등으로 오버로딩되어 있음
+  - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
 ## Slot API 패턴 (Composition over Inheritance) - Critical
 - **핵심 철학**: 유사한 구조를 가진 컴포넌트들을 통일할 때는 **상속이 아닌 합성(Composition)**을 사용합니다.
 - **원칙**: "공통 껍데기를 제공하고, 내용물은 호출부에서 주입받는다"
 - **구현 방법**:
-  1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
-  2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
-  3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
-  4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지
+ 1. **공통 껍데기 컴포넌트 생성**: 공통 레이아웃, 스타일, 동작을 가진 컴포넌트를 `core` 패키지에 생성
+ 2. **Slot 파라미터 사용**: `content: @Composable ColumnScope.() -> Unit` 같은 Slot 파라미터로 내용물을 주입받음
+ 3. **접근성 지원**: `Modifier.selectable`과 `Role.RadioButton` 등을 사용하여 접근성 개선
+ 4. **이벤트 충돌 방지**: 내부 자식 컴포넌트의 클릭 이벤트는 `null`로 설정하여 부모 컴포넌트의 클릭과 충돌 방지
+
+## Optimistic Updates Pattern (낙관적 업데이트 패턴)
+
+Optimistic Updates 패턴에 대한 상세 규칙은 `.cursor/rules/tech-stack/optimistic-updates.mdc`를 참조하세요.
+
+**핵심 원칙:**
+- StateFlow 기반 UiState로 단방향 데이터 흐름(UDF) 유지
+- Optimistic update 실패 시 `needsRollback` 플래그로 롤백 처리
+- Screen에서 rollback 시 navigation 취소
+- Race condition 고려 (연속 요청 시 이전 상태 스냅샷 + 요청 ID 추적)

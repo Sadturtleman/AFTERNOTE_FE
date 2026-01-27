@@ -7,29 +7,81 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.LastWishOption
-import com.kuit.afternote.feature.mainpage.presentation.model.AccountProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.model.RecipientCallbacks
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+
+/**
+ * 추모 플레이리스트 상태 홀더
+ */
+@Stable
+class MemorialPlaylistStateHolder {
+    val songs: SnapshotStateList<Song> = mutableStateListOf()
+    
+    var onSongCountChanged: (() -> Unit)? = null
+    
+    fun initializeSongs(initialSongs: List<Song>) {
+        if (songs.isEmpty()) {
+            songs.addAll(initialSongs)
+        }
+    }
+    
+    fun addSong(song: Song) {
+        songs.add(song)
+        onSongCountChanged?.invoke()
+    }
+    
+    fun removeSong(songId: String) {
+        songs.removeAll { it.id == songId }
+        onSongCountChanged?.invoke()
+    }
+
+    /**
+     * 선택된 곡 ID 집합에 해당하는 곡들을 일괄 삭제합니다.
+     */
+    fun removeSongs(ids: Set<String>) {
+        songs.removeAll { it.id in ids }
+        onSongCountChanged?.invoke()
+    }
+
+    fun clearAllSongs() {
+        songs.clear()
+        onSongCountChanged?.invoke()
+    }
+}
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
+private const val CUSTOM_ADD_OPTION = "직접 추가하기"
 
 /**
  * 다이얼로그 타입
  */
 enum class DialogType {
-    ADD_RECIPIENT
+    ADD_RECIPIENT,
+    CUSTOM_SERVICE
 }
 
 /**
  * AfternoteEditScreen의 상태를 관리하는 State Holder
+ *
+ * Note: State Holder 패턴으로 인해 많은 함수가 필요합니다.
+ * 현재 18개의 public 함수가 있으며, detekt threshold(20)를 초과하지 않지만
+ * 향후 확장 시 Manager 클래스로 책임 분리를 고려해야 합니다.
+ * (예: RecipientManager, CategoryManager, ProcessingMethodManager)
+ *
+ * TODO: 함수가 20개를 초과하면 Manager 클래스로 분리 고려
  */
 @Stable
 class AfternoteEditState(
@@ -38,7 +90,8 @@ class AfternoteEditState(
     val passwordState: TextFieldState,
     val messageState: TextFieldState,
     val recipientNameState: TextFieldState,
-    val phoneNumberState: TextFieldState
+    val phoneNumberState: TextFieldState,
+    val customServiceNameState: TextFieldState
 ) {
     // Navigation
     var selectedBottomNavItem by mutableStateOf(BottomNavItem.HOME)
@@ -58,8 +111,8 @@ class AfternoteEditState(
 
     // Recipients
     private val initialRecipients = listOf(
-        Recipient("1", "김지은", "친구"),
-        Recipient("2", "박선호", "가족")
+        Recipient(id = "1", name = "김지은", label = "친구"),
+        Recipient(id = "2", name = "박선호", label = "가족")
     )
     var recipients by mutableStateOf(initialRecipients)
         private set
@@ -94,10 +147,44 @@ class AfternoteEditState(
         private set
     var playlistSongCount by mutableIntStateOf(16)
         private set
+    
+    // Memorial Playlist State Holder (옵셔널 - 공유 상태)
+    var playlistStateHolder: MemorialPlaylistStateHolder? = null
+        private set
+    
+    /**
+     * 플레이리스트 상태 홀더 설정
+     */
+    fun setPlaylistStateHolder(stateHolder: MemorialPlaylistStateHolder) {
+        playlistStateHolder = stateHolder
+        // 상태 홀더가 설정되면 실제 노래 개수로 업데이트
+        updatePlaylistSongCount()
+    }
+    
+    /**
+     * 플레이리스트 노래 개수 업데이트
+     */
+    fun updatePlaylistSongCount() {
+        playlistSongCount = playlistStateHolder?.songs?.size ?: 16
+    }
+
+    // Dropdown States
+    var categoryDropdownState by mutableStateOf(
+        SelectionDropdownState()
+    )
+        private set
+    var serviceDropdownState by mutableStateOf(
+        SelectionDropdownState()
+    )
+        private set
+    var relationshipDropdownState by mutableStateOf(
+        SelectionDropdownState()
+    )
+        private set
 
     // Constants
     val categories = listOf("소셜네트워크", "비즈니스", CATEGORY_GALLERY_AND_FILE, "재산 처리", "추모 가이드라인")
-    val services = listOf("인스타그램", "페이스북", "트위터", "카카오톡", "네이버")
+    val services = listOf("인스타그램", "페이스북")
     val galleryServices = listOf("갤러리", "파일")
     val relationshipOptions = listOf("친구", "가족", "연인")
     val lastWishOptions = listOf(
@@ -123,7 +210,16 @@ class AfternoteEditState(
 
     // Computed Properties (Line 295 해결: 삼항 연산자 제거)
     val currentServiceOptions: List<String>
-        get() = if (selectedCategory == CATEGORY_GALLERY_AND_FILE) galleryServices else services
+        get() = if (selectedCategory == CATEGORY_GALLERY_AND_FILE) {
+            galleryServices
+        } else {
+            services + CUSTOM_ADD_OPTION
+        }
+
+    /**
+     * 선택된 서비스가 "직접 추가하기"인지 확인
+     */
+    fun isCustomAddOption(service: String): Boolean = service == CUSTOM_ADD_OPTION
 
     // Callbacks (Composable 내부 람다 제거로 인지 복잡도 최소화)
     val galleryRecipientCallbacks: RecipientCallbacks by lazy {
@@ -181,13 +277,20 @@ class AfternoteEditState(
     // Actions (Line 279 해결: 람다 내부 중첩 조건문 제거)
     fun onCategorySelected(category: String) {
         selectedCategory = category
-        if (category == CATEGORY_GALLERY_AND_FILE) {
-            selectedService = "갤러리"
+        // 카테고리 변경 시 서비스를 해당 카테고리의 기본값으로 초기화
+        selectedService = if (category == CATEGORY_GALLERY_AND_FILE) {
+            "갤러리"
+        } else {
+            "인스타그램"
         }
     }
 
     fun onServiceSelected(service: String) {
-        selectedService = service
+        if (isCustomAddOption(service)) {
+            showCustomServiceDialog()
+        } else {
+            selectedService = service
+        }
     }
 
     fun onProcessingMethodSelected(method: AccountProcessingMethod) {
@@ -206,11 +309,24 @@ class AfternoteEditState(
         activeDialog = DialogType.ADD_RECIPIENT
     }
 
+    fun showCustomServiceDialog() {
+        activeDialog = DialogType.CUSTOM_SERVICE
+    }
+
     fun dismissDialog() {
         activeDialog = null
         recipientNameState.edit { replace(0, length, "") }
         phoneNumberState.edit { replace(0, length, "") }
+        customServiceNameState.edit { replace(0, length, "") }
         relationshipSelectedValue = "친구"
+    }
+
+    fun onAddCustomService() {
+        val serviceName = customServiceNameState.text.toString().trim()
+        if (serviceName.isEmpty()) return
+
+        selectedService = serviceName
+        dismissDialog()
     }
 
     // Line 350 해결: Guard Clause로 중첩 줄이기
@@ -280,6 +396,7 @@ fun rememberAfternoteEditState(): AfternoteEditState {
     val messageState = rememberTextFieldState()
     val recipientNameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
+    val customServiceNameState = rememberTextFieldState()
 
     return remember {
         AfternoteEditState(
@@ -287,7 +404,8 @@ fun rememberAfternoteEditState(): AfternoteEditState {
             passwordState = passwordState,
             messageState = messageState,
             recipientNameState = recipientNameState,
-            phoneNumberState = phoneNumberState
+            phoneNumberState = phoneNumberState,
+            customServiceNameState = customServiceNameState
         )
     }
 }

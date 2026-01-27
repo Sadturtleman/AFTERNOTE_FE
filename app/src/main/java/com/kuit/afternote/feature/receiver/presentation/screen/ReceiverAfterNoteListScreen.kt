@@ -30,8 +30,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.RightArrowIcon
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.AfterNoteListItem
@@ -71,7 +71,7 @@ fun AfterNoteListScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
                 .fillMaxSize()
         ) {
             Box(
@@ -115,9 +115,8 @@ fun AfterNoteListScreen() {
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF8F9FA)),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(noteItems) { item ->

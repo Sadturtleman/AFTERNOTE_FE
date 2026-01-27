@@ -28,12 +28,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import java.time.LocalDate
 
 /**

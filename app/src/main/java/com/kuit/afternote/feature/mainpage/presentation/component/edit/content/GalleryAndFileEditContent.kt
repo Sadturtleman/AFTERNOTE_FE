@@ -8,19 +8,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.MessageTextField
-import com.kuit.afternote.core.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.InformationProcessingRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.ProcessingMethodList
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.RecipientList
-import com.kuit.afternote.feature.mainpage.presentation.model.GalleryAndFileEditContentParams
-import com.kuit.afternote.feature.mainpage.presentation.model.InfoMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.model.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.model.RecipientSection
+import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.RequiredLabel
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.InformationProcessingRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
@@ -32,70 +33,76 @@ fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams
 ) {
-    // 정보 처리 방법 섹션
-    RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
 
-    Spacer(modifier = Modifier.height(Spacing.m))
+    Column(modifier = modifier) {
+        // 정보 처리 방법 섹션
+        RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
-    InformationProcessingRadioButton(
-        method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-        selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-        onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
-    )
+        Spacer(modifier = Modifier.height(Spacing.m))
 
-    Spacer(modifier = Modifier.height(Spacing.s))
+        InformationProcessingRadioButton(
+            method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
+        )
 
-    InformationProcessingRadioButton(
-        method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-        selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-        onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
-    )
+        Spacer(modifier = Modifier.height(Spacing.s))
 
-    // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
-    params.recipientSection?.let { recipientSection ->
+        InformationProcessingRadioButton(
+            method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
+        )
+
+        // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
+        params.recipientSection?.let { recipientSection ->
+            Spacer(modifier = Modifier.height(Spacing.xl))
+
+            // 수신자 추가 섹션 제목
+            RequiredLabel(text = "수신자 추가", offsetY = 3f)
+
+            Spacer(modifier = Modifier.height(9.dp))
+
+            RecipientList(
+                recipients = recipientSection.recipients,
+                events = recipientSection.callbacks
+            )
+        }
+
         Spacer(modifier = Modifier.height(Spacing.xl))
 
-        // 수신자 추가 섹션 제목
-        RequiredLabel(text = "수신자 추가", offsetY = 3f)
+        // 처리 방법 리스트 섹션
+        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(9.dp))
+        Spacer(modifier = Modifier.height(Spacing.m))
 
-        RecipientList(
-            recipients = recipientSection.recipients,
-            onAddClick = recipientSection.callbacks.onAddClick,
-            onItemEditClick = recipientSection.callbacks.onItemEditClick,
-            onItemDeleteClick = recipientSection.callbacks.onItemDeleteClick,
-            onItemAdded = recipientSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = recipientSection.callbacks.onTextFieldVisibilityChanged
+        ProcessingMethodList(
+            params = ProcessingMethodListParams(
+                items = params.processingMethodSection.items,
+                onAddClick = params.processingMethodSection.callbacks.onAddClick,
+                onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
+                onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
+                onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
+                onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
+                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
+            )
         )
+
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        // 남기실 말씀
+        OutlineTextField(
+            label = "남기실 말씀",
+            textFieldState = params.messageState,
+            isMultiline = true
+        )
+
+        // 갤러리 및 파일 탭 하단 여백 (화면 높이의 57%, 800dp 기준 약 456dp)
+        Spacer(modifier = Modifier.height(screenHeight * 0.57f))
     }
-    Spacer(modifier = Modifier.height(Spacing.xl))
-    // 처리 방법 리스트 섹션
-    RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
-
-    Spacer(modifier = Modifier.height(Spacing.m))
-
-    ProcessingMethodList(
-        params = ProcessingMethodListParams(
-            items = params.processingMethodSection.items,
-            onAddClick = params.processingMethodSection.callbacks.onAddClick,
-            onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
-            onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
-            onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
-            onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
-            onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
-        )
-    )
-
-    Spacer(modifier = Modifier.height(Spacing.xl))
-
-    // 남기실 말씀
-    MessageTextField(
-        textFieldState = params.messageState
-    )
-
-    // 갤러리 및 파일 탭 하단 여백 (459dp)
-    Spacer(modifier = Modifier.height(Spacing.galleryAndFileBottom))
 }
 
 @Preview(showBackground = true)
@@ -139,8 +146,8 @@ private fun GalleryAndFileEditContentWithRecipientsPreview() {
                     ),
                     recipientSection = RecipientSection(
                         recipients = listOf(
-                            Recipient("1", "김지은", "친구"),
-                            Recipient("2", "박선호", "가족")
+                            Recipient(id = "1", name = "김지은", label = "친구"),
+                            Recipient(id = "2", name = "박선호", label = "가족")
                         )
                     )
                 )

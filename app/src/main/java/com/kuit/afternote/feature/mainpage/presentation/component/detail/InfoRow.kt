@@ -52,7 +52,7 @@ fun InfoRow(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight.Medium,
                     color = Gray9
                 )
             )

@@ -1,5 +1,5 @@
 ---
-description: 코드 품질, 포맷팅, 테스트 규칙
+description: Code quality, formatting, and test rules
 globs: **/*.kt
 alwaysApply: true
 ---
@@ -45,7 +45,17 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - **Function Length**: Keep functions short and focused (aim for < 20 lines). Break down complex logic into helper functions.
 - **Max Line Length**: Limit lines to 120 characters (or 100 depending on your team's rule). Wrap long chained calls or parameters.
 - **Long Parameter List**: Functions with more than 10 parameters should use data classes or be refactored.
-  - Use `@Suppress("LongParameterList")` only when absolutely necessary and document why.
+  - **⚠️ Critical: @Suppress는 최후의 수단**
+  - **절대 먼저 시도해야 할 것**: `@Suppress`를 사용하기 전에 반드시 코드 구조 개선을 시도해야 합니다.
+  - **State Hoisting 패턴 적용 시 파라미터가 많아지는 경우**:
+    * **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기 (예: `RecipientCallbacks`, `ProcessingMethodCallbacks`)
+    * **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기 (예: `SelectionDropdownState`)
+    * **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
+  - **TooManyFunctions 경고 발생 시**:
+    * **불필요한 함수 제거**: 사용되지 않는 헬퍼 함수나 중복 함수 제거
+    * **책임 분리**: Manager 클래스로 로직 위임 고려 (예: `RecipientManager`, `CategoryManager`)
+    * **Private 함수 활용**: 외부에 노출될 필요 없는 함수는 `private`으로 변경 (detekt 설정에서 `ignorePrivate: true`인 경우 카운트 제외)
+  - **Use `@Suppress` only when absolutely necessary and document why**: 구조적 개선이 불가능할 때(라이브러리 제약 등)만 사용하고, 단순히 "편해서" 사용하지 마세요.
 
 #### Code Smells
 - **Magic Numbers**: Avoid hardcoded numbers. Extract them to `const val` or strict named constants, except for obvious values like 0, 1, or -1.
@@ -59,6 +69,17 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
   - 함수의 매개변수가 10개를 넘으면 data class로 묶거나 리팩토링을 고려합니다.
   - `Magic Number` 사용을 지양하고 상수로 정의합니다.
   - 함수 복잡도 제한을 준수합니다.
+- **⚠️ Critical: @Suppress 사용 전 코드 구조 개선 필수**
+  - **경험 사례**: State Hoisting 패턴 적용 후 `LongParameterList`와 `TooManyFunctions` 경고가 발생했을 때, `@Suppress`를 사용하는 대신 코드 구조를 개선하여 해결했습니다.
+  - **LongParameterList 해결 방법**:
+    * 콜백 함수들을 Event Interface로 그룹화 (예: `RecipientCallbacks`)
+    * UI 상태를 State Class로 캡슐화 (예: `SelectionDropdownState`)
+    * 초기값 파라미터를 State 생성자로 이동
+  - **TooManyFunctions 해결 방법**:
+    * 불필요한 함수 제거 (사용되지 않는 헬퍼 함수)
+    * 책임 분리 (Manager 클래스로 로직 위임)
+    * Private 함수 활용 (외부 노출 불필요한 함수는 `private`으로 변경)
+  - **원칙**: `@Suppress`는 구조적 개선이 불가능할 때만 사용하고, 항상 먼저 코드 구조 개선을 시도해야 합니다.
 
 ### 5. Naming Convention
 - Composable: `PascalCase` (예: `LoginScreen`)
@@ -72,6 +93,44 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - All code must pass ktlint and detekt checks on first commit attempt.
 
 ## Testing Rules
+
+### Testing Strategy (테스트 전략) - Critical
+
+프로젝트는 **테스트 피라미드** 원칙을 따릅니다. 각 테스트 유형은 고유한 목적이 있으며, 중복을 피해야 합니다.
+
+| 테스트 유형 | 목적 | 도구 | 실행 시점 |
+|------------|------|------|----------|
+| **Unit Tests (MockK)** | ViewModel/UseCase 로직 검증 | MockK | 모든 PR, CI/CD |
+| **Integration Tests** | 실제 API 응답 검증 | Retrofit + Real Server | 주기적 (야간/릴리스 전) |
+| **UI Tests** | UI 흐름 검증 | Espresso/Compose + MockApiInterceptor | 릴리스 전 |
+
+#### 테스트 유형별 규칙
+
+1. **Unit Tests (MockK) - 필수**
+   - ViewModel, UseCase의 모든 로직을 테스트합니다.
+   - 의존성은 MockK로 모킹합니다 (`coEvery`, `coVerify`).
+   - 네트워크 없이 빠르게 실행 가능해야 합니다.
+   - **모든 PR에서 실행**합니다.
+
+2. **Integration Tests - 선택적**
+   - 실제 API 서버를 호출하여 응답을 검증합니다.
+   - API 계약(Contract) 변경을 감지합니다.
+   - **주기적으로 실행** (야간 빌드, 릴리스 전).
+   - 모든 PR에서 실행하지 않습니다 (네트워크 의존성, 느림).
+
+3. **Mock API Tests - 삭제 또는 UI 테스트로 전환**
+   - ❌ **금지**: "Input → API → Output" 형태의 Mock API 테스트는 Unit Tests와 중복이므로 작성하지 않습니다.
+   - ✅ **허용**: `MockApiInterceptor`는 **UI 테스트** 또는 **개발 모드**에서만 사용합니다.
+   - 예: "LoginScreen에서 401 반환 시 에러 다이얼로그 표시" 같은 **UI 흐름 테스트**에 활용.
+
+#### MockApiInterceptor 사용 가이드
+
+`MockApiInterceptor`는 다음 용도로만 사용합니다:
+- **개발/데모 모드**: 백엔드가 준비되지 않았을 때 앱 테스트
+- **UI 테스트 (Espresso/Compose)**: 네트워크 없이 UI 흐름 검증
+- **복잡한 Interceptor 로직 테스트**: 토큰 자동 갱신 등 OkHttp Interceptor 로직
+
+**주의**: MockApiInterceptor를 사용한 "Input → Output" 단위 테스트는 작성하지 않습니다. MockK로 충분합니다.
 
 ### Unit Test
 - `Domain Layer`(`UseCase`)와 `ViewModel`은 100%에 가까운 테스트 커버리지를 지향합니다.
@@ -93,6 +152,81 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - **파일명**: `{ViewModelName}Test.kt`
 - **내용**: ViewModel의 상태 변경, 이벤트 처리에 대한 단위 테스트 작성
 
+### ⚠️ Critical: HTTP Status Code Testing (API 테스트 필수 규칙)
+
+**스웨거(Swagger)에 문서화가 완료된 API를 사용하는 ViewModel은 반드시 HTTP 상태 코드별 테스트를 포함해야 합니다.**
+
+#### 필수 테스트 케이스
+
+| HTTP Status | 테스트 함수명 예시 | 설명 |
+|-------------|-------------------|------|
+| **400 Bad Request** | `login_when400BadRequest_setsErrorMessage` | 잘못된 요청 형식 |
+| **401 Unauthorized** | `login_when401Unauthorized_setsErrorMessage` | 인증 실패 (잘못된 자격 증명) |
+| **404 Not Found** | `login_when404NotFound_setsErrorMessage` | 리소스를 찾을 수 없음 |
+| **500 Server Error** | `login_when500ServerError_setsErrorMessage` | 서버 내부 오류 |
+| **Network Error** | `login_whenNetworkError_setsErrorMessage` | 네트워크 연결 실패 |
+
+#### 테스트 작성 패턴
+
+```kotlin
+// HTTP Error 테스트 패턴
+@Test
+fun functionName_when{StatusCode}{ErrorType}_setsErrorMessage() = runTest {
+    val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
+        .toResponseBody("application/json".toMediaType())
+    val httpException = HttpException(Response.error<ResultType>(404, errorBody))
+    coEvery { useCase(any(), any()) } returns Result.failure(httpException)
+
+    viewModel.doAction(...)
+    advanceUntilIdle()
+
+    assertEquals("HTTP 404 ", viewModel.uiState.value.errorMessage)
+    assertFalse(viewModel.uiState.value.successFlag)
+    assertFalse(viewModel.uiState.value.isLoading)
+}
+
+// Network Error 테스트 패턴
+@Test
+fun functionName_whenNetworkError_setsErrorMessage() = runTest {
+    coEvery { useCase(any(), any()) } returns Result.failure(
+        java.io.IOException("Network unavailable")
+    )
+
+    viewModel.doAction(...)
+    advanceUntilIdle()
+
+    assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+    assertFalse(viewModel.uiState.value.successFlag)
+}
+```
+
+#### 필수 Import
+
+```kotlin
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.HttpException
+import retrofit2.Response
+```
+
+#### 적용 대상
+- **스웨거에 등록된 API**를 호출하는 모든 ViewModel
+- 현재 적용 대상 (Auth API):
+  * `LoginViewModel` ✅
+  * `LogoutViewModel` ✅
+  * `SignUpViewModel` ✅
+  * `PasswordChangeViewModel` ✅
+  * `ReissueViewModel` ✅
+  * `SendEmailCodeViewModel` ✅
+  * `VerifyEmailViewModel` ✅
+  * `DevModeViewModel` ✅
+
+#### 검증 항목
+각 HTTP 에러 테스트에서 반드시 검증해야 할 항목:
+1. **errorMessage 설정**: 에러 메시지가 올바르게 설정되었는지
+2. **success 플래그**: 성공 플래그가 `false`인지
+3. **isLoading 상태**: 로딩 상태가 `false`로 변경되었는지
+
 ## Documentation
 
 ### Public API (필수)
@@ -103,3 +237,20 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 
 ### Complex Logic
 복잡한 비즈니스 로직이 들어가는 곳에는 주석을 통해 '왜(Why)' 이렇게 구현했는지 설명합니다.
+
+### ⚠️ Critical: 구조 변경 시 필수 검증 절차
+**파일 이동, 패키지 변경, 클래스 리팩토링 등 구조적 변경 작업 시 반드시 다음 절차를 따라야 합니다:**
+
+1. **변경 전 빌드 확인**: 구조 변경 전에 현재 상태가 빌드되는지 확인 (`./gradlew :app:compileDebugKotlin`)
+2. **사용처 전체 검색**: 이동/변경할 파일이 사용되는 모든 위치를 `grep`으로 검색하여 리스트업
+   - 예: `grep -r "ClassName" app/src/main/java/com/kuit/afternote/feature/mainpage`
+3. **Import 경로 일괄 변경**: 모든 사용처의 import 경로를 한 번에 변경 (단계적으로 하지 말고 전체를 먼저 파악)
+4. **변수/함수명 변경 시**: 변수명이나 함수명을 변경할 때는 `grep`으로 모든 사용처 확인 후 일괄 변경
+5. **변경 후 즉시 빌드 검증**: 파일 이동/변경 후 반드시 빌드하여 컴파일 오류 확인
+   - 명령어: `./gradlew :app:compileDebugKotlin`
+6. **State/Params 클래스 이동 시**: State 클래스나 Params 클래스를 이동할 때는 해당 클래스를 사용하는 모든 컴포넌트의 import 경로를 확인
+7. **중복 제거 시**: 중복 파일을 제거하기 전에 사용처를 모두 확인하고, 하나로 통합한 후 모든 import 경로를 업데이트
+8. **경험 사례**: 
+   - `IconResourceMapper` 중복 제거 시 `main/`과 `util/`에 모두 존재했으나, 사용처를 확인하지 않고 하나만 삭제하여 빌드 오류 발생
+   - `AfternoteItemMapper` 이동 시 `toAfternoteItems` 메서드가 사용되고 있었으나 확인하지 않아 빌드 오류 발생
+   - `SelectionDropdown` 리팩토링 시 `boxWidth` 변수를 `state.boxWidth`로 변경하지 않아 빌드 오류 발생
