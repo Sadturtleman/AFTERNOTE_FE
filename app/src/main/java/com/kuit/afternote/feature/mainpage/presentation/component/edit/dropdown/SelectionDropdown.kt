@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenu
@@ -39,6 +38,10 @@ import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
+
+private const val CATEGORY_SOCIAL_NETWORK = "소셜네트워크"
+private const val CATEGORY_BUSINESS = "비즈니스"
+private const val CATEGORY_GALLERY_AND_FILE_PREVIEW = "갤러리 및 파일"
 
 /**
  * 드롭다운 메뉴 스타일 설정
@@ -102,7 +105,7 @@ fun SelectionDropdown(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(36.dp)
+//                    .height(36.dp)
                     .onGloballyPositioned { coordinates ->
                         val newWidth = with(density) { coordinates.size.width.toDp() }
                         if (newWidth != state.boxWidth) {
@@ -180,8 +183,8 @@ private fun SelectionDropdownPreview() {
     AfternoteTheme {
         SelectionDropdown(
             label = "종류",
-            selectedValue = "소셜네트워크",
-            options = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일"),
+            selectedValue = CATEGORY_SOCIAL_NETWORK,
+            options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
             onValueSelected = {}
         )
     }
@@ -208,7 +211,7 @@ private fun ExpandedDropdownMenuPreview() {
                 tonalElevation = 0.dp,
                 modifier = Modifier.width(200.dp)
             ) {
-                listOf("소셜네트워크", "비즈니스", "갤러리 및 파일").forEach { option ->
+                listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW).forEach { option ->
                     DropdownMenuItem(
                         text = {
                             Text(

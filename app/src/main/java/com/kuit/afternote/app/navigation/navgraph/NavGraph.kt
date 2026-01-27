@@ -17,7 +17,6 @@ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMind
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
-import com.kuit.afternote.app.navigation.navigator.MainPageNavigatorImpl
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -41,9 +40,6 @@ import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNav
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
-    val mainPageNavigator = remember(navHostController) {
-        MainPageNavigatorImpl(navHostController)
-    }
     val devModeScreens = listOf(
 //        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
 //        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
@@ -84,8 +80,7 @@ fun NavGraph(navHostController: NavHostController) {
         mainPageNavGraph(
             navController = navHostController,
             afternoteItems = afternoteItems,
-            onItemsUpdated = { afternoteItems = it },
-            mainPageNavigator = mainPageNavigator
+            onItemsUpdated = { afternoteItems = it }
         )
 
         timeLetterNavGraph(

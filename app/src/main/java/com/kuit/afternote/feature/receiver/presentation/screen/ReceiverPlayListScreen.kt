@@ -119,7 +119,7 @@ fun MemorialPlaylistScreen() {
                 itemsIndexed(songList) { index, display ->
                     PlaylistSongItem(
                         song = display,
-                        displayIndex = index + 1,
+//                        displayIndex = index + 1,
                         onClick = null,
                         trailingContent = null
                     )
