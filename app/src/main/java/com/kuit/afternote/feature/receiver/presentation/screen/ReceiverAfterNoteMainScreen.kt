@@ -51,7 +51,10 @@ import com.kuit.afternote.ui.theme.Spacing
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
-fun ReceiverAfterNoteMainScreen(title: String) {
+fun ReceiverAfterNoteMainScreen(
+    title: String,
+    onNavigateToFullList: () -> Unit = {}
+) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
 
     Scaffold(
@@ -129,7 +132,7 @@ fun ReceiverAfterNoteMainScreen(title: String) {
                 ClickButton(
                     color = B3,
                     title = "애프터노트 전체 확인하기",
-                    onButtonClick = {}
+                    onButtonClick = onNavigateToFullList
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }

@@ -32,7 +32,11 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
+import androidx.activity.compose.BackHandler
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -209,7 +213,31 @@ fun NavGraph(navHostController: NavHostController) {
 
         // 수신자 애프터노트 메인 (개발자 모드용)
         composable("receiver_afternote_main") {
-            ReceiverAfterNoteMainScreen(title = "박서연")
+            ReceiverAfterNoteMainScreen(
+                title = "박서연",
+                onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") }
+            )
+        }
+
+        // 수신자 애프터노트 전체 목록 (애프터노트 전체 확인하기 진입)
+        composable("receiver_afternote_list") {
+            BackHandler { navHostController.popBackStack() }
+            var listState by remember {
+                mutableStateOf(ReceiverAfternoteListUiState())
+            }
+            ReceiverAfternoteListRoute(
+                uiState = listState,
+                onEvent = { event ->
+                    listState = when (event) {
+                        is ReceiverAfternoteListEvent.SelectTab ->
+                            listState.copy(selectedTab = event.tab)
+                        is ReceiverAfternoteListEvent.SelectBottomNav ->
+                            listState.copy(selectedBottomNavItem = event.navItem)
+                        is ReceiverAfternoteListEvent.ClickItem ->
+                            listState // TODO: navigate to receiver detail
+                    }
+                }
+            )
         }
 
         // 지문 로그인 화면

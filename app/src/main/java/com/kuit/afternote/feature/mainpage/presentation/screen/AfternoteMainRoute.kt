@@ -5,11 +5,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kuit.afternote.core.ui.component.AfternoteListScreen
+import com.kuit.afternote.core.ui.component.AfternoteListScreenListParams
+import com.kuit.afternote.core.ui.component.AfternoteListScreenShellParams
+import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
+import com.kuit.afternote.feature.mainpage.presentation.common.util.IconResourceMapper
 
 /**
- * 애프터노트 메인 화면 Route
- * ViewModel 주입 및 네비게이션 처리 담당
+ * 애프터노트 메인 Route. Maps domain items to display items and calls shared AfternoteListScreen.
  */
 @Composable
 fun AfternoteMainRoute(
@@ -27,21 +31,35 @@ fun AfternoteMainRoute(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    AfternoteMainScreen(
-        uiState = uiState,
-        onEvent = { event ->
-            when (event) {
-                is AfternoteMainEvent.ClickItem -> {
-                    val item = uiState.items.find { it.id == event.itemId }
-                    if (item?.serviceName == "갤러리") {
-                        onNavigateToGalleryDetail()
-                    } else {
-                        onNavigateToDetail()
-                    }
+    val displayItems = uiState.items.map { item ->
+        AfternoteListDisplayItem(
+            id = item.id,
+            serviceName = item.serviceName,
+            date = item.date,
+            iconResId = IconResourceMapper.getIconResForServiceType(item.type)
+        )
+    }
+
+    AfternoteListScreen(
+        shell = AfternoteListScreenShellParams(
+            title = "애프터노트",
+            bottomBarSelectedItem = uiState.selectedBottomNavItem,
+            onBottomBarItemSelected = { viewModel.onEvent(AfternoteMainEvent.SelectBottomNav(it)) },
+            showFab = true,
+            onFabClick = onNavigateToAdd
+        ),
+        list = AfternoteListScreenListParams(
+            items = displayItems,
+            selectedTab = uiState.selectedTab,
+            onTabSelected = { viewModel.onEvent(AfternoteMainEvent.SelectTab(it)) },
+            onItemClick = { itemId ->
+                val item = uiState.items.find { it.id == itemId }
+                if (item?.serviceName == "갤러리") {
+                    onNavigateToGalleryDetail()
+                } else {
+                    onNavigateToDetail()
                 }
-                is AfternoteMainEvent.ClickAdd -> onNavigateToAdd()
-                else -> viewModel.onEvent(event)
             }
-        }
+        )
     )
 }

@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
-import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
+import com.kuit.afternote.core.ui.component.AfternoteTab
 
 /**
  * 애프터노트 메인 화면 UI 상태
