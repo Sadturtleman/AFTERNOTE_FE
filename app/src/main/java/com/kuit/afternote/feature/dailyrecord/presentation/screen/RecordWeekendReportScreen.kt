@@ -1,8 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
-import android.content.ClipData
 import android.os.Build
-import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,8 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
@@ -36,6 +34,10 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeeke
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordweekendMindKeyword
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 /**
  * 주간리포트 화면
@@ -45,11 +47,6 @@ import java.time.DayOfWeek
  * - 나의 감정 키워드
  * - 나의 기록 다시 읽기(-> listItem 리스트로 연결)
  */
-import java.time.LocalDate
-import java.time.format.TextStyle
-import java.time.temporal.TemporalAdjusters
-import java.time.temporal.WeekFields
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 
@@ -62,7 +59,7 @@ fun RecordWeekendReportScreen(
     val today = LocalDate.now()
 
     val weekFields = WeekFields.of(Locale.KOREA)
-    val weekOfMonth = today.get(weekFields.weekOfMonth())
+    val weekOfMonth = today[weekFields.weekOfMonth()]
 
     // 이번 주의 월요일
     val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -75,7 +72,7 @@ fun RecordWeekendReportScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { item -> selectedBottomNavItem = item }
             )
         },
         floatingActionButton = {
@@ -109,7 +106,9 @@ fun RecordWeekendReportScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn {
+        LazyColumn(
+            contentPadding = paddingValues
+        ) {
             item {
                 RecordMainTopbar(
                     text = "주간 리포트",
