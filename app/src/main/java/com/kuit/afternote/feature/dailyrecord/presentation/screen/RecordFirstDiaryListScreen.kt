@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
-import android.icu.util.LocaleData
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -26,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
@@ -64,7 +62,7 @@ fun RecordFirstDiaryListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onPlusRecordClick ,
+                onClick = onPlusRecordClick,
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -95,15 +93,13 @@ fun RecordFirstDiaryListScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-
-            ) {
+        ) {
             RecordMainTopbar(
                 text = "일기",
                 showLeftArrow = true,
                 onLeftClock = onLeftClick,
-
             )
-            LazyColumn{
+            LazyColumn {
                 item {
                     RecordListSort(
                         today = today
@@ -132,11 +128,11 @@ fun RecordFirstDiaryListScreen(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//private fun RePrev() {
+// @Preview(showBackground = true)
+// @Composable
+// private fun RePrev() {
 //    RecordFirstDiaryListScreen(
 //        onLeftClick = {},
 //        onPlusRecordClick = {}
 //    )
-//}
+// }

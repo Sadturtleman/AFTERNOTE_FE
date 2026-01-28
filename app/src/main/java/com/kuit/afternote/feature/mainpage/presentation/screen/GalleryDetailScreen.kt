@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -211,7 +211,7 @@ private fun GalleryDetailDeleteDialog(
         ) {
             // 피그마 기준: 네비게이션 바로부터 247dp 비율에 맞게 weight 적용
             Spacer(modifier = Modifier.weight(1f))
-            
+
             Box(
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
@@ -278,9 +278,7 @@ private fun TitleSection(
 }
 
 @Composable
-private fun DateAndMethodCard(
-    finalWriteDate: String
-) {
+private fun DateAndMethodCard(finalWriteDate: String) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
         content = {
@@ -435,7 +433,7 @@ private fun RecipientDetailItem(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
         Column {
             Text(
                 text = recipient.name,
@@ -488,7 +486,7 @@ private fun GalleryDetailScreenWithDialogPreview() {
     MainPageLightTheme {
         val uiState = rememberAfternoteDetailState()
         uiState.showDeleteDialog()
-        
+
         GalleryDetailScreen(
             detailState = GalleryDetailState(),
             callbacks = GalleryDetailCallbacks(

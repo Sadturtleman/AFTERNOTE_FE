@@ -24,17 +24,16 @@ import com.kuit.afternote.R
 @Composable
 fun DraftSavePopUp(modifier: Modifier = Modifier) {
     Box(
-        modifier= Modifier
+        modifier = Modifier
             .shadow(elevation = 10.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
             .width(350.dp)
             .height(54.dp)
             .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 16.dp))
             .padding(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 16.dp),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Text(
-        text = "타임레터가 임시저장되었습니다.",
-
+            text = "타임레터가 임시저장되었습니다.",
             fontSize = 16.sp,
             lineHeight = 22.sp,
             fontFamily = FontFamily(Font(R.font.sansneomedium)),
@@ -42,8 +41,7 @@ fun DraftSavePopUp(modifier: Modifier = Modifier) {
             color = Color(0xFF212121),
             textAlign = TextAlign.Center,
         )
-
-     }
+    }
 }
 
 @Preview

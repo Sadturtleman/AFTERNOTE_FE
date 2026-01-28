@@ -14,7 +14,6 @@ import org.junit.Test
  * [SendEmailCodeUseCase] 단위 테스트.
  */
 class SendEmailCodeUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var sendEmailCodeUseCase: SendEmailCodeUseCase
 
@@ -25,22 +24,24 @@ class SendEmailCodeUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsUnit() = runTest {
-        coEvery { authRepository.sendEmailCode(any()) } returns Result.success(Unit)
+    fun invoke_whenSuccess_returnsUnit() =
+        runTest {
+            coEvery { authRepository.sendEmailCode(any()) } returns Result.success(Unit)
 
-        val result = sendEmailCodeUseCase("a@b.com")
+            val result = sendEmailCodeUseCase("a@b.com")
 
-        assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { authRepository.sendEmailCode("a@b.com") }
-    }
+            assertTrue(result.isSuccess)
+            coVerify(exactly = 1) { authRepository.sendEmailCode("a@b.com") }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.sendEmailCode(any()) } returns Result.failure(RuntimeException("rate limit"))
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.sendEmailCode(any()) } returns Result.failure(RuntimeException("rate limit"))
 
-        val result = sendEmailCodeUseCase("a@b.com")
+            val result = sendEmailCodeUseCase("a@b.com")
 
-        assertTrue(result.isFailure)
-        assertEquals("rate limit", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertEquals("rate limit", result.exceptionOrNull()?.message)
+        }
 }

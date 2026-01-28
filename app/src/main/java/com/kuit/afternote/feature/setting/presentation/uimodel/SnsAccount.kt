@@ -6,6 +6,6 @@ data class SnsAccount(
     val name: String,
     val iconBackground: Color,
     val initialValue: Boolean,
-    val iconRes: Int? = null // 실제 프로젝트에서는 로고 이미지 리소스 ID 사용
+    // 실제 프로젝트에서는 로고 이미지 리소스 ID 사용
+    val iconRes: Int? = null
 )
-

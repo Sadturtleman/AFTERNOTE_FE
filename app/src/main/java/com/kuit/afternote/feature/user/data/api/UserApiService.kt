@@ -17,9 +17,10 @@ import retrofit2.http.Query
  * - GET /users/push-settings, PATCH /users/push-settings
  */
 interface UserApiService {
-
     @GET("users/me")
-    suspend fun getMyProfile(@Query("userId") userId: Long): ApiResponse<UserResponse?>
+    suspend fun getMyProfile(
+        @Query("userId") userId: Long
+    ): ApiResponse<UserResponse?>
 
     @PATCH("users/me")
     suspend fun updateMyProfile(
@@ -28,7 +29,9 @@ interface UserApiService {
     ): ApiResponse<UserResponse?>
 
     @GET("users/push-settings")
-    suspend fun getMyPushSettings(@Query("userId") userId: Long): ApiResponse<UserPushSettingResponse?>
+    suspend fun getMyPushSettings(
+        @Query("userId") userId: Long
+    ): ApiResponse<UserPushSettingResponse?>
 
     @PATCH("users/push-settings")
     suspend fun updateMyPushSettings(

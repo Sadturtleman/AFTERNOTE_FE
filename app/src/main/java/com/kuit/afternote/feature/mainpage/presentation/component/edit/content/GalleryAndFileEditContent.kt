@@ -20,9 +20,9 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Inf
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing

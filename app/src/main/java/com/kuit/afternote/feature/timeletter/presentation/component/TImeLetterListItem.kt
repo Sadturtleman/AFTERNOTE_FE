@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,7 +39,7 @@ fun TimeLetterListItem(
     sendDate: String,
     title: String,
     content: String,
-    imageResId: Int?,  // 이미지 (null이면 표시 안 함)
+    imageResId: Int?, // 이미지 (null이면 표시 안 함)
     modifier: Modifier = Modifier,
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -81,7 +79,7 @@ fun TimeLetterListItem(
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
-                    .padding(top=20.dp)
+                    .padding(top = 20.dp)
                     .fillMaxWidth()
                     .height(248.dp)
                     .width(350.dp)
@@ -119,7 +117,7 @@ fun TimeLetterListItem(
             fontFamily = FontFamily(Font(R.font.sansneoregular))
         )
 
-        // 수정/삭제 아이콘    
+        // 수정/삭제 아이콘
         Row(
             modifier = Modifier
                 .fillMaxWidth()

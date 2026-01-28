@@ -43,7 +43,7 @@ fun FingerprintAuthContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        
+
         // 안내 텍스트
         Text(
             text = "사용자 인증 후 조회가 가능합니다.",
@@ -80,7 +80,7 @@ fun FingerprintAuthContent(
             color = B3,
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }

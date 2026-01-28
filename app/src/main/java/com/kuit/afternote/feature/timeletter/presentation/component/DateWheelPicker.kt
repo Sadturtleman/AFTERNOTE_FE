@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -93,7 +92,7 @@ fun DateWheelPicker(
                 count = years.size,
                 state = yearState,
                 modifier = Modifier.width(80.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 PickerText(
                     text = "${years[index]}",
@@ -108,7 +107,7 @@ fun DateWheelPicker(
                 count = months.size,
                 state = monthState,
                 modifier = Modifier.width(60.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 PickerText(
                     text = "${months[index]}",
@@ -123,7 +122,7 @@ fun DateWheelPicker(
                 count = days.size,
                 state = dayState,
                 modifier = Modifier.width(60.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 PickerText(
                     text = "${days[index]}",
@@ -177,4 +176,3 @@ private fun DateWheelPickerPreview() {
         onDateChanged = { _, _, _ -> }
     )
 }
-

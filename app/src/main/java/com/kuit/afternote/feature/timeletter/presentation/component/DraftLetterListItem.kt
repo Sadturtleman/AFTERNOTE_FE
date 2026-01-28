@@ -104,7 +104,6 @@ fun DraftLetterListItem(
     }
 }
 
-
 @Preview(showBackground = true, name = "일반 모드")
 @Composable
 private fun DraftLetterListItemPreview() {
@@ -121,7 +120,6 @@ private fun DraftLetterListItemPreview() {
     )
 }
 
-
 @Preview(showBackground = true, name = "편집 모드")
 @Composable
 private fun DraftLetterListItemSelectedPreview() {
@@ -137,6 +135,7 @@ private fun DraftLetterListItemSelectedPreview() {
         onItemClick = {}
     )
 }
+
 @Preview(showBackground = true, name = "편집 모드")
 @Composable
 private fun DraftLetterListItemUnSelectedPreview() {

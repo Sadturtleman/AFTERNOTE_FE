@@ -21,26 +21,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.Spacing
@@ -70,19 +70,19 @@ fun AfternoteEditScreen(
     playlistStateHolder: MemorialPlaylistStateHolder? = null
 ) {
     val focusManager = LocalFocusManager.current
-    
+
     // 플레이리스트 상태 홀더가 전달되면 설정
     LaunchedEffect(playlistStateHolder) {
         playlistStateHolder?.let { state.setPlaylistStateHolder(it) }
     }
-    
+
     // 플레이리스트 노래 개수 변경 감지 및 동기화
     val songCount by remember {
-        playlistStateHolder?.songs?.let { 
-            androidx.compose.runtime.derivedStateOf { it.size } 
+        playlistStateHolder?.songs?.let {
+            androidx.compose.runtime.derivedStateOf { it.size }
         } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
     }
-    
+
     LaunchedEffect(songCount) {
         if (playlistStateHolder != null) {
             state.updatePlaylistSongCount()

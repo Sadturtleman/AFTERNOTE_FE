@@ -87,11 +87,9 @@ fun MemorialPlaylist(
                 .padding(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(space = 8.dp)
         ) {
-
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-
                 // 노래 개수 텍스트
                 Text(
                     text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
@@ -103,7 +101,6 @@ fun MemorialPlaylist(
                         color = Color(0xFF000000)
                     )
                 )
-
 
                 // 앨범 커버 리스트 (페이드 아웃 효과 포함, 1부터 차례대로 숫자 표시)
                 if (albumCovers.isNotEmpty()) {
@@ -131,7 +128,6 @@ fun MemorialPlaylist(
                         }
                     }
                 }
-
             }
         }
 
@@ -141,8 +137,7 @@ fun MemorialPlaylist(
                 .background(
                     color = B3,
                     shape = RoundedCornerShape(20.dp)
-                )
-                .clickable(onClick = onAddSongClick)
+                ).clickable(onClick = onAddSongClick)
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .align(Alignment.End),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -170,7 +165,6 @@ fun MemorialPlaylist(
             )
         }
     }
-
 }
 
 @Preview(showBackground = true)

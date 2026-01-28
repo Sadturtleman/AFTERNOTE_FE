@@ -176,7 +176,6 @@ private fun DraftCountText(
     )
 }
 
-
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",

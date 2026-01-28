@@ -14,15 +14,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AuthModule {
-
     @Binds
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 
     companion object {
-
         @Provides
         @Singleton
-        fun provideAuthApiService(retrofit: Retrofit): AuthApiService =
-            retrofit.create(AuthApiService::class.java)
+        fun provideAuthApiService(retrofit: Retrofit): AuthApiService = retrofit.create(AuthApiService::class.java)
     }
 }

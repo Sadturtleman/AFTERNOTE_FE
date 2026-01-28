@@ -28,7 +28,6 @@ import retrofit2.Response
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -63,40 +62,43 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun login_whenSuccess_setsLoginSuccess() = runTest {
-        coEvery { loginUseCase(any(), any()) } returns Result.success(LoginResult(accessToken = "at", refreshToken = "rt"))
+    fun login_whenSuccess_setsLoginSuccess() =
+        runTest {
+            coEvery { loginUseCase(any(), any()) } returns Result.success(LoginResult(accessToken = "at", refreshToken = "rt"))
 
-        viewModel.login("a@b.com", "pwd")
-        advanceUntilIdle()
+            viewModel.login("a@b.com", "pwd")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.loginSuccess)
-        assertNull(viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun login_whenFailure_setsErrorMessage() = runTest {
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(RuntimeException("invalid credentials"))
-
-        viewModel.login("a@b.com", "wrong")
-        advanceUntilIdle()
-
-        assertEquals("invalid credentials", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertTrue(viewModel.uiState.value.loginSuccess)
+            assertNull(viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun clearLoginSuccess_resetsLoginSuccess() = runTest {
-        coEvery { loginUseCase(any(), any()) } returns Result.success(LoginResult())
-        viewModel.login("a@b.com", "pwd")
-        advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.loginSuccess)
+    fun login_whenFailure_setsErrorMessage() =
+        runTest {
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(RuntimeException("invalid credentials"))
 
-        viewModel.clearLoginSuccess()
+            viewModel.login("a@b.com", "wrong")
+            advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.loginSuccess)
-    }
+            assertEquals("invalid credentials", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun clearLoginSuccess_resetsLoginSuccess() =
+        runTest {
+            coEvery { loginUseCase(any(), any()) } returns Result.success(LoginResult())
+            viewModel.login("a@b.com", "pwd")
+            advanceUntilIdle()
+            assertTrue(viewModel.uiState.value.loginSuccess)
+
+            viewModel.clearLoginSuccess()
+
+            assertFalse(viewModel.uiState.value.loginSuccess)
+        }
 
     @Test
     fun clearError_clearsErrorMessage() {
@@ -111,74 +113,91 @@ class LoginViewModelTest {
     // ========== HTTP Error Cases ==========
 
     @Test
-    fun login_when404NotFound_setsErrorMessage() = runTest {
-        val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
+    fun login_when404NotFound_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.login("nonexistent@example.com", "password123!")
-        advanceUntilIdle()
+            viewModel.login("nonexistent@example.com", "password123!")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("404") == true)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun login_when401Unauthorized_setsErrorMessage() = runTest {
-        val errorBody = """{"status":401,"code":401,"message":"Invalid credentials"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
-
-        viewModel.login("test@example.com", "wrongPassword")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("401") == true)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("404") == true
+            )
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun login_when400BadRequest_setsErrorMessage() = runTest {
-        val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
+    fun login_when401Unauthorized_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":401,"code":401,"message":"Invalid credentials"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.login("invalid-email", "password123!")
-        advanceUntilIdle()
+            viewModel.login("test@example.com", "wrongPassword")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("401") == true
+            )
+            assertFalse(viewModel.uiState.value.loginSuccess)
+        }
 
     @Test
-    fun login_when500ServerError_setsErrorMessage() = runTest {
-        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
+    fun login_when400BadRequest_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.login("test@example.com", "password123!")
-        advanceUntilIdle()
+            viewModel.login("invalid-email", "password123!")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("400") == true
+            )
+            assertFalse(viewModel.uiState.value.loginSuccess)
+        }
+
+    @Test
+    fun login_when500ServerError_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
+
+            viewModel.login("test@example.com", "password123!")
+            advanceUntilIdle()
+
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("500") == true
+            )
+            assertFalse(viewModel.uiState.value.loginSuccess)
+        }
 
     // ========== Network Error Cases ==========
 
     @Test
-    fun login_whenNetworkError_setsErrorMessage() = runTest {
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(
-            java.io.IOException("Network unavailable")
-        )
+    fun login_whenNetworkError_setsErrorMessage() =
+        runTest {
+            coEvery { loginUseCase(any(), any()) } returns Result.failure(
+                java.io.IOException("Network unavailable")
+            )
 
-        viewModel.login("test@example.com", "password123!")
-        advanceUntilIdle()
+            viewModel.login("test@example.com", "password123!")
+            advanceUntilIdle()
 
-        assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.loginSuccess)
-    }
+            assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+        }
 }

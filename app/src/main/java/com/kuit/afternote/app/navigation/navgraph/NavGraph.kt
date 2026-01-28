@@ -10,13 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
 import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
-import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
-import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
-import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -48,8 +44,7 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("스플래시 화면", "dev_splash"),
         ScreenInfo("로그인 화면", "dev_login"),
         ScreenInfo("회원가입 화면", "dev_signup"),
-
-        ScreenInfo("마음의기록 메인 화면","record_main"),
+        ScreenInfo("마음의기록 메인 화면", "record_main"),
         ScreenInfo("지문 로그인 화면", "fingerprint_login"),
         ScreenInfo("타임레터 화면", "time_letter_main"),
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
@@ -73,9 +68,7 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(navHostController)
 
-
         recordNavGraph(navHostController)
-
 
         mainPageNavGraph(
             navController = navHostController,
@@ -95,27 +88,25 @@ fun NavGraph(navHostController: NavHostController) {
         composable("dev") {
             DevModeScreen(
                 screens = devModeScreens,
-
                 onScreenClick = { route ->
 
-                // 문자열 route를 MainPageRoute로 변환하여 navigate
-                when (route) {
-                    "main_empty" -> navHostController.navigate(MainPageRoute.MainEmptyRoute)
-                    "main_with_items" -> navHostController.navigate(MainPageRoute.MainWithItemsRoute)
-                    "afternote_detail" -> navHostController.navigate(MainPageRoute.DetailRoute)
-                    "afternote_edit" -> navHostController.navigate(MainPageRoute.EditRoute)
-                    "fingerprint_login" -> navHostController.navigate(MainPageRoute.FingerprintLoginRoute)
-                    "time_letter_main" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
-                    "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
-                    "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
-                    "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
-                    "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
-                    "setting_main" -> navHostController.navigate(SettingRoute.SettingMainRoute)
-                    else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
-                }
-            },
-            onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) }
-
+                    // 문자열 route를 MainPageRoute로 변환하여 navigate
+                    when (route) {
+                        "main_empty" -> navHostController.navigate(MainPageRoute.MainEmptyRoute)
+                        "main_with_items" -> navHostController.navigate(MainPageRoute.MainWithItemsRoute)
+                        "afternote_detail" -> navHostController.navigate(MainPageRoute.DetailRoute)
+                        "afternote_edit" -> navHostController.navigate(MainPageRoute.EditRoute)
+                        "fingerprint_login" -> navHostController.navigate(MainPageRoute.FingerprintLoginRoute)
+                        "time_letter_main" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
+                        "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
+                        "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
+                        "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
+                        "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
+                        "setting_main" -> navHostController.navigate(SettingRoute.SettingMainRoute)
+                        else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
+                    }
+                },
+                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) }
             )
         }
 
@@ -183,14 +174,13 @@ fun NavGraph(navHostController: NavHostController) {
                 onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
             )
         }
-        composable("record_main"){
+        composable("record_main") {
             RecordMainScreen(
                 onDiaryClick = { navHostController.navigate(RecordRoute.ListRoute) },
-                onDeepMindClick = { navHostController.navigate(RecordRoute.ListRoute)},
-                onWeekendReportClick = { navHostController.navigate(RecordRoute.WeekendReportRoute)},
+                onDeepMindClick = { navHostController.navigate(RecordRoute.ListRoute) },
+                onWeekendReportClick = { navHostController.navigate(RecordRoute.WeekendReportRoute) },
                 onQuestionClick = { navHostController.navigate(RecordRoute.QuestionRouteList) }
             )
         }
-
     }
 }

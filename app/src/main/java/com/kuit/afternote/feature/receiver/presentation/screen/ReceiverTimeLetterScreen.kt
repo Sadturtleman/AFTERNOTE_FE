@@ -119,7 +119,7 @@ fun TimeLetterScreen() {
                 TimeLetterActionCard(
                     desc = "고인이 작성한 편지를 날짜 순서로 확인합니다.",
                     subDesc = "9개의 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기",// Light Blue tint
+                    btnText = "타임 레터 확인하러 가기", // Light Blue tint
                 )
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -137,7 +137,7 @@ fun TimeLetterScreen() {
                 TimeLetterActionCard(
                     desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
                     subDesc = "5개의 읽지 않은 타임 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기"// Light Orange tint
+                    btnText = "타임 레터 확인하러 가기" // Light Orange tint
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }

@@ -18,83 +18,86 @@ import javax.inject.Inject
  * 프로필 화면 ViewModel.
  */
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
-    private val getMyProfileUseCase: GetMyProfileUseCase,
-    private val updateMyProfileUseCase: UpdateMyProfileUseCase,
-    private val getUserIdUseCase: GetUserIdUseCase
-) : ViewModel() {
+class ProfileViewModel
+    @Inject
+    constructor(
+        private val getMyProfileUseCase: GetMyProfileUseCase,
+        private val updateMyProfileUseCase: UpdateMyProfileUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(ProfileUiState())
+        val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
-
-    /**
-     * 프로필 조회.
-     * JWT 토큰에서 userId를 자동으로 추출합니다.
-     */
-    fun loadProfile() {
-        viewModelScope.launch {
-            val userId = getUserIdUseCase()
-            if (userId == null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요."
-                    )
+        /**
+         * 프로필 조회.
+         * JWT 토큰에서 userId를 자동으로 추출합니다.
+         */
+        fun loadProfile() {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요."
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
+
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                getMyProfileUseCase(userId = userId)
+                    .onSuccess { profile ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                name = profile.name,
+                                email = profile.email,
+                                phone = profile.phone,
+                                profileImageUrl = profile.profileImageUrl,
+                                errorMessage = null
+                            )
+                        }
+                    }.onFailure { e ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = e.message ?: "프로필 조회에 실패했습니다."
+                            )
+                        }
+                    }
             }
-
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getMyProfileUseCase(userId = userId)
-                .onSuccess { profile ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            name = profile.name,
-                            email = profile.email,
-                            phone = profile.phone,
-                            profileImageUrl = profile.profileImageUrl,
-                            errorMessage = null
-                        )
-                    }
-                }
-                .onFailure { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = e.message ?: "프로필 조회에 실패했습니다."
-                        )
-                    }
-                }
         }
-    }
 
-    /**
-     * 프로필 수정.
-     * JWT 토큰에서 userId를 자동으로 추출합니다.
-     */
-    fun updateProfile(name: String?, phone: String?, profileImageUrl: String?) {
-        viewModelScope.launch {
-            val userId = getUserIdUseCase()
-            if (userId == null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요.",
-                        updateSuccess = false
-                    )
+        /**
+         * 프로필 수정.
+         * JWT 토큰에서 userId를 자동으로 추출합니다.
+         */
+        fun updateProfile(
+            name: String?,
+            phone: String?,
+            profileImageUrl: String?
+        ) {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요.",
+                            updateSuccess = false
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
-            }
 
-            _uiState.update { it.copy(isLoading = true, errorMessage = null, updateSuccess = false) }
-            updateMyProfileUseCase(
-                userId = userId,
-                name = name,
-                phone = phone,
-                profileImageUrl = profileImageUrl
-            )
-                .onSuccess { profile ->
+                _uiState.update { it.copy(isLoading = true, errorMessage = null, updateSuccess = false) }
+                updateMyProfileUseCase(
+                    userId = userId,
+                    name = name,
+                    phone = phone,
+                    profileImageUrl = profileImageUrl
+                ).onSuccess { profile ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -106,8 +109,7 @@ class ProfileViewModel @Inject constructor(
                             updateSuccess = true
                         )
                     }
-                }
-                .onFailure { e ->
+                }.onFailure { e ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -116,20 +118,20 @@ class ProfileViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+
+        /**
+         * updateSuccess 소비 후 호출 (네비게이션 후).
+         */
+        fun clearUpdateSuccess() {
+            _uiState.update { it.copy(updateSuccess = false) }
+        }
+
+        /**
+         * 에러 메시지 초기화.
+         */
+        fun clearError() {
+            _uiState.update { it.copy(errorMessage = null) }
         }
     }
-
-    /**
-     * updateSuccess 소비 후 호출 (네비게이션 후).
-     */
-    fun clearUpdateSuccess() {
-        _uiState.update { it.copy(updateSuccess = false) }
-    }
-
-    /**
-     * 에러 메시지 초기화.
-     */
-    fun clearError() {
-        _uiState.update { it.copy(errorMessage = null) }
-    }
-}
