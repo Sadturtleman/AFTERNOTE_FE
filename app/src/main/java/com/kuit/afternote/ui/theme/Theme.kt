@@ -9,10 +9,6 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.kuit.afternote.ui.theme.Gray1
-import com.kuit.afternote.ui.theme.Gray8
-import com.kuit.afternote.ui.theme.Gray9
-import com.kuit.afternote.ui.theme.White
 
 private val DarkColorScheme =
     darkColorScheme(
