@@ -50,9 +50,9 @@ fun DraftLetterHeader(
 
         Text(
             text = "임시 저장된 레터",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
             fontFamily = FontFamily(Font(R.font.sansneobold)),
+            fontWeight = FontWeight(700),
             color = Color(0xFF212121)
         )
 

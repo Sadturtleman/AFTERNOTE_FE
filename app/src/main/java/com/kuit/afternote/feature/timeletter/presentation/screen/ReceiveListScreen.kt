@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,25 +59,39 @@ fun ReceiveListScreen(
                     .height(44.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // LEFT (뒤로가기 영역)
                 Box(
                     modifier = Modifier
-                        .padding(start = 23.dp)
-                        .clickable { onBackClick() }
+                        .size(44.dp)
+                        .padding(start=23.dp),              // 터치 영역 확보 (Row height랑 맞춤)
+                    contentAlignment = Alignment.CenterStart
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector),
                         contentDescription = "뒤로가기",
-                        modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                        modifier = Modifier
+                            .size(width = 6.dp, height = 12.dp)
+                            .clickable { onBackClick() }
                     )
                 }
-                Text(
-                    text = "수신자 목록",
-                    color = Color(0xFF212121),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 131.dp)
-                )
+
+                // CENTER (진짜 가운데)
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "수신자 목록",
+                        color = Color(0xFF212121),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                // RIGHT (왼쪽과 대칭으로 공간 확보)
+                Spacer(modifier = Modifier.size(44.dp))
             }
+
         },
         bottomBar = {
             BottomNavigationBar(

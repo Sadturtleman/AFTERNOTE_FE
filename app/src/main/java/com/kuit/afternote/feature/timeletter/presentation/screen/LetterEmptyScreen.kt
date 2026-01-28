@@ -48,22 +48,31 @@ fun LetterEmptyScreen(
                     .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.padding(start = 23.dp)) {
+                // LEFT
+                Box(
+                    modifier = Modifier.size(48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector),
                         contentDescription = "뒤로가기",
                         modifier = Modifier
                             .size(width = 6.dp, height = 12.dp)
-                            .clickable {  onNavigateBack() }
+                            .clickable { onNavigateBack() }
                     )
                 }
-                Text(
-                    text = "타임레터",
-                    color = Color(0xFF212121),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 131.dp)
-                )
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "타임레터",
+                        color = Color(0xFF212121),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.size(48.dp))
             }
         },
         bottomBar = {

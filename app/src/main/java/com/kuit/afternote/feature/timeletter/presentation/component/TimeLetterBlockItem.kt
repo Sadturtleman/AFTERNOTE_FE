@@ -72,7 +72,8 @@ fun TimeLetterBlockItem(
 
     Box(
         modifier = modifier
-            .width(350.dp)
+            .fillMaxWidth()
+            .padding(horizontal=20.dp)
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)

@@ -98,7 +98,7 @@ fun TimeLetterWriterScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .height(43.dp),
+                        .height(40.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -121,15 +121,15 @@ fun TimeLetterWriterScreen(
                     ) {
                         Text(
                             text = "${recipientName}님께",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal,
-                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight(700),
+                            fontFamily = FontFamily(Font(R.font.sansneobold)),
                             color = Color(0xFF212121)
                         )
                         Image(
                             painter = painterResource(R.drawable.ic_down),
                             contentDescription = "수신자 선택",
-                            modifier = Modifier.padding(start = 4.dp)
+                            modifier = Modifier.padding(start = 14.dp)
                         )
                     }
 
