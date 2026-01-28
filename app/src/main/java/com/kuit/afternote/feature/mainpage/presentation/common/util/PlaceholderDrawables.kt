@@ -25,12 +25,10 @@ object PlaceholderDrawables {
     /**
      * 1-based 목록 순번(displayIndex)에 맞는 placeholder drawable id.
      */
-    fun forDisplayIndex(displayIndex: Int): Int =
-        LIST[(displayIndex - 1) % LIST.size]
+    fun forDisplayIndex(displayIndex: Int): Int = LIST[(displayIndex - 1) % LIST.size]
 
     /**
      * 0-based index에 맞는 placeholder drawable id.
      */
-    fun forZeroBasedIndex(index: Int): Int =
-        LIST[index % LIST.size]
+    fun forZeroBasedIndex(index: Int): Int = LIST[index % LIST.size]
 }

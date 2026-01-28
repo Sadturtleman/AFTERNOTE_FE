@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.ui.theme.Gray6
+import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -38,29 +38,30 @@ import com.kuit.afternote.ui.theme.Sansneo
  * - [onClick]이 있으면 클릭 가능, [trailingContent]로 라디오 버튼 등 오른쪽 UI 삽입 (없으면 null)
  *
  * @param song 표시용 모델 [PlaylistSongDisplay] (Feature별 Song/Entity에서 매핑)
- * @param displayIndex 목록 내 순번 (이미지/placeholder용, 현재는 미사용, API 호환용)
+// * @param displayIndex 목록 내 순번 (이미지/placeholder용, 현재는 미사용, API 호환용)
  * @param onClick 클릭 시 호출 (null이면 비클릭)
  * @param trailingContent Row 오른쪽 콘텐츠 (AddSongScreen·MemorialPlaylistRouteScreen에서는 라디오)
  */
 @Composable
 fun PlaylistSongItem(
     song: PlaylistSongDisplay,
-    displayIndex: Int,
     onClick: (() -> Unit)? = null,
     trailingContent: (@Composable RowScope.() -> Unit)? = null
 ) {
     val base = if (onClick != null) {
-        Modifier.fillMaxWidth().clickable(onClick = onClick)
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
     } else {
         Modifier.fillMaxWidth()
     }
 
     Column(modifier = base) {
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -77,7 +78,7 @@ fun PlaylistSongItem(
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
                         fontFamily = Sansneo,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Normal,
                         color = Gray9
                     )
                 )
@@ -85,11 +86,11 @@ fun PlaylistSongItem(
                 Text(
                     text = song.artist,
                     style = TextStyle(
-                        fontSize = 12.sp,
-                        lineHeight = 18.sp,
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
                         fontFamily = Sansneo,
                         fontWeight = FontWeight.Normal,
-                        color = Gray6
+                        color = Gray9
                     )
                 )
             }
@@ -97,11 +98,11 @@ fun PlaylistSongItem(
                 trailingContent()
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
             thickness = 1.dp,
-            color = Gray6,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            color = Gray3,
+//            modifier = Modifier.padding(horizontal = 20.dp)
         )
     }
 }
@@ -111,6 +112,5 @@ fun PlaylistSongItem(
 private fun PlaylistSongItemPreview() {
     PlaylistSongItem(
         song = PlaylistSongDisplay(id = "1", title = "노래 제목", artist = "가수 이름"),
-        displayIndex = 1
     )
 }

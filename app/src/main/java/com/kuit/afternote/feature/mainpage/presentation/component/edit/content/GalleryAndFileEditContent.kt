@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,17 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.InformationProcessingRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Spacing
 
@@ -31,28 +33,49 @@ import com.kuit.afternote.ui.theme.Spacing
 @Composable
 fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
+    bottomPadding: PaddingValues,
     params: GalleryAndFileEditContentParams
 ) {
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
-    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
+    // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
+    val bottomPaddingDp = bottomPadding.calculateBottomPadding()
+    // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
+    // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
+    val viewportHeight = with(density) {
+        windowInfo.containerSize.height.toDp() - bottomPaddingDp
+    }
+    val spacerHeight = viewportHeight * 0.1f
 
-    Column(modifier = modifier) {
+    GalleryAndFileEditContentContent(
+        modifier = modifier,
+        params = params,
+        spacerHeight = spacerHeight
+    )
+}
+
+@Composable
+private fun GalleryAndFileEditContentContent(
+    modifier: Modifier = Modifier,
+    params: GalleryAndFileEditContentParams,
+    spacerHeight: Dp
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
         // 정보 처리 방법 섹션
         RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
         Spacer(modifier = Modifier.height(Spacing.m))
 
-        InformationProcessingRadioButton(
-            method = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+        ProcessingMethodRadioButton(
+            option = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
             onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
         )
 
         Spacer(modifier = Modifier.height(Spacing.s))
 
-        InformationProcessingRadioButton(
-            method = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+        ProcessingMethodRadioButton(
+            option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
             onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
         )
@@ -77,7 +100,7 @@ fun GalleryAndFileEditContent(
         // 처리 방법 리스트 섹션
         RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(Spacing.ml))
 
         ProcessingMethodList(
             params = ProcessingMethodListParams(
@@ -100,8 +123,9 @@ fun GalleryAndFileEditContent(
             isMultiline = true
         )
 
-        // 갤러리 및 파일 탭 하단 여백 (화면 높이의 57%, 800dp 기준 약 456dp)
-        Spacer(modifier = Modifier.height(screenHeight * 0.57f))
+        // 갤러리 및 파일 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
+        // LocalWindowInfo를 사용하여 창 높이를 기준으로 계산
+        Spacer(modifier = Modifier.height(spacerHeight))
     }
 }
 
@@ -116,6 +140,7 @@ private fun GalleryAndFileEditContentPreview() {
         ) {
             // 첫 번째 옵션 선택됨 (파란 테두리), 두 번째는 선택 안 됨 (테두리 없음) 상태를 한 화면에 표시
             GalleryAndFileEditContent(
+                bottomPadding = PaddingValues(bottom = 88.dp),
                 params = GalleryAndFileEditContentParams(
                     messageState = rememberTextFieldState(),
                     infoMethodSection = InfoMethodSection(
@@ -138,6 +163,7 @@ private fun GalleryAndFileEditContentWithRecipientsPreview() {
                 .padding(20.dp)
         ) {
             GalleryAndFileEditContent(
+                bottomPadding = PaddingValues(bottom = 88.dp),
                 params = GalleryAndFileEditContentParams(
                     messageState = rememberTextFieldState(),
                     infoMethodSection = InfoMethodSection(

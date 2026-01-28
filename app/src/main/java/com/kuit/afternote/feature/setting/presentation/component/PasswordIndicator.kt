@@ -19,7 +19,8 @@ import com.kuit.afternote.ui.theme.B2
 @Composable
 fun PasscodeIndicator(
     totalDots: Int = 4,
-    filledDots: Int = 0 // 입력된 개수
+    // 입력된 개수
+    filledDots: Int = 0
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -34,10 +35,10 @@ fun PasscodeIndicator(
                     .size(15.dp)
                     .border(
                         width = 2.dp,
-                        color = B2, // B2 컬러
+                        // B2 컬러
+                        color = B2,
                         shape = CircleShape
-                    )
-                    .background(
+                    ).background(
                         color = if (isFilled) Color(0xFF91C1FF) else Color.Transparent,
                         shape = CircleShape
                     )

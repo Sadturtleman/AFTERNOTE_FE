@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -36,7 +38,7 @@ fun BottomNavigationItem(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    iconTextSpacing: androidx.compose.ui.unit.Dp = 4.dp,
+    iconTextSpacing: Dp = 4.dp,
 ) {
     Column(
         modifier = modifier
@@ -54,7 +56,8 @@ fun BottomNavigationItem(
             text = label,
             color = if (isSelected) B1 else Gray4,
             fontSize = 12.sp,
-            fontFamily = Sansneo
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Medium
         )
     }
 }

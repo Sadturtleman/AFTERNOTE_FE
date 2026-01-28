@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.expand.dropShadow
-import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Sansneo
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -36,15 +35,14 @@ import java.util.Locale
 fun RecordWeekTotal(
     modifier: Modifier = Modifier,
     today: LocalDate,
-
-    ) {
+) {
     val month = today.monthValue
     val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top=32.dp)
+            .padding(top = 32.dp)
             .padding(horizontal = 20.dp)
     ) {
         Text(
@@ -64,19 +62,18 @@ fun RecordWeekTotal(
                     offsetY = 2.dp,
                     offsetX = 0.dp,
                     spread = 0.dp
-                )
-                .clip(RoundedCornerShape(16.dp))
+                ).clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
-
-        ){
+        ) {
             val formatter = DateTimeFormatter.ofPattern("d", Locale.KOREA) // 일(day)만
             val allItems = (0..6).map { offset ->
                 val date = startOfWeek.plusDays(offset.toLong())
                 val dayLabel = date.format(formatter) // "10", "11", ...
-                listOf("월","화","수","목","금","토","일")[offset] to dayLabel
+                listOf("월", "화", "수", "목", "금", "토", "일")[offset] to dayLabel
             }
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 16.dp)
             ) {
                 allItems.forEach { (today, day) ->
@@ -87,7 +84,6 @@ fun RecordWeekTotal(
                     )
                 }
             }
-
         }
     }
 }

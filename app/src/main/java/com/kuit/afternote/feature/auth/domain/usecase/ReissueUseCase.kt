@@ -7,10 +7,10 @@ import javax.inject.Inject
 /**
  * 토큰 재발급 UseCase.
  */
-class ReissueUseCase @Inject constructor(
-    private val authRepository: AuthRepository
-) {
-
-    suspend operator fun invoke(refreshToken: String): Result<ReissueResult> =
-        authRepository.reissue(refreshToken)
-}
+class ReissueUseCase
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository
+    ) {
+        suspend operator fun invoke(refreshToken: String): Result<ReissueResult> = authRepository.reissue(refreshToken)
+    }

@@ -1,10 +1,8 @@
 package com.kuit.afternote.feature.setting.presentation.navgraph
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.kuit.afternote.feature.setting.presentation.screen.PasswordChangeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.ProfileEditCallbacks

@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
@@ -29,13 +31,34 @@ import com.kuit.afternote.ui.theme.Spacing
 @Composable
 fun SocialNetworkEditContent(
     modifier: Modifier = Modifier,
+    bottomPadding: PaddingValues,
     params: SocialNetworkEditContentParams
 ) {
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
-    val screenHeight = with(density) { windowInfo.containerSize.height.toDp() }
+    // Scaffold가 제공하는 bottomPadding을 사용 (네비게이션 바 높이 + 시스템 바 높이 자동 계산)
+    val bottomPaddingDp = bottomPadding.calculateBottomPadding()
+    // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
+    // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
+    val viewportHeight = with(density) {
+        windowInfo.containerSize.height.toDp() - bottomPaddingDp
+    }
+    val spacerHeight = viewportHeight * 0.1f
 
-    Column(modifier = modifier) {
+    SocialNetworkEditContentContent(
+        modifier = modifier,
+        params = params,
+        spacerHeight = spacerHeight
+    )
+}
+
+@Composable
+private fun SocialNetworkEditContentContent(
+    modifier: Modifier = Modifier,
+    params: SocialNetworkEditContentParams,
+    spacerHeight: Dp
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
         // 계정 정보 섹션
         RequiredLabel(text = "계정 정보", offsetY = 4f)
 
@@ -114,8 +137,9 @@ fun SocialNetworkEditContent(
             isMultiline = true
         )
 
-        // 소셜네트워크 탭 하단 여백 (화면 높이의 10%, 800dp 기준 약 80dp)
-        Spacer(modifier = Modifier.height(screenHeight * 0.1f))
+        // 소셜네트워크 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
+        // LocalWindowInfo를 사용하여 창 높이를 기준으로 계산
+        Spacer(modifier = Modifier.height(spacerHeight))
     }
 }
 
@@ -130,6 +154,7 @@ private fun SocialNetworkEditContentPreview() {
         ) {
             // 첫 번째 옵션 선택됨 (파란 테두리), 나머지는 선택 안 됨 (테두리 없음) 상태를 한 화면에 표시
             SocialNetworkEditContent(
+                bottomPadding = PaddingValues(bottom = 88.dp),
                 params = SocialNetworkEditContentParams(
                     messageState = rememberTextFieldState(),
                     accountSection = AccountSection(

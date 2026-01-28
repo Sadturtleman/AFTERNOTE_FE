@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -29,20 +29,20 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Son
 @Stable
 class MemorialPlaylistStateHolder {
     val songs: SnapshotStateList<Song> = mutableStateListOf()
-    
+
     var onSongCountChanged: (() -> Unit)? = null
-    
+
     fun initializeSongs(initialSongs: List<Song>) {
         if (songs.isEmpty()) {
             songs.addAll(initialSongs)
         }
     }
-    
+
     fun addSong(song: Song) {
         songs.add(song)
         onSongCountChanged?.invoke()
     }
-    
+
     fun removeSong(songId: String) {
         songs.removeAll { it.id == songId }
         onSongCountChanged?.invoke()
@@ -147,11 +147,11 @@ class AfternoteEditState(
         private set
     var playlistSongCount by mutableIntStateOf(16)
         private set
-    
+
     // Memorial Playlist State Holder (옵셔널 - 공유 상태)
     var playlistStateHolder: MemorialPlaylistStateHolder? = null
         private set
-    
+
     /**
      * 플레이리스트 상태 홀더 설정
      */
@@ -160,7 +160,7 @@ class AfternoteEditState(
         // 상태 홀더가 설정되면 실제 노래 개수로 업데이트
         updatePlaylistSongCount()
     }
-    
+
     /**
      * 플레이리스트 노래 개수 업데이트
      */

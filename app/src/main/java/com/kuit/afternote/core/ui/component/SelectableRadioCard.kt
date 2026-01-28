@@ -55,6 +55,7 @@ fun SelectableRadioCard(
 ) {
     val borderColor = when {
         selected -> B2
+        borderWhenUnselected -> Gray4
         else -> Color.Transparent
     }
 

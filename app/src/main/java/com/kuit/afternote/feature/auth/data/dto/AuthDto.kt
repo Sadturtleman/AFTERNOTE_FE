@@ -4,7 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SendEmailCodeRequest(val email: String)
+data class SendEmailCodeRequest(
+    val email: String
+)
 
 @Serializable
 data class VerifyEmailRequest(
@@ -13,7 +15,9 @@ data class VerifyEmailRequest(
 )
 
 @Serializable
-data class VerifyEmailData(@SerialName("isVerified") val isVerified: Boolean? = null)
+data class VerifyEmailData(
+    @SerialName("isVerified") val isVerified: Boolean? = null
+)
 
 @Serializable
 data class SignUpRequest(
@@ -42,7 +46,9 @@ data class LoginData(
 )
 
 @Serializable
-data class ReissueRequest(@SerialName("refreshToken") val refreshToken: String)
+data class ReissueRequest(
+    @SerialName("refreshToken") val refreshToken: String
+)
 
 @Serializable
 data class ReissueData(
@@ -51,7 +57,9 @@ data class ReissueData(
 )
 
 @Serializable
-data class LogoutRequest(@SerialName("refreshToken") val refreshToken: String)
+data class LogoutRequest(
+    @SerialName("refreshToken") val refreshToken: String
+)
 
 @Serializable
 data class PasswordChangeRequest(

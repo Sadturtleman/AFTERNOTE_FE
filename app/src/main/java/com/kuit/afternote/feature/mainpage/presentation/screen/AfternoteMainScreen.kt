@@ -17,8 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.AddFloatingActionButton
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar

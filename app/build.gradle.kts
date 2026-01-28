@@ -140,7 +140,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.hilt.android.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)

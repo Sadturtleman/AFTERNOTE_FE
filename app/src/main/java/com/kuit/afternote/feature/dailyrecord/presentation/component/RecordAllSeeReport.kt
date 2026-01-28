@@ -14,8 +14,10 @@ import java.time.LocalDate
  * 활동 한 눈에 보기
  */
 @Composable
-fun RecordAllSeeReport(modifier: Modifier = Modifier
-,today: LocalDate) {
+fun RecordAllSeeReport(
+    modifier: Modifier = Modifier,
+    today: LocalDate
+) {
     Column(
         modifier = Modifier
             .padding(top = 32.dp)
@@ -28,13 +30,11 @@ fun RecordAllSeeReport(modifier: Modifier = Modifier
         RecordShowWeekReport(
             standard = "데일리 질문 답변을 3번 작성했어요.",
             today = today
-
         )
         Spacer(Modifier.height(8.dp))
         RecordShowWeekReport(
             standard = "애프터노트에 3번 등록했어요.",
             today = today
-
         )
     }
 }

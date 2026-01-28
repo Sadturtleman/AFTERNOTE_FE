@@ -18,86 +18,85 @@ import javax.inject.Inject
  * 푸시 알림 설정 화면 ViewModel.
  */
 @HiltViewModel
-class PushSettingsViewModel @Inject constructor(
-    private val getMyPushSettingsUseCase: GetMyPushSettingsUseCase,
-    private val updateMyPushSettingsUseCase: UpdateMyPushSettingsUseCase,
-    private val getUserIdUseCase: GetUserIdUseCase
-) : ViewModel() {
+class PushSettingsViewModel
+    @Inject
+    constructor(
+        private val getMyPushSettingsUseCase: GetMyPushSettingsUseCase,
+        private val updateMyPushSettingsUseCase: UpdateMyPushSettingsUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(PushSettingsUiState())
+        val uiState: StateFlow<PushSettingsUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(PushSettingsUiState())
-    val uiState: StateFlow<PushSettingsUiState> = _uiState.asStateFlow()
-
-    /**
-     * 푸시 알림 설정 조회.
-     * JWT 토큰에서 userId를 자동으로 추출합니다.
-     */
-    fun loadPushSettings() {
-        viewModelScope.launch {
-            val userId = getUserIdUseCase()
-            if (userId == null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요."
-                    )
+        /**
+         * 푸시 알림 설정 조회.
+         * JWT 토큰에서 userId를 자동으로 추출합니다.
+         */
+        fun loadPushSettings() {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요."
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
+
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                getMyPushSettingsUseCase(userId = userId)
+                    .onSuccess { settings ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                timeLetter = settings.timeLetter,
+                                mindRecord = settings.mindRecord,
+                                afterNote = settings.afterNote,
+                                errorMessage = null
+                            )
+                        }
+                    }.onFailure { e ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = e.message ?: "푸시 알림 설정 조회에 실패했습니다."
+                            )
+                        }
+                    }
             }
-
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getMyPushSettingsUseCase(userId = userId)
-                .onSuccess { settings ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            timeLetter = settings.timeLetter,
-                            mindRecord = settings.mindRecord,
-                            afterNote = settings.afterNote,
-                            errorMessage = null
-                        )
-                    }
-                }
-                .onFailure { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = e.message ?: "푸시 알림 설정 조회에 실패했습니다."
-                        )
-                    }
-                }
         }
-    }
 
-    /**
-     * 푸시 알림 설정 수정.
-     * JWT 토큰에서 userId를 자동으로 추출합니다.
-     */
-    fun updatePushSettings(
-        timeLetter: Boolean?,
-        mindRecord: Boolean?,
-        afterNote: Boolean?
-    ) {
-        viewModelScope.launch {
-            val userId = getUserIdUseCase()
-            if (userId == null) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요.",
-                        updateSuccess = false
-                    )
+        /**
+         * 푸시 알림 설정 수정.
+         * JWT 토큰에서 userId를 자동으로 추출합니다.
+         */
+        fun updatePushSettings(
+            timeLetter: Boolean?,
+            mindRecord: Boolean?,
+            afterNote: Boolean?
+        ) {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요.",
+                            updateSuccess = false
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
-            }
 
-            _uiState.update { it.copy(isLoading = true, errorMessage = null, updateSuccess = false) }
-            updateMyPushSettingsUseCase(
-                userId = userId,
-                timeLetter = timeLetter,
-                mindRecord = mindRecord,
-                afterNote = afterNote
-            )
-                .onSuccess { settings ->
+                _uiState.update { it.copy(isLoading = true, errorMessage = null, updateSuccess = false) }
+                updateMyPushSettingsUseCase(
+                    userId = userId,
+                    timeLetter = timeLetter,
+                    mindRecord = mindRecord,
+                    afterNote = afterNote
+                ).onSuccess { settings ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -108,8 +107,7 @@ class PushSettingsViewModel @Inject constructor(
                             updateSuccess = true
                         )
                     }
-                }
-                .onFailure { e ->
+                }.onFailure { e ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -118,20 +116,20 @@ class PushSettingsViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+
+        /**
+         * updateSuccess 소비 후 호출 (네비게이션 후).
+         */
+        fun clearUpdateSuccess() {
+            _uiState.update { it.copy(updateSuccess = false) }
+        }
+
+        /**
+         * 에러 메시지 초기화.
+         */
+        fun clearError() {
+            _uiState.update { it.copy(errorMessage = null) }
         }
     }
-
-    /**
-     * updateSuccess 소비 후 호출 (네비게이션 후).
-     */
-    fun clearUpdateSuccess() {
-        _uiState.update { it.copy(updateSuccess = false) }
-    }
-
-    /**
-     * 에러 메시지 초기화.
-     */
-    fun clearError() {
-        _uiState.update { it.copy(errorMessage = null) }
-    }
-}

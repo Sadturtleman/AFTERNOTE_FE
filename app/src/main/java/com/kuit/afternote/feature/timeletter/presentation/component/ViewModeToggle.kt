@@ -2,9 +2,7 @@ package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.ViewMode
-import com.kuit.afternote.ui.theme.White
 
 /**
  * 리스트형 / 블록형 토글 버튼
@@ -35,8 +32,7 @@ fun ViewModeToggle(
             .background(
                 color = Color(0xFFEEEEEE),
                 shape = RoundedCornerShape(40.dp)
-            )
-            .padding(
+            ).padding(
                 vertical = 6.dp,
                 horizontal = 16.dp
             ),
@@ -46,7 +42,7 @@ fun ViewModeToggle(
         // 리스트 버튼
         ToggleButton(
             isSelected = currentMode == ViewMode.LIST,
-            iconResId = R.drawable.ic_radio_list,  // 리스트 아이콘
+            iconResId = R.drawable.ic_radio_list, // 리스트 아이콘
             contentDescription = "리스트형",
             onClick = { onModeChange(ViewMode.LIST) }
         )
@@ -57,7 +53,7 @@ fun ViewModeToggle(
         // 블록 버튼
         ToggleButton(
             isSelected = currentMode == ViewMode.BLOCK,
-            iconResId = R.drawable.ic_radio_block,  // 블록 아이콘
+            iconResId = R.drawable.ic_radio_block, // 블록 아이콘
             contentDescription = "블록형",
             onClick = { onModeChange(ViewMode.BLOCK) }
         )
@@ -75,13 +71,12 @@ private fun ToggleButton(
         modifier = Modifier
             .background(
                 color = Color(0xFFEEEEEE)
-            )
-            .size(
+            ).size(
                 24.dp
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
-    )  {
+    ) {
         Image(
             painter = painterResource(id = iconResId),
             contentDescription = contentDescription,
@@ -110,5 +105,3 @@ private fun ViewModeToggleBlockPreview() {
         onModeChange = {}
     )
 }
-
-
