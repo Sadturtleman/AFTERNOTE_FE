@@ -36,6 +36,7 @@ import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
+@Suppress("AssignedValueIsNeverRead")
 @Composable
 fun AfterNoteDetailScreen() {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
@@ -136,7 +137,7 @@ fun AfterNoteDetailScreen() {
                     Text(
                         text = "이 계정에는 우리 가족 여행 사진이 많아.\n계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!",
                         fontSize = 14.sp,
-                        color = TextDark,
+                        color = Gray9,
                         lineHeight = 22.sp,
                         modifier = Modifier.padding(top = 30.dp)
                     )
