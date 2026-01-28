@@ -14,7 +14,6 @@ import org.junit.Test
  * [PasswordChangeUseCase] 단위 테스트.
  */
 class PasswordChangeUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var passwordChangeUseCase: PasswordChangeUseCase
 
@@ -25,22 +24,24 @@ class PasswordChangeUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsUnit() = runTest {
-        coEvery { authRepository.passwordChange(any(), any()) } returns Result.success(Unit)
+    fun invoke_whenSuccess_returnsUnit() =
+        runTest {
+            coEvery { authRepository.passwordChange(any(), any()) } returns Result.success(Unit)
 
-        val result = passwordChangeUseCase("oldPwd123!", "newPwd456!")
+            val result = passwordChangeUseCase("oldPwd123!", "newPwd456!")
 
-        assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { authRepository.passwordChange("oldPwd123!", "newPwd456!") }
-    }
+            assertTrue(result.isSuccess)
+            coVerify(exactly = 1) { authRepository.passwordChange("oldPwd123!", "newPwd456!") }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.passwordChange(any(), any()) } returns Result.failure(RuntimeException("wrong password"))
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.passwordChange(any(), any()) } returns Result.failure(RuntimeException("wrong password"))
 
-        val result = passwordChangeUseCase("wrongPwd", "newPwd")
+            val result = passwordChangeUseCase("wrongPwd", "newPwd")
 
-        assertTrue(result.isFailure)
-        assertEquals("wrong password", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertEquals("wrong password", result.exceptionOrNull()?.message)
+        }
 }

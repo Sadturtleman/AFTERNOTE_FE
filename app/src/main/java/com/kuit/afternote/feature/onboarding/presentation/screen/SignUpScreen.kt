@@ -207,7 +207,6 @@ fun SignUpScreen(
                                 }
                             }
                         ) {
-
                             Text(
                                 text = "비밀번호 입력",
                                 fontSize = 16.sp,

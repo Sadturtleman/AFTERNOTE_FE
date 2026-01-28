@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -30,7 +31,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,10 +49,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.kuit.afternote.core.ui.component.OutlineTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.BuildConfig
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeUiState
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -286,7 +286,7 @@ private fun LoginActionButton(
     onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit
 ) {
     var showPasswordCycleDialog by remember { mutableStateOf(false) }
-    
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
@@ -311,7 +311,7 @@ private fun LoginActionButton(
             )
         }
     }
-    
+
     if (showPasswordCycleDialog) {
         PasswordCycleDialog(
             onDismiss = { showPasswordCycleDialog = false },
@@ -388,7 +388,7 @@ private fun PasswordCycleDialog(
 ) {
     val currentPasswordState = rememberTextFieldState()
     val newPasswordState = rememberTextFieldState()
-    
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -406,17 +406,17 @@ private fun PasswordCycleDialog(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 Text(
                     text = "현재 비밀번호를 입력하거나 비워두면 저장된 값(또는 기본값)을 사용합니다.",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 OutlineTextField(
                     label = "현재 비밀번호 (선택)",
                     textFieldState = currentPasswordState,
@@ -424,18 +424,18 @@ private fun PasswordCycleDialog(
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = "비워두면 저장된 값 사용"
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 OutlineTextField(
                     label = "새 비밀번호",
                     textFieldState = newPasswordState,
                     keyboardType = KeyboardType.Password,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

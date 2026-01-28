@@ -7,10 +7,10 @@ import javax.inject.Inject
 /**
  * 내 프로필 조회 UseCase.
  */
-class GetMyProfileUseCase @Inject constructor(
-    private val userRepository: UserRepository
-) {
-
-    suspend operator fun invoke(userId: Long): Result<UserProfile> =
-        userRepository.getMyProfile(userId = userId)
-}
+class GetMyProfileUseCase
+    @Inject
+    constructor(
+        private val userRepository: UserRepository
+    ) {
+        suspend operator fun invoke(userId: Long): Result<UserProfile> = userRepository.getMyProfile(userId = userId)
+    }

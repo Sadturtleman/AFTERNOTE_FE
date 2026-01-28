@@ -25,7 +25,7 @@ fun AccountProcessingRadioButton(
         option = method,
         selected = selected,
         onClick = onClick,
-        height = 102.dp
+//        height = 102.dp
     )
 }
 

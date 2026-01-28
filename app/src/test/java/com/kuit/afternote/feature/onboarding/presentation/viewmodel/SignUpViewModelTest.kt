@@ -25,7 +25,6 @@ import retrofit2.Response
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class SignUpViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -61,50 +60,54 @@ class SignUpViewModelTest {
     }
 
     @Test
-    fun signUp_whenSuccess_setsSignUpSuccess() = runTest {
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+    fun signUp_whenSuccess_setsSignUpSuccess() =
+        runTest {
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
 
-        viewModel.signUp("a@b.com", "pwd1!", "name", null)
-        advanceUntilIdle()
+            viewModel.signUp("a@b.com", "pwd1!", "name", null)
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.signUpSuccess)
-        assertNull(viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun signUp_withProfileUrl_callsUseCaseWithProfileUrl() = runTest {
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
-
-        viewModel.signUp("b@c.com", "pwd2!", "nick", "https://img/p.jpg")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.signUpSuccess)
-    }
+            assertTrue(viewModel.uiState.value.signUpSuccess)
+            assertNull(viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun signUp_whenFailure_setsErrorMessage() = runTest {
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(RuntimeException("email exists"))
+    fun signUp_withProfileUrl_callsUseCaseWithProfileUrl() =
+        runTest {
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
 
-        viewModel.signUp("a@b.com", "pwd", "n", null)
-        advanceUntilIdle()
+            viewModel.signUp("b@c.com", "pwd2!", "nick", "https://img/p.jpg")
+            advanceUntilIdle()
 
-        assertEquals("email exists", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertTrue(viewModel.uiState.value.signUpSuccess)
+        }
 
     @Test
-    fun clearSignUpSuccess_resetsSignUpSuccess() = runTest {
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
-        viewModel.signUp("a@b.com", "pwd", "n", null)
-        advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.signUpSuccess)
+    fun signUp_whenFailure_setsErrorMessage() =
+        runTest {
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(RuntimeException("email exists"))
 
-        viewModel.clearSignUpSuccess()
+            viewModel.signUp("a@b.com", "pwd", "n", null)
+            advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-    }
+            assertEquals("email exists", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun clearSignUpSuccess_resetsSignUpSuccess() =
+        runTest {
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+            viewModel.signUp("a@b.com", "pwd", "n", null)
+            advanceUntilIdle()
+            assertTrue(viewModel.uiState.value.signUpSuccess)
+
+            viewModel.clearSignUpSuccess()
+
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+        }
 
     @Test
     fun clearError_clearsErrorMessage() {
@@ -119,60 +122,73 @@ class SignUpViewModelTest {
     // ========== HTTP Error Cases ==========
 
     @Test
-    fun signUp_when400BadRequest_setsErrorMessage() = runTest {
-        val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<SignUpResult>(400, errorBody))
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
+    fun signUp_when400BadRequest_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<SignUpResult>(400, errorBody))
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
 
-        viewModel.signUp("invalid-email", "pwd1!", "name", null)
-        advanceUntilIdle()
+            viewModel.signUp("invalid-email", "pwd1!", "name", null)
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun signUp_when409Conflict_setsErrorMessage() = runTest {
-        val errorBody = """{"status":409,"code":409,"message":"Email already exists"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<SignUpResult>(409, errorBody))
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
-
-        viewModel.signUp("existing@example.com", "pwd1!", "name", null)
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("409") == true)
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("400") == true
+            )
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun signUp_when500ServerError_setsErrorMessage() = runTest {
-        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<SignUpResult>(500, errorBody))
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
+    fun signUp_when409Conflict_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":409,"code":409,"message":"Email already exists"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<SignUpResult>(409, errorBody))
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
 
-        viewModel.signUp("a@b.com", "pwd1!", "name", null)
-        advanceUntilIdle()
+            viewModel.signUp("existing@example.com", "pwd1!", "name", null)
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("409") == true
+            )
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+        }
+
+    @Test
+    fun signUp_when500ServerError_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<SignUpResult>(500, errorBody))
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
+
+            viewModel.signUp("a@b.com", "pwd1!", "name", null)
+            advanceUntilIdle()
+
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("500") == true
+            )
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+        }
 
     // ========== Network Error Cases ==========
 
     @Test
-    fun signUp_whenNetworkError_setsErrorMessage() = runTest {
-        coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(
-            java.io.IOException("Network unavailable")
-        )
+    fun signUp_whenNetworkError_setsErrorMessage() =
+        runTest {
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(
+                java.io.IOException("Network unavailable")
+            )
 
-        viewModel.signUp("a@b.com", "pwd1!", "name", null)
-        advanceUntilIdle()
+            viewModel.signUp("a@b.com", "pwd1!", "name", null)
+            advanceUntilIdle()
 
-        assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.signUpSuccess)
-    }
+            assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.signUpSuccess)
+        }
 }

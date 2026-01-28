@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.AddCircleButton
 import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
@@ -87,14 +88,12 @@ fun RecipientList(
         Spacer(modifier = Modifier.height(8.dp))
 
         // 추가 버튼 (파란 원형 버튼)
-        Image(
-            painter = painterResource(R.drawable.ic_add_circle),
+        AddCircleButton(
             contentDescription = "수신자 추가",
-            modifier = Modifier
-                .clickable(onClick = {
-                    state.toggleTextField()
-                    events.onAddClick()
-                })
+            onClick = {
+                state.toggleTextField()
+                events.onAddClick()
+            }
         )
     }
 }

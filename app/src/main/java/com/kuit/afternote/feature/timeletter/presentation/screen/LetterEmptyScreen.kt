@@ -54,7 +54,7 @@ fun LetterEmptyScreen(
                         contentDescription = "뒤로가기",
                         modifier = Modifier
                             .size(width = 6.dp, height = 12.dp)
-                            .clickable {  onNavigateBack() }
+                            .clickable { onNavigateBack() }
                     )
                 }
                 Text(
@@ -91,7 +91,6 @@ fun LetterEmptyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
-
         ) {
             Spacer(modifier = Modifier.height(287.38.dp))
 

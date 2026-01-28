@@ -270,8 +270,7 @@ private fun SmallActionButton(
             .background(
                 color = B3,
                 shape = RoundedCornerShape(80.dp)
-            )
-            .clickable { onClick() }
+            ).clickable { onClick() }
             .padding(
                 horizontal = 24.dp,
                 vertical = 12.dp

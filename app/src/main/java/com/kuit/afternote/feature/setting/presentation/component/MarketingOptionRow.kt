@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.B2
 
-
 @Composable
 fun MarketingOptionRow(
     label: String,
@@ -42,8 +41,7 @@ fun MarketingOptionRow(
                     width = 1.dp,
                     color = Color.LightGray,
                     shape = CircleShape
-                )
-                .background(
+                ).background(
                     color = Color.Transparent,
                     shape = CircleShape
                 ),

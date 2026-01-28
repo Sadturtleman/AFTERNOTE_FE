@@ -59,7 +59,10 @@ private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
  * @param confirmPassword 비밀번호 확인
  * @return 검증 결과에 따른 에러 상태
  */
-private fun validatePassword(newPassword: String, confirmPassword: String): PasswordErrorState {
+private fun validatePassword(
+    newPassword: String,
+    confirmPassword: String
+): PasswordErrorState {
     // 비밀번호 요구사항 검증
     if (PasswordValidator.validate(newPassword) != null) {
         return PasswordErrorState(requirementError = true)
@@ -114,7 +117,7 @@ fun PasswordChangeScreen(
             viewModel.clearRollback()
             return@LaunchedEffect
         }
-        
+
         // 성공 시에만 navigation
         if (uiState.passwordChangeSuccess && !uiState.needsRollback) {
             snackbarHostState.showSnackbar("비밀번호가 변경되었습니다.")

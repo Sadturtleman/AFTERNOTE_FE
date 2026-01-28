@@ -95,7 +95,6 @@ fun AfternoteDetailScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

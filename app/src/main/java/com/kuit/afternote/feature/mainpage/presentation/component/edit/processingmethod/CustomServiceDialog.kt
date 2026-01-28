@@ -82,12 +82,10 @@ fun CustomServiceDialog(
                     offsetX = 0.dp,
                     offsetY = 2.dp,
                     spread = 0.dp
-                )
-                .background(
+                ).background(
                     color = White,
                     shape = RoundedCornerShape(16.dp)
-                )
-                .padding(
+                ).padding(
                     horizontal = 24.dp,
                     vertical = 32.dp
                 ),
