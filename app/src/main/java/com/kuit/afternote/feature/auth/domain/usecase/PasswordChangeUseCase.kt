@@ -6,10 +6,13 @@ import javax.inject.Inject
 /**
  * 비밀번호 변경 UseCase.
  */
-class PasswordChangeUseCase @Inject constructor(
-    private val authRepository: AuthRepository
-) {
-
-    suspend operator fun invoke(currentPassword: String, newPassword: String): Result<Unit> =
-        authRepository.passwordChange(currentPassword, newPassword)
-}
+class PasswordChangeUseCase
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository
+    ) {
+        suspend operator fun invoke(
+            currentPassword: String,
+            newPassword: String
+        ): Result<Unit> = authRepository.passwordChange(currentPassword, newPassword)
+    }

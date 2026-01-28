@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit
  * 4. PATCH /users/push-settings - 푸시 알림 설정 수정
  */
 class UserApiIntegrationTest {
-
     private lateinit var userApi: UserApiService
     private lateinit var authApi: AuthApiService
     private var accessToken: String? = null
@@ -61,15 +60,16 @@ class UserApiIntegrationTest {
 
     @Before
     fun setUp() {
-        val okHttpClient = OkHttpClient.Builder()
+        val okHttpClient = OkHttpClient
+            .Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+            ).build()
 
-        val retrofit = Retrofit.Builder()
+        val retrofit = Retrofit
+            .Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
@@ -88,28 +88,31 @@ class UserApiIntegrationTest {
             LoginRequest(email = TEST_EMAIL, password = TEST_PASSWORD)
         )
         accessToken = response.data?.accessToken
-        
+
         // userId는 프로필 조회로 얻거나 테스트 계정의 실제 userId를 사용
         // 여기서는 기본값 1L을 사용 (실제 테스트 시 조정 필요)
 
         // 인증된 API 클라이언트 생성
         val authInterceptor = Interceptor { chain ->
-            val request = chain.request().newBuilder()
+            val request = chain
+                .request()
+                .newBuilder()
                 .addHeader("Authorization", "Bearer $accessToken")
                 .build()
             chain.proceed(request)
         }
 
-        val authenticatedClient = OkHttpClient.Builder()
+        val authenticatedClient = OkHttpClient
+            .Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+            ).build()
 
-        userApi = Retrofit.Builder()
+        userApi = Retrofit
+            .Builder()
             .baseUrl(BASE_URL)
             .client(authenticatedClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
@@ -120,193 +123,206 @@ class UserApiIntegrationTest {
     // ========== Get My Profile API Tests ==========
 
     @Test
-    fun getMyProfile_withValidToken_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun getMyProfile_withValidToken_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = userApi.getMyProfile(userId = userId)
+            val response = userApi.getMyProfile(userId = userId)
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-        assertNotNull(response.data?.name)
-        assertNotNull(response.data?.email)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+            assertNotNull(response.data?.name)
+            assertNotNull(response.data?.email)
+        }
 
     @Test
-    fun getMyProfile_withInvalidToken_returns401() = runBlocking {
-        // 인증 없이 API 호출 시도
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+    fun getMyProfile_withInvalidToken_returns401() =
+        runBlocking {
+            // 인증 없이 API 호출 시도
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
 
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(UserApiService::class.java)
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(UserApiService::class.java)
 
-        try {
-            unauthenticatedApi.getMyProfile(userId = 1L)
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated request returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            try {
+                unauthenticatedApi.getMyProfile(userId = 1L)
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated request returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
         }
-    }
 
     @Test
-    fun getMyProfile_withInvalidUserId_returnsExpectedStatusCode() = runBlocking {
-        loginAndGetTokens()
+    fun getMyProfile_withInvalidUserId_returnsExpectedStatusCode() =
+        runBlocking {
+            loginAndGetTokens()
 
-        try {
-            userApi.getMyProfile(userId = 999999L) // 존재하지 않는 userId
-            // 성공할 수도 있고, 404를 반환할 수도 있음
-        } catch (e: HttpException) {
-            println("==> Invalid userId returns HTTP ${e.code()}")
-            assertTrue("Expected 400, 401, or 404", e.code() in listOf(400, 401, 404))
+            try {
+                userApi.getMyProfile(userId = 999999L) // 존재하지 않는 userId
+                // 성공할 수도 있고, 404를 반환할 수도 있음
+            } catch (e: HttpException) {
+                println("==> Invalid userId returns HTTP ${e.code()}")
+                assertTrue("Expected 400, 401, or 404", e.code() in listOf(400, 401, 404))
+            }
+            Unit
         }
-        Unit
-    }
 
     // ========== Update My Profile API Tests ==========
 
     @Test
-    fun updateMyProfile_withValidData_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun updateMyProfile_withValidData_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = userApi.updateMyProfile(
-            userId = userId,
-            body = UserUpdateProfileRequest(
-                name = "Updated Name",
-                phone = "01012345678",
-                profileImageUrl = null
+            val response = userApi.updateMyProfile(
+                userId = userId,
+                body = UserUpdateProfileRequest(
+                    name = "Updated Name",
+                    phone = "01012345678",
+                    profileImageUrl = null
+                )
             )
-        )
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+        }
 
     @Test
-    fun updateMyProfile_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+    fun updateMyProfile_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
 
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(UserApiService::class.java)
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(UserApiService::class.java)
 
-        try {
-            unauthenticatedApi.updateMyProfile(
-                userId = 1L,
-                body = UserUpdateProfileRequest(name = "Test")
-            )
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated update returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            try {
+                unauthenticatedApi.updateMyProfile(
+                    userId = 1L,
+                    body = UserUpdateProfileRequest(name = "Test")
+                )
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated update returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
         }
-    }
 
     // ========== Get Push Settings API Tests ==========
 
     @Test
-    fun getMyPushSettings_withValidToken_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun getMyPushSettings_withValidToken_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = userApi.getMyPushSettings(userId = userId)
+            val response = userApi.getMyPushSettings(userId = userId)
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-        // Boolean 값들이 포함되어 있는지 확인
-        assertNotNull(response.data?.timeLetter)
-        assertNotNull(response.data?.mindRecord)
-        assertNotNull(response.data?.afterNote)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+            // Boolean 값들이 포함되어 있는지 확인
+            assertNotNull(response.data?.timeLetter)
+            assertNotNull(response.data?.mindRecord)
+            assertNotNull(response.data?.afterNote)
+        }
 
     @Test
-    fun getMyPushSettings_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+    fun getMyPushSettings_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
 
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(UserApiService::class.java)
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(UserApiService::class.java)
 
-        try {
-            unauthenticatedApi.getMyPushSettings(userId = 1L)
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated push settings request returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            try {
+                unauthenticatedApi.getMyPushSettings(userId = 1L)
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated push settings request returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
         }
-    }
 
     // ========== Update Push Settings API Tests ==========
 
     @Test
-    fun updateMyPushSettings_withValidData_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun updateMyPushSettings_withValidData_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = userApi.updateMyPushSettings(
-            userId = userId,
-            body = UserUpdatePushSettingRequest(
-                timeLetter = true,
-                mindRecord = false,
-                afterNote = true
+            val response = userApi.updateMyPushSettings(
+                userId = userId,
+                body = UserUpdatePushSettingRequest(
+                    timeLetter = true,
+                    mindRecord = false,
+                    afterNote = true
+                )
             )
-        )
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+        }
 
     @Test
-    fun updateMyPushSettings_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+    fun updateMyPushSettings_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
 
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(UserApiService::class.java)
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(UserApiService::class.java)
 
-        try {
-            unauthenticatedApi.updateMyPushSettings(
-                userId = 1L,
-                body = UserUpdatePushSettingRequest(timeLetter = true)
-            )
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated push settings update returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            try {
+                unauthenticatedApi.updateMyPushSettings(
+                    userId = 1L,
+                    body = UserUpdatePushSettingRequest(timeLetter = true)
+                )
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated push settings update returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
         }
-    }
 }

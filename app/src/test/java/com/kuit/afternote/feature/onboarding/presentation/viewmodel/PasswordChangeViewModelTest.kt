@@ -29,7 +29,6 @@ import retrofit2.Response
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class PasswordChangeViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -70,42 +69,45 @@ class PasswordChangeViewModelTest {
     }
 
     @Test
-    fun changePassword_whenSuccess_setsPasswordChangeSuccess() = runTest {
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.success(Unit)
+    fun changePassword_whenSuccess_setsPasswordChangeSuccess() =
+        runTest {
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.success(Unit)
 
-        viewModel.changePassword("currentPwd123!", "newPwd123!")
-        advanceUntilIdle()
+            viewModel.changePassword("currentPwd123!", "newPwd123!")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.passwordChangeSuccess)
-        assertNull(viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun changePassword_whenFailure_setsErrorMessage() = runTest {
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
-            RuntimeException("현재 비밀번호가 일치하지 않습니다.")
-        )
-
-        viewModel.changePassword("wrongPwd", "newPwd123!")
-        advanceUntilIdle()
-
-        assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertTrue(viewModel.uiState.value.passwordChangeSuccess)
+            assertNull(viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun clearPasswordChangeSuccess_resetsPasswordChangeSuccess() = runTest {
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.success(Unit)
-        viewModel.changePassword("currentPwd123!", "newPwd123!")
-        advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.passwordChangeSuccess)
+    fun changePassword_whenFailure_setsErrorMessage() =
+        runTest {
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
+                RuntimeException("현재 비밀번호가 일치하지 않습니다.")
+            )
 
-        viewModel.clearPasswordChangeSuccess()
+            viewModel.changePassword("wrongPwd", "newPwd123!")
+            advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-    }
+            assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun clearPasswordChangeSuccess_resetsPasswordChangeSuccess() =
+        runTest {
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.success(Unit)
+            viewModel.changePassword("currentPwd123!", "newPwd123!")
+            advanceUntilIdle()
+            assertTrue(viewModel.uiState.value.passwordChangeSuccess)
+
+            viewModel.clearPasswordChangeSuccess()
+
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+        }
 
     @Test
     fun clearError_clearsErrorMessage() {
@@ -120,80 +122,85 @@ class PasswordChangeViewModelTest {
     // ========== HTTP Error Cases ==========
 
     @Test
-    fun changePassword_when400BadRequest_setsUserFriendlyErrorMessage() = runTest {
-        val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(400, errorBody))
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+    fun changePassword_when400BadRequest_setsUserFriendlyErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(400, errorBody))
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.changePassword("currentPwd!", "weak")
-        advanceUntilIdle()
+            viewModel.changePassword("currentPwd!", "weak")
+            advanceUntilIdle()
 
-        // Server message contains "format" -> maps to password format requirement message
-        assertEquals(
-            "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다.",
-            viewModel.uiState.value.errorMessage
-        )
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun changePassword_when400WrongPassword_setsUserFriendlyErrorMessage() = runTest {
-        val errorBody = """{"status":400,"code":400,"message":"Current password is wrong"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(400, errorBody))
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
-
-        viewModel.changePassword("wrongPwd!", "newPwd123!")
-        advanceUntilIdle()
-
-        // Server message contains "wrong" -> maps to wrong password message
-        assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            // Server message contains "format" -> maps to password format requirement message
+            assertEquals(
+                "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다.",
+                viewModel.uiState.value.errorMessage
+            )
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun changePassword_when401Unauthorized_setsUserFriendlyErrorMessage() = runTest {
-        val errorBody = """{"status":401,"code":401,"message":"Current password is incorrect"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(401, errorBody))
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+    fun changePassword_when400WrongPassword_setsUserFriendlyErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Current password is wrong"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(400, errorBody))
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.changePassword("wrongPwd!", "newPwd123!")
-        advanceUntilIdle()
+            viewModel.changePassword("wrongPwd!", "newPwd123!")
+            advanceUntilIdle()
 
-        assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-    }
+            // Server message contains "wrong" -> maps to wrong password message
+            assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun changePassword_when500ServerError_setsUserFriendlyErrorMessage() = runTest {
-        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(500, errorBody))
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+    fun changePassword_when401Unauthorized_setsUserFriendlyErrorMessage() =
+        runTest {
+            val errorBody = """{"status":401,"code":401,"message":"Current password is incorrect"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(401, errorBody))
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
-        viewModel.changePassword("currentPwd!", "newPwd123!")
-        advanceUntilIdle()
+            viewModel.changePassword("wrongPwd!", "newPwd123!")
+            advanceUntilIdle()
 
-        assertEquals("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-    }
+            assertEquals("현재 비밀번호가 일치하지 않습니다.", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+        }
+
+    @Test
+    fun changePassword_when500ServerError_setsUserFriendlyErrorMessage() =
+        runTest {
+            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(500, errorBody))
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
+
+            viewModel.changePassword("currentPwd!", "newPwd123!")
+            advanceUntilIdle()
+
+            assertEquals("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+        }
 
     // ========== Network Error Cases ==========
 
     @Test
-    fun changePassword_whenNetworkError_setsUserFriendlyErrorMessage() = runTest {
-        coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
-            java.io.IOException("Network unavailable")
-        )
+    fun changePassword_whenNetworkError_setsUserFriendlyErrorMessage() =
+        runTest {
+            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
+                java.io.IOException("Network unavailable")
+            )
 
-        viewModel.changePassword("currentPwd!", "newPwd123!")
-        advanceUntilIdle()
+            viewModel.changePassword("currentPwd!", "newPwd123!")
+            advanceUntilIdle()
 
-        assertEquals("네트워크 연결을 확인해주세요.", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.passwordChangeSuccess)
-    }
+            assertEquals("네트워크 연결을 확인해주세요.", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.passwordChangeSuccess)
+        }
 }

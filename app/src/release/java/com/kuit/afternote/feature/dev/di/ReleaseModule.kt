@@ -18,7 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ReleaseModule {
-
     @Binds
     @Singleton
     abstract fun bindTestAccountManager(impl: ReleaseTestAccountManager): TestAccountManager

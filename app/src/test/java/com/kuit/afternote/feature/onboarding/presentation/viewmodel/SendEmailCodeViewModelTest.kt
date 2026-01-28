@@ -24,7 +24,6 @@ import retrofit2.Response
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class SendEmailCodeViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -46,40 +45,43 @@ class SendEmailCodeViewModelTest {
     }
 
     @Test
-    fun sendEmailCode_whenSuccess_setsSendSuccess() = runTest {
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.success(Unit)
+    fun sendEmailCode_whenSuccess_setsSendSuccess() =
+        runTest {
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.success(Unit)
 
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.sendSuccess)
-        assertNull(viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun sendEmailCode_whenFailure_setsErrorMessage() = runTest {
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(RuntimeException("rate limit"))
-
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
-
-        assertEquals("rate limit", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.sendSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertTrue(viewModel.uiState.value.sendSuccess)
+            assertNull(viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun clearSendSuccess_resetsSendSuccess() = runTest {
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.success(Unit)
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.sendSuccess)
+    fun sendEmailCode_whenFailure_setsErrorMessage() =
+        runTest {
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(RuntimeException("rate limit"))
 
-        viewModel.clearSendSuccess()
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.sendSuccess)
-    }
+            assertEquals("rate limit", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.sendSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun clearSendSuccess_resetsSendSuccess() =
+        runTest {
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.success(Unit)
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
+            assertTrue(viewModel.uiState.value.sendSuccess)
+
+            viewModel.clearSendSuccess()
+
+            assertFalse(viewModel.uiState.value.sendSuccess)
+        }
 
     @Test
     fun clearError_clearsErrorMessage() {
@@ -94,60 +96,73 @@ class SendEmailCodeViewModelTest {
     // ========== HTTP Error Cases ==========
 
     @Test
-    fun sendEmailCode_when400BadRequest_setsErrorMessage() = runTest {
-        val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(400, errorBody))
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
+    fun sendEmailCode_when400BadRequest_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(400, errorBody))
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
 
-        viewModel.sendEmailCode("invalid-email")
-        advanceUntilIdle()
+            viewModel.sendEmailCode("invalid-email")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
-        assertFalse(viewModel.uiState.value.sendSuccess)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun sendEmailCode_when429TooManyRequests_setsErrorMessage() = runTest {
-        val errorBody = """{"status":429,"code":429,"message":"Rate limit exceeded"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(429, errorBody))
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
-
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("429") == true)
-        assertFalse(viewModel.uiState.value.sendSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("400") == true
+            )
+            assertFalse(viewModel.uiState.value.sendSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun sendEmailCode_when500ServerError_setsErrorMessage() = runTest {
-        val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-            .toResponseBody("application/json".toMediaType())
-        val httpException = HttpException(Response.error<Unit>(500, errorBody))
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
+    fun sendEmailCode_when429TooManyRequests_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":429,"code":429,"message":"Rate limit exceeded"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(429, errorBody))
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
 
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
-        assertFalse(viewModel.uiState.value.sendSuccess)
-    }
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("429") == true
+            )
+            assertFalse(viewModel.uiState.value.sendSuccess)
+        }
+
+    @Test
+    fun sendEmailCode_when500ServerError_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(500, errorBody))
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
+
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
+
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("500") == true
+            )
+            assertFalse(viewModel.uiState.value.sendSuccess)
+        }
 
     // ========== Network Error Cases ==========
 
     @Test
-    fun sendEmailCode_whenNetworkError_setsErrorMessage() = runTest {
-        coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(
-            java.io.IOException("Network unavailable")
-        )
+    fun sendEmailCode_whenNetworkError_setsErrorMessage() =
+        runTest {
+            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(
+                java.io.IOException("Network unavailable")
+            )
 
-        viewModel.sendEmailCode("a@b.com")
-        advanceUntilIdle()
+            viewModel.sendEmailCode("a@b.com")
+            advanceUntilIdle()
 
-        assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
-        assertFalse(viewModel.uiState.value.sendSuccess)
-    }
+            assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.sendSuccess)
+        }
 }

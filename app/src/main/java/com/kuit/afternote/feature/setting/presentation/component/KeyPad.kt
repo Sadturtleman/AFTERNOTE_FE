@@ -57,7 +57,7 @@ fun KeyPad(
                         key = key,
                         modifier = Modifier.weight(1f), // 균등한 클릭 영역 확보
                         onClick = {
-                            val action = when(key) {
+                            val action = when (key) {
                                 "delete" -> KeyAction.Delete
                                 "check" -> KeyAction.Confirm
                                 else -> KeyAction.Number(key)

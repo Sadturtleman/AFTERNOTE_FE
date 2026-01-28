@@ -6,7 +6,6 @@ import com.kuit.afternote.feature.timeletter.data.api.TimeLetterApiService
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterCreateRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterDeleteRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterStatus
-import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterUpdateRequest
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -39,7 +38,6 @@ import java.util.concurrent.TimeUnit
  * 7. DELETE /time-letters/temporary - 임시저장 전체 삭제
  */
 class TimeLetterApiIntegrationTest {
-
     private lateinit var timeLetterApi: TimeLetterApiService
     private lateinit var authApi: AuthApiService
     private var accessToken: String? = null
@@ -63,15 +61,16 @@ class TimeLetterApiIntegrationTest {
 
     @Before
     fun setUp() {
-        val okHttpClient = OkHttpClient.Builder()
+        val okHttpClient = OkHttpClient
+            .Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+            ).build()
 
-        val retrofit = Retrofit.Builder()
+        val retrofit = Retrofit
+            .Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
@@ -93,22 +92,25 @@ class TimeLetterApiIntegrationTest {
 
         // 인증된 API 클라이언트 생성
         val authInterceptor = Interceptor { chain ->
-            val request = chain.request().newBuilder()
+            val request = chain
+                .request()
+                .newBuilder()
                 .addHeader("Authorization", "Bearer $accessToken")
                 .build()
             chain.proceed(request)
         }
 
-        val authenticatedClient = OkHttpClient.Builder()
+        val authenticatedClient = OkHttpClient
+            .Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+            ).build()
 
-        timeLetterApi = Retrofit.Builder()
+        timeLetterApi = Retrofit
+            .Builder()
             .baseUrl(BASE_URL)
             .client(authenticatedClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
@@ -119,175 +121,187 @@ class TimeLetterApiIntegrationTest {
     // ========== Get Time Letters API Tests ==========
 
     @Test
-    fun getTimeLetters_withValidToken_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun getTimeLetters_withValidToken_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = timeLetterApi.getTimeLetters()
+            val response = timeLetterApi.getTimeLetters()
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+        }
 
     @Test
-    fun getTimeLetters_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
+    fun getTimeLetters_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
 
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(TimeLetterApiService::class.java)
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(TimeLetterApiService::class.java)
 
-        try {
-            unauthenticatedApi.getTimeLetters()
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated request returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            try {
+                unauthenticatedApi.getTimeLetters()
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated request returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
         }
-    }
 
     // ========== Create Time Letter API Tests ==========
 
     @Test
-    fun createTimeLetter_withValidData_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun createTimeLetter_withValidData_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = timeLetterApi.createTimeLetter(
-            TimeLetterCreateRequest(
-                title = "Test Time Letter",
-                content = "Test content",
-                sendAt = null,
-                status = TimeLetterStatus.DRAFT,
-                mediaList = null
-            )
-        )
-
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-    }
-
-    @Test
-    fun createTimeLetter_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
-
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(TimeLetterApiService::class.java)
-
-        try {
-            unauthenticatedApi.createTimeLetter(
+            val response = timeLetterApi.createTimeLetter(
                 TimeLetterCreateRequest(
-                    status = TimeLetterStatus.DRAFT
+                    title = "Test Time Letter",
+                    content = "Test content",
+                    sendAt = null,
+                    status = TimeLetterStatus.DRAFT,
+                    mediaList = null
                 )
             )
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated create returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
         }
-    }
+
+    @Test
+    fun createTimeLetter_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
+
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(TimeLetterApiService::class.java)
+
+            try {
+                unauthenticatedApi.createTimeLetter(
+                    TimeLetterCreateRequest(
+                        status = TimeLetterStatus.DRAFT
+                    )
+                )
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated create returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
+        }
 
     // ========== Get Time Letter API Tests ==========
 
     @Test
-    fun getTimeLetter_withValidId_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun getTimeLetter_withValidId_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        // 먼저 타임레터 목록을 가져와서 ID를 얻거나, 테스트용 ID 사용
-        try {
-            val response = timeLetterApi.getTimeLetter(timeLetterId = 1L)
-            assertEquals(200, response.status)
-            assertNotNull(response.data)
-        } catch (e: HttpException) {
-            // 404가 반환될 수 있음 (존재하지 않는 ID)
-            println("==> Get time letter returns HTTP ${e.code()}")
-            assertTrue("Expected 200 or 404", e.code() == 200 || e.code() == 404)
+            // 먼저 타임레터 목록을 가져와서 ID를 얻거나, 테스트용 ID 사용
+            try {
+                val response = timeLetterApi.getTimeLetter(timeLetterId = 1L)
+                assertEquals(200, response.status)
+                assertNotNull(response.data)
+            } catch (e: HttpException) {
+                // 404가 반환될 수 있음 (존재하지 않는 ID)
+                println("==> Get time letter returns HTTP ${e.code()}")
+                assertTrue("Expected 200 or 404", e.code() == 200 || e.code() == 404)
+            }
+            Unit
         }
-        Unit
-    }
 
     @Test
-    fun getTimeLetter_withInvalidId_returns404() = runBlocking {
-        loginAndGetTokens()
+    fun getTimeLetter_withInvalidId_returns404() =
+        runBlocking {
+            loginAndGetTokens()
 
-        try {
-            timeLetterApi.getTimeLetter(timeLetterId = 999999L)
-            // 성공할 수도 있음
-        } catch (e: HttpException) {
-            println("==> Invalid time letter ID returns HTTP ${e.code()}")
-            assertEquals("Expected 404 for invalid ID", 404, e.code())
+            try {
+                timeLetterApi.getTimeLetter(timeLetterId = 999999L)
+                // 성공할 수도 있음
+            } catch (e: HttpException) {
+                println("==> Invalid time letter ID returns HTTP ${e.code()}")
+                assertEquals("Expected 404 for invalid ID", 404, e.code())
+            }
+            Unit
         }
-        Unit
-    }
 
     // ========== Get Temporary Time Letters API Tests ==========
 
     @Test
-    fun getTemporaryTimeLetters_withValidToken_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun getTemporaryTimeLetters_withValidToken_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = timeLetterApi.getTemporaryTimeLetters()
+            val response = timeLetterApi.getTemporaryTimeLetters()
 
-        assertEquals(200, response.status)
-        assertNotNull(response.data)
-    }
+            assertEquals(200, response.status)
+            assertNotNull(response.data)
+        }
 
     // ========== Delete Time Letters API Tests ==========
 
     @Test
-    fun deleteTimeLetters_withValidIds_returns200() = runBlocking {
-        loginAndGetTokens()
+    fun deleteTimeLetters_withValidIds_returns200() =
+        runBlocking {
+            loginAndGetTokens()
 
-        val response = timeLetterApi.deleteTimeLetters(
-            TimeLetterDeleteRequest(timeLetterIds = listOf(1L))
-        )
-
-        // 200 또는 404 (존재하지 않는 ID일 수 있음)
-        assertTrue("Expected 200 or 404", response.status == 200 || response.status == 404)
-    }
-
-    @Test
-    fun deleteTimeLetters_withInvalidToken_returns401() = runBlocking {
-        val unauthenticatedClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
-
-        val unauthenticatedApi = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(unauthenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(TimeLetterApiService::class.java)
-
-        try {
-            unauthenticatedApi.deleteTimeLetters(
+            val response = timeLetterApi.deleteTimeLetters(
                 TimeLetterDeleteRequest(timeLetterIds = listOf(1L))
             )
-            throw AssertionError("Expected HttpException but got success response")
-        } catch (e: HttpException) {
-            println("==> Unauthenticated delete returns HTTP ${e.code()}")
-            assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+
+            // 200 또는 404 (존재하지 않는 ID일 수 있음)
+            assertTrue("Expected 200 or 404", response.status == 200 || response.status == 404)
         }
-    }
+
+    @Test
+    fun deleteTimeLetters_withInvalidToken_returns401() =
+        runBlocking {
+            val unauthenticatedClient = OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                ).build()
+
+            val unauthenticatedApi = Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(unauthenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
+                .create(TimeLetterApiService::class.java)
+
+            try {
+                unauthenticatedApi.deleteTimeLetters(
+                    TimeLetterDeleteRequest(timeLetterIds = listOf(1L))
+                )
+                throw AssertionError("Expected HttpException but got success response")
+            } catch (e: HttpException) {
+                println("==> Unauthenticated delete returns HTTP ${e.code()}")
+                assertEquals("Expected 401 for unauthenticated request", 401, e.code())
+            }
+        }
 }

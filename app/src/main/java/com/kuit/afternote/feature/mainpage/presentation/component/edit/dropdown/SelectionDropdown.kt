@@ -7,16 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +39,10 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
+private const val CATEGORY_SOCIAL_NETWORK = "소셜네트워크"
+private const val CATEGORY_BUSINESS = "비즈니스"
+private const val CATEGORY_GALLERY_AND_FILE_PREVIEW = "갤러리 및 파일"
+
 /**
  * 드롭다운 메뉴 스타일 설정
  *
@@ -61,7 +63,7 @@ data class DropdownMenuStyle(
  *
  * 피그마 디자인 기반:
  * - 라벨: 12sp, Regular, Gray9
- * - 드롭다운 필드: 흰색 배경, 하단 보더, 36dp 높이
+ * - 드롭다운 필드: 흰색 배경, 하단 보더
  * - 선택된 값: 16sp, Regular, Gray8
  * - 드롭다운 아이콘: 오른쪽 정렬
  * - 드롭다운 메뉴 offset: 기본 4.dp
@@ -103,7 +105,7 @@ fun SelectionDropdown(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(36.dp)
+//                    .height(36.dp)
                     .onGloballyPositioned { coordinates ->
                         val newWidth = with(density) { coordinates.size.width.toDp() }
                         if (newWidth != state.boxWidth) {
@@ -181,8 +183,8 @@ private fun SelectionDropdownPreview() {
     AfternoteTheme {
         SelectionDropdown(
             label = "종류",
-            selectedValue = "소셜네트워크",
-            options = listOf("소셜네트워크", "비즈니스", "갤러리 및 파일"),
+            selectedValue = CATEGORY_SOCIAL_NETWORK,
+            options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
             onValueSelected = {}
         )
     }
@@ -195,7 +197,11 @@ private fun SelectionDropdownPreview() {
 @Composable
 private fun ExpandedDropdownMenuPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -205,7 +211,7 @@ private fun ExpandedDropdownMenuPreview() {
                 tonalElevation = 0.dp,
                 modifier = Modifier.width(200.dp)
             ) {
-                listOf("소셜네트워크", "비즈니스", "갤러리 및 파일").forEach { option ->
+                listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW).forEach { option ->
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -236,7 +242,11 @@ private fun ExpandedDropdownMenuPreview() {
 @Composable
 private fun ExpandedDropdownMenuWithElevationPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -277,7 +287,11 @@ private fun ExpandedDropdownMenuWithElevationPreview() {
 @Composable
 private fun ExpandedDropdownMenuInDialogPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},
@@ -318,7 +332,11 @@ private fun ExpandedDropdownMenuInDialogPreview() {
 @Composable
 private fun ExpandedDropdownMenuLongListPreview() {
     AfternoteTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             DropdownMenu(
                 expanded = true,
                 onDismissRequest = {},

@@ -18,4 +18,3 @@ sealed interface TimeLetterRoute {
     @Serializable
     data object LetterEmptyRoute : TimeLetterRoute
 }
-

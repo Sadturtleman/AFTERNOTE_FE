@@ -2,10 +2,14 @@ package com.kuit.afternote.feature.timeletter.presentation.uimodel
 
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 
-sealed class TimeLetterUiState{
+sealed class TimeLetterUiState {
     object Loading : TimeLetterUiState()
+
     object Empty : TimeLetterUiState()
-    data class Success(val letters: List<TimeLetterItem>) : TimeLetterUiState()
+
+    data class Success(
+        val letters: List<TimeLetterItem>
+    ) : TimeLetterUiState()
 }
 
 data class TimeLetterItem(

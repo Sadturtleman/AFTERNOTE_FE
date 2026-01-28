@@ -14,7 +14,6 @@ import org.junit.Test
  * [LogoutUseCase] 단위 테스트.
  */
 class LogoutUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var logoutUseCase: LogoutUseCase
 
@@ -25,22 +24,24 @@ class LogoutUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsUnit() = runTest {
-        coEvery { authRepository.logout(any()) } returns Result.success(Unit)
+    fun invoke_whenSuccess_returnsUnit() =
+        runTest {
+            coEvery { authRepository.logout(any()) } returns Result.success(Unit)
 
-        val result = logoutUseCase("refresh_token")
+            val result = logoutUseCase("refresh_token")
 
-        assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { authRepository.logout("refresh_token") }
-    }
+            assertTrue(result.isSuccess)
+            coVerify(exactly = 1) { authRepository.logout("refresh_token") }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.logout(any()) } returns Result.failure(RuntimeException("logout failed"))
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.logout(any()) } returns Result.failure(RuntimeException("logout failed"))
 
-        val result = logoutUseCase("invalid_token")
+            val result = logoutUseCase("invalid_token")
 
-        assertTrue(result.isFailure)
-        assertEquals("logout failed", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertEquals("logout failed", result.exceptionOrNull()?.message)
+        }
 }

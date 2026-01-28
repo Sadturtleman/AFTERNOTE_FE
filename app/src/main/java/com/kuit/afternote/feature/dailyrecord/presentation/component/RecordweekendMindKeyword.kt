@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.ui.expand.dropShadow
 
@@ -42,16 +41,13 @@ fun RecordweekendMindKeyword(modifier: Modifier = Modifier) {
                     offsetY = 2.dp,
                     offsetX = 0.dp,
                     spread = 0.dp
-                )
-                .clip(RoundedCornerShape(16.dp))
+                ).clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
-        ){
+        ) {
             Text(
                 text = "이번 주 박서연 님의 기록에서는\n" +
                     "‘가족’을 위한 ‘감사’의 마음이 엿보입니다."
             )
-
         }
     }
-
 }

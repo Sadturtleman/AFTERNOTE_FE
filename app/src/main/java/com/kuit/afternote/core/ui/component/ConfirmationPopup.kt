@@ -94,8 +94,7 @@ fun ConfirmationPopupContent(
                     offsetX = 0.dp,
                     offsetY = 2.dp,
                     spread = 0.dp
-                )
-                .clip(containerShape)
+                ).clip(containerShape)
                 .background(Color.White)
                 .padding(
                     horizontal = 24.dp,
@@ -103,72 +102,69 @@ fun ConfirmationPopupContent(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-        Text(
-            text = message,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9,
-                textAlign = TextAlign.Center
-            )
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Spacer(modifier = Modifier.height(7.5.dp))
             Text(
-                text = dismissText,
-                style = buttonTextStyle,
-                modifier = Modifier
-                    .weight(1f)
-                    .dropShadow(
-                        shape = buttonShape,
-                        color = Color.Black.copy(alpha = 0.05f),
-                        blur = 5.dp,
-                        offsetX = 0.dp,
-                        offsetY = 2.dp,
-                        spread = 0.dp
-                    )
-                    .clip(buttonShape)
-                    .background(Gray3)
-                    .clickable(onClick = onDismiss)
-                    .padding(
-                        horizontal = 24.dp,
-                        vertical = 16.dp
-                    )
+                text = message,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                    textAlign = TextAlign.Center
+                )
             )
 
-            Text(
-                text = confirmText,
-                style = buttonTextStyle,
-                modifier = Modifier
-                    .weight(1f)
-                    .dropShadow(
-                        shape = buttonShape,
-                        color = Color.Black.copy(alpha = 0.05f),
-                        blur = 5.dp,
-                        offsetX = 0.dp,
-                        offsetY = 2.dp,
-                        spread = 0.dp
-                    )
-                    .clip(buttonShape)
-                    .background(B3)
-                    .clickable(onClick = onConfirm)
-                    .padding(
-                        horizontal = 24.dp,
-                        vertical = 16.dp
-                    )
-            )
-            Spacer(modifier = Modifier.height(7.5.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Spacer(modifier = Modifier.height(7.5.dp))
+                Text(
+                    text = dismissText,
+                    style = buttonTextStyle,
+                    modifier = Modifier
+                        .weight(1f)
+                        .dropShadow(
+                            shape = buttonShape,
+                            color = Color.Black.copy(alpha = 0.05f),
+                            blur = 5.dp,
+                            offsetX = 0.dp,
+                            offsetY = 2.dp,
+                            spread = 0.dp
+                        ).clip(buttonShape)
+                        .background(Gray3)
+                        .clickable(onClick = onDismiss)
+                        .padding(
+                            horizontal = 24.dp,
+                            vertical = 16.dp
+                        )
+                )
+
+                Text(
+                    text = confirmText,
+                    style = buttonTextStyle,
+                    modifier = Modifier
+                        .weight(1f)
+                        .dropShadow(
+                            shape = buttonShape,
+                            color = Color.Black.copy(alpha = 0.05f),
+                            blur = 5.dp,
+                            offsetX = 0.dp,
+                            offsetY = 2.dp,
+                            spread = 0.dp
+                        ).clip(buttonShape)
+                        .background(B3)
+                        .clickable(onClick = onConfirm)
+                        .padding(
+                            horizontal = 24.dp,
+                            vertical = 16.dp
+                        )
+                )
+                Spacer(modifier = Modifier.height(7.5.dp))
+            }
         }
-    }
     }
 }
 

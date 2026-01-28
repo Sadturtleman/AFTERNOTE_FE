@@ -1,9 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
-import android.icu.util.LocaleData
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,10 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -52,15 +44,14 @@ import com.kuit.afternote.ui.theme.White
 @Composable
 fun RecordListItem(
     modifier: Modifier = Modifier
-        .background(Gray1)
-    ,
+        .background(Gray1),
     title: String,
     content: String,
     onRightClick: () -> Unit = {},
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Column{
+    Column {
         Box(
             modifier = Modifier
                 .padding(top = 16.dp)
@@ -82,7 +73,6 @@ fun RecordListItem(
                         .clip(RoundedCornerShape(8.dp))
                         .background(Gray2)
                         .padding(start = 16.dp, top = 24.dp, end = 16.dp)
-
                 ) {
                     Text(
                         text = content,
@@ -94,11 +84,10 @@ fun RecordListItem(
 
                 Row(
                     modifier = Modifier
-                        //.fillMaxWidth()
-                        .padding(top = 7.dp,bottom = 11.dp),
+                        // .fillMaxWidth()
+                        .padding(top = 7.dp, bottom = 11.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
-
                 ) {
                     Text(
                         text = "2026.01.03",
@@ -121,10 +110,11 @@ fun RecordListItem(
                                 contentDescription = "수정버튼",
                                 modifier = Modifier.size(30.dp),
                                 tint = Gray5
-
                             )
-                            IconButton(onClick = { expanded = true },
-                                modifier = Modifier.size(30.dp)) {
+                            IconButton(
+                                onClick = { expanded = true },
+                                modifier = Modifier.size(30.dp)
+                            ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_three_jum_fore_foreground),
                                     contentDescription = "더보기",
@@ -139,23 +129,27 @@ fun RecordListItem(
                             onDismissRequest = { expanded = false },
                             offset = DpOffset(x = 130.dp, y = 10.dp), // 원하는 만큼 이동
                             containerColor = White,
-
                         ) {
                             DropdownMenuItem(
-                                text = { Text(
-                                    text = "수정하기",
-                                    fontFamily = Sansneo,
-                                    fontWeight = FontWeight.Medium
-                                    ) },
+                                text = {
+                                    Text(
+                                        text = "수정하기",
+                                        fontFamily = Sansneo,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
                                 onClick = {
                                     expanded = false
                                 },
                             )
                             DropdownMenuItem(
-                                text = { Text(text = "삭제하기",
-                                    fontFamily = Sansneo,
-                                    fontWeight = FontWeight.Medium
-                                ) },
+                                text = {
+                                    Text(
+                                        text = "삭제하기",
+                                        fontFamily = Sansneo,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
                                 onClick = {
                                     expanded = false
                                     println("삭제")
@@ -178,7 +172,7 @@ fun RecordListItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun RecordListItemPrev () {
+private fun RecordListItemPrev() {
     Column {
         RecordListItem(
             title = "오능ㄹ",
@@ -189,5 +183,4 @@ private fun RecordListItemPrev () {
             content = "r"
         )
     }
-
 }

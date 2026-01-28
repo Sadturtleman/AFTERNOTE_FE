@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.SelectableRadioCard
@@ -28,8 +26,6 @@ import com.kuit.afternote.ui.theme.Sansneo
  * 처리 방법 라디오 버튼 컴포넌트 (공통)
  *
  * 피그마 디자인 기반:
- * - 너비: 350.dp
- * - 높이: 기본 102.dp (설명이 2줄인 경우 110.dp)
  * - 보더: 1.dp, 선택됨: B2 (#89C2FF), 선택 안 됨: 없음
  * - 배경: 흰색
  * - 패딩: 16.dp (모든 방향)
@@ -44,12 +40,10 @@ fun ProcessingMethodRadioButton(
     option: ProcessingMethodOption,
     selected: Boolean,
     onClick: () -> Unit,
-    height: Dp = 102.dp
 ) {
     SelectableRadioCard(
         modifier = modifier
-            .width(350.dp)
-            .height(height),
+            .fillMaxWidth(),
         selected = selected,
         onClick = onClick,
         borderWhenUnselected = false

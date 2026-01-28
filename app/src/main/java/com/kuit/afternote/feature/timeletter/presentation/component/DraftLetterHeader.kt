@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 
-
 @Composable
 fun DraftLetterHeader(
     isEditMode: Boolean,
@@ -78,8 +77,9 @@ fun DraftLetterHeader(
 @Composable
 private fun DraftHeaderPrev() {
     DraftLetterHeader(
-        isEditMode= true,
-        onCloseClick= {},
-    onEditClick= {},
-    onCompleteClick= {})
+        isEditMode = true,
+        onCloseClick = {},
+        onEditClick = {},
+        onCompleteClick = {}
+    )
 }

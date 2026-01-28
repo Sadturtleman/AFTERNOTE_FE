@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -73,11 +72,11 @@ fun RecordListSort(
                         contentDescription = "리스트 정렬",
                         modifier = Modifier
                             .size(30.dp)
-                            .clickable { isClicked = !isClicked } ,
+                            .clickable { isClicked = !isClicked },
                         colorFilter = if (isClicked) {
-                            ColorFilter.tint(Color(0xFF328BFF))   // 클릭되었을 때 빨간색
+                            ColorFilter.tint(Color(0xFF328BFF)) // 클릭되었을 때 빨간색
                         } else {
-                            ColorFilter.tint(Color.Gray)  // 기본 색상
+                            ColorFilter.tint(Color.Gray) // 기본 색상
                         }
                     )
                     Text(
@@ -93,22 +92,19 @@ fun RecordListSort(
                             .size(30.dp)
                             .clickable { isClicked = !isClicked },
                         colorFilter = if (!isClicked) {
-                            ColorFilter.tint(Color(0xFF328BFF))   // 클릭되었을 때 빨간색
+                            ColorFilter.tint(Color(0xFF328BFF)) // 클릭되었을 때 빨간색
                         } else {
-                            ColorFilter.tint(Color.Gray)  // 기본 색상
+                            ColorFilter.tint(Color.Gray) // 기본 색상
                         }
                     )
                 }
             }
-
         }
     }
     Spacer(Modifier.height(20.dp))
-    if(!isClicked){
+    if (!isClicked) {
         RecordCalendarSort(
             today = today
         )
     }
-
 }
-

@@ -65,7 +65,8 @@ fun NotificationSettingsScreen() {
                     fontWeight = FontWeight.Medium,
                     fontFamily = Sansneo,
                     color = Gray9,
-                    modifier = Modifier.clickable {})
+                    modifier = Modifier.clickable {}
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("꺼짐", fontSize = 14.sp, color = Gray5, fontFamily = Sansneo)
             }

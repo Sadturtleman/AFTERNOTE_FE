@@ -7,7 +7,6 @@ import com.kuit.afternote.feature.user.domain.model.UserProfile
  * User 도메인 Repository 인터페이스. (스웨거 기준)
  */
 interface UserRepository {
-
     suspend fun getMyProfile(userId: Long): Result<UserProfile>
 
     suspend fun updateMyProfile(

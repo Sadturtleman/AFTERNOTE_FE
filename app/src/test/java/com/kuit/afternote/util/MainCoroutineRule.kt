@@ -15,7 +15,6 @@ import org.junit.runner.Description
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainCoroutineRule : TestWatcher() {
-
     override fun starting(description: Description) {
         Dispatchers.setMain(Dispatchers.Unconfined)
     }

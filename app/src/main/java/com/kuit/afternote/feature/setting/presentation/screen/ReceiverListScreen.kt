@@ -28,7 +28,6 @@ import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
-//import com.kuit.afternote.feature.receiver.presentation.component.ReceiverRow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Sansneo
@@ -37,7 +36,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ReceiverListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    receivers: List<Recipient> = emptyList() // TODO: ViewModel에서 가져오기
+    // TODO: ViewModel에서 가져오기
+    receivers: List<Recipient> = emptyList()
 ) {
     Scaffold(
         topBar = {

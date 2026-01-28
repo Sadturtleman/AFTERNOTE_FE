@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,6 +37,7 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.Spacing
+import com.kuit.afternote.ui.theme.White
 
 /**
  * 앨범 커버 데이터
@@ -69,8 +68,7 @@ fun MemorialPlaylist(
     onAddSongClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+        verticalArrangement = Arrangement.spacedBy(space = Spacing.m)
     ) {
         Text(
             text = label,
@@ -79,55 +77,58 @@ fun MemorialPlaylist(
                 lineHeight = 22.sp,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Medium,
-                color = Gray9,
+                color = Gray9
             )
         )
-
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
+                .background(color = White, shape = RoundedCornerShape(size = 16.dp))
+                .padding(all = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 8.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            // 노래 개수 텍스트
-            Text(
-                text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Color(0xFF000000)
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // 노래 개수 텍스트
+                Text(
+                    text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFF000000)
+                    )
                 )
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 앨범 커버 리스트 (페이드 아웃 효과 포함, 1부터 차례대로 숫자 표시)
-            if (albumCovers.isNotEmpty()) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalFadingEdge(edgeWidth = 45.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    itemsIndexed(albumCovers) { index, album ->
-                        Box(
-                            modifier = Modifier.size(87.dp)
-                        ) {
-                            if (album.imageUrl != null) {
-                                // TODO: 실제 이미지 로드 (Coil 등 사용)
-                            } else {
-                                Image(
-                                    painter = painterResource(id = PlaceholderDrawables.forZeroBasedIndex(index)),
-                                    contentDescription = "${index + 1}",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Fit
-                                )
+                // 앨범 커버 리스트 (페이드 아웃 효과 포함, 1부터 차례대로 숫자 표시)
+                if (albumCovers.isNotEmpty()) {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalFadingEdge(edgeWidth = 45.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        itemsIndexed(albumCovers) { index, album ->
+                            Box(
+                                modifier = Modifier.size(87.dp)
+                            ) {
+                                if (album.imageUrl != null) {
+                                    // TODO: 실제 이미지 로드 (Coil 등 사용)
+                                } else {
+                                    Image(
+                                        painter = painterResource(id = PlaceholderDrawables.forZeroBasedIndex(index)),
+                                        contentDescription = "${index + 1}",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // 노래 추가하기 버튼

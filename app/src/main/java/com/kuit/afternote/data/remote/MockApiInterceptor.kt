@@ -28,7 +28,6 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 class MockApiInterceptor(
     private val json: Json
 ) : Interceptor {
-
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!BuildConfig.USE_MOCK_API) {
             return chain.proceed(chain.request())
@@ -261,7 +260,8 @@ class MockApiInterceptor(
         )
         val responseBody = jsonString.toResponseBody("application/json".toMediaType())
 
-        return Response.Builder()
+        return Response
+            .Builder()
             .request(request)
             .protocol(Protocol.HTTP_1_1)
             .code(200)
