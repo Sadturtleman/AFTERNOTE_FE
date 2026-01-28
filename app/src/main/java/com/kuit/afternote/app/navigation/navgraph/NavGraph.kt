@@ -30,6 +30,7 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 
@@ -53,6 +54,7 @@ fun NavGraph(navHostController: NavHostController) {
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
         ScreenInfo("임시저장 화면", "draft_letter"),
         ScreenInfo("수신자 목록 화면", "receive_list"),
+        ScreenInfo("수신자 애프터노트 메인", "receiver_afternote_main"),
         ScreenInfo("타임레터 빈 화면", "letter_empty"),
         ScreenInfo("설정 화면", "setting_main")
     )
@@ -105,6 +107,7 @@ fun NavGraph(navHostController: NavHostController) {
                         "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
                         "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
                         "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
+                        "receiver_afternote_main" -> navHostController.navigate("receiver_afternote_main")
                         "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
                         "setting_main" -> navHostController.navigate(SettingRoute.SettingMainRoute)
                         else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
@@ -170,6 +173,11 @@ fun NavGraph(navHostController: NavHostController) {
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}
             )
+        }
+
+        // 수신자 애프터노트 메인 (개발자 모드용)
+        composable("receiver_afternote_main") {
+            ReceiverAfterNoteMainScreen(title = "박서연")
         }
 
         // 지문 로그인 화면

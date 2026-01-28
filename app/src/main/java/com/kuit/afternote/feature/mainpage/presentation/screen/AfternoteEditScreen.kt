@@ -29,7 +29,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.core.ui.component.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
