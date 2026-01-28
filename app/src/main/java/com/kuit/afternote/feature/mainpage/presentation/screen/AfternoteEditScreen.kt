@@ -59,6 +59,8 @@ private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
  * - 계정 처리 방법 선택 (라디오 버튼)
  * - 처리 방법 리스트 (체크박스)
  * - 남기실 말씀 (멀티라인 텍스트 필드)
+ *
+ * @param onNavigateToAddSong Called when user taps "노래 추가하기" in the MemorialPlaylist card on this edit screen; should navigate to MemorialPlaylistRouteScreen (full playlist screen).
  */
 @Composable
 fun AfternoteEditScreen(

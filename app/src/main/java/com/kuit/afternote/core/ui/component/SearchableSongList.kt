@@ -54,6 +54,28 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
+/**
+ * Slots for [SearchableSongList]: optional trailing (per row) and leading (header) content.
+ *
+ * @param trailingContent Optional composable for each row (e.g. radio button).
+ * @param leadingContent Optional composable for the first item (e.g. custom header).
+ */
+data class SearchableSongListSlots(
+    val trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)? = null,
+    val leadingContent: (@Composable () -> Unit)? = null
+)
+
+/**
+ * Content slots for the management-mode [SongPlaylistScreen]: leading header and selection bottom bar.
+ *
+ * @param leadingContent Header composable receiving selectedIds.
+ * @param selectionBottomBar Bottom bar composable when selection is non-empty.
+ */
+data class SongPlaylistScreenManagementContent(
+    val leadingContent: @Composable (selectedIds: Set<String>) -> Unit,
+    val selectionBottomBar: @Composable (selectedIds: Set<String>, onClearSelection: () -> Unit) -> Unit
+)
+
 // region ── SongPlaylistScreen (full screen composable) ──
 
 /**
@@ -66,6 +88,7 @@ import com.kuit.afternote.ui.theme.White
  * @param defaultBottomNavItem 초기 선택 BottomNavItem
  */
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun SongPlaylistScreen(
     modifier: Modifier = Modifier,
     title: String,
@@ -161,15 +184,17 @@ fun SongPlaylistScreen(
                     end = 20.dp,
                     bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
                 ),
-                trailingContent = { song ->
-                    CustomRadioButton(
-                        selected = selectedSongIds.contains(song.id),
-                        onClick = null,
-                        buttonSize = 24.dp,
-                        selectedColor = B2,
-                        unselectedColor = Gray4
-                    )
-                }
+                slots = SearchableSongListSlots(
+                    trailingContent = { song ->
+                        CustomRadioButton(
+                            selected = selectedSongIds.contains(song.id),
+                            onClick = null,
+                            buttonSize = 24.dp,
+                            selectedColor = B2,
+                            unselectedColor = Gray4
+                        )
+                    }
+                )
             )
             if (selectedSongIds.isNotEmpty()) {
                 Row(
@@ -190,6 +215,92 @@ fun SongPlaylistScreen(
     }
 }
 
+/**
+ * 노래 선택 + 커스텀 하단 액션 바가 있는 플레이리스트 화면 (관리 모드).
+ * managementContent.leadingContent로 "총 N곡" + 노래 추가하기 등 헤더를 넣고,
+ * managementContent.selectionBottomBar로 선택 시 표시할 액션 바(예: 전체 삭제/선택 삭제)를 넣을 수 있음.
+ *
+ * @param title TopBar 타이틀
+ * @param onBackClick 뒤로가기 콜백
+ * @param songs 표시할 노래 목록
+ * @param managementContent leadingContent + selectionBottomBar (헤더 및 하단 액션 바)
+ * @param defaultBottomNavItem 초기 BottomNavItem
+ * @param initialSelectedSongIds Preview용 초기 선택 ID
+ */
+@Composable
+fun SongPlaylistScreen(
+    modifier: Modifier = Modifier,
+    title: String,
+    onBackClick: () -> Unit,
+    songs: List<PlaylistSongDisplay>,
+    managementContent: SongPlaylistScreenManagementContent,
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME,
+    initialSelectedSongIds: Set<String>? = null
+) {
+    var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet()) }
+    val selectedBottomNavItem = remember { mutableStateOf(defaultBottomNavItem) }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopBar(
+                title = title,
+                onBackClick = onBackClick
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = selectedBottomNavItem.value,
+                onItemSelected = { selectedBottomNavItem.value = it }
+            )
+        }
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            SearchableSongList(
+                modifier = Modifier.fillMaxSize(),
+                songs = songs,
+                searchQuery = "",
+                onSearchQueryChange = {},
+                onSongClick = { song ->
+                    selectedSongIds = if (song.id in selectedSongIds) {
+                        selectedSongIds - song.id
+                    } else {
+                        selectedSongIds + song.id
+                    }
+                },
+                contentPadding = PaddingValues(
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
+                ),
+                slots = SearchableSongListSlots(
+                    trailingContent = { song ->
+                        CustomRadioButton(
+                            selected = selectedSongIds.contains(song.id),
+                            onClick = null,
+                            buttonSize = 24.dp,
+                            selectedColor = B2,
+                            unselectedColor = Gray4
+                        )
+                    },
+                    leadingContent = { managementContent.leadingContent(selectedSongIds) }
+                )
+            )
+            if (selectedSongIds.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 20.dp, end = 20.dp, bottom = 24.dp)
+                ) {
+                    managementContent.selectionBottomBar(selectedSongIds) {
+                        selectedSongIds = emptySet()
+                    }
+                }
+            }
+        }
+    }
+}
+
 // endregion
 
 // region ── SearchableSongList (list-level composable) ──
@@ -203,7 +314,7 @@ fun SongPlaylistScreen(
  * @param onSearchQueryChange 검색 텍스트 변경 콜백
  * @param onSongClick 노래 행 클릭 콜백 (null이면 비클릭)
  * @param contentPadding LazyColumn contentPadding
- * @param trailingContent 노래별 오른쪽 콘텐츠 (예: 라디오 버튼)
+ * @param slots Optional trailing (per row) and leading (header) content; nulls use defaults.
  */
 @Composable
 fun SearchableSongList(
@@ -213,19 +324,24 @@ fun SearchableSongList(
     onSearchQueryChange: (String) -> Unit,
     onSongClick: ((PlaylistSongDisplay) -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)? = null
+    slots: SearchableSongListSlots = SearchableSongListSlots()
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = contentPadding
     ) {
         item {
-            SongSearchSection(
-                searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
-            )
+            if (slots.leadingContent != null) {
+                slots.leadingContent()
+            } else {
+                SongSearchSection(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = onSearchQueryChange
+                )
+            }
         }
         itemsIndexed(songs) { _, song ->
+            val trailing = slots.trailingContent
             PlaylistSongItem(
                 song = song,
                 onClick = if (onSongClick != null) {
@@ -233,8 +349,8 @@ fun SearchableSongList(
                 } else {
                     null
                 },
-                trailingContent = if (trailingContent != null) {
-                    { trailingContent(song) }
+                trailingContent = if (trailing != null) {
+                    { trailing(song) }
                 } else {
                     null
                 }
@@ -406,6 +522,7 @@ private fun SongPlaylistScreenSelectablePreview() {
 
 @Preview(showBackground = true, name = "SearchableSongList 단독")
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 private fun SearchableSongListPreview() {
     val songs = (1..5).map { i ->
         PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")

@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.navgraph
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,6 +17,7 @@ import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginS
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
@@ -58,7 +59,8 @@ inline fun <reified T : Any> NavGraphBuilder.mainPageComposable(noinline content
 fun NavGraphBuilder.mainPageNavGraph(
     navController: NavController,
     afternoteItems: List<Pair<String, String>>,
-    onItemsUpdated: (List<Pair<String, String>>) -> Unit
+    onItemsUpdated: (List<Pair<String, String>>) -> Unit,
+    playlistStateHolder: MemorialPlaylistStateHolder
 ) {
     mainPageComposable<MainPageRoute.MainEmptyRoute> {
         AfternoteMainRoute(
@@ -96,31 +98,22 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.EditRoute> {
-        // 플레이리스트 상태 생성
-        val playlistStateHolder = remember {
-            MemorialPlaylistStateHolder().apply {
-                // 초기 데이터 설정
-                if (songs.isEmpty()) {
-                    initializeSongs(
-                        listOf(
-                            Song(id = "1", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "2", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "3", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "4", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "5", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "6", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "7", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "8", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "9", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "10", title = "노래 제목", artist = "가수 이름"),
-                            Song(id = "11", title = "노래 제목", artist = "가수 이름")
-                        )
-                    )
-                }
-                // AfternoteEditState와 동기화를 위한 콜백 설정
-                onSongCountChanged = {
-                    // 콜백은 AfternoteEditScreen에서 설정됨
-                }
+        val defaultSongs = listOf(
+            Song(id = "1", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "2", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "3", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "4", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "5", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "6", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "7", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "8", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "9", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "10", title = "노래 제목", artist = "가수 이름"),
+            Song(id = "11", title = "노래 제목", artist = "가수 이름")
+        )
+        LaunchedEffect(playlistStateHolder) {
+            if (playlistStateHolder.songs.isEmpty()) {
+                playlistStateHolder.initializeSongs(defaultSongs)
             }
         }
 
@@ -144,8 +137,16 @@ fun NavGraphBuilder.mainPageNavGraph(
                     launchSingleTop = true
                 }
             },
-            onNavigateToAddSong = { navController.navigate(MainPageRoute.AddSongRoute) },
+            onNavigateToAddSong = { navController.navigate(MainPageRoute.MemorialPlaylistRoute) },
             playlistStateHolder = playlistStateHolder
+        )
+    }
+
+    mainPageComposable<MainPageRoute.MemorialPlaylistRoute> {
+        MemorialPlaylistRouteScreen(
+            playlistStateHolder = playlistStateHolder,
+            onBackClick = { navController.popBackStack() },
+            onNavigateToAddSongScreen = { navController.navigate(MainPageRoute.AddSongRoute) }
         )
     }
 
@@ -160,8 +161,8 @@ fun NavGraphBuilder.mainPageNavGraph(
             songs = emptyList(), // TODO: 추후 실제 검색 결과로 교체
             callbacks = AddSongCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onSongsAdded = { _ ->
-                    // 추후 선택된 노래를 플레이리스트에 반영하는 로직 구현 예정
+                onSongsAdded = { added ->
+                    added.forEach { playlistStateHolder.addSong(it) }
                     navController.popBackStack()
                 }
             )
