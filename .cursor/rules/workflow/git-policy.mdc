@@ -163,6 +163,37 @@ Before executing ANY git write command (`git add`, `git commit`, `git push`):
   - `ci`: CI 설정 파일 및 스크립트 변경
   - `perf`: 성능 개선
 
+### Commitlint Line Length Rules (CI 강제)
+**CI에서 `commitlint`가 커밋 메시지를 검증합니다. 다음 규칙을 반드시 준수하세요.**
+
+- **PR 통과 조건:** PR이 merge 가능하려면 **PR에 포함된 모든 커밋**(base..head)이 commitlint를 통과해야 합니다. 최신 커밋만이 아닌, CI가 범위 내 전체 커밋 메시지를 검사합니다.
+
+1. **Subject Line (제목)**: 최대 100자 (`header-max-length`)
+2. **Body Line (본문 각 줄)**: 최대 100자 (`body-max-line-length`)
+3. **Footer Line (꼬리말 각 줄)**: 최대 100자 (`footer-max-line-length`)
+
+#### 본문 작성 규칙
+- 본문의 **모든 줄**이 100자를 초과하면 안 됩니다
+- 긴 설명은 줄바꿈으로 나누어 작성하세요
+- 함수명, 클래스명 등이 길면 줄을 나누어 작성하세요
+
+#### 예시 (올바른 커밋 메시지)
+```
+refactor(edit): use Scaffold paddingValues for spacing
+
+- Replace hardcoded nav bar height (88.dp) with
+  Scaffold paddingValues.calculateBottomPadding()
+- Update Content components to accept bottomPadding
+- Follow Compose best practices for system bar handling
+```
+
+#### 예시 (잘못된 커밋 메시지 - 100자 초과)
+```
+refactor(edit): use Scaffold paddingValues for bottom spacing calculation
+
+- Replace hardcoded navigation bar height (88.dp) with Scaffold's paddingValues.calculateBottomPadding()
+```
+
 ## Example
 - `feat(auth): add login usecase`
 - `fix(ui): correct padding in home screen`
