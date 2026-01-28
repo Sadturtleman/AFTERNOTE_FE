@@ -38,8 +38,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
             .width(142.dp)
             .height(224.dp)
             .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 8.dp))
-    )
-    {
+    ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -56,15 +55,15 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
                     contentDescription = "카메라",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier= Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "이미지 추가",
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.sansneomedium)),
-                        fontWeight = FontWeight(500),
-                        color = Color(0xFF212121),
-                    )
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF212121),
+                )
             }
             Row(
                 modifier = modifier
@@ -79,7 +78,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
                     contentDescription = "음성 추가",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier= Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "음성 추가",
                     fontSize = 16.sp,
@@ -102,7 +101,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
                     contentDescription = "파일",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier= Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "파일 추가",
                     fontSize = 16.sp,
@@ -125,7 +124,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
                     contentDescription = "링크",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier= Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "링크 추가",
                     fontSize = 16.sp,
@@ -135,7 +134,6 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
                     color = Color(0xFF212121),
                 )
             }
-
         }
     }
 }

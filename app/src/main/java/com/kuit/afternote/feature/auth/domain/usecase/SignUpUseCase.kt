@@ -7,15 +7,15 @@ import javax.inject.Inject
 /**
  * 회원가입 UseCase.
  */
-class SignUpUseCase @Inject constructor(
-    private val authRepository: AuthRepository
-) {
-
-    suspend operator fun invoke(
-        email: String,
-        password: String,
-        name: String,
-        profileUrl: String?
-    ): Result<SignUpResult> =
-        authRepository.signUp(email, password, name, profileUrl)
-}
+class SignUpUseCase
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository
+    ) {
+        suspend operator fun invoke(
+            email: String,
+            password: String,
+            name: String,
+            profileUrl: String?
+        ): Result<SignUpResult> = authRepository.signUp(email, password, name, profileUrl)
+    }

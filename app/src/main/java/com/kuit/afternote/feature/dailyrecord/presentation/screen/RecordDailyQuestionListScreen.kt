@@ -59,7 +59,7 @@ fun RecordDailyQuestionScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick =  onPlusRecordClick ,
+                onClick = onPlusRecordClick,
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -98,7 +98,7 @@ fun RecordDailyQuestionScreen(
                 showLeftArrow = true,
                 onLeftClock = onLeftClick
             )
-            LazyColumn{
+            LazyColumn {
                 item {
                     RecordListSort(
                         today = today

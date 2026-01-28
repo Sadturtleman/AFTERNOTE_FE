@@ -114,8 +114,8 @@ fun AddSongScreen(
  * 검색 결과용 목업. 플레이리스트 곡과 구분되도록 "검색 곡 N", "검색 가수 X" 형식.
  */
 @Composable
-private fun rememberSearchResultSongs(): List<Song> {
-    return remember {
+private fun rememberSearchResultSongs(): List<Song> =
+    remember {
         listOf(
             Song(id = "s1", title = "검색 곡 1", artist = "검색 가수 A"),
             Song(id = "s2", title = "검색 곡 2", artist = "검색 가수 B"),
@@ -128,7 +128,6 @@ private fun rememberSearchResultSongs(): List<Song> {
             Song(id = "s9", title = "검색 곡 9", artist = "검색 가수 I")
         )
     }
-}
 
 @Composable
 private fun AddSongScaffold(
@@ -202,15 +201,13 @@ private fun AddButton(
                 clip = false,
                 ambientColor = Color(0x26000000),
                 spotColor = Color(0x26000000)
-            )
-            .background(color = Gray1, shape = addButtonShape)
+            ).background(color = Gray1, shape = addButtonShape)
             .clip(addButtonShape)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Row {
-
             Box(
                 modifier = Modifier
                     .size(16.dp)

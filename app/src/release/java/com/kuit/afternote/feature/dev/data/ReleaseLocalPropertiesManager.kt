@@ -10,10 +10,11 @@ import javax.inject.Singleton
  * 프로덕션 빌드에서는 파일을 수정하지 않습니다.
  */
 @Singleton
-class ReleaseLocalPropertiesManager @Inject constructor() : LocalPropertiesManager {
-
-    override suspend fun updateTestPassword(newPassword: String): Boolean {
-        // Release 빌드에서는 아무 작업도 하지 않음
-        return false
+class ReleaseLocalPropertiesManager
+    @Inject
+    constructor() : LocalPropertiesManager {
+        override suspend fun updateTestPassword(newPassword: String): Boolean {
+            // Release 빌드에서는 아무 작업도 하지 않음
+            return false
+        }
     }
-}

@@ -210,8 +210,7 @@ private fun MemorialPlaylistList(
                                 .background(
                                     color = B3,
                                     shape = RoundedCornerShape(20.dp)
-                                )
-                                .clickable(onClick = onAddSongClick),
+                                ).clickable(onClick = onAddSongClick),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Spacer(modifier = Modifier.width(16.dp))
@@ -283,8 +282,7 @@ private fun MemorialPlaylistActionBar(
                 clip = false,
                 ambientColor = Color(0x26000000),
                 spotColor = Color(0x26000000)
-            )
-            .background(color = Color.White, shape = actionBarShape)
+            ).background(color = Color.White, shape = actionBarShape)
             .clip(actionBarShape)
             .padding(horizontal = 56.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

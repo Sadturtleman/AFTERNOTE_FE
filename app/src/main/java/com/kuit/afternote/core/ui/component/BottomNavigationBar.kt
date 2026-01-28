@@ -26,7 +26,6 @@ fun BottomNavigationBar(
     selectedItem: BottomNavItem = BottomNavItem.HOME,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()

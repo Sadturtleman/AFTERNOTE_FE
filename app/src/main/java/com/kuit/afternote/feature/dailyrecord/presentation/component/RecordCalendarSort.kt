@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
-import android.icu.util.LocaleData
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,12 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -50,13 +44,12 @@ import java.util.Locale
 fun RecordCalendarSort(
     modifier: Modifier = Modifier,
     today: LocalDate
-    ) {
+) {
     val year = today.year
     val month = today.monthValue
     val formatter = DateTimeFormatter.ofPattern("yyyy년 mm월", Locale.KOREA)
     val markedDates = listOf(1, 6, 8, 11, 13, 15, 16, 17, 25)
     var selectedDate = today.dayOfMonth
-
 
     Box(
         modifier = Modifier
@@ -64,7 +57,7 @@ fun RecordCalendarSort(
             .size(350.dp, 370.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(color = White)
-    ){
+    ) {
         Column {
             Box(
                 modifier = Modifier
@@ -72,19 +65,18 @@ fun RecordCalendarSort(
                     .size(120.dp, 34.dp)
                     .background(color = White)
                     .border(
-                        width = 1.dp,                // 두께
-                        color = Color(0xFF328BFF),          // 색상
+                        width = 1.dp, // 두께
+                        color = Color(0xFF328BFF), // 색상
                         shape = RoundedCornerShape(20.dp) // 모양 (선택)
                     ),
                 contentAlignment = Alignment.Center // 가운데 정렬
-
-            ){
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text =" ${year}년 ${month}월",
+                        text = " ${year}년 ${month}월",
                         fontWeight = FontWeight.Medium,
                         fontSize = 12.sp
                     )
@@ -97,14 +89,12 @@ fun RecordCalendarSort(
                         colorFilter = ColorFilter.tint(Color(0xFF328BFF))
                     )
                 }
-
             }
             Column(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .padding(horizontal = 16.dp)
             ) {
-
                 // 요일 헤더
 //                Row(horizontalArrangement = Arrangement.SpaceBetween) {
 //                    listOf("일", "월", "화", "수", "목", "금", "토").forEach {
@@ -129,14 +119,13 @@ fun RecordCalendarSort(
                                         .aspectRatio(1f)
                                         .padding(4.dp)
                                         .clip(CircleShape)
-                                        .clickable(onClick = {selectedDate = day })
+                                        .clickable(onClick = { selectedDate = day })
                                         .background(
                                             when {
                                                 day == selectedDate -> Color(0xFF328BFF)
                                                 else -> Color.Transparent
                                             }
-                                        )
-                                        .then(
+                                        ).then(
                                             if (day in markedDates) {
                                                 Modifier.border(
                                                     width = 1.dp,
@@ -156,9 +145,11 @@ fun RecordCalendarSort(
                                     )
                                 }
                             } else {
-                                Spacer(modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f))
+                                Spacer(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(1f)
+                                )
                             }
                         }
                     }

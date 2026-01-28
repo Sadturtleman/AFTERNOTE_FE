@@ -27,15 +27,14 @@ import com.kuit.afternote.feature.setting.presentation.component.PasscodeIndicat
 import com.kuit.afternote.feature.setting.presentation.uimodel.KeyAction
 import com.kuit.afternote.feature.setting.presentation.uimodel.PasswordStep
 import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadModifyViewModel
-import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadViewModel
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel()){
+fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel()) {
     val password by keyPadViewModel.inputCode.collectAsStateWithLifecycle()
     val step by keyPadViewModel.currentStep.collectAsStateWithLifecycle()
     val onKeyAction: (KeyAction) -> Unit = remember {
-        {action -> keyPadViewModel.handleKeyAction(action)}
+        { action -> keyPadViewModel.handleKeyAction(action) }
     }
 
     Scaffold(
@@ -61,7 +60,7 @@ fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = when(step) {
+                text = when (step) {
                     is PasswordStep.Confirm ->
                         "비밀번호를 다시 한 번 입력해 주세요"
                     is PasswordStep.Setup ->
@@ -88,6 +87,6 @@ fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel(
 
 @Preview
 @Composable
-private fun PasswordModifyScreenPreview(){
+private fun PasswordModifyScreenPreview() {
     PasswordModifyScreen()
 }

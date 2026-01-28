@@ -15,7 +15,6 @@ import org.junit.Test
  * [ReissueUseCase] 단위 테스트.
  */
 class ReissueUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var reissueUseCase: ReissueUseCase
 
@@ -26,27 +25,29 @@ class ReissueUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsReissueResult() = runTest {
-        val expected = ReissueResult(
-            accessToken = "new_access_token",
-            refreshToken = "new_refresh_token"
-        )
-        coEvery { authRepository.reissue(any()) } returns Result.success(expected)
+    fun invoke_whenSuccess_returnsReissueResult() =
+        runTest {
+            val expected = ReissueResult(
+                accessToken = "new_access_token",
+                refreshToken = "new_refresh_token"
+            )
+            coEvery { authRepository.reissue(any()) } returns Result.success(expected)
 
-        val result = reissueUseCase("old_refresh_token")
+            val result = reissueUseCase("old_refresh_token")
 
-        assertTrue(result.isSuccess)
-        assertEquals(expected, result.getOrNull())
-        coVerify(exactly = 1) { authRepository.reissue("old_refresh_token") }
-    }
+            assertTrue(result.isSuccess)
+            assertEquals(expected, result.getOrNull())
+            coVerify(exactly = 1) { authRepository.reissue("old_refresh_token") }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.reissue(any()) } returns Result.failure(RuntimeException("invalid token"))
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.reissue(any()) } returns Result.failure(RuntimeException("invalid token"))
 
-        val result = reissueUseCase("invalid_token")
+            val result = reissueUseCase("invalid_token")
 
-        assertTrue(result.isFailure)
-        assertEquals("invalid token", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertEquals("invalid token", result.exceptionOrNull()?.message)
+        }
 }

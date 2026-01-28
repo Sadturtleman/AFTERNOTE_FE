@@ -2,7 +2,6 @@ package com.kuit.afternote.util
 
 import android.util.Base64
 import android.util.Log
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject

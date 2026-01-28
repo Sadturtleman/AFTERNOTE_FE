@@ -26,7 +26,7 @@ import java.util.Locale
 /**
  * mainpage feature 전용 라이트 모드 테마 래퍼
  * Preview 함수에서 사용하여 다크 모드를 강제로 비활성화합니다.
- * 
+ *
  * 사용 예시:
  * ```
  * @Preview(showBackground = true)
@@ -97,7 +97,7 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.EditRoute> {
         // 플레이리스트 상태 생성
-        val playlistStateHolder = remember { 
+        val playlistStateHolder = remember {
             MemorialPlaylistStateHolder().apply {
                 // 초기 데이터 설정
                 if (songs.isEmpty()) {
@@ -123,7 +123,7 @@ fun NavGraphBuilder.mainPageNavGraph(
                 }
             }
         }
-        
+
         AfternoteEditScreen(
             onBackClick = { navController.popBackStack() },
             onRegisterClick = { selectedService ->

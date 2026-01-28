@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -96,7 +96,7 @@ fun ProfileSettingScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Spacer(modifier = Modifier.weight(0.4f))
 
             ClickButton(

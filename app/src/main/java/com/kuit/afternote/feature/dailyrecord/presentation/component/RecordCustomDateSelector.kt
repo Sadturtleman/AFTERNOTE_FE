@@ -43,8 +43,7 @@ fun RecordCustomDateSelector(
             modifier = Modifier
                 .clickable {
                     onDateSelected(selectedYear, selectedMonth, selectedDay)
-                }
-                .padding(8.dp)
+                }.padding(8.dp)
         )
     }
 }

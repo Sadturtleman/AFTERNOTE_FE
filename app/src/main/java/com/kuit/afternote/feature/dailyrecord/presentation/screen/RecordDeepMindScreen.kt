@@ -26,21 +26,18 @@ fun RecordDeepMindScreen(
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    Scaffold(
-
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록
-
+                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
             item {
                 RecordSubTopbar(
                     text = "깊은 생각 기록하기",
                     onLeftClock = onLeftClick,
                     onRightClick = {}
-                    )
+                )
             }
 
             item {
@@ -54,7 +51,6 @@ fun RecordDeepMindScreen(
                 )
             }
         }
-
     }
 }
 
@@ -62,5 +58,5 @@ fun RecordDeepMindScreen(
 @Preview(showBackground = true)
 @Composable
 private fun RecordDeepMindPrev() {
-    //RecordDeepMindScreen()
+    // RecordDeepMindScreen()
 }

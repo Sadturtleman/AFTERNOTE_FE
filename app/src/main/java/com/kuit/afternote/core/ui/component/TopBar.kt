@@ -226,6 +226,7 @@ private fun TopBarWithStepPreview() {
             title = "회원가입",
             step = object : Step {
                 override val value: Int = 1
+
                 override fun previous(): Step? = null
             },
             onBackClick = {}

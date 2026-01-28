@@ -10,11 +10,12 @@ import javax.inject.Singleton
  * 프로덕션 빌드에서는 테스트 계정 관리 기능을 사용하지 않으므로 빈 구현을 제공합니다.
  */
 @Singleton
-class ReleaseTestAccountManager @Inject constructor() : TestAccountManager {
+class ReleaseTestAccountManager
+    @Inject
+    constructor() : TestAccountManager {
+        override suspend fun getCurrentPassword(): String = ""
 
-    override suspend fun getCurrentPassword(): String = ""
-
-    override suspend fun updateStoredPassword(newPassword: String) {
-        // Release 빌드에서는 아무 작업도 수행하지 않음
+        override suspend fun updateStoredPassword(newPassword: String) {
+            // Release 빌드에서는 아무 작업도 수행하지 않음
+        }
     }
-}

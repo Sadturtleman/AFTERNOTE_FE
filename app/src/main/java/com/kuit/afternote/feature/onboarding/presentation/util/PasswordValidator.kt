@@ -54,7 +54,8 @@ object PasswordValidator {
      * @param passwordConfirm 비밀번호 확인
      * @return 일치 여부
      */
-    fun matches(password: String, passwordConfirm: String): Boolean {
-        return password == passwordConfirm
-    }
+    fun matches(
+        password: String,
+        passwordConfirm: String
+    ): Boolean = password == passwordConfirm
 }

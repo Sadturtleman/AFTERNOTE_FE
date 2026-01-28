@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,9 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 
@@ -37,21 +34,18 @@ fun RecordDiaryScreen(
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    Scaffold(
-
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록
-
+                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
             item {
                 RecordSubTopbar(
                     text = "일기 기록하기",
                     onLeftClock = onLeftClick,
                     onRightClick = {}
-                    )
+                )
             }
 
             item {
@@ -65,7 +59,6 @@ fun RecordDiaryScreen(
                 )
             }
         }
-
     }
 }
 
@@ -73,5 +66,5 @@ fun RecordDiaryScreen(
 @Preview(showBackground = true)
 @Composable
 private fun RecordDailyScreenPrev() {
-    //RecordDiaryScreen()
+    // RecordDiaryScreen()
 }

@@ -22,15 +22,18 @@ import retrofit2.http.Path
  * - GET /time-letters/temporary, DELETE /time-letters/temporary
  */
 interface TimeLetterApiService {
-
     @GET("time-letters")
     suspend fun getTimeLetters(): ApiResponse<TimeLetterListResponse?>
 
     @POST("time-letters")
-    suspend fun createTimeLetter(@Body body: TimeLetterCreateRequest): ApiResponse<TimeLetterResponse?>
+    suspend fun createTimeLetter(
+        @Body body: TimeLetterCreateRequest
+    ): ApiResponse<TimeLetterResponse?>
 
     @GET("time-letters/{timeLetterId}")
-    suspend fun getTimeLetter(@Path("timeLetterId") timeLetterId: Long): ApiResponse<TimeLetterResponse?>
+    suspend fun getTimeLetter(
+        @Path("timeLetterId") timeLetterId: Long
+    ): ApiResponse<TimeLetterResponse?>
 
     @PATCH("time-letters/{timeLetterId}")
     suspend fun updateTimeLetter(
@@ -39,7 +42,9 @@ interface TimeLetterApiService {
     ): ApiResponse<TimeLetterResponse?>
 
     @POST("time-letters/delete")
-    suspend fun deleteTimeLetters(@Body body: TimeLetterDeleteRequest): ApiResponse<Unit?>
+    suspend fun deleteTimeLetters(
+        @Body body: TimeLetterDeleteRequest
+    ): ApiResponse<Unit?>
 
     @GET("time-letters/temporary")
     suspend fun getTemporaryTimeLetters(): ApiResponse<TimeLetterListResponse?>

@@ -29,7 +29,8 @@ fun SettingMainScreen(
 ) {
     val sections = listOf(
         SettingSection(
-            "계정", listOf(
+            "계정",
+            listOf(
                 SettingItemData("프로필 수정"),
                 SettingItemData("비밀번호 변경"),
                 SettingItemData("연결된 계정"),
@@ -37,20 +38,23 @@ fun SettingMainScreen(
             )
         ),
         SettingSection(
-            "수신자 관리", listOf(
+            "수신자 관리",
+            listOf(
                 SettingItemData("수신자 목록"),
                 SettingItemData("수신자 등록"),
                 SettingItemData("사후 전달 조건")
             )
         ),
         SettingSection(
-            "보안", listOf(
+            "보안",
+            listOf(
                 SettingItemData("패스키 관리"),
                 SettingItemData("앱 잠금 설정", status = "켬")
             )
         ),
         SettingSection(
-            "고객 지원", listOf(
+            "고객 지원",
+            listOf(
                 SettingItemData("FAQ"),
                 SettingItemData("1:1 문의"),
                 SettingItemData("공지사항"),

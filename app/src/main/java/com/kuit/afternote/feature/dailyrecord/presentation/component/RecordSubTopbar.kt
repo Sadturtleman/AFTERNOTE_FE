@@ -1,8 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
-import android.graphics.Paint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.Black
-import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -39,14 +36,14 @@ fun RecordSubTopbar(
     text: String,
     onLeftClock: () -> Unit,
     onRightClick: () -> Unit,
-    ) {
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
             .padding(bottom = 12.dp),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Text(
             text = text,
             color = Black,
@@ -61,7 +58,7 @@ fun RecordSubTopbar(
                 .size(30.dp)
                 .clickable(onClick = onLeftClock),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_sub_left_foreground),
                 contentDescription = "화살표",
@@ -74,7 +71,7 @@ fun RecordSubTopbar(
                 .clickable(onClick = onRightClick)
                 .padding(end = 13.dp),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(
                 text = "등록",
                 color = Gray5,
