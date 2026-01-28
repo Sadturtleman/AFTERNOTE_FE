@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.main
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,9 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ArrowIconSpec
-import com.kuit.afternote.core.ui.component.RightArrowIcon
-import com.kuit.afternote.core.ui.component.AfternoteTab
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -38,13 +35,8 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
- * 애프터노트 상단 탭 로우 컴포넌트
- *
- * 피그마 디자인 기반:
- * - 가로 스크롤 가능한 탭 바
- * - 선택된 탭은 연한 파란색(B3) 배경, 검은색 텍스트
- * - 선택되지 않은 탭은 회색(Gray2) 배경, 검은색 텍스트
- * - 탭 높이: 34dp, 모서리: 17dp, 폰트: 12sp
+ * Shared 애프터노트 tab row (writer main and receiver list).
+ * Horizontal scrollable tabs; selected tab B3, unselected Gray2.
  */
 @Composable
 fun AfternoteTabRow(
@@ -74,7 +66,6 @@ fun AfternoteTabRow(
             }
         }
 
-        // 오른쪽 끝에 화살표 아이콘 (스크롤 가능할 때만 표시)
         if (canScrollRight) {
             RightArrowIcon(
                 iconSpec = ArrowIconSpec(
@@ -89,9 +80,6 @@ fun AfternoteTabRow(
     }
 }
 
-/**
- * 개별 탭 아이템 컴포넌트
- */
 @Composable
 private fun TabItem(
     tab: AfternoteTab,
