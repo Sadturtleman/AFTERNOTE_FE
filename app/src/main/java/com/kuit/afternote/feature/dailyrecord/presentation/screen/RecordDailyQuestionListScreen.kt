@@ -27,12 +27,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
-import com.kuit.afternote.feature.mainpage.presentation.model.AfternoteTab
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
@@ -43,18 +42,17 @@ fun RecordDailyQuestionScreen(
     onLeftClick: () -> Unit,
     onPlusRecordClick: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
     val today = LocalDate.now()
 
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { item -> selectedBottomNavItem = item }
             )
         },
         floatingActionButton = {
@@ -91,6 +89,7 @@ fun RecordDailyQuestionScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(paddingValues)
                 .padding(top = 10.dp)
         ) {
             RecordMainTopbar(
