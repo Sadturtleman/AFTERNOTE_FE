@@ -157,6 +157,7 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.AddSongRoute> {
         AddSongScreen(
+            songs = emptyList(), // TODO: 추후 실제 검색 결과로 교체
             callbacks = AddSongCallbacks(
                 onBackClick = { navController.popBackStack() },
                 onSongsAdded = { _ ->
