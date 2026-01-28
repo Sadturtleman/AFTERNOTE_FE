@@ -61,7 +61,8 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 @Composable
 fun TimeLetterScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimeLetterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: TimeLetterViewModel = androidx.lifecycle.viewmodel.compose
+        .viewModel(),
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
@@ -221,7 +222,6 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
     }
 }
 
-
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
@@ -367,4 +367,3 @@ private fun TimeLetterScreenPreviewContent(viewMode: ViewMode) {
         }
     }
 }
-

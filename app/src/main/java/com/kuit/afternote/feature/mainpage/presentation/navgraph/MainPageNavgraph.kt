@@ -6,17 +6,18 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.kuit.afternote.core.navigation.MainPageNavigator
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.GalleryDetailState
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,7 +26,7 @@ import java.util.Locale
 /**
  * mainpage feature 전용 라이트 모드 테마 래퍼
  * Preview 함수에서 사용하여 다크 모드를 강제로 비활성화합니다.
- * 
+ *
  * 사용 예시:
  * ```
  * @Preview(showBackground = true)
@@ -57,8 +58,7 @@ inline fun <reified T : Any> NavGraphBuilder.mainPageComposable(noinline content
 fun NavGraphBuilder.mainPageNavGraph(
     navController: NavController,
     afternoteItems: List<Pair<String, String>>,
-    onItemsUpdated: (List<Pair<String, String>>) -> Unit,
-    mainPageNavigator: MainPageNavigator
+    onItemsUpdated: (List<Pair<String, String>>) -> Unit
 ) {
     mainPageComposable<MainPageRoute.MainEmptyRoute> {
         AfternoteMainRoute(
@@ -97,23 +97,23 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.EditRoute> {
         // 플레이리스트 상태 생성
-        val playlistStateHolder = remember { 
-            com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder().apply {
+        val playlistStateHolder = remember {
+            MemorialPlaylistStateHolder().apply {
                 // 초기 데이터 설정
                 if (songs.isEmpty()) {
                     initializeSongs(
                         listOf(
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "1", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "2", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "3", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "4", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "5", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "6", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "7", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "8", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "9", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "10", title = "노래 제목", artist = "가수 이름"),
-                            com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song(id = "11", title = "노래 제목", artist = "가수 이름")
+                            Song(id = "1", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "2", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "3", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "4", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "5", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "6", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "7", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "8", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "9", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "10", title = "노래 제목", artist = "가수 이름"),
+                            Song(id = "11", title = "노래 제목", artist = "가수 이름")
                         )
                     )
                 }
@@ -123,7 +123,7 @@ fun NavGraphBuilder.mainPageNavGraph(
                 }
             }
         }
-        
+
         AfternoteEditScreen(
             onBackClick = { navController.popBackStack() },
             onRegisterClick = { selectedService ->
@@ -151,7 +151,7 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.FingerprintLoginRoute> {
         FingerprintLoginScreen(
-            onFingerprintAuthClick = { /* TODO: 지문 인증 처리 */ }
+            onFingerprintAuthClick = { TODO("지문 인증 처리") }
         )
     }
 
@@ -159,8 +159,8 @@ fun NavGraphBuilder.mainPageNavGraph(
         AddSongScreen(
             callbacks = AddSongCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onSongsAdded = { songs ->
-                    // TODO: 선택된 노래를 플레이리스트에 추가
+                onSongsAdded = { _ ->
+                    // 추후 선택된 노래를 플레이리스트에 반영하는 로직 구현 예정
                     navController.popBackStack()
                 }
             )

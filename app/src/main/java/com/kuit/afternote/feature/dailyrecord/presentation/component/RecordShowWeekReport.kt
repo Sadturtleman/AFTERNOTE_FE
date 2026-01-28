@@ -26,15 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.dropShadow
-import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.White
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -48,11 +45,11 @@ fun RecordShowWeekReport(
     modifier: Modifier = Modifier,
     standard: String,
     today: LocalDate
-    ) {
+) {
     var isExpanded by remember { mutableStateOf(false) }
     val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
-    if(!isExpanded) {
+    if (!isExpanded) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,11 +61,9 @@ fun RecordShowWeekReport(
                     offsetY = 2.dp,
                     offsetX = 0.dp,
                     spread = 0.dp
-                )
-                .clip(RoundedCornerShape(16.dp))
+                ).clip(RoundedCornerShape(16.dp))
                 .background(color = White)
                 .clickable { isExpanded = !isExpanded }
-
         ) {
             Row(
                 modifier = Modifier
@@ -84,7 +79,6 @@ fun RecordShowWeekReport(
                 )
                 Box(
                     modifier = Modifier
-
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_under_direct_foreground),
@@ -94,9 +88,8 @@ fun RecordShowWeekReport(
                     )
                 }
             }
-
         }
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -108,17 +101,14 @@ fun RecordShowWeekReport(
                     offsetY = 2.dp,
                     offsetX = 0.dp,
                     spread = 0.dp
-                )
-                .clip(RoundedCornerShape(16.dp))
+                ).clip(RoundedCornerShape(16.dp))
                 .background(color = White)
                 .clickable { isExpanded = !isExpanded }
-
         ) {
             Column(
                 modifier = Modifier
                     .padding(all = 17.dp),
-
-            ){
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -132,7 +122,6 @@ fun RecordShowWeekReport(
                     )
                     Box(
                         modifier = Modifier
-
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_under_direct_foreground),
@@ -161,10 +150,7 @@ fun RecordShowWeekReport(
                         )
                     }
                 }
-
-
             }
         }
     }
 }
-

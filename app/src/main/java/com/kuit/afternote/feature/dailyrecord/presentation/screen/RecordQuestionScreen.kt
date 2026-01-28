@@ -23,14 +23,11 @@ fun RecordQuestionScreen(
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
-    Scaffold(
-
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록
-
+                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
             item {
                 RecordSubTopbar(
@@ -49,7 +46,5 @@ fun RecordQuestionScreen(
                 )
             }
         }
-
     }
 }
-

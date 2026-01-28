@@ -32,6 +32,7 @@ import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
+import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
@@ -42,22 +43,23 @@ fun RecordDailyQuestionScreen(
     onLeftClick: () -> Unit,
     onPlusRecordClick: () -> Unit
 ) {
+    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
     val today = LocalDate.now()
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { item -> selectedBottomNavItem = item }
+                onItemSelected = { selectedBottomNavItem = it }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick =  onPlusRecordClick ,
+                onClick = onPlusRecordClick,
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -89,7 +91,6 @@ fun RecordDailyQuestionScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValues)
                 .padding(top = 10.dp)
         ) {
             RecordMainTopbar(
@@ -97,7 +98,7 @@ fun RecordDailyQuestionScreen(
                 showLeftArrow = true,
                 onLeftClock = onLeftClick
             )
-            LazyColumn{
+            LazyColumn {
                 item {
                     RecordListSort(
                         today = today

@@ -22,21 +22,19 @@ private const val READ_TIMEOUT_SEC = 15L
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    @Provides
+    @Singleton
+    fun provideJson(): Json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            isLenient = true
+            coerceInputValues = true
+        }
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-        isLenient = true
-        coerceInputValues = true
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(tokenManager: TokenManager): AuthInterceptor {
-        return AuthInterceptor(tokenManager)
-    }
+    fun provideAuthInterceptor(tokenManager: TokenManager): AuthInterceptor = AuthInterceptor(tokenManager)
 
     @Provides
     @Singleton
@@ -44,7 +42,8 @@ object NetworkModule {
         json: Json,
         authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
+        val builder = OkHttpClient
+            .Builder()
             .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
@@ -65,9 +64,11 @@ object NetworkModule {
     fun provideRetrofit(
         json: Json,
         okHttpClient: OkHttpClient
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-        .build()
+    ): Retrofit =
+        Retrofit
+            .Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
 }

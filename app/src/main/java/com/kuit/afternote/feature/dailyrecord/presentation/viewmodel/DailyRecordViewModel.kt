@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class DailyRecordViewModel : ViewModel() {
-
     // 더미 데이터
     private val dummyPosts = mutableStateListOf(
         RecordPost(
@@ -117,7 +116,10 @@ class DailyRecordViewModel : ViewModel() {
         }
     }
 
-    fun deletePost(postId: Long, onSuccess: () -> Unit = {}) {
+    fun deletePost(
+        postId: Long,
+        onSuccess: () -> Unit = {}
+    ) {
         viewModelScope.launch {
             delay(300)
             dummyPosts.removeIf { it.id == postId }
@@ -131,7 +133,5 @@ class DailyRecordViewModel : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCurrentDateTime(): String {
-        return LocalDateTime.now().toString()
-    }
+    private fun getCurrentDateTime(): String = LocalDateTime.now().toString()
 }

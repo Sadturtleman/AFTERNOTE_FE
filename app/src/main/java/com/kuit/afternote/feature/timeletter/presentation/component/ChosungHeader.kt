@@ -19,7 +19,7 @@ import com.kuit.afternote.R
 
 /**
  * 초성 헤더 컴포넌트
- * 
+ *
  * 수신자 목록에서 초성별 구분을 표시하는 헤더
  * 예: ㄱ, ㄴ, ㄷ 등
  */
@@ -56,4 +56,3 @@ fun ChosungHeader(
 private fun ChosungHeaderPreview() {
     ChosungHeader(chosung = 'ㄱ')
 }
-

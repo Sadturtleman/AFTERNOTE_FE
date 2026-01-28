@@ -6,10 +6,10 @@ import javax.inject.Inject
 /**
  * 이메일 인증번호 발송 UseCase.
  */
-class SendEmailCodeUseCase @Inject constructor(
-    private val authRepository: AuthRepository
-) {
-
-    suspend operator fun invoke(email: String): Result<Unit> =
-        authRepository.sendEmailCode(email)
-}
+class SendEmailCodeUseCase
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository
+    ) {
+        suspend operator fun invoke(email: String): Result<Unit> = authRepository.sendEmailCode(email)
+    }

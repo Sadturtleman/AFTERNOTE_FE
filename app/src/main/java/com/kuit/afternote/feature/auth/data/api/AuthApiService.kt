@@ -22,25 +22,38 @@ import retrofit2.http.POST
  * - POST /auth/reissue, /auth/logout, /auth/password/change
  */
 interface AuthApiService {
-
     @POST("auth/email/send")
-    suspend fun sendEmailCode(@Body body: SendEmailCodeRequest): ApiResponse<Unit?>
+    suspend fun sendEmailCode(
+        @Body body: SendEmailCodeRequest
+    ): ApiResponse<Unit?>
 
     @POST("auth/email/verify")
-    suspend fun verifyEmail(@Body body: VerifyEmailRequest): ApiResponse<VerifyEmailData?>
+    suspend fun verifyEmail(
+        @Body body: VerifyEmailRequest
+    ): ApiResponse<VerifyEmailData?>
 
     @POST("auth/sign-up")
-    suspend fun signUp(@Body body: SignUpRequest): ApiResponse<SignUpData?>
+    suspend fun signUp(
+        @Body body: SignUpRequest
+    ): ApiResponse<SignUpData?>
 
     @POST("auth/login")
-    suspend fun login(@Body body: LoginRequest): ApiResponse<LoginData?>
+    suspend fun login(
+        @Body body: LoginRequest
+    ): ApiResponse<LoginData?>
 
     @POST("auth/reissue")
-    suspend fun reissue(@Body body: ReissueRequest): ApiResponse<ReissueData?>
+    suspend fun reissue(
+        @Body body: ReissueRequest
+    ): ApiResponse<ReissueData?>
 
     @POST("auth/logout")
-    suspend fun logout(@Body body: LogoutRequest): ApiResponse<Unit?>
+    suspend fun logout(
+        @Body body: LogoutRequest
+    ): ApiResponse<Unit?>
 
     @POST("auth/password/change")
-    suspend fun passwordChange(@Body body: PasswordChangeRequest): ApiResponse<Unit?>
+    suspend fun passwordChange(
+        @Body body: PasswordChangeRequest
+    ): ApiResponse<Unit?>
 }

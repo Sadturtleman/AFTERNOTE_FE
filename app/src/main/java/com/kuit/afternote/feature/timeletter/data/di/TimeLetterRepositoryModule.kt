@@ -16,24 +16,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class TimeLetterRepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindDraftLetterRepository(impl: DraftLetterRepositoryImpl): DraftLetterRepository
 
     @Binds
     @Singleton
-    abstract fun bindDraftLetterRepository(
-        impl: DraftLetterRepositoryImpl
-    ): DraftLetterRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindTimeLetterRepository(
-        impl: TimeLetterRepositoryImpl
-    ): TimeLetterRepository
+    abstract fun bindTimeLetterRepository(impl: TimeLetterRepositoryImpl): TimeLetterRepository
 
     companion object {
-
         @Provides
         @Singleton
-        fun provideTimeLetterApiService(retrofit: Retrofit): TimeLetterApiService =
-            retrofit.create(TimeLetterApiService::class.java)
+        fun provideTimeLetterApiService(retrofit: Retrofit): TimeLetterApiService = retrofit.create(TimeLetterApiService::class.java)
     }
 }

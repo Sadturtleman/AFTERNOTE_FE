@@ -38,7 +38,7 @@ import java.time.LocalTime
 fun TimeWheelPicker(
     initialHour: Int = LocalTime.now().hour,
     initialMinute: Int = LocalTime.now().minute,
-    onTimeChanged: (hour: Int, minute: Int) -> Unit,  // 24시간 형식으로 반환
+    onTimeChanged: (hour: Int, minute: Int) -> Unit, // 24시간 형식으로 반환
     modifier: Modifier = Modifier
 ) {
     val amPmList = listOf("오전", "오후")
@@ -78,13 +78,15 @@ fun TimeWheelPicker(
         onTimeChanged(hour24, selectedMinute)
     }
 
-    Box(modifier = modifier
-        .width(204.dp)
-        .height(152.dp)) {
+    Box(
+        modifier = modifier
+            .width(204.dp)
+            .height(152.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top= 21.dp, bottom = 21.dp, start= 10.dp,end=10.dp),
+                .padding(top = 21.dp, bottom = 21.dp, start = 10.dp, end = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -93,7 +95,7 @@ fun TimeWheelPicker(
                 count = amPmList.size,
                 state = amPmState,
                 modifier = Modifier.width(60.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 TimePickerText(
                     text = amPmList[index],
@@ -108,7 +110,7 @@ fun TimeWheelPicker(
                 count = hours.size,
                 state = hourState,
                 modifier = Modifier.width(50.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 TimePickerText(
                     text = "${hours[index]}",
@@ -123,7 +125,7 @@ fun TimeWheelPicker(
                 count = minutes.size,
                 state = minuteState,
                 modifier = Modifier.width(50.dp),
-                focus = {}  // 구분선 제거
+                focus = {} // 구분선 제거
             ) { index ->
                 TimePickerText(
                     text = minutes[index].toString().padStart(2, '0'),
@@ -143,14 +145,16 @@ fun TimeWheelPicker(
     }
 }
 
-private fun convertTo24Hour(amPm: String, hour12: Int): Int {
-    return when {
+private fun convertTo24Hour(
+    amPm: String,
+    hour12: Int
+): Int =
+    when {
         amPm == "오전" && hour12 == 12 -> 0
         amPm == "오전" -> hour12
         amPm == "오후" && hour12 == 12 -> 12
         else -> hour12 + 12
     }
-}
 
 @Composable
 private fun TimePickerText(
@@ -180,9 +184,8 @@ private fun TimeDivider() {
 @Composable
 private fun TimeWheelPickerPreview() {
     TimeWheelPicker(
-        initialHour = 15,  // 오후 3시
+        initialHour = 15, // 오후 3시
         initialMinute = 22,
         onTimeChanged = { _, _ -> }
     )
 }
-

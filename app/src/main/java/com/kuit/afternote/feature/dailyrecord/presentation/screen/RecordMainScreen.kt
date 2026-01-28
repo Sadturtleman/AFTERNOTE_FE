@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,10 +31,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.kuit.afternote.core.ui.component.BottomNavItem
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
-
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.ui.theme.Gray1
@@ -56,7 +53,6 @@ fun RecordMainScreen(
     onWeekendReportClick: () -> Unit,
     onQuestionClick: () -> Unit
 ) {
-
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -69,7 +65,7 @@ fun RecordMainScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {  },
+                onClick = { },
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -102,15 +98,16 @@ fun RecordMainScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars)//상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
-            //샹단 제목
-            RecordMainTopbar(modifier = modifier,
+            // 샹단 제목
+            RecordMainTopbar(
+                modifier = modifier,
                 "나의 모든 기록",
                 showLeftArrow = false,
                 onLeftClock = {}
             )
-            //리스트
+            // 리스트
             val allItems = listOf(
                 "데일리 질문답변" to "매일 다른 질문들에 나를 남겨보세요",
                 "일기" to "나의 매일을 기록하세요.",
@@ -126,15 +123,24 @@ fun RecordMainScreen(
                     end = 20.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
-
             ) {
                 items(allItems) { (title, subtitle) ->
                     val clickAction: () -> Unit = when (title) {
-                        "데일리 질문답변" -> { onQuestionClick }
-                        "일기" -> { onDiaryClick }
-                        "깊은 생각" -> { onDeepMindClick }
-                        "주간 리포트" -> { onWeekendReportClick }
-                        else -> { {} } // 아무 것도 안 하는 빈 람다
+                        "데일리 질문답변" -> {
+                            onQuestionClick
+                        }
+                        "일기" -> {
+                            onDiaryClick
+                        }
+                        "깊은 생각" -> {
+                            onDeepMindClick
+                        }
+                        "주간 리포트" -> {
+                            onWeekendReportClick
+                        }
+                        else -> {
+                            {}
+                        } // 아무 것도 안 하는 빈 람다
                     }
 
                     RecordItem(
@@ -143,13 +149,8 @@ fun RecordMainScreen(
                         onClick = clickAction
                     )
                 }
-
-
             }
         }
-
-
-
     }
 }
 
@@ -158,5 +159,4 @@ fun RecordMainScreen(
 )
 @Composable
 private fun RecordMainScreenPrev() {
-
 }

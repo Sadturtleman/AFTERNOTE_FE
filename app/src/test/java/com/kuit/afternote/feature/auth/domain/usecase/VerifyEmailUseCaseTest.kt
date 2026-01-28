@@ -15,7 +15,6 @@ import org.junit.Test
  * [VerifyEmailUseCase] 단위 테스트.
  */
 class VerifyEmailUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var verifyEmailUseCase: VerifyEmailUseCase
 
@@ -26,24 +25,26 @@ class VerifyEmailUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsEmailVerifyResult() = runTest {
-        val expected = EmailVerifyResult(isVerified = true)
-        coEvery { authRepository.verifyEmail(any(), any()) } returns Result.success(expected)
+    fun invoke_whenSuccess_returnsEmailVerifyResult() =
+        runTest {
+            val expected = EmailVerifyResult(isVerified = true)
+            coEvery { authRepository.verifyEmail(any(), any()) } returns Result.success(expected)
 
-        val result = verifyEmailUseCase("a@b.com", "123456")
+            val result = verifyEmailUseCase("a@b.com", "123456")
 
-        assertTrue(result.isSuccess)
-        assertEquals(expected, result.getOrNull())
-        coVerify(exactly = 1) { authRepository.verifyEmail("a@b.com", "123456") }
-    }
+            assertTrue(result.isSuccess)
+            assertEquals(expected, result.getOrNull())
+            coVerify(exactly = 1) { authRepository.verifyEmail("a@b.com", "123456") }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.verifyEmail(any(), any()) } returns Result.failure(RuntimeException("invalid code"))
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.verifyEmail(any(), any()) } returns Result.failure(RuntimeException("invalid code"))
 
-        val result = verifyEmailUseCase("a@b.com", "000000")
+            val result = verifyEmailUseCase("a@b.com", "000000")
 
-        assertTrue(result.isFailure)
-        assertEquals("invalid code", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertEquals("invalid code", result.exceptionOrNull()?.message)
+        }
 }

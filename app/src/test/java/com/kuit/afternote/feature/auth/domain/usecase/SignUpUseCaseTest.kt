@@ -15,7 +15,6 @@ import org.junit.Test
  * [SignUpUseCase] 단위 테스트.
  */
 class SignUpUseCaseTest {
-
     private lateinit var authRepository: AuthRepository
     private lateinit var signUpUseCase: SignUpUseCase
 
@@ -26,33 +25,36 @@ class SignUpUseCaseTest {
     }
 
     @Test
-    fun invoke_whenSuccess_returnsSignUpResult() = runTest {
-        val expected = SignUpResult(userId = 1L, email = "a@b.com")
-        coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.success(expected)
+    fun invoke_whenSuccess_returnsSignUpResult() =
+        runTest {
+            val expected = SignUpResult(userId = 1L, email = "a@b.com")
+            coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.success(expected)
 
-        val result = signUpUseCase("a@b.com", "pwd1!", "name", null)
+            val result = signUpUseCase("a@b.com", "pwd1!", "name", null)
 
-        assertTrue(result.isSuccess)
-        assertEquals(expected, result.getOrNull())
-        coVerify(exactly = 1) { authRepository.signUp("a@b.com", "pwd1!", "name", null) }
-    }
-
-    @Test
-    fun invoke_withProfileUrl_callsRepositoryWithProfileUrl() = runTest {
-        coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
-
-        signUpUseCase("b@c.com", "pwd2!", "nick", "https://img.url/p.jpg")
-
-        coVerify(exactly = 1) { authRepository.signUp("b@c.com", "pwd2!", "nick", "https://img.url/p.jpg") }
-    }
+            assertTrue(result.isSuccess)
+            assertEquals(expected, result.getOrNull())
+            coVerify(exactly = 1) { authRepository.signUp("a@b.com", "pwd1!", "name", null) }
+        }
 
     @Test
-    fun invoke_whenFailure_returnsFailure() = runTest {
-        coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.failure(RuntimeException("email exists"))
+    fun invoke_withProfileUrl_callsRepositoryWithProfileUrl() =
+        runTest {
+            coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
 
-        val result = signUpUseCase("a@b.com", "pwd", "n", null)
+            signUpUseCase("b@c.com", "pwd2!", "nick", "https://img.url/p.jpg")
 
-        assertTrue(result.isFailure)
-        assertEquals("email exists", result.exceptionOrNull()?.message)
-    }
+            coVerify(exactly = 1) { authRepository.signUp("b@c.com", "pwd2!", "nick", "https://img.url/p.jpg") }
+        }
+
+    @Test
+    fun invoke_whenFailure_returnsFailure() =
+        runTest {
+            coEvery { authRepository.signUp(any(), any(), any(), any()) } returns Result.failure(RuntimeException("email exists"))
+
+            val result = signUpUseCase("a@b.com", "pwd", "n", null)
+
+            assertTrue(result.isFailure)
+            assertEquals("email exists", result.exceptionOrNull()?.message)
+        }
 }

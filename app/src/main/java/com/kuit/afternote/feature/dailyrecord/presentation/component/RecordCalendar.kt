@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
 import android.os.Build
-import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,10 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +51,7 @@ fun RecordCalendar(modifier: Modifier = Modifier) {
     val daysInMonth = YearMonth.of(selectedYear, selectedMonth).lengthOfMonth()
     val firstDayOfWeek = LocalDate.of(selectedYear, selectedMonth, 1).dayOfWeek.value // 1 = 월요일
 
-    //누르면 정렬 가능하도록
+    // 누르면 정렬 가능하도록
     var showSelector by remember { mutableStateOf(false) }
 
     val calendarDates = buildList {
@@ -67,11 +63,10 @@ fun RecordCalendar(modifier: Modifier = Modifier) {
 
     Column(
         modifier = Modifier
-            .size(350.dp,370.dp)
+            .size(350.dp, 370.dp)
             .background(color = Color.White)
             .clip(RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp, vertical = 24.dp)
-
     ) {
 //        Row {
 //            DropdownSelector("년", (2020..2030).toList(), selectedYear) { selectedYear = it }
@@ -80,17 +75,17 @@ fun RecordCalendar(modifier: Modifier = Modifier) {
 
         Box(
             modifier = Modifier
-                .size(120.dp,34.dp)
+                .size(120.dp, 34.dp)
                 .border(
                     width = 1.dp,
                     color = Color(0xFF328BFF),
                     shape = RoundedCornerShape(20.dp)
-                    ),
+                ),
             contentAlignment = Alignment.Center
-
-        ){
+        ) {
             Row {
-                Text(text = "${selectedYear}년 ${selectedMonth}월",
+                Text(
+                    text = "${selectedYear}년 ${selectedMonth}월",
                     fontSize = 12.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium
@@ -100,13 +95,12 @@ fun RecordCalendar(modifier: Modifier = Modifier) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_under),
                     contentDescription = "밑 화살표",
-                    modifier = Modifier.size(16.dp)
-                        .clickable{ showSelector = true },
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable { showSelector = true },
                     colorFilter = ColorFilter.tint(Color(0xFF89C2FF))
-
                 )
             }
-
         }
 
         LazyVerticalGrid(columns = GridCells.Fixed(7)) {
@@ -130,7 +124,6 @@ fun RecordCalendar(modifier: Modifier = Modifier) {
             }
         }
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

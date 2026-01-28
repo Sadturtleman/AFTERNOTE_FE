@@ -24,9 +24,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 
 @Composable
-fun ReceiverInfoItem(
-    receiver: TimeLetterReceiver
-) {
+fun ReceiverInfoItem(receiver: TimeLetterReceiver) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,8 +40,7 @@ fun ReceiverInfoItem(
                 .size(52.91.dp)
         )
 
-        Column(
-        ) {
+        Column {
             Text(
                 modifier = Modifier.padding(top = 13.dp),
                 text = receiver.receiver_name,
@@ -67,7 +64,6 @@ fun ReceiverInfoItem(
         }
     }
 }
-
 
 @Preview(
     showBackground = true,

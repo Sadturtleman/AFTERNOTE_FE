@@ -11,15 +11,16 @@ import javax.inject.Inject
  *
  * 현재 Room/API 연동 전이므로 스텁 구현. 추후 DataSource(DAO 등) 주입 후 실제 저장·조회 로직으로 교체.
  */
-class DraftLetterRepositoryImpl @Inject constructor() : DraftLetterRepository {
+class DraftLetterRepositoryImpl
+    @Inject
+    constructor() : DraftLetterRepository {
+        override fun getDraftLetters(): Flow<List<DraftLetter>> = flow { emit(emptyList()) }
 
-    override fun getDraftLetters(): Flow<List<DraftLetter>> = flow { emit(emptyList()) }
+        override suspend fun saveDraftLetter(draftLetter: DraftLetter): Long = 0L
 
-    override suspend fun saveDraftLetter(draftLetter: DraftLetter): Long = 0L
+        override suspend fun deleteDraftLetter(id: Long) = Unit
 
-    override suspend fun deleteDraftLetter(id: Long) = Unit
+        override suspend fun deleteAllDraftLetters() = Unit
 
-    override suspend fun deleteAllDraftLetters() = Unit
-
-    override suspend fun getDraftLetterById(id: Long): DraftLetter? = null
-}
+        override suspend fun getDraftLetterById(id: Long): DraftLetter? = null
+    }

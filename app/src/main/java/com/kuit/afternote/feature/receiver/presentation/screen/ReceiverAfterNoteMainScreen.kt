@@ -157,9 +157,8 @@ fun AfterNoteMainScreen(title: String) {
                 }
             }
 
-
             item {
-                Spacer(modifier = Modifier.height(32    .dp))
+                Spacer(modifier = Modifier.height(32.dp))
                 SectionHeader(title = "남기고 싶은 당부")
                 Spacer(modifier = Modifier.height(8.dp))
 

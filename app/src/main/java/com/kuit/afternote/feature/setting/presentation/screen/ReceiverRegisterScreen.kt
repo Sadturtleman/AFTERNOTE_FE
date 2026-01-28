@@ -27,7 +27,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray1
-import com.kuit.afternote.ui.theme.Spacing
 
 @Composable
 fun ReceiverRegisterScreen(

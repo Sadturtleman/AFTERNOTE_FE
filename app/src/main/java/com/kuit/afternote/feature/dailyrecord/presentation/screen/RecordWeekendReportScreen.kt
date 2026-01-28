@@ -39,45 +39,36 @@ import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
-/**
- * 주간리포트 화면
- * - 활동 한 눈에 보기
- * - 기록 통계
- * - 활동 통계
- * - 나의 감정 키워드
- * - 나의 기록 다시 읽기(-> listItem 리스트로 연결)
- */
-
 @RequiresApi(Build.VERSION_CODES.O)
-
 @Composable
 fun RecordWeekendReportScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit
-    ) {
+) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     val today = LocalDate.now()
 
     val weekFields = WeekFields.of(Locale.KOREA)
-    val weekOfMonth = today[weekFields.weekOfMonth()]
+    val weekOfMonth = today.get(weekFields.weekOfMonth())
 
     // 이번 주의 월요일
     val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     // 이번 주의 일요일
     val endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .background(color = Gray1),
         containerColor = Gray1,
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { item -> selectedBottomNavItem = item }
+                onItemSelected = { selectedBottomNavItem = it }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {  },
+                onClick = { },
                 modifier = Modifier.size(56.dp),
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
@@ -106,9 +97,7 @@ fun RecordWeekendReportScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = paddingValues
-        ) {
+        LazyColumn {
             item {
                 RecordMainTopbar(
                     text = "주간 리포트",
@@ -134,10 +123,10 @@ fun RecordWeekendReportScreen(
                     today = today
                 )
             }
-            item{
+            item {
                 RecordweekendMindKeyword()
             }
-            item{
+            item {
                 RecordWeekendReview()
             }
         }
