@@ -15,8 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +45,6 @@ import com.kuit.afternote.ui.theme.White
  */
 @Composable
 private fun RelationshipDropdown(
-    label: String,
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
@@ -56,7 +53,7 @@ private fun RelationshipDropdown(
     val dropdownState = rememberSelectionDropdownState()
 
     SelectionDropdown(
-        label = label,
+        label = "수신자와의 관계",
         selectedValue = selectedValue,
         options = options,
         onValueSelected = onValueSelected,
@@ -159,7 +156,6 @@ fun AddRecipientDialog(
 
             // 수신자와의 관계 드롭다운
             RelationshipDropdown(
-                label = "수신자와의 관계",
                 selectedValue = params.relationshipSelectedValue,
                 options = params.relationshipOptions,
                 onValueSelected = params.callbacks.onRelationshipSelected,
