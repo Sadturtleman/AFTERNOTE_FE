@@ -12,13 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.AddFloatingActionButton
 import com.kuit.afternote.core.ui.component.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.TopBar
@@ -29,48 +25,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.main.Afternote
 import com.kuit.afternote.feature.mainpage.presentation.component.main.EmptyAfternoteContent
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.Spacing
-
-/**
- * 애프터노트 메인 화면 Route
- * ViewModel 주입 및 네비게이션 처리 담당
- */
-@Composable
-fun AfternoteMainRoute(
-    viewModel: AfternoteMainViewModel = hiltViewModel(),
-    onNavigateToDetail: () -> Unit = {},
-    onNavigateToGalleryDetail: () -> Unit = {},
-    onNavigateToAdd: () -> Unit = {},
-    initialItems: List<AfternoteItem> = emptyList()
-) {
-    // 초기 데이터 설정 (한 번만 실행)
-    LaunchedEffect(initialItems) {
-        if (initialItems.isNotEmpty()) {
-            viewModel.setItems(initialItems)
-        }
-    }
-
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    AfternoteMainScreen(
-        uiState = uiState,
-        onEvent = { event ->
-            when (event) {
-                is AfternoteMainEvent.ClickItem -> {
-                    // 아이템 ID로 아이템 찾기
-                    val item = uiState.items.find { it.id == event.itemId }
-                    // 서비스명이 "갤러리"인 경우 갤러리 상세 화면으로 이동
-                    if (item?.serviceName == "갤러리") {
-                        onNavigateToGalleryDetail()
-                    } else {
-                        onNavigateToDetail()
-                    }
-                }
-                is AfternoteMainEvent.ClickAdd -> onNavigateToAdd()
-                else -> viewModel.onEvent(event)
-            }
-        }
-    )
-}
 
 /**
  * 애프터노트 메인 화면 (순수 UI 컴포저블)
