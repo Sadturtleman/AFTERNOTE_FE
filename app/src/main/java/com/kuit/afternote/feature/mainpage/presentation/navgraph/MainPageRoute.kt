@@ -23,4 +23,7 @@ sealed interface MainPageRoute {
 
     @Serializable
     data object AddSongRoute : MainPageRoute
+
+    @Serializable
+    data object MemorialPlaylistRoute : MainPageRoute
 }

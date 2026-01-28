@@ -18,6 +18,7 @@ import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
+import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
@@ -34,8 +35,10 @@ import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNav
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun NavGraph(navHostController: NavHostController) {
     var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = listOf(
 //        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
 //        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
@@ -73,7 +76,8 @@ fun NavGraph(navHostController: NavHostController) {
         mainPageNavGraph(
             navController = navHostController,
             afternoteItems = afternoteItems,
-            onItemsUpdated = { afternoteItems = it }
+            onItemsUpdated = { afternoteItems = it },
+            playlistStateHolder = playlistStateHolder
         )
 
         timeLetterNavGraph(

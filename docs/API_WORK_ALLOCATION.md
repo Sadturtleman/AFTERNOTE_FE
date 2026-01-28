@@ -27,6 +27,9 @@
 > **중요**: `Repository` **인터페이스**는 Domain 계층이며, 각 Feature의 Domain 담당자(UseCase 작성자)가 정의합니다. 정일혁은 **RepositoryImpl만 구현**합니다.  
 > 예외: Auth와 User는 정일혁이 Domain까지 담당하므로, 해당 Feature의 Repository 인터페이스도 정일혁이 정의합니다.
 
+> **정일혁이 담당하지 않는 것** (Auth·User 제외):  
+> Time-Letters, Received, Mind-Record, Afternote 등 **그 외 모든 Feature**에 대해서는 **Repository 인터페이스, UseCase, ViewModel, UIModel을 작성하지 않습니다.** 해당 계층은 각 Feature 담당자(박경민, 안현지)가 담당합니다. 정일혁의 역할은 Data 계층(API·DataSource·DTO·Mapper·RepositoryImpl)만입니다.
+
 > 요약: DTO를 nonnull 등으로 정제하는 **반복적인 Data 계층**을 한 명이 담당.
 
 ---
