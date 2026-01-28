@@ -39,8 +39,11 @@ import com.kuit.afternote.feature.receiver.presentation.component.FilterChipItem
 import com.kuit.afternote.feature.receiver.presentation.uimodel.AppNoteItem
 import com.kuit.afternote.ui.theme.B1
 
+private const val DUMMY_LAST_MODIFIED = "최종 작성일 2026.1.28."
+
 @Composable
-fun AfterNoteListScreen() {
+@Suppress("AssignedValueIsNeverRead")
+fun ReceiverAfterNoteListScreen() {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
 
     // 필터 카테고리 데이터
@@ -49,10 +52,10 @@ fun AfterNoteListScreen() {
 
     // 리스트 데이터 (더미)
     val noteItems = listOf(
-        AppNoteItem("인스타그램", "최종 작성일 2025.11.26.", Icons.Outlined.Image, Color.White, Color(0xFFE1306C)), // Instagram Pink
-        AppNoteItem("갤러리", "최종 작성일 2025.11.26.", Icons.Outlined.Image, Color.Gray, Color(0xFFEEEEEE)), // Gallery Gray
-        AppNoteItem("카카오톡", "최종 작성일 2025.11.26.", Icons.Filled.Phone, Color(0xFF381E1F), Color(0xFFFEE500)), // Kakao Yellow
-        AppNoteItem("네이버 메일", "최종 작성일 2025.11.26.", Icons.Filled.MailOutline, Color.White, Color(0xFF03C75A)) // Naver Green
+        AppNoteItem("인스타그램", DUMMY_LAST_MODIFIED, Icons.Outlined.Image, Color.White, Color(0xFFE1306C)), // Instagram Pink
+        AppNoteItem("갤러리", DUMMY_LAST_MODIFIED, Icons.Outlined.Image, Color.Gray, Color(0xFFEEEEEE)), // Gallery Gray
+        AppNoteItem("카카오톡", DUMMY_LAST_MODIFIED, Icons.Filled.Phone, Color(0xFF381E1F), Color(0xFFFEE500)), // Kakao Yellow
+        AppNoteItem("네이버 메일", DUMMY_LAST_MODIFIED, Icons.Filled.MailOutline, Color.White, Color(0xFF03C75A)) // Naver Green
     )
 
     Scaffold(
@@ -129,8 +132,8 @@ fun AfterNoteListScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewAfterNoteList() {
+fun PreviewReceiverAfterNoteList() {
     MaterialTheme {
-        AfterNoteListScreen()
+        ReceiverAfterNoteListScreen()
     }
 }

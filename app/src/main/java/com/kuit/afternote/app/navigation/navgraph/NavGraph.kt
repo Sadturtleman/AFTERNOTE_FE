@@ -18,6 +18,8 @@ import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
+import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
@@ -33,6 +35,7 @@ import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
+import com.kuit.afternote.ui.theme.AfternoteTheme
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -41,8 +44,9 @@ fun NavGraph(navHostController: NavHostController) {
     var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = listOf(
-//        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
-//        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
+        ScreenInfo("메인 화면", "main"),
+        ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
+        ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
         ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
         ScreenInfo("애프터노트 수정 화면", "afternote_edit"),
         ScreenInfo("스플래시 화면", "dev_splash"),
@@ -98,8 +102,9 @@ fun NavGraph(navHostController: NavHostController) {
 
                     // 문자열 route를 MainPageRoute로 변환하여 navigate
                     when (route) {
-                        "main_empty" -> navHostController.navigate(MainPageRoute.MainEmptyRoute)
-                        "main_with_items" -> navHostController.navigate(MainPageRoute.MainWithItemsRoute)
+                        "main" -> navHostController.navigate(MainPageRoute.MainRoute)
+                        "main_empty" -> navHostController.navigate("main_empty")
+                        "main_with_items" -> navHostController.navigate("main_with_items")
                         "afternote_detail" -> navHostController.navigate(MainPageRoute.DetailRoute)
                         "afternote_edit" -> navHostController.navigate(MainPageRoute.EditRoute)
                         "fingerprint_login" -> navHostController.navigate(MainPageRoute.FingerprintLoginRoute)
@@ -118,6 +123,33 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         // 메인 화면 - 빈 상태 (개발용)
+        composable("main_empty") {
+            AfternoteTheme(darkTheme = false) {
+                AfternoteMainRoute(
+                    onNavigateToDetail = { navHostController.navigate(MainPageRoute.DetailRoute) },
+                    onNavigateToGalleryDetail = { navHostController.navigate(MainPageRoute.GalleryDetailRoute) },
+                    onNavigateToAdd = { navHostController.navigate(MainPageRoute.EditRoute) },
+                    initialItems = emptyList()
+                )
+            }
+        }
+
+        // 메인 화면 - 목록 있음 (개발용)
+        composable("main_with_items") {
+            AfternoteTheme(darkTheme = false) {
+                AfternoteMainRoute(
+                    onNavigateToDetail = { navHostController.navigate(MainPageRoute.DetailRoute) },
+                    onNavigateToGalleryDetail = { navHostController.navigate(MainPageRoute.GalleryDetailRoute) },
+                    onNavigateToAdd = { navHostController.navigate(MainPageRoute.EditRoute) },
+                    initialItems = AfternoteItemMapper.toAfternoteItems(
+                        listOf(
+                            "갤러리" to "2025.01.28",
+                            "추모 가이드라인" to "2025.01.28"
+                        )
+                    )
+                )
+            }
+        }
 
         // 애프터노트 상세 화면
         composable("afternote_detail") {
@@ -150,7 +182,7 @@ fun NavGraph(navHostController: NavHostController) {
                 onBackClick = { navHostController.popBackStack() },
                 onSignUpClick = { navHostController.navigate("dev_signup") },
                 onFindIdClick = {},
-                onLoginSuccess = { navHostController.navigate(MainPageRoute.MainEmptyRoute) }
+                onLoginSuccess = { navHostController.navigate(MainPageRoute.MainRoute) }
             )
         }
 
@@ -169,7 +201,7 @@ fun NavGraph(navHostController: NavHostController) {
             ProfileSettingScreen(
                 email = email,
                 password = password,
-                onFinishClick = { navHostController.navigate(MainPageRoute.MainEmptyRoute) },
+                onFinishClick = { navHostController.navigate(MainPageRoute.MainRoute) },
                 onBackClick = { navHostController.popBackStack() },
                 onAddProfileAvatarClick = {}
             )

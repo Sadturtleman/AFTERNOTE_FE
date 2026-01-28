@@ -62,16 +62,7 @@ fun NavGraphBuilder.mainPageNavGraph(
     onItemsUpdated: (List<Pair<String, String>>) -> Unit,
     playlistStateHolder: MemorialPlaylistStateHolder
 ) {
-    mainPageComposable<MainPageRoute.MainEmptyRoute> {
-        AfternoteMainRoute(
-            onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
-            onNavigateToGalleryDetail = { navController.navigate(MainPageRoute.GalleryDetailRoute) },
-            onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
-            initialItems = emptyList()
-        )
-    }
-
-    mainPageComposable<MainPageRoute.MainWithItemsRoute> {
+    mainPageComposable<MainPageRoute.MainRoute> {
         AfternoteMainRoute(
             onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
             onNavigateToGalleryDetail = { navController.navigate(MainPageRoute.GalleryDetailRoute) },
@@ -130,10 +121,8 @@ fun NavGraphBuilder.mainPageNavGraph(
                 onItemsUpdated(updatedItems)
 
                 // 메인 화면으로 이동
-                navController.navigate(MainPageRoute.MainWithItemsRoute) {
-                    // 백 스택에서 MainEmptyRoute까지 제거 (시작점으로 돌아감)
-                    popUpTo(MainPageRoute.MainEmptyRoute) { inclusive = true }
-                    // 같은 Route가 이미 있으면 재사용
+                navController.navigate(MainPageRoute.MainRoute) {
+                    popUpTo(MainPageRoute.MainRoute) { inclusive = true }
                     launchSingleTop = true
                 }
             },
