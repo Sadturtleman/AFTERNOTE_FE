@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +31,6 @@ import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.ShadowBlack
@@ -75,48 +73,36 @@ fun AfternoteListItem(
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.Transparent),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(item.iconResId),
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-
+                Image(
+                    painter = painterResource(item.iconResId),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp),
+                    contentScale = ContentScale.FillBounds
+                )
                 Spacer(modifier = Modifier.width(16.dp))
-
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = item.serviceName,
-                        color = Black,
+                        color = Color(0xFF000000),
+                        lineHeight = 22.sp,
                         fontSize = 16.sp,
                         fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "최종 작성일 ${item.date}",
                         color = Gray5,
+                        lineHeight = 16.sp,
                         fontSize = 10.sp,
                         fontFamily = Sansneo,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth()
+                        fontWeight = FontWeight.Normal,
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
                 Box(
                     modifier = Modifier
