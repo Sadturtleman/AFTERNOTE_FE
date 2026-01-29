@@ -13,13 +13,10 @@
     <string name="daily_answer_sample_answer">아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다.</string>
     <string name="daily_answer_sample_date">2025. 10. 09.</string>
 
-    <string name="receiver_afternote_list_title">나의 모든 기록</string>
     <string name="receiver_afternote_intro_line2">애프터노트입니다.</string>
     <string name="afternote_last_written_date">최종 작성일 %1$s.</string>
     <string name="receiver_afternote_item_instagram">인스타그램</string>
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
-
-    <string name="content_description_navigate">이동</string>
 </resources>

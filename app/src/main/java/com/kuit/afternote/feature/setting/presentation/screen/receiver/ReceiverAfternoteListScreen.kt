@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -34,16 +33,11 @@ import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Sansneo
 
-@Immutable
-data class ReceiverAfternoteListRowUiModel(
-    val displayItem: AfternoteListDisplayItem,
-)
-
 @Composable
 fun ReceiverAfternoteListScreen(
     modifier: Modifier = Modifier,
     receiverName: String,
-    items: List<ReceiverAfternoteListRowUiModel>,
+    items: List<AfternoteListDisplayItem>,
     onBackClick: () -> Unit,
     onItemClick: (String) -> Unit
 ) {
@@ -51,7 +45,7 @@ fun ReceiverAfternoteListScreen(
         containerColor = Gray1,
         topBar = {
             TopBar(
-                title = stringResource(R.string.receiver_afternote_list_title),
+                title = stringResource(R.string.daily_answer_title),
                 onBackClick = onBackClick
             )
         }
@@ -74,11 +68,11 @@ fun ReceiverAfternoteListScreen(
 
             items(
                 items = items,
-                key = { item -> item.displayItem.id }
+                key = { item -> item.id }
             ) { item ->
                 AfternoteListItem(
-                    item = item.displayItem,
-                    onClick = { onItemClick(item.displayItem.id) }
+                    item = item,
+                    onClick = { onItemClick(item.id) }
                 )
             }
         }
@@ -118,37 +112,29 @@ private fun ReceiverAfternoteListScreenPreview() {
         ReceiverAfternoteListScreen(
             receiverName = "김지은",
             items = listOf(
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "instagram",
-                        serviceName = stringResource(R.string.receiver_afternote_item_instagram),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.img_insta_pattern
-                    ),
+                AfternoteListDisplayItem(
+                    id = "instagram",
+                    serviceName = stringResource(R.string.receiver_afternote_item_instagram),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.img_insta_pattern
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "gallery",
-                        serviceName = stringResource(R.string.receiver_afternote_item_gallery),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.ic_gallery
-                    ),
+                AfternoteListDisplayItem(
+                    id = "gallery",
+                    serviceName = stringResource(R.string.receiver_afternote_item_gallery),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.ic_gallery
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "memorial_guideline",
-                        serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.ic_memorial_guideline
-                    ),
+                AfternoteListDisplayItem(
+                    id = "memorial_guideline",
+                    serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.ic_memorial_guideline
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "naver_mail",
-                        serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.img_naver_mail
-                    ),
+                AfternoteListDisplayItem(
+                    id = "naver_mail",
+                    serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.img_naver_mail
                 )
             ),
             onBackClick = {},

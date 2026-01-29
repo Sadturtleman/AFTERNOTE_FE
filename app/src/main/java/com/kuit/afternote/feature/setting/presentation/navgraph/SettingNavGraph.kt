@@ -15,7 +15,6 @@ import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyA
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
-import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListRowUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
@@ -153,37 +152,29 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         ReceiverAfternoteListScreen(
             receiverName = receiverDetail.name,
             items = listOf(
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "instagram",
-                        serviceName = stringResource(R.string.receiver_afternote_item_instagram),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.img_insta_pattern
-                    ),
+                AfternoteListDisplayItem(
+                    id = "instagram",
+                    serviceName = stringResource(R.string.receiver_afternote_item_instagram),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.img_insta_pattern
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "gallery",
-                        serviceName = stringResource(R.string.receiver_afternote_item_gallery),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.ic_gallery
-                    ),
+                AfternoteListDisplayItem(
+                    id = "gallery",
+                    serviceName = stringResource(R.string.receiver_afternote_item_gallery),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.ic_gallery
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "memorial_guideline",
-                        serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.ic_memorial_guideline
-                    ),
+                AfternoteListDisplayItem(
+                    id = "memorial_guideline",
+                    serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.ic_memorial_guideline
                 ),
-                ReceiverAfternoteListRowUiModel(
-                    displayItem = AfternoteListDisplayItem(
-                        id = "naver_mail",
-                        serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
-                        date = "2025.11.26",
-                        iconResId = R.drawable.img_naver_mail
-                    ),
+                AfternoteListDisplayItem(
+                    id = "naver_mail",
+                    serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
+                    date = "2025.11.26",
+                    iconResId = R.drawable.img_naver_mail
                 )
             ),
             onBackClick = { navController.popBackStack() },
