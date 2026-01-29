@@ -104,9 +104,9 @@ private fun SocialNetworkEditContentContent(
         Spacer(modifier = Modifier.height(Spacing.s))
 
         AccountProcessingRadioButton(
-            method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
-            selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
-            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECIPIENT) }
+            method = AccountProcessingMethod.TRANSFER_TO_RECEIVER,
+            selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECEIVER,
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECEIVER) }
         )
 
         Spacer(modifier = Modifier.height(Spacing.xl))

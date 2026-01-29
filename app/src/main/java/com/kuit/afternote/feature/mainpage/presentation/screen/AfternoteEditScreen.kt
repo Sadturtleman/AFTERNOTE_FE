@@ -30,17 +30,17 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.Spacing
@@ -124,16 +124,16 @@ fun AfternoteEditScreen(
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
             state.activeDialog?.let { dialogType ->
                 when (dialogType) {
-                    DialogType.ADD_RECIPIENT -> {
-                        AddRecipientDialog(
-                            params = AddRecipientDialogParams(
-                                recipientNameState = state.recipientNameState,
+                    DialogType.ADD_MAINPAGE_EDIT_RECEIVER -> {
+                        AddMainPageEditReceiverDialog(
+                            params = AddMainPageEditReceiverDialogParams(
+                                mainPageEditReceiverNameState = state.mainPageEditReceiverNameState,
                                 phoneNumberState = state.phoneNumberState,
                                 relationshipSelectedValue = state.relationshipSelectedValue,
                                 relationshipOptions = state.relationshipOptions,
-                                callbacks = AddRecipientDialogCallbacks(
+                                callbacks = AddMainPageEditReceiverDialogCallbacks(
                                     onDismiss = state::dismissDialog,
-                                    onAddClick = state::onAddRecipient,
+                                    onAddClick = state::onAddMainPageEditReceiver,
                                     onRelationshipSelected = state::onRelationshipSelected,
                                     onImportContactsClick = {
                                         // 연락처 가져오기 기능은 추후 구현 예정
@@ -262,13 +262,13 @@ private fun CategoryContent(
                         selectedMethod = state.selectedInformationProcessingMethod,
                         onMethodSelected = state::onInformationProcessingMethodSelected
                     ),
-                    recipientSection = if (
+                    mainPageEditReceiverSection = if (
                         state.selectedInformationProcessingMethod ==
-                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT
+                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER
                     ) {
-                        RecipientSection(
-                            recipients = state.recipients,
-                            callbacks = state.galleryRecipientCallbacks
+                        MainPageEditReceiverSection(
+                            mainPageEditReceivers = state.mainPageEditReceivers,
+                            callbacks = state.galleryMainPageEditReceiverCallbacks
                         )
                     } else {
                         null

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,9 +73,9 @@ private fun RelationshipDropdown(
  * - 연락처에서 추가하기 버튼 (B3 배경)
  */
 @Composable
-fun AddRecipientDialog(
+fun AddMainPageEditReceiverDialog(
     modifier: Modifier = Modifier,
-    params: AddRecipientDialogParams
+    params: AddMainPageEditReceiverDialogParams
 ) {
     Dialog(
         onDismissRequest = params.callbacks.onDismiss,
@@ -146,7 +146,7 @@ fun AddRecipientDialog(
             // 수신자 이름 입력 필드
             OutlineTextField(
                 label = "수신자 이름",
-                textFieldState = params.recipientNameState,
+                textFieldState = params.mainPageEditReceiverNameState,
                 keyboardType = KeyboardType.Text,
                 containerColor = Gray1,
                 labelSpacing = 7.95.dp
@@ -205,11 +205,11 @@ fun AddRecipientDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun AddRecipientDialogPreview() {
+private fun AddMainPageEditReceiverDialogPreview() {
     AfternoteTheme {
-        AddRecipientDialog(
-            params = AddRecipientDialogParams(
-                recipientNameState = rememberTextFieldState(),
+        AddMainPageEditReceiverDialog(
+            params = AddMainPageEditReceiverDialogParams(
+                mainPageEditReceiverNameState = rememberTextFieldState(),
                 phoneNumberState = rememberTextFieldState(),
                 relationshipSelectedValue = "친구",
                 relationshipOptions = listOf("친구", "가족", "연인")

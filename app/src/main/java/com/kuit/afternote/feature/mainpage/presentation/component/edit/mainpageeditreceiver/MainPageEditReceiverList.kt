@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,19 +8,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -48,17 +45,17 @@ import com.kuit.afternote.ui.theme.White
  * - 하단 중앙에 추가 버튼 (파란 원형 버튼)
  */
 @Composable
-fun RecipientList(
+fun MainPageEditReceiverList(
     modifier: Modifier = Modifier,
-    recipients: List<Recipient>,
-    events: RecipientCallbacks = RecipientCallbacks(),
-    state: RecipientListState = rememberRecipientListState()
+    mainPageEditReceivers: List<MainPageEditReceiver>,
+    events: MainPageEditReceiverCallbacks = MainPageEditReceiverCallbacks(),
+    state: MainPageEditReceiverListState = rememberMainPageEditReceiverListState()
 ) {
     val focusManager = LocalFocusManager.current
 
     // 초기화: 수신자들의 expanded 상태 설정
-    LaunchedEffect(recipients) {
-        state.initializeExpandedStates(recipients, null)
+    LaunchedEffect(mainPageEditReceivers) {
+        state.initializeExpandedStates(mainPageEditReceivers, null)
     }
 
     Column(
@@ -68,19 +65,19 @@ fun RecipientList(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        recipients.forEachIndexed { _, recipient ->
-            RecipientItem(
-                recipient = recipient,
-                expanded = state.expandedStates[recipient.id] ?: false,
+        mainPageEditReceivers.forEachIndexed { _, receiver ->
+            MainPageEditReceiverItem(
+                receiver = receiver,
+                expanded = state.expandedStates[receiver.id] ?: false,
                 onMoreClick = {
                     focusManager.clearFocus()
-                    state.toggleItemExpanded(recipient.id)
+                    state.toggleItemExpanded(receiver.id)
                 },
                 onDismissDropdown = {
-                    state.expandedStates[recipient.id] = false
+                    state.expandedStates[receiver.id] = false
                 },
-                onEditClick = { events.onItemEditClick(recipient.id) },
-                onDeleteClick = { events.onItemDeleteClick(recipient.id) }
+                onEditClick = { events.onItemEditClick(receiver.id) },
+                onDeleteClick = { events.onItemDeleteClick(receiver.id) }
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -108,9 +105,9 @@ fun RecipientList(
  * - 더보기 아이콘: 오른쪽 정렬
  */
 @Composable
-private fun RecipientItem(
+private fun MainPageEditReceiverItem(
     modifier: Modifier = Modifier,
-    recipient: Recipient,
+    receiver: MainPageEditReceiver,
     expanded: Boolean = false,
     onMoreClick: () -> Unit = {},
     onDismissDropdown: () -> Unit = {},
@@ -124,25 +121,18 @@ private fun RecipientItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // 아바타 (기본 프로필 이미지)
-        Box(
-            modifier = Modifier
-                .size(58.dp)
-                .clip(CircleShape)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.img_recipient_profile),
-                contentDescription = "프로필 사진",
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
+        Image(
+            painter = painterResource(R.drawable.img_recipient_profile),
+            contentDescription = "프로필 사진",
+            modifier = Modifier.size(58.dp),
+        )
 
         // 이름과 라벨
         Column(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = recipient.name,
+                text = receiver.name,
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
@@ -152,7 +142,7 @@ private fun RecipientItem(
                 )
             )
             Text(
-                text = recipient.label,
+                text = receiver.label,
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
@@ -183,14 +173,14 @@ private fun RecipientItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun RecipientListPreview() {
+private fun MainPageEditReceiverListPreview() {
     AfternoteTheme {
-        RecipientList(
-            recipients = listOf(
-                Recipient(id = "1", name = "김지은", label = "친구"),
-                Recipient(id = "2", name = "박선호", label = "가족")
+        MainPageEditReceiverList(
+            mainPageEditReceivers = listOf(
+                MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
+                MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
             ),
-            events = RecipientCallbacks()
+            events = MainPageEditReceiverCallbacks()
         )
     }
 }
