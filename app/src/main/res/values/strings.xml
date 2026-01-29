@@ -3,4 +3,13 @@
     <string name="song_search_label">노래 검색</string>
     <string name="song_search_placeholder">노래 제목 또는 가수명</string>
     <string name="add_button">추가하기</string>
+
+    <string name="content_description_back">뒤로가기</string>
+
+    <string name="daily_answer_title">나의 모든 기록</string>
+    <string name="daily_answer_intro_line1_suffix">님에게 전달 될</string>
+    <string name="daily_answer_intro_line2">데일리 질문 답변입니다.</string>
+    <string name="daily_answer_sample_question">오늘 하루, 누구에게 가장 고마웠나요?</string>
+    <string name="daily_answer_sample_answer">아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다.</string>
+    <string name="daily_answer_sample_date">2025. 10. 09.</string>
 </resources>

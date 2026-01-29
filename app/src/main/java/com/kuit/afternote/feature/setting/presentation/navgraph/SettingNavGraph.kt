@@ -2,11 +2,15 @@ package com.kuit.afternote.feature.setting.presentation.navgraph
 
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kuit.afternote.R
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
+import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
+import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
@@ -70,7 +74,13 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                 onBackClick = { navController.popBackStack() },
                 onEditClick = { /* TODO: 프로필 수정 저장 */ },
                 onReceiverDetailImageClick = { /* TODO: 프로필 이미지 변경 */ },
-                onDailyQuestionClick = { /* TODO: 데일리 질문 답변 목록으로 이동 */ },
+                onDailyQuestionClick = {
+                    navController.navigate(
+                        SettingRoute.DailyAnswerRoute(
+                            receiverId = receiverDetail.receiverId
+                        )
+                    )
+                },
                 onTimeLetterClick = { /* TODO: 타임레터 목록으로 이동 */ },
                 onAfternoteClick = { /* TODO: 애프터노트 목록으로 이동 */ }
             )
@@ -102,6 +112,27 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<SettingRoute.DailyAnswerRoute>()
+        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+
+        val sampleQuestion = stringResource(R.string.daily_answer_sample_question)
+        val sampleAnswer = stringResource(R.string.daily_answer_sample_answer)
+        val sampleDateText = stringResource(R.string.daily_answer_sample_date)
+
+        DailyAnswerScreen(
+            receiverName = receiverDetail.name,
+            items = List(receiverDetail.dailyQuestionCount) {
+                DailyAnswerItemUiModel(
+                    question = sampleQuestion,
+                    answer = sampleAnswer,
+                    dateText = sampleDateText
+                )
+            },
             onBackClick = { navController.popBackStack() }
         )
     }

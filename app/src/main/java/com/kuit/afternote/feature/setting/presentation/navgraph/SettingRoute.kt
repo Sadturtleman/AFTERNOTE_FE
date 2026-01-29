@@ -22,4 +22,9 @@ sealed interface SettingRoute {
 
     @Serializable
     data object PostDeliveryConditionRoute : SettingRoute
+
+    @Serializable
+    data class DailyAnswerRoute(
+        val receiverId: String = ""
+    ) : SettingRoute
 }
