@@ -30,6 +30,8 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 

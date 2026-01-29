@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.screen
+package com.kuit.afternote.core.ui.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -6,14 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 
 /**
  * AfternoteDetailScreen의 상태를 관리하는 State Holder
+ *
+ * @param defaultBottomNavItem 기본 선택된 하단 네비게이션 아이템
  */
 @Stable
-class AfternoteDetailState {
-    var selectedBottomNavItem by mutableStateOf(BottomNavItem.HOME)
+class AfternoteDetailState(
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
+) {
+    var selectedBottomNavItem by mutableStateOf(defaultBottomNavItem)
         private set
 
     var showDropdownMenu by mutableStateOf(false)
@@ -60,7 +64,13 @@ class AfternoteDetailState {
 
 /**
  * AfternoteDetailState를 생성하는 Composable 함수
+ *
+ * @param defaultBottomNavItem 기본 선택된 하단 네비게이션 아이템
  */
 @Stable
 @Composable
-fun rememberAfternoteDetailState(): AfternoteDetailState = remember { AfternoteDetailState() }
+fun rememberAfternoteDetailState(
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
+): AfternoteDetailState = remember(defaultBottomNavItem) {
+    AfternoteDetailState(defaultBottomNavItem = defaultBottomNavItem)
+}

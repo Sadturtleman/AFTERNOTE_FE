@@ -5,9 +5,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.ui.component.AfternoteListScreen
-import com.kuit.afternote.core.ui.component.AfternoteListScreenListParams
-import com.kuit.afternote.core.ui.component.AfternoteListScreenShellParams
+import com.kuit.afternote.core.ui.screen.AfternoteListScreen
+import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
+import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
 import com.kuit.afternote.feature.mainpage.presentation.common.util.IconResourceMapper

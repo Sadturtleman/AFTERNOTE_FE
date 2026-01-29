@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.ui.component.SignUpContentButton
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.button.SignUpContentButton
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.component.IdentifyInputContent
 import com.kuit.afternote.feature.onboarding.presentation.component.PhoneAuthContent
 import com.kuit.afternote.feature.onboarding.presentation.component.PwInputContent

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.setting.presentation.component.KeyPad
 import com.kuit.afternote.feature.setting.presentation.component.PasscodeIndicator
 import com.kuit.afternote.feature.setting.presentation.uimodel.KeyAction

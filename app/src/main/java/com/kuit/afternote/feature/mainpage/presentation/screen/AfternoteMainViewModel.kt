@@ -1,10 +1,10 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.lifecycle.ViewModel
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.mainpage.domain.model.AfternoteItem
 import com.kuit.afternote.feature.mainpage.domain.model.ServiceType
-import com.kuit.afternote.core.ui.component.AfternoteTab
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

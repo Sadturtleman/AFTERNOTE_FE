@@ -21,7 +21,9 @@ import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGrap
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute
 import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
+import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
@@ -233,11 +235,27 @@ fun NavGraph(navHostController: NavHostController) {
                             listState.copy(selectedTab = event.tab)
                         is ReceiverAfternoteListEvent.SelectBottomNav ->
                             listState.copy(selectedBottomNavItem = event.navItem)
-                        is ReceiverAfternoteListEvent.ClickItem ->
-                            listState // TODO: navigate to receiver detail
+                        is ReceiverAfternoteListEvent.ClickItem -> {
+                            navHostController.navigate("receiver_afternote_detail/${event.itemId}")
+                            listState
+                        }
                     }
                 }
             )
+        }
+
+        // 수신자 애프터노트 상세 (읽기 전용)
+        composable("receiver_afternote_detail/{itemId}") {
+            // TODO: itemId = backStackEntry.arguments?.getString("itemId") 로 데이터 로드 구현
+            AfternoteTheme(darkTheme = false) {
+                AfternoteDetailScreen(
+                    isEditable = false,
+                    onBackClick = { navHostController.popBackStack() },
+                    state = rememberAfternoteDetailState(
+                        defaultBottomNavItem = BottomNavItem.AFTERNOTE
+                    )
+                )
+            }
         }
 
         // 지문 로그인 화면

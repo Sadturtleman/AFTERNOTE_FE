@@ -44,6 +44,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
@@ -97,7 +100,7 @@ fun SongPlaylistScreen(
     defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val selectedBottomNavItem = remember { mutableStateOf(defaultBottomNavItem) }
+    var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -109,8 +112,8 @@ fun SongPlaylistScreen(
         },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem.value,
-                onItemSelected = { selectedBottomNavItem.value = it }
+                selectedItem = selectedBottomNavItem,
+                onItemSelected = { selectedBottomNavItem = it }
             )
         }
     ) { paddingValues ->
@@ -138,6 +141,7 @@ fun SongPlaylistScreen(
  * @param initialSelectedSongIds Preview용 초기 선택 ID (기본 null)
  */
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun SongPlaylistScreen(
     modifier: Modifier = Modifier,
     title: String,
@@ -147,9 +151,9 @@ fun SongPlaylistScreen(
     defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME,
     initialSelectedSongIds: Set<String>? = null
 ) {
-    var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet()) }
+    var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet<String>()) }
     var searchQuery by remember { mutableStateOf("") }
-    val selectedBottomNavItem = remember { mutableStateOf(defaultBottomNavItem) }
+    var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -161,8 +165,8 @@ fun SongPlaylistScreen(
         },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem.value,
-                onItemSelected = { selectedBottomNavItem.value = it }
+                selectedItem = selectedBottomNavItem,
+                onItemSelected = { selectedBottomNavItem = it }
             )
         }
     ) { paddingValues ->
@@ -228,6 +232,7 @@ fun SongPlaylistScreen(
  * @param initialSelectedSongIds Preview용 초기 선택 ID
  */
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun SongPlaylistScreen(
     modifier: Modifier = Modifier,
     title: String,
@@ -237,8 +242,10 @@ fun SongPlaylistScreen(
     defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME,
     initialSelectedSongIds: Set<String>? = null
 ) {
-    var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet()) }
-    val selectedBottomNavItem = remember { mutableStateOf(defaultBottomNavItem) }
+    var selectedSongIds by remember {
+        mutableStateOf(initialSelectedSongIds ?: emptySet<String>())
+    }
+    var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -250,8 +257,8 @@ fun SongPlaylistScreen(
         },
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem.value,
-                onItemSelected = { selectedBottomNavItem.value = it }
+                selectedItem = selectedBottomNavItem,
+                onItemSelected = { selectedBottomNavItem = it }
             )
         }
     ) { paddingValues ->
