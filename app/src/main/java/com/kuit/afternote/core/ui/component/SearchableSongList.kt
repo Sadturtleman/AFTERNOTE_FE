@@ -456,8 +456,7 @@ private fun SongAddButton(
                 clip = false,
                 ambientColor = Color(0x26000000),
                 spotColor = Color(0x26000000)
-            )
-            .background(color = Gray1, shape = shape)
+            ).background(color = Gray1, shape = shape)
             .clip(shape)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,

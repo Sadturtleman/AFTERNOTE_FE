@@ -34,9 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.CalendarGrid
 import com.kuit.afternote.feature.receiver.presentation.component.RecordListItem

@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.SignUpViewModel
 import com.kuit.afternote.ui.theme.B2

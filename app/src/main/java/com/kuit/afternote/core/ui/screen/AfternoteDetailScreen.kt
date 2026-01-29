@@ -24,14 +24,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.detail.InfoRow
 import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray6
