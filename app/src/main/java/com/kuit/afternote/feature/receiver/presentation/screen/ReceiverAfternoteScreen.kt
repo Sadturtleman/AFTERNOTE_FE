@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.feature.receiver.presentation.component.ContentSection
 import com.kuit.afternote.feature.receiver.presentation.component.HeroCard
 import com.kuit.afternote.feature.receiver.presentation.component.TopHeader

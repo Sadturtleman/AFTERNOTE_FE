@@ -69,8 +69,7 @@ class AfternoteDetailState(
  */
 @Stable
 @Composable
-fun rememberAfternoteDetailState(
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
-): AfternoteDetailState = remember(defaultBottomNavItem) {
-    AfternoteDetailState(defaultBottomNavItem = defaultBottomNavItem)
-}
+fun rememberAfternoteDetailState(defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME): AfternoteDetailState =
+    remember(defaultBottomNavItem) {
+        AfternoteDetailState(defaultBottomNavItem = defaultBottomNavItem)
+    }
