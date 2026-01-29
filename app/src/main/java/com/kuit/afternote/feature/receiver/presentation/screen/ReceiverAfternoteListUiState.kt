@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
-import com.kuit.afternote.core.ui.component.AfternoteTab
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 
 /**

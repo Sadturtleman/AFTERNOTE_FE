@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.navigation
 
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.detail
+package com.kuit.afternote.core.ui.component.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

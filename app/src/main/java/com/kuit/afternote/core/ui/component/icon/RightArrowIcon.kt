@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.icon
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +33,8 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 
 /**
  * Shared 애프터노트 tab row (writer main and receiver list).

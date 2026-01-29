@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9

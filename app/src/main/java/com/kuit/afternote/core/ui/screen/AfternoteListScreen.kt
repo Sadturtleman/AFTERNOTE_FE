@@ -1,9 +1,13 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.list.AfternoteListContent
+import com.kuit.afternote.core.ui.component.list.AfternoteListScreenShell
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 

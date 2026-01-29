@@ -12,9 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.fingerprint.FingerprintAuthContent
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 
@@ -29,6 +29,7 @@ import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTh
  * - 하단 네비게이션 바
  */
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun FingerprintLoginScreen(
     modifier: Modifier = Modifier,
     onFingerprintAuthClick: () -> Unit = {}

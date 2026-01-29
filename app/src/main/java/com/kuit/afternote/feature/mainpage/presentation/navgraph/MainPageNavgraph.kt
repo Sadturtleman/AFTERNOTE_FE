@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteDetailScreen
+import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteMainRoute

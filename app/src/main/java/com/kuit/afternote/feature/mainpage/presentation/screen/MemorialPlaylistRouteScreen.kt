@@ -26,10 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ArrowIconSpec
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.SongPlaylistScreenManagementContent
-import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.core.ui.component.SongPlaylistScreen
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song

@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.list
 
 /**
  * Tab categories for the shared 애프터노트 list screen (writer main and receiver list).

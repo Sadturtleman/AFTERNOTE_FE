@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row

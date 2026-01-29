@@ -2,9 +2,9 @@ package com.kuit.afternote.feature.receiver.presentation.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.kuit.afternote.core.ui.component.AfternoteListScreen
-import com.kuit.afternote.core.ui.component.AfternoteListScreenListParams
-import com.kuit.afternote.core.ui.component.AfternoteListScreenShellParams
+import com.kuit.afternote.core.ui.screen.AfternoteListScreen
+import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
+import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 
 /**
  * Receiver list Route. Calls shared AfternoteListScreen with showFab = false.

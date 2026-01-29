@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
-import com.kuit.afternote.core.ui.component.AfternoteTab
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 
 /**
  * 애프터노트 메인 화면 UI 이벤트
