@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.button
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

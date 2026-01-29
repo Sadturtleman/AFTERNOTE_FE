@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.core.ui.component.button.ClickButton
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.presentation.component.ContentSection
 import com.kuit.afternote.feature.receiver.presentation.component.HeroCard
 import com.kuit.afternote.feature.receiver.presentation.component.TopHeader
@@ -44,7 +44,8 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun AfterNoteScreen() {
+@Suppress("AssignedValueIsNeverRead")
+fun ReceiverAfterNoteScreen() {
     var showDialog by remember { mutableStateOf(false) }
 
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
@@ -203,8 +204,8 @@ fun AfterNoteScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewAfterNote() {
+fun PreviewReceiverAfterNote() {
     MaterialTheme {
-        AfterNoteScreen()
+        ReceiverAfterNoteScreen()
     }
 }

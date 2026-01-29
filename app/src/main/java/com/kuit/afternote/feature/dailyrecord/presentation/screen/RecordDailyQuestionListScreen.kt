@@ -17,22 +17,17 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
-import com.kuit.afternote.feature.mainpage.presentation.component.main.AfternoteTab
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
@@ -43,18 +38,16 @@ fun RecordDailyQuestionScreen(
     onLeftClick: () -> Unit,
     onPlusRecordClick: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
     val today = LocalDate.now()
 
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                selectedItem = BottomNavItem.HOME,
+                onItemSelected = { }
             )
         },
         floatingActionButton = {
@@ -91,6 +84,7 @@ fun RecordDailyQuestionScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(paddingValues)
                 .padding(top = 10.dp)
         ) {
             RecordMainTopbar(

@@ -4,10 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed interface MainPageRoute {
     @Serializable
-    data object MainEmptyRoute : MainPageRoute
-
-    @Serializable
-    data object MainWithItemsRoute : MainPageRoute
+    data object MainRoute : MainPageRoute
 
     @Serializable
     data object DetailRoute : MainPageRoute
@@ -23,4 +20,7 @@ sealed interface MainPageRoute {
 
     @Serializable
     data object AddSongRoute : MainPageRoute
+
+    @Serializable
+    data object MemorialPlaylistRoute : MainPageRoute
 }

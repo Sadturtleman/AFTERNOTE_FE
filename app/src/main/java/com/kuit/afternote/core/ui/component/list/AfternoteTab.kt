@@ -1,7 +1,7 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.main
+package com.kuit.afternote.core.ui.component.list
 
 /**
- * 애프터노트 탭 카테고리
+ * Tab categories for the shared 애프터노트 list screen (writer main and receiver list).
  */
 enum class AfternoteTab(
     val label: String

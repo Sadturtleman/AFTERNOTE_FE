@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.ui.component.ClickButton
 import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.button.ClickButton
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.util.PasswordValidator
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.PasswordChangeViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -118,7 +118,8 @@ fun PasswordChangeScreen(
             return@LaunchedEffect
         }
 
-        // 성공 시에만 navigation
+        // 성공 시에만 navigation (needsRollback이 true면 위에서 return되므로 여기선 항상 false)
+        @Suppress("KotlinConstantConditions")
         if (uiState.passwordChangeSuccess && !uiState.needsRollback) {
             snackbarHostState.showSnackbar("비밀번호가 변경되었습니다.")
             viewModel.clearPasswordChangeSuccess()

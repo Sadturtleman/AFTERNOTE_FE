@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.screen
+package com.kuit.afternote.core.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,14 +24,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoRow
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
+import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
+import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
+import com.kuit.afternote.core.ui.component.detail.InfoCard
+import com.kuit.afternote.core.ui.component.detail.InfoRow
+import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
@@ -50,18 +51,21 @@ import com.kuit.afternote.ui.theme.Spacing
  * - 남기신 말씀 카드
  * - 편집 드롭다운 메뉴 (수정하기/삭제하기)
  * - 삭제 확인 다이얼로그
+ *
+ * @param isEditable true이면 편집/삭제 기능 표시 (작성자 모드), false이면 읽기 전용 (수신자 모드)
  */
 @Composable
 fun AfternoteDetailScreen(
     modifier: Modifier = Modifier,
     serviceName: String = "인스타그램",
     userName: String = "서영",
+    isEditable: Boolean = true,
     onBackClick: () -> Unit,
-    onEditClick: () -> Unit,
+    onEditClick: () -> Unit = {},
     onDeleteConfirm: () -> Unit = {},
     state: AfternoteDetailState = rememberAfternoteDetailState()
 ) {
-    if (state.showDeleteDialog) {
+    if (isEditable && state.showDeleteDialog) {
         DeleteConfirmDialog(
             serviceName = serviceName,
             onDismiss = state::hideDeleteDialog,
@@ -75,10 +79,17 @@ fun AfternoteDetailScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            TopBar(
-                onBackClick = onBackClick,
-                onEditClick = state::toggleDropdownMenu
-            )
+            if (isEditable) {
+                TopBar(
+                    onBackClick = onBackClick,
+                    onEditClick = state::toggleDropdownMenu
+                )
+            } else {
+                TopBar(
+                    title = "",
+                    onBackClick = onBackClick
+                )
+            }
         },
         bottomBar = {
             BottomNavigationBar(
@@ -251,19 +262,21 @@ fun AfternoteDetailScreen(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 20.dp)
-            ) {
-                EditDropdownMenu(
-                    expanded = state.showDropdownMenu,
-                    onDismissRequest = state::hideDropdownMenu,
-                    onEditClick = onEditClick,
-                    onDeleteClick = {
-                        state.showDeleteDialog()
-                    }
-                )
+            if (isEditable) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 20.dp)
+                ) {
+                    EditDropdownMenu(
+                        expanded = state.showDropdownMenu,
+                        onDismissRequest = state::hideDropdownMenu,
+                        onEditClick = onEditClick,
+                        onDeleteClick = {
+                            state.showDeleteDialog()
+                        }
+                    )
+                }
             }
         }
     }
@@ -275,7 +288,7 @@ fun AfternoteDetailScreen(
 )
 @Composable
 private fun AfternoteDetailScreenPreview() {
-    MainPageLightTheme {
+    AfternoteTheme {
         AfternoteDetailScreen(
             onBackClick = {},
             onEditClick = {}
@@ -290,7 +303,7 @@ private fun AfternoteDetailScreenPreview() {
 )
 @Composable
 private fun AfternoteDetailScreenWithDeleteDialogPreview() {
-    MainPageLightTheme {
+    AfternoteTheme {
         val stateWithDialog = remember {
             AfternoteDetailState().apply {
                 showDeleteDialog()
@@ -311,7 +324,7 @@ private fun AfternoteDetailScreenWithDeleteDialogPreview() {
 )
 @Composable
 private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
-    MainPageLightTheme {
+    AfternoteTheme {
         val stateWithDropdown = remember {
             AfternoteDetailState().apply {
                 toggleDropdownMenu()
@@ -321,6 +334,24 @@ private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
             onBackClick = {},
             onEditClick = {},
             state = stateWithDropdown
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
+    name = "AfternoteDetailScreen - Receiver Mode (Read Only)"
+)
+@Composable
+private fun AfternoteDetailScreenReceiverModePreview() {
+    AfternoteTheme {
+        AfternoteDetailScreen(
+            isEditable = false,
+            onBackClick = {},
+            state = rememberAfternoteDetailState(
+                defaultBottomNavItem = BottomNavItem.AFTERNOTE
+            )
         )
     }
 }
