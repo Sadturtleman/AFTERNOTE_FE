@@ -4,10 +4,26 @@ package com.kuit.afternote.util
  * 한글 초성(자음) 관련 유틸리티
  */
 object KoreanConsonantUtil {
-
     private val KOREAN_CONSONANTS = listOf(
-        'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ',
-        'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+        'ㄱ',
+        'ㄲ',
+        'ㄴ',
+        'ㄷ',
+        'ㄸ',
+        'ㄹ',
+        'ㅁ',
+        'ㅂ',
+        'ㅃ',
+        'ㅅ',
+        'ㅆ',
+        'ㅇ',
+        'ㅈ',
+        'ㅉ',
+        'ㅊ',
+        'ㅋ',
+        'ㅌ',
+        'ㅍ',
+        'ㅎ',
     )
 
     private const val KOREAN_UNICODE_START = 0xAC00
@@ -41,10 +57,8 @@ object KoreanConsonantUtil {
      */
     fun <T> groupByInitialConsonant(
         items: List<T>,
-        keySelector: (T) -> String
-    ): Map<Char, List<T>> {
-        return items
-            .groupBy { getInitialConsonant(keySelector(it)) }
-            .toSortedMap(compareBy { KOREAN_CONSONANTS.indexOf(it).takeIf { idx -> idx >= 0 } ?: Int.MAX_VALUE })
-    }
+        keySelector: (T) -> String,
+    ): Map<Char, List<T>> = items
+        .groupBy { getInitialConsonant(keySelector(it)) }
+        .toSortedMap(compareBy { KOREAN_CONSONANTS.indexOf(it).takeIf { idx -> idx >= 0 } ?: Int.MAX_VALUE })
 }

@@ -77,7 +77,11 @@ private fun GalleryAndFileEditContentContent(
         ProcessingMethodRadioButton(
             option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
-            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER) }
+            onClick = {
+                params.infoMethodSection.onMethodSelected(
+                    InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER
+                )
+            }
         )
 
         // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시

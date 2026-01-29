@@ -56,9 +56,8 @@ class MainPageEditReceiverListState(
 @Composable
 fun rememberMainPageEditReceiverListState(
     initialShowTextField: Boolean = false,
-): MainPageEditReceiverListState =
-    remember {
-        MainPageEditReceiverListState(
-            initialShowTextField = initialShowTextField,
-        )
-    }
+): MainPageEditReceiverListState = remember {
+    MainPageEditReceiverListState(
+        initialShowTextField = initialShowTextField,
+    )
+}
