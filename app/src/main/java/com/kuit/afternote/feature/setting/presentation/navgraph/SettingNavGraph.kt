@@ -7,14 +7,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
-import com.kuit.afternote.feature.setting.presentation.screen.PasswordChangeScreen
-import com.kuit.afternote.feature.setting.presentation.screen.PostDeliveryConditionScreen
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverDetailEditCallbacks
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverDetailScreen
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverDetailScreenParams
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverManagementScreen
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverRegisterScreen
-import com.kuit.afternote.feature.setting.presentation.screen.SettingMainScreen
+import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
+import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
+import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreenParams
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.SettingMainRoute> {

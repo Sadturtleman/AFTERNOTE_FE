@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

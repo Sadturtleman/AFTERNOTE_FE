@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -127,6 +127,7 @@ private fun ConsonantSection(
     receivers: List<MainPageEditReceiver>,
     onReceiverClick: (MainPageEditReceiver) -> Unit
 ) {
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(space = 16.dp)
@@ -155,40 +156,53 @@ private fun ConsonantSection(
             verticalArrangement = Arrangement.spacedBy(space = 8.dp)
         ) {
             receivers.forEach { receiver ->
-                Row(
-                    modifier = Modifier.clickable(onClick = { onReceiverClick(receiver) }),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.img_recipient_profile),
-                        contentDescription = "프로필 사진",
-                        modifier = Modifier.size(52.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = receiver.name,
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight.Medium,
-                                color = Black,
-                            )
-                        )
-                        Text(
-                            text = receiver.label,
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 18.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight.Normal,
-                                color = Gray8,
-                            )
-                        )
-                    }
-                }
+                ReceiverManagementItem(
+                    receiver,
+                    onReceiverClick = onReceiverClick
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun ReceiverManagementItem(
+    receiver: MainPageEditReceiver,
+    onReceiverClick: (MainPageEditReceiver) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onReceiverClick(receiver) }),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.img_recipient_profile),
+            contentDescription = "프로필 사진",
+            modifier = Modifier.size(52.dp),
+        )
+        Spacer(Modifier.width(8.dp))
+        Column {
+            Text(
+                text = receiver.name,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Black,
+                )
+            )
+            Text(
+                text = receiver.label,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray8,
+                )
+            )
         }
     }
 }

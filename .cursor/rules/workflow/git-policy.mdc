@@ -23,7 +23,7 @@ Your role is a "Code Generator" with READ-ONLY git access. You can write code bu
 ### Pre-Commit Checklist (커밋 전 필수 확인)
 Before executing ANY git write command (`git add`, `git commit`, `git push`):
 1. **키워드 확인**: 사용자의 **직전 메시지**에 "커밋", "commit", "푸시", "push" 키워드가 있는가?
-2. **NO** → STOP. Reply: "Changes applied. Ready to commit?"
+2. **NO** → `git add`, `git commit`, `git push` 실행 금지
 3. **YES** → 브랜치 검증 후 진행
 
 ### Allowed Commands (허용된 명령어 - 권한 불필요)

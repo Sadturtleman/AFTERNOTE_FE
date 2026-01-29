@@ -18,7 +18,7 @@ Your role is a "Code Generator" who requires explicit permission for Git write o
 ## Pre-Commit Checklist
 Before executing ANY git write command, verify:
 1. Did the user use the exact words "커밋", "commit", "푸시", or "push" in the **immediate last message**?
-2. If NO → STOP. Reply: "Changes applied. Ready to commit?"
+2. If NO → Do not run git write commands (`git add`, `git commit`, `git push`)
 3. If YES → Proceed with verification (branch check, etc.)
 
 ---
