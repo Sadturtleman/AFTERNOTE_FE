@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.list.RecordAnswerListItem
+import com.kuit.afternote.core.ui.component.list.RecordQnAListItem
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
@@ -39,7 +39,7 @@ fun RecordListItem(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    RecordAnswerListItem(
+    RecordQnAListItem(
         modifier = modifier,
         question = title,
         answer = content,

@@ -12,6 +12,11 @@ sealed interface SettingRoute {
     ) : SettingRoute
 
     @Serializable
+    data class ReceiverAfternoteListRoute(
+        val receiverId: String = ""
+    ) : SettingRoute
+
+    @Serializable
     data object PasswordChangeRoute : SettingRoute
 
     @Serializable

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -34,7 +35,7 @@ import com.kuit.afternote.ui.theme.Sansneo
  * This is shared across multiple features (e.g., daily record and setting screens).
  */
 @Composable
-fun RecordAnswerListItem(
+fun RecordQnAListItem(
     modifier: Modifier = Modifier,
     question: String,
     answer: String,
@@ -50,16 +51,19 @@ fun RecordAnswerListItem(
                 .padding(top = 16.dp)
                 .padding(horizontal = 20.dp)
         ) {
-            Text(
-                text = question,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 22.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
+            Row {
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = question,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9
+                    )
                 )
-            )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -122,9 +126,9 @@ fun RecordAnswerListItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun RecordAnswerListItemPreview() {
+private fun RecordQnAListItemPreview() {
     AfternoteTheme {
-        RecordAnswerListItem(
+        RecordQnAListItem(
             question = "오늘 하루, 누구에게 가장 고마웠나요?",
             answer = "아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다.",
             dateText = "2025. 10. 09."

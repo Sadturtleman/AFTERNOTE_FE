@@ -8,12 +8,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListRowUiModel
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreenParams
@@ -82,7 +85,13 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                     )
                 },
                 onTimeLetterClick = { /* TODO: 타임레터 목록으로 이동 */ },
-                onAfternoteClick = { /* TODO: 애프터노트 목록으로 이동 */ }
+                onAfternoteClick = {
+                    navController.navigate(
+                        SettingRoute.ReceiverAfternoteListRoute(
+                            receiverId = receiverDetail.receiverId
+                        )
+                    )
+                }
             )
         )
     }
@@ -134,6 +143,51 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                 )
             },
             onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.ReceiverAfternoteListRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<SettingRoute.ReceiverAfternoteListRoute>()
+        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+
+        ReceiverAfternoteListScreen(
+            receiverName = receiverDetail.name,
+            items = listOf(
+                ReceiverAfternoteListRowUiModel(
+                    displayItem = AfternoteListDisplayItem(
+                        id = "instagram",
+                        serviceName = stringResource(R.string.receiver_afternote_item_instagram),
+                        date = "2025.11.26",
+                        iconResId = R.drawable.img_insta_pattern
+                    ),
+                ),
+                ReceiverAfternoteListRowUiModel(
+                    displayItem = AfternoteListDisplayItem(
+                        id = "gallery",
+                        serviceName = stringResource(R.string.receiver_afternote_item_gallery),
+                        date = "2025.11.26",
+                        iconResId = R.drawable.ic_gallery
+                    ),
+                ),
+                ReceiverAfternoteListRowUiModel(
+                    displayItem = AfternoteListDisplayItem(
+                        id = "memorial_guideline",
+                        serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
+                        date = "2025.11.26",
+                        iconResId = R.drawable.ic_memorial_guideline
+                    ),
+                ),
+                ReceiverAfternoteListRowUiModel(
+                    displayItem = AfternoteListDisplayItem(
+                        id = "naver_mail",
+                        serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
+                        date = "2025.11.26",
+                        iconResId = R.drawable.img_naver_mail
+                    ),
+                )
+            ),
+            onBackClick = { navController.popBackStack() },
+            onItemClick = { /* TODO: 애프터노트 상세로 이동 */ }
         )
     }
 }

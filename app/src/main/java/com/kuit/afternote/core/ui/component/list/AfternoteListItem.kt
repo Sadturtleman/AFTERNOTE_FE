@@ -19,9 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +31,7 @@ import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.ShadowBlack
@@ -73,19 +74,24 @@ fun AfternoteListItem(
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(item.iconResId),
-                    contentDescription = null,
+                Box(
                     modifier = Modifier.size(40.dp),
-                    contentScale = ContentScale.FillBounds
-                )
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(item.iconResId),
+                        contentDescription = item.serviceName,
+                        modifier = Modifier.size(40.dp),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = item.serviceName,
-                        color = Color(0xFF000000),
+                        color = Black,
                         lineHeight = 22.sp,
                         fontSize = 16.sp,
                         fontFamily = Sansneo,
@@ -93,7 +99,7 @@ fun AfternoteListItem(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "최종 작성일 ${item.date}",
+                        text = stringResource(R.string.afternote_last_written_date, item.date),
                         color = Gray5,
                         lineHeight = 16.sp,
                         fontSize = 10.sp,

@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.list.RecordAnswerListItem
+import com.kuit.afternote.core.ui.component.list.RecordQnAListItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -75,7 +75,7 @@ fun DailyAnswerScreen(
                 items = items,
                 key = { index, _ -> "daily_answer_$index" }
             ) { index, item ->
-                RecordAnswerListItem(
+                RecordQnAListItem(
                     question = item.question,
                     answer = item.answer,
                     dateText = item.dateText
