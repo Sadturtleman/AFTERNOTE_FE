@@ -64,7 +64,7 @@ fun TopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    title: String,
+    title: String = "",
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     actionText: String = "등록"
@@ -242,12 +242,22 @@ private fun TopBarTitleOnlyPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Material3 - 뒤로가기 + 타이틀 + 액션")
+@Preview(showBackground = true, name = "Material3 - 뒤로가기 + 액션")
 @Composable
 private fun TopBarWithActionPreview() {
     AfternoteTheme {
         TopBar(
-            title = "애프터노트 작성하기",
+            onBackClick = {},
+            onActionClick = {}
+        )
+    }
+}
+@Preview(showBackground = true, name = "Material3 - 뒤로가기 + 타이틀 + 액션")
+@Composable
+private fun TopBarWithTitleAndActionPreview() {
+    AfternoteTheme {
+        TopBar(
+            title = "뒤로가기+액션",
             onBackClick = {},
             onActionClick = {}
         )
