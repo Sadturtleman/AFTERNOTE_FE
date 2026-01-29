@@ -47,7 +47,7 @@ private fun AccountProcessingRadioButtonPreview() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             AccountProcessingRadioButton(
-                method = AccountProcessingMethod.TRANSFER_TO_RECIPIENT,
+                method = AccountProcessingMethod.TRANSFER_TO_RECEIVER,
                 selected = false,
                 onClick = {}
             )

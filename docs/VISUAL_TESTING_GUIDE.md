@@ -36,7 +36,7 @@
 
 **Step 1: ProfileEditScreen 수정**
 
-`ProfileEditScreen.kt`를 다음과 같이 수정:
+`ReceiverDetailScreen.kt`를 다음과 같이 수정:
 
 ```kotlin
 @Composable

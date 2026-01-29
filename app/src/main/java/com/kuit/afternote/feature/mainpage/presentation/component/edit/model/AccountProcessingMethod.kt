@@ -15,7 +15,7 @@ enum class AccountProcessingMethod(
         "계정 영구 삭제",
         "모든 사진과 게시물을 완전히 삭제하고 계정을 영구히 폐쇄합니다."
     ),
-    TRANSFER_TO_RECIPIENT(
+    TRANSFER_TO_RECEIVER(
         "수신자에게 정보 전달",
         "수신자가 직접 로그인하여 계정을 관리할 수 있도록 계정 정보를 전달합니다."
     )

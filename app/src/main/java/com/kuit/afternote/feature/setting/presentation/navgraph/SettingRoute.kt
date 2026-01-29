@@ -7,7 +7,7 @@ sealed interface SettingRoute {
     data object SettingMainRoute : SettingRoute
 
     @Serializable
-    data object ProfileEditRoute : SettingRoute
+    data object ReceiverDetailRoute : SettingRoute
 
     @Serializable
     data object PasswordChangeRoute : SettingRoute

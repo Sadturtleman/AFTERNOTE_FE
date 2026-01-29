@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient
+package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -7,20 +7,16 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 
 /**
- * RecipientList의 상태를 관리하는 State Holder
+ * MainPageEditReceiverList의 상태를 관리하는 State Holder
  */
 @Stable
-class RecipientListState(
+class MainPageEditReceiverListState(
     initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null
 ) {
     var showTextField by mutableStateOf(initialShowTextField)
-        private set
-
-    var previousFocusedState by mutableStateOf(false)
         private set
 
     val expandedStates = mutableStateMapOf<String, Boolean>()
@@ -29,12 +25,12 @@ class RecipientListState(
      * 초기화: 수신자들의 expanded 상태 설정
      */
     fun initializeExpandedStates(
-        recipients: List<Recipient>,
+        mainPageEditReceivers: List<MainPageEditReceiver>,
         initialExpandedItemId: String?
     ) {
-        recipients.forEach { recipient ->
-            if (!expandedStates.containsKey(recipient.id)) {
-                expandedStates[recipient.id] = initialExpandedItemId == recipient.id
+        mainPageEditReceivers.forEach { receiver ->
+            if (!expandedStates.containsKey(receiver.id)) {
+                expandedStates[receiver.id] = initialExpandedItemId == receiver.id
             }
         }
     }
@@ -47,38 +43,22 @@ class RecipientListState(
     }
 
     /**
-     * 텍스트 필드 표시 상태 변경
-     */
-    fun setTextFieldVisible(visible: Boolean) {
-        showTextField = visible
-    }
-
-    /**
      * 아이템 expanded 상태 토글
      */
     fun toggleItemExpanded(itemId: String) {
         expandedStates[itemId] = !(expandedStates[itemId] ?: false)
     }
-
-    /**
-     * 이전 포커스 상태 업데이트
-     */
-    fun updatePreviousFocusedState(isFocused: Boolean) {
-        previousFocusedState = isFocused
-    }
 }
 
 /**
- * RecipientListState를 생성하는 Composable 함수
+ * MainPageEditReceiverListState를 생성하는 Composable 함수
  */
 @Composable
-fun rememberRecipientListState(
+fun rememberMainPageEditReceiverListState(
     initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null
-): RecipientListState =
+): MainPageEditReceiverListState =
     remember {
-        RecipientListState(
+        MainPageEditReceiverListState(
             initialShowTextField = initialShowTextField,
-            initialExpandedItemId = initialExpandedItemId
         )
     }
