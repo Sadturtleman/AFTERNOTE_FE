@@ -19,8 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
@@ -29,7 +30,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
@@ -59,6 +59,8 @@ private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
  * - 계정 처리 방법 선택 (라디오 버튼)
  * - 처리 방법 리스트 (체크박스)
  * - 남기실 말씀 (멀티라인 텍스트 필드)
+ *
+ * @param onNavigateToAddSong Called when user taps "노래 추가하기" in the MemorialPlaylist card on this edit screen; should navigate to MemorialPlaylistRouteScreen (full playlist screen).
  */
 @Composable
 fun AfternoteEditScreen(

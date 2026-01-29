@@ -16,7 +16,7 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
             onBackClick = { navController.popBackStack() },
             onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) },
             onFindIdClick = {},
-            onLoginSuccess = { navController.navigate(MainPageRoute.MainEmptyRoute) }
+            onLoginSuccess = { navController.navigate(MainPageRoute.MainRoute) }
         )
     }
 
@@ -49,8 +49,8 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
             email = route.email,
             password = route.password,
             onFinishClick = {
-                android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, MainEmptyRoute로 이동 시도")
-                navController.navigate(MainPageRoute.MainEmptyRoute)
+                android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, MainRoute로 이동 시도")
+                navController.navigate(MainPageRoute.MainRoute)
                 android.util.Log.d("OnboardingNavGraph", "navigate 호출 완료")
             },
             onBackClick = { navController.popBackStack() },

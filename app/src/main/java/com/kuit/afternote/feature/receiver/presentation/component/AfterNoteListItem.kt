@@ -24,13 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.feature.receiver.presentation.uimodel.AppNoteItem
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
+@Suppress("UNUSED")
 fun AfterNoteListItem(item: AppNoteItem) {
     Card(
         modifier = Modifier
