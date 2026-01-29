@@ -8,26 +8,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
@@ -35,7 +28,7 @@ import java.time.LocalDate
 @Composable
 fun RecordDailyQuestionScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
+    onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit
 ) {
     val today = LocalDate.now()
@@ -51,33 +44,10 @@ fun RecordDailyQuestionScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onPlusRecordClick,
-                modifier = Modifier.size(56.dp),
-                containerColor = Color.Transparent,
-                contentColor = Color.White,
-                shape = CircleShape
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFFBDE0FF), // B3
-                                    Color(0xFFFFE1CC) // 주황색 계열
-                                )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "새 기록 추가",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
+            Box {
+                AddFloatingActionButton(
+                    onClick = onPlusRecordClick
+                )
             }
         }
     ) { paddingValues ->
@@ -87,10 +57,9 @@ fun RecordDailyQuestionScreen(
                 .padding(paddingValues)
                 .padding(top = 10.dp)
         ) {
-            RecordMainTopbar(
-                text = "데일리 질문 답변",
-                showLeftArrow = true,
-                onLeftClock = onLeftClick
+            TopBar(
+                title = "데일리 질문 답변",
+                onBackClick = onBackClick,
             )
             LazyColumn {
                 item {
@@ -118,5 +87,17 @@ fun RecordDailyQuestionScreen(
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+private fun RecordDailyQuestionScreenPreview() {
+    AfternoteTheme {
+        RecordDailyQuestionScreen(
+            onBackClick = {},
+            onPlusRecordClick = {}
+        )
     }
 }
