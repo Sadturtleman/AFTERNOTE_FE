@@ -166,7 +166,7 @@ Before executing ANY git write command (`git add`, `git commit`, `git push`):
 ### Commitlint Line Length Rules (CI 강제)
 **CI에서 `commitlint`가 커밋 메시지를 검증합니다. 다음 규칙을 반드시 준수하세요.**
 
-- **PR 통과 조건:** PR이 merge 가능하려면 **PR에 포함된 모든 커밋**(base..head)이 commitlint를 통과해야 합니다. 최신 커밋만이 아닌, CI가 범위 내 전체 커밋 메시지를 검사합니다.
+- **PR 통과 조건:** PR **제목**이 commitlint(Conventional Commits) 규칙을 만족해야 합니다.
 
 1. **Subject Line (제목)**: 최대 100자 (`header-max-length`)
 2. **Body Line (본문 각 줄)**: 최대 100자 (`body-max-line-length`)

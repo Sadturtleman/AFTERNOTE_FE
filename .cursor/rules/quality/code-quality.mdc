@@ -93,8 +93,8 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - All code must pass ktlint and detekt checks on first commit attempt.
 
 ### PR/CI 준수 (Commitlint & Ktlint)
-- **PR이 merge되려면** PR 내 **모든** 커밋이 commitlint를, 브랜치 코드가 ktlint를 통과해야 합니다. 최신 커밋만 통과해도 안 되고, base..head 범위 전체가 검사됩니다.
-- 커밋·푸시 시마다 해당 커밋 메시지가 commitlint를 만족하고, 수정한 코드가 ktlint를 만족하는지 확인합니다.
+- **PR이 merge되려면** PR **제목**이 commitlint(Conventional Commits) 규칙을, 브랜치 코드가 ktlint를 통과해야 합니다.
+- 커밋 메시지는 Conventional Commits 형식을 **권장**하며, 필수 검증 대상은 PR 제목입니다.
 
 ## Testing Rules
 
