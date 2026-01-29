@@ -252,6 +252,7 @@ private fun TopBarWithActionPreview() {
         )
     }
 }
+
 @Preview(showBackground = true, name = "Material3 - 뒤로가기 + 타이틀 + 액션")
 @Composable
 private fun TopBarWithTitleAndActionPreview() {

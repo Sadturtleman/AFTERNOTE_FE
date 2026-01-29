@@ -58,7 +58,10 @@ object KoreanConsonantUtil {
     fun <T> groupByInitialConsonant(
         items: List<T>,
         keySelector: (T) -> String,
-    ): Map<Char, List<T>> = items
-        .groupBy { getInitialConsonant(keySelector(it)) }
-        .toSortedMap(compareBy { KOREAN_CONSONANTS.indexOf(it).takeIf { idx -> idx >= 0 } ?: Int.MAX_VALUE })
+    ): Map<Char, List<T>> =
+        items
+            .groupBy { getInitialConsonant(keySelector(it)) }
+            .toSortedMap(
+                compareBy { KOREAN_CONSONANTS.indexOf(it).takeIf { idx -> idx >= 0 } ?: Int.MAX_VALUE }
+            )
 }
