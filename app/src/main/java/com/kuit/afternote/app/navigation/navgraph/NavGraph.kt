@@ -36,9 +36,11 @@ import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import androidx.activity.compose.BackHandler
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
+import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
+import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -225,7 +227,30 @@ fun NavGraph(navHostController: NavHostController) {
         composable("receiver_afternote_list") {
             BackHandler { navHostController.popBackStack() }
             var listState by remember {
-                mutableStateOf(ReceiverAfternoteListUiState())
+                mutableStateOf(
+                    ReceiverAfternoteListUiState(
+                        items = listOf(
+                            AfternoteListDisplayItem(
+                                id = "1",
+                                serviceName = "추모 가이드라인",
+                                date = "2025.12.01",
+                                iconResId = R.drawable.img_logo
+                            ),
+                            AfternoteListDisplayItem(
+                                id = "2",
+                                serviceName = "갤러리",
+                                date = "2025.12.02",
+                                iconResId = R.drawable.img_insta_pattern
+                            ),
+                            AfternoteListDisplayItem(
+                                id = "3",
+                                serviceName = "인스타그램",
+                                date = "2025.12.03",
+                                iconResId = R.drawable.img_insta_pattern
+                            )
+                        )
+                    )
+                )
             }
             ReceiverAfternoteListRoute(
                 uiState = listState,
