@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
  * 수신자 관련 콜백을 묶는 data class
  */
 @Immutable
-data class RecipientCallbacks(
+data class MainPageEditReceiverCallbacks(
     val onAddClick: () -> Unit = {},
     val onItemEditClick: (String) -> Unit = {},
     val onItemDeleteClick: (String) -> Unit = {},

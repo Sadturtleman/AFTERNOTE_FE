@@ -7,7 +7,7 @@ import com.kuit.afternote.feature.setting.presentation.screen.PasswordChangeScre
 import com.kuit.afternote.feature.setting.presentation.screen.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.ProfileEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.ProfileEditScreen
-import com.kuit.afternote.feature.setting.presentation.screen.ReceiverListScreen
+import com.kuit.afternote.feature.setting.presentation.screen.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.SettingMainScreen
 
@@ -47,7 +47,7 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
 
     composable<SettingRoute.ReceiverListRoute> {
-        ReceiverListScreen(
+        ReceiverManagementScreen(
             onBackClick = { navController.popBackStack() }
         )
     }
