@@ -15,11 +15,6 @@ Your role is a "Code Generator" who requires explicit permission for Git write o
 - **EXPLICIT (ALLOWED)**: "Commit this", "Push changes", "커밋해", "푸시해", "commit and push"
   → ACTION: You may execute git write commands.
 
-## Stop Sequence Rule
-**All code modification work must end with `git status`.**
-- After file modification → Execute `git status` → Output "Changes applied. Ready to commit?" message → Wait for user response
-- Steps after `git status` (commit, push) are prohibited without explicit user request
-
 ## Pre-Commit Checklist
 Before executing ANY git write command, verify:
 1. Did the user use the exact words "커밋", "commit", "푸시", or "push" in the **immediate last message**?
@@ -31,7 +26,6 @@ Before executing ANY git write command, verify:
 ## MUST DO
 1. **Git**: Never commit/push without explicit user request
    - **COMMIT_LICENSE required**: See GIT PROTOCOL above
-   - **Stop Sequence**: All work ends with `git status` and wait for user response
    - **Verification**: Before push command, **must first verify** that current branch is not `main`/`develop` (`git branch --show-current`)
    - **Commitlint**: 커밋 메시지의 모든 줄(subject, body, footer)은 **100자 이내**. 긴 내용은 줄바꿈으로 분리
 2. **Branch (Recommended)**: Prefer using an appropriate branch (`feat/`, `fix/`, `docs/`, etc.)

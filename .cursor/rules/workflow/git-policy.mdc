@@ -20,16 +20,6 @@ Your role is a "Code Generator" with READ-ONLY git access. You can write code bu
 | **IMPLICIT (금지)** | "브랜치 만들어서 작업해", "리팩토링해줘", "새 기능 구현해", "Work on this", "Fix it" | 파일 수정만. 커밋 금지. |
 | **EXPLICIT (허용)** | "커밋해", "commit", "푸시해", "push", "커밋하고 푸시해" | Git write 명령 실행 가능 |
 
-### Stop Sequence Rule (필수)
-**모든 코드 변경 작업은 `git status`에서 종료해야 합니다.**
-
-```
-[작업 완료] → git status 실행 → "Changes applied. Ready to commit?" 출력 → 사용자 응답 대기
-```
-
-- `git status` 이후 단계(add, commit, push)는 사용자의 명시적 COMMIT_LICENSE 없이 진행 금지
-- 사용자가 "Yes", "OK" 등으로 응답해도, "커밋" 또는 "commit" 키워드가 없으면 커밋하지 않음
-
 ### Pre-Commit Checklist (커밋 전 필수 확인)
 Before executing ANY git write command (`git add`, `git commit`, `git push`):
 1. **키워드 확인**: 사용자의 **직전 메시지**에 "커밋", "commit", "푸시", "push" 키워드가 있는가?

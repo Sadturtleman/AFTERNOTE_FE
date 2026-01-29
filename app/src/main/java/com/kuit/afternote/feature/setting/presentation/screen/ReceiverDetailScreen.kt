@@ -45,6 +45,7 @@ import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 private const val RECEIVER_DETAIL_FIELD_PLACEHOLDER = "Text Field"
@@ -104,30 +105,27 @@ fun ReceiverDetailScreen(
                 .padding(paddingValues)
                 .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
             ReceiverDetailHeader(
                 name = params.name,
                 relationship = params.relationship,
                 onReceiverDetailImageClick = callbacks.onReceiverDetailImageClick
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.m))
 
             ReceiverDetailValueField(
                 label = "전화번호",
                 textFieldState = params.phoneNumberState
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.l))
 
             ReceiverDetailValueField(
                 label = "이메일",
                 textFieldState = params.emailState
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
+            Spacer(modifier = Modifier.height(Spacing.l))
             Text(
                 text = "전달할 내용",
                 modifier = Modifier
@@ -142,13 +140,13 @@ fun ReceiverDetailScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.m))
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 DeliveryCountRow(
                     title = "데일리 질문 답변",
@@ -169,7 +167,7 @@ fun ReceiverDetailScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
         }
     }
 }
@@ -187,20 +185,15 @@ private fun ReceiverDetailHeader(
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.size(134.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.img_profile),
-                contentDescription = "프로필 이미지",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(onClick = onReceiverDetailImageClick)
-            )
-        }
+        Image(
+            painter = painterResource(R.drawable.img_profile),
+            contentDescription = "프로필 이미지",
+            modifier = Modifier
+                .size(134.dp)
+                .clickable(onClick = onReceiverDetailImageClick)
+        )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Spacing.ml))
 
         Text(
             text = name,
@@ -213,7 +206,7 @@ private fun ReceiverDetailHeader(
             )
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.s))
 
         Text(
             text = relationship,
