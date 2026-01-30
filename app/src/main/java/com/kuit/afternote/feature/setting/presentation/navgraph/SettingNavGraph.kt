@@ -21,6 +21,9 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreenParams
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
+import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
+import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.SettingMainRoute> {
@@ -83,7 +86,13 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                         )
                     )
                 },
-                onTimeLetterClick = { /* TODO: 타임레터 목록으로 이동 */ },
+                onTimeLetterClick = {
+                    navController.navigate(
+                        SettingRoute.ReceiverTimeLetterListRoute(
+                            receiverId = receiverDetail.receiverId
+                        )
+                    )
+                },
                 onAfternoteClick = {
                     navController.navigate(
                         SettingRoute.ReceiverAfternoteListRoute(
@@ -183,6 +192,32 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
             ),
             onBackClick = { navController.popBackStack() },
             onItemClick = { /* TODO: 애프터노트 상세로 이동 */ }
+        )
+    }
+
+    composable<SettingRoute.ReceiverTimeLetterListRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
+        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+
+        ReceiverTimeLetterListScreen(
+            receiverName = receiverDetail.name,
+            items = List(receiverDetail.timeLetterCount) { index ->
+                TimeLetterItem(
+                    id = "timeletter_$index",
+                    receivername = "박채연",
+                    sendDate = "2027. 11. 24",
+                    title = "채연아 20번째 생일을 축하해",
+                    content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
+                    imageResId = if (index == 0) R.drawable.ic_test_block else null,
+                    theme = when (index % 3) {
+                        0 -> LetterTheme.BLUE
+                        1 -> LetterTheme.YELLOW
+                        else -> LetterTheme.PEACH
+                    }
+                )
+            },
+            onBackClick = { navController.popBackStack() },
+            onItemClick = { /* TODO: 타임레터 상세로 이동 */ }
         )
     }
 }

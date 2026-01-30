@@ -32,4 +32,9 @@ sealed interface SettingRoute {
     data class DailyAnswerRoute(
         val receiverId: String = ""
     ) : SettingRoute
+
+    @Serializable
+    data class ReceiverTimeLetterListRoute(
+        val receiverId: String = ""
+    ) : SettingRoute
 }

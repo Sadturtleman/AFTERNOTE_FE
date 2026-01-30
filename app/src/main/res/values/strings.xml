@@ -14,6 +14,7 @@
     <string name="daily_answer_sample_date">2025. 10. 09.</string>
 
     <string name="receiver_afternote_intro_line2">애프터노트입니다.</string>
+    <string name="receiver_timeletter_intro_line2">타임 레터입니다.</string>
     <string name="afternote_last_written_date">최종 작성일 %1$s.</string>
     <string name="receiver_afternote_item_instagram">인스타그램</string>
     <string name="receiver_afternote_item_gallery">갤러리</string>
