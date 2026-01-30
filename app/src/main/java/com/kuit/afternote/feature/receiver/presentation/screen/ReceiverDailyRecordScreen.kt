@@ -39,9 +39,9 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.CalendarGrid
+import com.kuit.afternote.feature.receiver.presentation.component.ReceiverWheelDatePickerDialog
 import com.kuit.afternote.feature.receiver.presentation.component.RecordListItem
 import com.kuit.afternote.feature.receiver.presentation.component.TodayRecordCard
-import com.kuit.afternote.feature.receiver.presentation.component.ReceiverWheelDatePickerDialog
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9

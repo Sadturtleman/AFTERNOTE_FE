@@ -75,7 +75,5 @@ internal object ReceiverDummyData {
         )
     )
 
-    fun detailOf(receiverId: String): ReceiverDummyDetail {
-        return receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
-    }
+    fun detailOf(receiverId: String): ReceiverDummyDetail = receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
 }

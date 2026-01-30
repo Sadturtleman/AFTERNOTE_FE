@@ -83,14 +83,12 @@ fun DatePickerDialogContent(
                 offsetX = 0.dp,
                 offsetY = 2.dp,
                 spread = 0.dp
-            )
-            .clip(containerShape)
+            ).clip(containerShape)
             .background(Color.White)
             .padding(
                 horizontal = 24.dp,
                 vertical = 32.dp
-            )
-        ,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -139,13 +137,11 @@ fun DatePickerDialogContent(
                     offsetX = 0.dp,
                     offsetY = 2.dp,
                     spread = 0.dp
-                )
-                .clip(buttonShape)
+                ).clip(buttonShape)
                 .background(B3)
                 .clickable {
                     onConfirm(LocalDate.of(selectedYear, selectedMonth, selectedDay))
-                }
-                .padding(
+                }.padding(
                     horizontal = 24.dp,
                     vertical = 16.dp
                 )

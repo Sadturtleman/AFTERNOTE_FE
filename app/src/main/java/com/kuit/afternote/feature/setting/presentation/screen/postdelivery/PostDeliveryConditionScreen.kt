@@ -238,9 +238,7 @@ fun PostDeliveryConditionScreen(
 }
 
 @Composable
-private fun BulletItem(
-    text: String
-) {
+private fun BulletItem(text: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,

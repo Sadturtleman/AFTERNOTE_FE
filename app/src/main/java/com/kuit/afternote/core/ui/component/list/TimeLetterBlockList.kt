@@ -76,4 +76,3 @@ private fun TimeLetterBlockListPreview() {
         contentPadding = PaddingValues(vertical = 16.dp)
     )
 }
-

@@ -74,8 +74,7 @@ fun RecordQnAListItem(
                     .background(
                         color = Gray2,
                         shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(
+                    ).padding(
                         horizontal = 16.dp,
                         vertical = 24.dp
                     )
@@ -135,4 +134,3 @@ private fun RecordQnAListItemPreview() {
         )
     }
 }
-

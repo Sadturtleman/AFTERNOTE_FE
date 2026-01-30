@@ -104,16 +104,16 @@ fun RecordDiaryContentItem(
                 if (showDialog.value) {
                     LaunchedEffect(Unit) {
                         DatePickerDialog(
-                                context,
-                                R.style.SpinnerDatePickerStyle,
-                                { _, year, month, dayOfMonth ->
-                                    onDateSelected(year, month + 1, dayOfMonth)
-                                    showDialog.value = false
-                                },
-                                today.year,
-                                today.monthValue - 1,
-                                today.dayOfMonth
-                            ).show()
+                            context,
+                            R.style.SpinnerDatePickerStyle,
+                            { _, year, month, dayOfMonth ->
+                                onDateSelected(year, month + 1, dayOfMonth)
+                                showDialog.value = false
+                            },
+                            today.year,
+                            today.monthValue - 1,
+                            today.dayOfMonth
+                        ).show()
                     }
                 }
             }

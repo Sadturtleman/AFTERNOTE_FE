@@ -127,7 +127,6 @@ private fun ConsonantSection(
     receivers: List<MainPageEditReceiver>,
     onReceiverClick: (MainPageEditReceiver) -> Unit
 ) {
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(space = 16.dp)
