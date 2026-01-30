@@ -26,7 +26,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.processin
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 갤러리 및 파일 선택 시 표시되는 콘텐츠
@@ -65,7 +64,7 @@ private fun GalleryAndFileEditContentContent(
         // 정보 처리 방법 섹션
         RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
 
-        Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(16.dp))
 
         ProcessingMethodRadioButton(
             option = InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER,
@@ -73,7 +72,7 @@ private fun GalleryAndFileEditContentContent(
             onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER) }
         )
 
-        Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(8.dp))
 
         ProcessingMethodRadioButton(
             option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
@@ -87,7 +86,7 @@ private fun GalleryAndFileEditContentContent(
 
         // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
         params.mainPageEditReceiverSection?.let { mainPageEditReceiverSection ->
-            Spacer(modifier = Modifier.height(Spacing.xl))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // 수신자 추가 섹션 제목
             RequiredLabel(text = "수신자 추가", offsetY = 3f)
@@ -100,12 +99,12 @@ private fun GalleryAndFileEditContentContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 처리 방법 리스트 섹션
         RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(Spacing.ml))
+        Spacer(modifier = Modifier.height(20.dp))
 
         ProcessingMethodList(
             params = ProcessingMethodListParams(
@@ -119,7 +118,7 @@ private fun GalleryAndFileEditContentContent(
             )
         )
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 남기실 말씀
         OutlineTextField(

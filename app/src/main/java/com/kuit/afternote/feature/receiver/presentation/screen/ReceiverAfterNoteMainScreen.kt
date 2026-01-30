@@ -47,7 +47,6 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
@@ -125,7 +124,7 @@ fun ReceiverAfterNoteMainScreen(
                             ReceiverVideoSection()
                         }
                     ),
-                    sectionSpacing = Spacing.xl
+                    sectionSpacing = 32.dp
                 )
             }
             item {

@@ -43,7 +43,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.processin
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
-import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
@@ -177,7 +176,7 @@ private fun EditContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 종류 선택 (Line 279 해결: State의 메서드 사용)
             SelectionDropdown(
@@ -194,7 +193,7 @@ private fun EditContent(
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
             if (state.selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) {
-                Spacer(modifier = Modifier.height(Spacing.m))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 SelectionDropdown(
                     label = "서비스명",
@@ -208,7 +207,7 @@ private fun EditContent(
                     state = state.serviceDropdownState
                 )
             }
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 종류에 따라 다른 콘텐츠 표시
             // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리

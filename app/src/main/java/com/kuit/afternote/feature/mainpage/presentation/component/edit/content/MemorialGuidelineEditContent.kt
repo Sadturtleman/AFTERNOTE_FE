@@ -24,7 +24,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.FuneralVideoUpload
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.MemorialPhotoUpload
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 추모 가이드라인 종류 선택 시 표시되는 콘텐츠 (편집 모드).
@@ -87,7 +86,7 @@ fun MemorialGuidelineEditContent(
                 )
             }
         ),
-        sectionSpacing = Spacing.xl,
+        sectionSpacing = 32.dp,
         trailingSpacerHeight = trailingSpacerHeight
     )
 }

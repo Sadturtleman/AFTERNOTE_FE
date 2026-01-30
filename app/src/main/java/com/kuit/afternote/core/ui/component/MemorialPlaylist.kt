@@ -32,7 +32,6 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -127,7 +126,7 @@ fun MemorialPlaylist(
 ) {
     val isEditMode = onAddSongClick != null
     Column(
-        verticalArrangement = Arrangement.spacedBy(space = Spacing.m)
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
         Text(
             text = label,
@@ -201,7 +200,7 @@ private fun MemorialPlaylistEditPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             MemorialPlaylist(
                 songCount = 4,
@@ -223,7 +222,7 @@ private fun MemorialPlaylistViewPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             MemorialPlaylist(
                 songCount = 16,

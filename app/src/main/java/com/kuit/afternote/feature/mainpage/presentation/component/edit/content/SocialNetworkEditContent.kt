@@ -24,7 +24,6 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.processin
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 소셜네트워크 등 일반적인 종류 선택 시 표시되는 콘텐츠
@@ -63,7 +62,7 @@ private fun SocialNetworkEditContentContent(
         // 계정 정보 섹션
         RequiredLabel(text = "계정 정보", offsetY = 4f)
 
-        Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlineTextField(
             modifier = Modifier,
@@ -81,12 +80,12 @@ private fun SocialNetworkEditContentContent(
             keyboardType = KeyboardType.Password
         )
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 계정 처리 방법 섹션
         RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(Spacing.l))
+        Spacer(modifier = Modifier.height(24.dp))
 
         AccountProcessingRadioButton(
             method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
@@ -94,7 +93,7 @@ private fun SocialNetworkEditContentContent(
             onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
         )
 
-        Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(8.dp))
 
         AccountProcessingRadioButton(
             method = AccountProcessingMethod.PERMANENT_DELETE,
@@ -102,7 +101,7 @@ private fun SocialNetworkEditContentContent(
             onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) }
         )
 
-        Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(8.dp))
 
         AccountProcessingRadioButton(
             method = AccountProcessingMethod.TRANSFER_TO_RECEIVER,
@@ -110,12 +109,12 @@ private fun SocialNetworkEditContentContent(
             onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECEIVER) }
         )
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 처리 방법 리스트 섹션
         RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
 
-        Spacer(modifier = Modifier.height(Spacing.m))
+        Spacer(modifier = Modifier.height(16.dp))
 
         ProcessingMethodList(
             params = ProcessingMethodListParams(
@@ -129,7 +128,7 @@ private fun SocialNetworkEditContentContent(
             )
         )
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 남기실 말씀
         OutlineTextField(

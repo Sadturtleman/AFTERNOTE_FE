@@ -79,6 +79,8 @@ sealed interface TriggerConditionOption {
     }
 }
 
+private val BulletOpticalOffset = 7.dp
+
 @Composable
 fun PostDeliveryConditionScreen(
     modifier: Modifier = Modifier,
@@ -219,7 +221,7 @@ private fun BulletItem(
     ) {
         Box(
             modifier = Modifier
-                .padding(top = 7.dp)
+                .padding(top = BulletOpticalOffset)
                 .size(4.dp)
                 .background(color = Gray9, shape = CircleShape)
         )

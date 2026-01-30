@@ -45,7 +45,6 @@ import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 private const val RECEIVER_DETAIL_FIELD_PLACEHOLDER = "Text Field"
@@ -111,21 +110,21 @@ fun ReceiverDetailScreen(
                 onReceiverDetailImageClick = callbacks.onReceiverDetailImageClick
             )
 
-            Spacer(modifier = Modifier.height(Spacing.m))
+            Spacer(modifier = Modifier.height(16.dp))
 
             ReceiverDetailValueField(
                 label = "전화번호",
                 textFieldState = params.phoneNumberState
             )
 
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             ReceiverDetailValueField(
                 label = "이메일",
                 textFieldState = params.emailState
             )
 
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "전달할 내용",
                 modifier = Modifier
@@ -140,13 +139,13 @@ fun ReceiverDetailScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.height(Spacing.m))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 DeliveryCountRow(
                     title = "데일리 질문 답변",
@@ -167,7 +166,7 @@ fun ReceiverDetailScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(Spacing.xl))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -193,7 +192,7 @@ private fun ReceiverDetailHeader(
                 .clickable(onClick = onReceiverDetailImageClick)
         )
 
-        Spacer(modifier = Modifier.height(Spacing.ml))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = name,
@@ -206,7 +205,7 @@ private fun ReceiverDetailHeader(
             )
         )
 
-        Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = relationship,
