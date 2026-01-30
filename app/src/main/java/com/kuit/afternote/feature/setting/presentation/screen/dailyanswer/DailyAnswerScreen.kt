@@ -90,9 +90,7 @@ fun DailyAnswerScreen(
 }
 
 @Composable
-private fun DailyAnswerIntro(
-    receiverName: String
-) {
+private fun DailyAnswerIntro(receiverName: String) {
     Text(
         text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = B1)) {
@@ -149,4 +147,3 @@ private fun DailyAnswerScreenPreview() {
         )
     }
 }
-

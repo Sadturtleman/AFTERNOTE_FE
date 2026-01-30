@@ -54,9 +54,7 @@ class MainPageEditReceiverListState(
  * MainPageEditReceiverListState를 생성하는 Composable 함수
  */
 @Composable
-fun rememberMainPageEditReceiverListState(
-    initialShowTextField: Boolean = false,
-): MainPageEditReceiverListState =
+fun rememberMainPageEditReceiverListState(initialShowTextField: Boolean = false,): MainPageEditReceiverListState =
     remember {
         MainPageEditReceiverListState(
             initialShowTextField = initialShowTextField,

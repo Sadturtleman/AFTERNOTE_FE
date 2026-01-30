@@ -104,7 +104,7 @@ fun RecordMainScreen(
         ) {
             // 샹단 제목
             TopBar(
-                title="나의 모든 기록"
+                title = "나의 모든 기록"
             )
             // 리스트
             val allItems = listOf(
