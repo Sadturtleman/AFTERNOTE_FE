@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.core.ui.component.SongPlaylistScreen
+import com.kuit.afternote.core.ui.component.list.SongPlaylistScreen
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
