@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.upload
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +20,6 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 영정사진 추가 컴포넌트
@@ -54,18 +54,27 @@ fun MemorialPhotoUpload(
             )
         )
 
+        val imageModifier = Modifier
+            .size(144.dp)
+            .align(Alignment.CenterHorizontally)
+            .clickable(onClick = onAddPhotoClick)
+
         // 큰 원형 배경
         // 프로필 아이콘 (이미지가 없을 때만 표시)
         if (imageUrl == null) {
             Image(
                 painter = painterResource(R.drawable.img_deceased_profile),
                 contentDescription = "영정사진 기본 프로필",
-                modifier = Modifier
-                    .size(144.dp)
-                    .align(Alignment.CenterHorizontally)
+                modifier = imageModifier
             )
         } else {
             // TODO: 실제 이미지 로드 (Coil 등 사용)
+            // 현재는 클릭 동작을 위해 placeholder 이미지를 그대로 사용합니다.
+            Image(
+                painter = painterResource(R.drawable.img_deceased_profile),
+                contentDescription = "영정사진 변경",
+                modifier = imageModifier
+            )
         }
     }
 }
@@ -75,7 +84,7 @@ fun MemorialPhotoUpload(
 private fun MemorialPhotoUploadPreview() {
     AfternoteTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // 이미지 없음
             MemorialPhotoUpload(

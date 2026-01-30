@@ -24,7 +24,7 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6
 
 @Composable
-fun WheelDatePickerDialog(
+fun ReceiverWheelDatePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {

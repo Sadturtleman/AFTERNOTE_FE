@@ -34,12 +34,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.AlbumCover
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.MemorialGuidelineSlots
-import com.kuit.afternote.core.ui.component.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.button.ClickButton
+import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -47,7 +47,6 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
@@ -125,7 +124,7 @@ fun ReceiverAfterNoteMainScreen(
                             ReceiverVideoSection()
                         }
                     ),
-                    sectionSpacing = Spacing.xl
+                    sectionSpacing = 32.dp
                 )
             }
             item {

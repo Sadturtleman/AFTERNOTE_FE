@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.timeletter.presentation.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 
 /**
@@ -67,6 +67,7 @@ import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWr
  */
 @Composable
 fun TimeLetterWriterScreen(
+    modifier: Modifier = Modifier,
     recipientName: String,
     title: String,
     content: String,
@@ -83,8 +84,7 @@ fun TimeLetterWriterScreen(
     onDateClick: () -> Unit,
     onTimeClick: () -> Unit,
     onDatePickerDismiss: () -> Unit = {},
-    onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> },
-    modifier: Modifier = Modifier
+    onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> }
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -349,32 +349,22 @@ fun TimeLetterWriterScreen(
             // DateWheelPicker 오버레이 (발송 날짜 아래 위치)
             Box(
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(top = 43.dp) // TopBar 높이
-                    .padding(top = 24.dp) // Spacer 높이
-                    .padding(top = 62.dp) // 발송 날짜 Row 높이
-                    .padding(start = 20.dp)
-                    .zIndex(2f)
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    ).clip(RoundedCornerShape(12.dp))
+                    .background(Color.White)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
+                    .padding(vertical = 16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .shadow(
-                            elevation = 8.dp,
-                            shape = RoundedCornerShape(12.dp)
-                        ).clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
-                        .padding(vertical = 16.dp)
-                ) {
-                    DateWheelPicker(
-                        onDateChanged = { year, month, day ->
-                            onDateSelected(year, month, day)
-                        }
-                    )
-                }
+                DateWheelPicker(
+                    onDateChanged = { year, month, day ->
+                        onDateSelected(year, month, day)
+                    }
+                )
             }
         }
     }

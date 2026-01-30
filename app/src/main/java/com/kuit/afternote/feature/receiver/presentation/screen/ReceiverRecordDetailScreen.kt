@@ -31,7 +31,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDate
 
 @Composable
-fun ReceiverDetailScreen(
+fun ReceiverRecordDetailScreen(
     receiver: Receiver,
     onBackClick: () -> Unit,
     onOpenClick: () -> Unit
@@ -177,8 +177,8 @@ fun ReceiverDetailScreen(
 
 @Preview
 @Composable
-private fun ReceiverDetailScreenPreview() {
-    ReceiverDetailScreen(
+private fun ReceiverRecordDetailScreenPreview() {
+    ReceiverRecordDetailScreen(
         Receiver(
             name = "미진이",
             acceptDate = LocalDate.now(),

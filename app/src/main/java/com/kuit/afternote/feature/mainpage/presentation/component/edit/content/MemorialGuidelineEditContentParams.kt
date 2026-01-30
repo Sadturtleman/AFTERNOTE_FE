@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.content
 
 import androidx.compose.runtime.Immutable
-import com.kuit.afternote.core.ui.component.AlbumCover
 import com.kuit.afternote.core.ui.component.LastWishOption
+import com.kuit.afternote.core.ui.component.list.AlbumCover
 
 /**
  * 추모 가이드라인 콘텐츠 파라미터

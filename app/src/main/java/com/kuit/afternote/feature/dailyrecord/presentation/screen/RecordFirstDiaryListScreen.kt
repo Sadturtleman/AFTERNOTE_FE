@@ -25,9 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import java.time.LocalDate
 
 /**
@@ -40,7 +40,7 @@ import java.time.LocalDate
 @Composable
 fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
+    onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
 ) {
     val today = LocalDate.now()
@@ -87,10 +87,9 @@ fun RecordFirstDiaryListScreen(
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            RecordMainTopbar(
-                text = "일기",
-                showLeftArrow = true,
-                onLeftClock = onLeftClick,
+            TopBar(
+                title = "일기",
+                onBackClick = onBackClick,
             )
             LazyColumn {
                 item {

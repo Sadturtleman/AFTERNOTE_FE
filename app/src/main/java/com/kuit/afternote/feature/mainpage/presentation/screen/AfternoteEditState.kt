@@ -11,8 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.kuit.afternote.core.ui.component.AlbumCover
 import com.kuit.afternote.core.ui.component.LastWishOption
+import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod

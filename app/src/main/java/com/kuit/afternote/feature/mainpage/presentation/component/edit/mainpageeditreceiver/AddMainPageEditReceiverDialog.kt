@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
@@ -37,7 +38,6 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -141,15 +141,14 @@ fun AddMainPageEditReceiverDialog(
                 }
             }
 
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 수신자 이름 입력 필드
             OutlineTextField(
                 label = "수신자 이름",
                 textFieldState = params.mainPageEditReceiverNameState,
                 keyboardType = KeyboardType.Text,
-                containerColor = Gray1,
-                labelSpacing = 7.95.dp
+                style = LabeledTextFieldStyle(containerColor = Gray1, labelSpacing = 7.95.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -166,15 +165,14 @@ fun AddMainPageEditReceiverDialog(
                     tonalElevation = 0.dp
                 )
             )
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 전화번호로 추가하기 입력 필드
             OutlineTextField(
                 label = "전화번호로 추가하기",
                 textFieldState = params.phoneNumberState,
                 keyboardType = KeyboardType.Phone,
-                containerColor = Gray1,
-                labelSpacing = 7.95.dp
+                style = LabeledTextFieldStyle(containerColor = Gray1, labelSpacing = 7.95.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -13,18 +13,17 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.AlbumCover
 import com.kuit.afternote.core.ui.component.LastWishOption
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.MemorialGuidelineSlots
-import com.kuit.afternote.core.ui.component.MemorialPlaylist
+import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.feature.mainpage.presentation.common.util.PlaceholderDrawables
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.FuneralVideoUpload
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.MemorialPhotoUpload
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 추모 가이드라인 종류 선택 시 표시되는 콘텐츠 (편집 모드).
@@ -87,7 +86,7 @@ fun MemorialGuidelineEditContent(
                 )
             }
         ),
-        sectionSpacing = Spacing.xl,
+        sectionSpacing = 32.dp,
         trailingSpacerHeight = trailingSpacerHeight
     )
 }

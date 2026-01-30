@@ -5,13 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -29,12 +25,8 @@ fun RecordDiaryQuestionContentItem(
     content: String,
     onContentChange: (String) -> Unit
 ) {
-    var isEditing by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
     Column(
-        modifier = Modifier
-            .padding(top = 24.dp, start = 20.dp, end = 20.dp)
+        modifier = modifier.padding(top = 24.dp, start = 20.dp, end = 20.dp)
     ) {
         Box(
             modifier = Modifier
@@ -48,7 +40,7 @@ fun RecordDiaryQuestionContentItem(
                 fontFamily = Sansneo
             )
         }
-        Divider(color = Color.LightGray, thickness = 0.8.dp)
+        HorizontalDivider(color = Color.LightGray, thickness = 0.8.dp)
         BasicTextField(
             value = title,
             onValueChange = onTitleChange,
@@ -72,7 +64,7 @@ fun RecordDiaryQuestionContentItem(
             }
         )
 
-        Divider(color = Color.LightGray, thickness = 0.8.dp)
+        HorizontalDivider(color = Color.LightGray, thickness = 0.8.dp)
 
         BasicTextField(
             value = content,

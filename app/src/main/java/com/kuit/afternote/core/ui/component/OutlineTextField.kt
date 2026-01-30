@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -49,11 +50,36 @@ import com.kuit.afternote.ui.theme.White
 private const val DEFAULT_PLACEHOLDER = "Text Field"
 private const val PASSWORD_MASK_CHAR = '\u2022'
 
+/**
+ * Style configuration for labeled OutlineTextField.
+ */
+data class LabeledTextFieldStyle(
+    val containerColor: Color = White,
+    val labelSpacing: Dp = 6.dp,
+    val labelFontSize: TextUnit = 12.sp,
+    val labelLineHeight: TextUnit = 18.sp,
+    val labelFontWeight: FontWeight = FontWeight.Normal
+)
+
 private val PasswordOutputTransformation = OutputTransformation {
     val originalLength = length
     replace(0, originalLength, PASSWORD_MASK_CHAR.toString().repeat(originalLength))
 }
 
+// ============================================================================
+// Basic Variants (placeholder inside field, 70.dp height)
+// ============================================================================
+
+/**
+ * Single-line outlined text field (basic variant).
+ *
+ * @param textFieldState Text field state holder.
+ * @param label Placeholder text shown when empty.
+ * @param keyboardType Keyboard type; if [KeyboardType.Password], input is visually masked.
+ * @param enabled Whether the field is enabled.
+ * @param focusRequester Optional focus controller for programmatic focus.
+ * @param requestFocusOnEnabled If true, requests focus when the field is laid out and enabled.
+ */
 @Composable
 fun OutlineTextField(
     textFieldState: TextFieldState,
@@ -81,9 +107,7 @@ fun OutlineTextField(
             disabledContainerColor = White
         ),
         shape = RoundedCornerShape(8.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType
-        ),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         outputTransformation = if (keyboardType == KeyboardType.Password) {
             PasswordOutputTransformation
         } else {
@@ -110,6 +134,9 @@ fun OutlineTextField(
     )
 }
 
+/**
+ * Single-line outlined text field with a trailing "auth code request" action.
+ */
 @Composable
 fun OutlineTextField(
     textFieldState: TextFieldState,
@@ -129,17 +156,13 @@ fun OutlineTextField(
             )
         },
         shape = RoundedCornerShape(8.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType
-        ),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         outputTransformation = if (keyboardType == KeyboardType.Password) {
             PasswordOutputTransformation
         } else {
             null
         },
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Gray4
-        ),
+        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
         trailingIcon = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -147,10 +170,7 @@ fun OutlineTextField(
             ) {
                 Text(
                     text = "인증번호 받기",
-                    modifier = Modifier
-                        .clickable {
-                            onAuthClick()
-                        }
+                    modifier = Modifier.clickable { onAuthClick() }
                 )
             }
         },
@@ -160,6 +180,9 @@ fun OutlineTextField(
     )
 }
 
+/**
+ * Single-line outlined text field that behaves like a file picker.
+ */
 @Composable
 fun OutlineTextField(
     textFieldState: TextFieldState,
@@ -178,9 +201,7 @@ fun OutlineTextField(
             )
         },
         shape = RoundedCornerShape(8.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Gray4
-        ),
+        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
         readOnly = true,
         trailingIcon = {
             Row(
@@ -190,7 +211,7 @@ fun OutlineTextField(
                 IconButton(onClick = { onFileAddClick() }) {
                     Icon(
                         imageVector = Icons.Filled.AddCircle,
-                        contentDescription = null,
+                        contentDescription = "Add file",
                         tint = B2,
                         modifier = Modifier.size(24.dp)
                     )
@@ -203,16 +224,25 @@ fun OutlineTextField(
     )
 }
 
+// ============================================================================
+// Labeled Variants (external label above field, filled style, 56.dp height)
+// ============================================================================
+
 /**
- * 라벨이 있는 텍스트 필드 컴포넌트 (LabeledTextField 호환)
+ * Labeled single-line text field with optional error state.
  *
- * @param modifier Modifier (기본: Modifier)
- * @param label 라벨 텍스트
- * @param textFieldState 텍스트 필드 상태
- * @param placeholder 플레이스홀더 텍스트 (기본: "Text Field")
- * @param keyboardType 키보드 타입 (기본: KeyboardType.Text)
- * @param containerColor 텍스트 필드 배경색 (기본: White)
- * @param labelSpacing 라벨과 필드 간 간격 (기본: 6.dp)
+ * **Use when**
+ * - You need a label above the field (instead of a placeholder-only input).
+ * - You want a filled look (border hidden) with a configurable container color.
+ * - You optionally need error state with red border.
+ *
+ * @param modifier Modifier for the whole component.
+ * @param label Label text shown above the field.
+ * @param textFieldState Text field state holder.
+ * @param placeholder Placeholder text shown when empty.
+ * @param keyboardType Keyboard type; if [KeyboardType.Password], input is visually masked.
+ * @param style Style configuration (container color, label spacing).
+ * @param isError Whether to show the red error border.
  */
 @Composable
 fun OutlineTextField(
@@ -221,20 +251,20 @@ fun OutlineTextField(
     textFieldState: TextFieldState,
     placeholder: String = DEFAULT_PLACEHOLDER,
     keyboardType: KeyboardType = KeyboardType.Text,
-    containerColor: Color = White,
-    labelSpacing: Dp = 6.dp
+    style: LabeledTextFieldStyle = LabeledTextFieldStyle(),
+    isError: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = labelSpacing)
+        verticalArrangement = Arrangement.spacedBy(space = style.labelSpacing)
     ) {
         Text(
             text = label,
             style = TextStyle(
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
+                fontSize = style.labelFontSize,
+                lineHeight = style.labelLineHeight,
                 fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
+                fontWeight = style.labelFontWeight,
                 color = Gray9
             )
         )
@@ -259,13 +289,11 @@ fun OutlineTextField(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color.Transparent,
                 focusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = containerColor,
-                focusedContainerColor = containerColor
+                unfocusedContainerColor = style.containerColor,
+                focusedContainerColor = style.containerColor
             ),
             shape = RoundedCornerShape(8.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             outputTransformation = if (keyboardType == KeyboardType.Password) {
                 PasswordOutputTransformation
             } else {
@@ -274,88 +302,7 @@ fun OutlineTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(containerColor, RoundedCornerShape(8.dp)),
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 20.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
-        )
-    }
-}
-
-/**
- * 라벨이 있는 텍스트 필드 컴포넌트 - 에러 상태 지원 버전
- *
- * @param modifier Modifier (기본: Modifier)
- * @param label 라벨 텍스트
- * @param textFieldState 텍스트 필드 상태
- * @param placeholder 플레이스홀더 텍스트 (기본: "Text Field")
- * @param keyboardType 키보드 타입 (기본: KeyboardType.Text)
- * @param isError 에러 상태 여부 - true일 경우 1dp 빨간 테두리 표시
- */
-@Composable
-fun OutlineTextField(
-    modifier: Modifier = Modifier,
-    label: String,
-    textFieldState: TextFieldState,
-    placeholder: String = DEFAULT_PLACEHOLDER,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    isError: Boolean
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = 6.dp)
-    ) {
-        Text(
-            text = label,
-            style = TextStyle(
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
-        )
-
-        OutlinedTextField(
-            state = textFieldState,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            contentPadding = PaddingValues(
-                vertical = 16.dp,
-                horizontal = 24.dp
-            ),
-            placeholder = {
-                Text(
-                    text = placeholder,
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray4
-                )
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = White,
-                focusedContainerColor = White
-            ),
-            shape = RoundedCornerShape(8.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType
-            ),
-            outputTransformation = if (keyboardType == KeyboardType.Password) {
-                PasswordOutputTransformation
-            } else {
-                null
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .background(White, RoundedCornerShape(8.dp))
+                .background(style.containerColor, RoundedCornerShape(8.dp))
                 .then(
                     if (isError) {
                         Modifier.border(
@@ -378,75 +325,88 @@ fun OutlineTextField(
     }
 }
 
+// ============================================================================
+// Multiline Variant (external label, larger container)
+// ============================================================================
+
 /**
- * 멀티라인 텍스트 필드 컴포넌트 (MessageTextField 호환)
- *
- * @param modifier Modifier (기본: Modifier)
- * @param label 라벨 텍스트 (기본: "남기실 말씀")
- * @param textFieldState 텍스트 필드 상태
- * @param placeholder 플레이스홀더 텍스트 (기본: "Text Field")
+ * Marker object for multiline OutlineTextField variant.
  */
+object Multiline
+
+/**
+ * Multiline message-style text field.
+ *
+ * @param modifier Modifier for the whole component.
+ * @param label Label text shown above the field.
+ * @param textFieldState Text field state holder.
+ * @param placeholder Placeholder text shown when empty.
+ * @param multiline Marker to distinguish this as multiline variant.
+ */
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun OutlineTextField(
     modifier: Modifier = Modifier,
     label: String,
     textFieldState: TextFieldState,
     placeholder: String = DEFAULT_PLACEHOLDER,
-    isMultiline: Boolean
+    multiline: Multiline
 ) {
-    if (isMultiline) {
-        Column(
-            modifier = modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(space = 16.dp)
-        ) {
-            Text(
-                text = label,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 22.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+    ) {
+        Text(
+            text = label,
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = Gray9
             )
+        )
 
-            OutlinedTextField(
-                state = textFieldState,
-                lineLimits = TextFieldLineLimits.MultiLine(),
-                placeholder = {
-                    Text(
-                        text = placeholder,
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray4
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedContainerColor = White,
-                    focusedContainerColor = White
-                ),
-                shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions.Default,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(White, RoundedCornerShape(16.dp)),
-                contentPadding = PaddingValues(all = 16.dp),
-                textStyle = TextStyle(
+        OutlinedTextField(
+            state = textFieldState,
+            lineLimits = TextFieldLineLimits.MultiLine(),
+            placeholder = {
+                Text(
+                    text = placeholder,
                     fontSize = 16.sp,
                     lineHeight = 20.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Normal,
-                    color = Gray9
+                    color = Gray4
                 )
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                unfocusedContainerColor = White,
+                focusedContainerColor = White
+            ),
+            shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions.Default,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(White, RoundedCornerShape(16.dp)),
+            contentPadding = PaddingValues(all = 16.dp),
+            textStyle = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 20.dp.value.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
+                color = Gray9
             )
-        }
+        )
     }
 }
+
+// ============================================================================
+// Previews
+// ============================================================================
 
 @Preview(showBackground = true, name = "기본 플레이스홀더")
 @Composable
@@ -496,6 +456,43 @@ private fun OutlineTextFieldWithLabelPreview() {
     }
 }
 
+@Preview(showBackground = true, name = "에러 상태")
+@Composable
+private fun OutlineTextFieldWithErrorPreview() {
+    AfternoteTheme {
+        OutlineTextField(
+            modifier = Modifier,
+            label = "비밀번호",
+            textFieldState = rememberTextFieldState(),
+            isError = true
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "비활성화 상태")
+@Composable
+private fun OutlineTextFieldDisabledPreview() {
+    AfternoteTheme {
+        OutlineTextField(
+            textFieldState = rememberTextFieldState(),
+            label = "비활성화된 필드",
+            enabled = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "비밀번호 입력")
+@Composable
+private fun OutlineTextFieldPasswordPreview() {
+    AfternoteTheme {
+        OutlineTextField(
+            textFieldState = rememberTextFieldState("password123"),
+            label = "비밀번호",
+            keyboardType = KeyboardType.Password
+        )
+    }
+}
+
 @Preview(showBackground = true, name = "멀티라인 버전")
 @Composable
 private fun OutlineTextFieldMultilinePreview() {
@@ -503,34 +500,7 @@ private fun OutlineTextFieldMultilinePreview() {
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = rememberTextFieldState(),
-            isMultiline = true
+            multiline = Multiline
         )
-    }
-}
-
-@Preview(showBackground = true, name = "ID와 Password 비교")
-@Composable
-private fun OutlineTextFieldIdPasswordComparisonPreview() {
-    AfternoteTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            OutlineTextField(
-                modifier = Modifier,
-                label = "아이디",
-                textFieldState = rememberTextFieldState(),
-                keyboardType = KeyboardType.Text
-            )
-
-            OutlineTextField(
-                modifier = Modifier,
-                label = "비밀번호",
-                textFieldState = rememberTextFieldState(),
-                keyboardType = KeyboardType.Password
-            )
-        }
     }
 }

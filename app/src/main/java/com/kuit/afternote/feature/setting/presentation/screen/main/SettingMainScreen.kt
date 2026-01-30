@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.main
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

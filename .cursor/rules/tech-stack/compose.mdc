@@ -49,21 +49,15 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 ### 4. Preview (필수)
 **모든 public Composable 함수는 반드시 `@Preview` 어노테이션을 사용한 Preview 함수를 포함해야 합니다.**
 - Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다.
-- 다양한 상태를 보여주는 것이 좋습니다 (선택됨/선택 안 됨, 활성화/비활성화 등).
+- 모든 상태를 보여 줘(선택됨/선택 안 됨, 활성화/비활성화 등).
 
 ## File Structure
-- **One Component per File**: 하나의 파일에는 하나의 주요 `@Composable` 함수와 해당 `@Preview`만 위치시킵니다.
 - **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
 - **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다.
 
 ## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
 
 ### 핵심 규칙
-1. **컴포넌트 크기**: 피그마의 dp 값을 그대로 사용 (예: `height(56.dp)`, `width(350.dp)`)
-2. **Padding 지양, Spacer 사용**: 컴포넌트에 `Modifier.padding()`을 직접 적용하지 말고, `Spacer`를 사용하여 간격을 표현
-   - **❌ 금지**: `Column(modifier = Modifier.padding(vertical = 16.dp)) { ... }`
-   - **✅ 권장**: `Column { Spacer(Modifier.height(16.dp)); ... }`
-   - **예외**: 화면 가장자리 padding만 고정값 허용 (예: `padding(horizontal = 20.dp)`)
 3. **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween`, `Arrangement.SpaceEvenly` 등을 사용
    - **❌ 금지**: `padding(top = 100.dp)` 같은 큰 padding 값
    - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(1f))`
@@ -72,13 +66,16 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
    - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
    - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
+### Hardcoded Dp (Figma parity) - Allowed
+피그마 디자인과의 여백/간격을 빠르게 맞추기 위해, 화면/컴포넌트에서 `dp` 값을 **직접 하드코딩하는 것을 허용**합니다.
+- 금지: 의미 없는 산술로 새 값을 만들지 않습니다 (예: `16.dp - 8.dp`).
+
 ### 적용 우선순위
 1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
    - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
 2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
 3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)
 4. **화면 가장자리 padding**: 고정값 허용 (일관성 유지, 예: `padding(horizontal = 20.dp)`)
-5. **컴포넌트 크기**: 항상 고정 dp 값 사용
 6. **컴포넌트 간 간격**: `Arrangement.spacedBy()` 사용 권장
 7. **⚠️ Critical: 반응형 간격 계산 시 `BoxWithConstraints` 사용 필수**
    - 스크롤 컨테이너 내부에서 비율 기반 간격이 필요할 때는 `LocalWindowInfo`나 `LocalConfiguration` 대신 `BoxWithConstraints`를 사용해야 합니다.
@@ -175,34 +172,6 @@ BoxWithConstraints(modifier = modifier) {
         // Viewport 높이 기준 - 분할 화면, 작은 창, 재사용 모두 안전
         Spacer(modifier = Modifier.height(spacerHeight))
     }
-}
-</good_example>
-</rule>
-
-### 패딩 대신 Spacer 사용 예시
-<rule id="spacer_instead_of_padding">
-<description>컴포넌트 패딩 대신 Spacer를 사용하여 간격을 표현하세요.</description>
-<bad_example>
-Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 16.dp, horizontal = 20.dp)
-) {
-    Text("Title")
-    Text("Content")
-}
-</bad_example>
-<good_example>
-Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp)
-) {
-    Spacer(Modifier.height(16.dp))
-    Text("Title")
-    Spacer(Modifier.height(16.dp))
-    Text("Content")
-    Spacer(Modifier.height(16.dp))
 }
 </good_example>
 </rule>

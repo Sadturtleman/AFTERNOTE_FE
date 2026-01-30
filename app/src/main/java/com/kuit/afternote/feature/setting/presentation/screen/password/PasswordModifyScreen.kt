@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.password
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -26,11 +26,11 @@ import com.kuit.afternote.feature.setting.presentation.component.KeyPad
 import com.kuit.afternote.feature.setting.presentation.component.PasscodeIndicator
 import com.kuit.afternote.feature.setting.presentation.uimodel.KeyAction
 import com.kuit.afternote.feature.setting.presentation.uimodel.PasswordStep
-import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadViewModel
+import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadModifyViewModel
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
+fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel()) {
     val password by keyPadViewModel.inputCode.collectAsStateWithLifecycle()
     val step by keyPadViewModel.currentStep.collectAsStateWithLifecycle()
     val onKeyAction: (KeyAction) -> Unit = remember {
@@ -39,7 +39,7 @@ fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopBar(title = "앱 잠금 비밀번호 설정") {}
+            TopBar(title = "앱 잠금 비밀번호 변경") {}
         }
     ) { paddingValues ->
         Column(
@@ -63,8 +63,10 @@ fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
                 text = when (step) {
                     is PasswordStep.Confirm ->
                         "비밀번호를 다시 한 번 입력해 주세요"
+
                     is PasswordStep.Setup ->
-                        "비밀번호를 입력해 주세요"
+                        "변경할 비밀번호를 입력해 주세요"
+
                     else -> ""
                 },
                 fontFamily = Sansneo,
@@ -87,6 +89,6 @@ fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
 
 @Preview
 @Composable
-private fun PasswordConfirmScreenPreview() {
-    PasswordConfirmScreen()
+private fun PasswordModifyScreenPreview() {
+    PasswordModifyScreen()
 }
