@@ -1,0 +1,119 @@
+## Optimistic Updates Pattern (낙관적 업데이트 패턴) - Critical
+
+### When to Use
+- **Non-critical updates**: Profile, settings, preferences
+- **High success rate operations**: Toggle switches, simple updates
+- **User-initiated actions**: Where immediate feedback is expected
+
+### Implementation Pattern
+
+1. **UiState에 needsRollback 플래그 추가**:
+```kotlin
+data class MyUiState(
+    val success: Boolean = false,
+    val needsRollback: Boolean = false // Optimistic update 실패 시 rollback 필요
+)
+```
+
+2. **ViewModel에서 Optimistic Update 구현**:
+```kotlin
+fun updateSomething() {
+    viewModelScope.launch {
+        // Optimistic: 즉시 성공 상태로 설정
+        _uiState.update { 
+            it.copy(success = true, needsRollback = false) 
+        }
+        
+        // 백그라운드에서 실제 API 호출
+        useCase.update()
+            .onFailure { e ->
+                // Rollback: 성공 상태 취소 및 에러 표시
+                _uiState.update {
+                    it.copy(
+                        success = false,
+                        needsRollback = true,
+                        errorMessage = mapErrorToUserMessage(e)
+                    )
+                }
+            }
+    }
+}
+```
+
+3. **Screen에서 Rollback 처리**:
+```kotlin
+LaunchedEffect(uiState.success, uiState.needsRollback) {
+    if (uiState.needsRollback) {
+        viewModel.clearSuccess()
+        viewModel.clearRollback()
+        return@LaunchedEffect
+    }
+    
+    if (uiState.success && !uiState.needsRollback) {
+        // Navigation or success feedback
+    }
+}
+```
+
+### Rollback Handling
+- **Navigation 취소**: `needsRollback`이 true면 navigation을 취소
+- **에러 표시**: Rollback 시 에러 메시지를 사용자에게 표시
+- **상태 초기화**: Rollback 후 `clearRollback()` 호출하여 상태 초기화
+
+### Race Condition 처리 (연속 요청 시) - Critical
+
+연속적인 요청이 발생할 수 있는 경우 (예: 토글 스위치를 빠르게 클릭, 연속 저장):
+
+**핵심 원칙:**
+1. **이전 상태 스냅샷**: Rollback 시 이전 상태로 복원할 수 있도록 스냅샷 저장
+2. **진행 중 요청 식별자**: 각 요청에 고유 ID를 부여하여 최신 요청만 처리
+3. **에러 메시지 정책**: 사용자에게 보여줄 에러 메시지 정책 명확화
+
+**Race Condition 처리 예시:**
+```kotlin
+private var currentRequestId = 0
+
+fun updateSomething() {
+    viewModelScope.launch {
+        val requestId = ++currentRequestId
+        val previousState = _uiState.value // 이전 상태 스냅샷 저장
+
+        // Optimistic: 즉시 성공 상태로 설정
+        _uiState.update {
+            it.copy(success = true, needsRollback = false)
+        }
+
+        // 백그라운드에서 실제 API 호출
+        useCase.update()
+            .onSuccess {
+                // 최신 요청인지 확인 (레이스 컨디션 방지)
+                if (requestId == currentRequestId) {
+                    // 이미 성공 상태이므로 추가 업데이트 불필요
+                }
+            }
+            .onFailure { e ->
+                // 최신 요청인지 확인 (레이스 컨디션 방지)
+                if (requestId == currentRequestId) {
+                    // Rollback: 이전 상태로 복원
+                    _uiState.update {
+                        previousState.copy(
+                            success = false,
+                            needsRollback = true,
+                            errorMessage = mapErrorToUserMessage(e)
+                        )
+                    }
+                }
+            }
+    }
+}
+```
+
+**Race Condition이 필요 없는 경우:**
+- 사용자가 연속으로 호출할 가능성이 낮은 작업 (예: 비밀번호 변경)
+- 단순히 `needsRollback` 플래그만 사용해도 충분
+
+### Avoid For
+- Security-critical operations (password changes - use with caution)
+- Financial transactions
+- Irreversible operations
+- Operations requiring server-side validation

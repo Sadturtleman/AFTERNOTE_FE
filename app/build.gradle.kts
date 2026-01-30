@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
-
 detekt {
     buildUponDefaultConfig = true
     allRules = false
@@ -58,11 +57,20 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
+        buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
+
+        // Test credentials from local.properties (not committed to git)
+        val testEmail = properties["TEST_EMAIL"] as? String ?: ""
+        val testPassword = properties["TEST_PASSWORD"] as? String ?: ""
+        buildConfigField("String", "TEST_EMAIL", "\"$testEmail\"")
+        buildConfigField("String", "TEST_PASSWORD", "\"$testPassword\"")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -78,6 +86,7 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
         }
     }
 
@@ -85,13 +94,37 @@ android {
         compose = true
         buildConfig = true
     }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
+
+    // Pass test credentials from local.properties to unit tests
+    tasks.withType<Test>().configureEach {
+        val testEmail = properties["TEST_EMAIL"] as? String ?: ""
+        val testPassword = properties["TEST_PASSWORD"] as? String ?: ""
+        systemProperty("TEST_EMAIL", testEmail)
+        systemProperty("TEST_PASSWORD", testPassword)
+    }
 }
 
+// compileOptions에서 Java 11을 명시적으로 설정하여 동일한 효과 달성
+// 필요시 각 개발자는 ~/.gradle/gradle.properties에 org.gradle.java.home 설정
+
 dependencies {
+    // ---------------------------------------------------------------
+    // Core Library Desugaring
+    // ---------------------------------------------------------------
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // ---------------------------------------------------------------
+    // Implementation (Main)
+    // ---------------------------------------------------------------
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.room.common.jvm)
-    // Core Library Desugaring (Java 8+ API 지원)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -106,24 +139,40 @@ dependencies {
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.foundation)
     ksp(libs.hilt.android.compiler)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
     implementation(libs.hilt.navigation.compose)
-    // Wheel Picker
-    implementation("com.github.zj565061763:compose-wheel-picker:1.0.0-beta05")
+    implementation(libs.compose.wheel.picker)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.datastore.preferences)
+
+    // ---------------------------------------------------------------
+    // Test Implementation (Unit Tests)
+    // ---------------------------------------------------------------
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+
+    // ---------------------------------------------------------------
+    // Android Test Implementation (Instrumentation Tests)
+    // ---------------------------------------------------------------
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    // ---------------------------------------------------------------
+    // Debug Implementation
+    // ---------------------------------------------------------------
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation("androidx.appcompat:appcompat:1.6.1")
 }

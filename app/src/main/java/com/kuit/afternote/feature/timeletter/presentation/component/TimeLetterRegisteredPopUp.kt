@@ -36,8 +36,7 @@ fun TimeLetterRegisteredPopUp(modifier: Modifier = Modifier) {
             .width(350.dp)
             .height(221.19643.dp)
             .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 16.dp)),
-
-        ) {
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -50,7 +49,7 @@ fun TimeLetterRegisteredPopUp(modifier: Modifier = Modifier) {
                     .height(71.dp)
                     .width(112.dp)
             )
-            Spacer(modifier= Modifier.padding(top=20.dp))
+            Spacer(modifier = Modifier.padding(top = 20.dp))
             Text(
                 text = "새로운 타임레터가 등록되었습니다.",
                 fontSize = 16.sp,
@@ -60,7 +59,7 @@ fun TimeLetterRegisteredPopUp(modifier: Modifier = Modifier) {
                 color = Color(0xFF000000),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier= Modifier.padding(top=8.dp))
+            Spacer(modifier = Modifier.padding(top = 8.dp))
             Text(
                 text = "레터는 지정된 날짜와 시간에 수신인에게\n발송될 예정입니다.",
                 fontSize = 14.sp,
@@ -70,10 +69,7 @@ fun TimeLetterRegisteredPopUp(modifier: Modifier = Modifier) {
                 color = Color(0xFF9E9E9E),
                 textAlign = TextAlign.Center,
             )
-
-
         }
-
     }
 }
 

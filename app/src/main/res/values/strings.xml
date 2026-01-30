@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">afternote</string>
+    <string name="song_search_label">노래 검색</string>
+    <string name="song_search_placeholder">노래 제목 또는 가수명</string>
+    <string name="add_button">추가하기</string>
 </resources>

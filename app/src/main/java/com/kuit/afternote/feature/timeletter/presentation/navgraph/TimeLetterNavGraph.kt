@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
@@ -95,4 +95,3 @@ fun NavGraphBuilder.timeLetterNavGraph(
         )
     }
 }
-

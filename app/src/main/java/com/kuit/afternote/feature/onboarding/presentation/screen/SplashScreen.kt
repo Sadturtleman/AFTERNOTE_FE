@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ClickButton
+import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
@@ -39,7 +39,8 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
     onStartClick: () -> Unit,
-    onCheckClick: () -> Unit
+    onCheckClick: () -> Unit,
+    onSignUpClick: () -> Unit = onLoginClick
 ) {
     Scaffold(
         modifier = modifier
@@ -101,6 +102,14 @@ fun SplashScreen(
                 color = B3,
                 onButtonClick = onCheckClick,
                 title = "전달 받은 기록 확인하기"
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ClickButton(
+                color = B3,
+                onButtonClick = onSignUpClick,
+                title = "회원가입 (테스트용)"
             )
 
             Spacer(modifier = Modifier.height(24.dp))

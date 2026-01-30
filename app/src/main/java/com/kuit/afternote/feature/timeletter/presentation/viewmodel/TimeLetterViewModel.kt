@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
  * 타임레터 목록을 관리하고 뷰 모드(리스트/블록)를 제어합니다.
  */
 class TimeLetterViewModel : ViewModel() {
-
     private val _viewMode = MutableStateFlow(ViewMode.LIST)
     val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
 

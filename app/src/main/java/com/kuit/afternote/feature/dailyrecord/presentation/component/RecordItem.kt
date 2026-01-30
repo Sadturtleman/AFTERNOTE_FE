@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.expand.dropShadow
@@ -47,7 +46,7 @@ fun RecordItem(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -60,18 +59,17 @@ fun RecordItem(
                 offsetY = 2.dp,
                 offsetX = 0.dp,
                 spread = 0.dp
-            )
-            .clip(RoundedCornerShape(8.dp))
+            ).clip(RoundedCornerShape(8.dp))
             .background(Color.White)
             .clickable(onClick = onClick)
             .padding(horizontal = 20.dp)
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -83,7 +81,7 @@ fun RecordItem(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1, // 텍스트가 최대 한 줄로 표시
-                    overflow = TextOverflow.Ellipsis //한 줄 안에 못 들어가면, 잘린 부분을 ..으로 표시
+                    overflow = TextOverflow.Ellipsis // 한 줄 안에 못 들어가면, 잘린 부분을 ..으로 표시
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -104,7 +102,7 @@ fun RecordItem(
                     .background(B2)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_arrow_forward_b2),
+                    painter = painterResource(R.drawable.ic_arrow_right_tab),
                     contentDescription = null,
                     modifier = Modifier
                         .size(6.dp, 12.dp)
@@ -114,17 +112,19 @@ fun RecordItem(
         }
     }
 }
+
 @Preview(showBackground = true)
-@Composable fun RecordItemPreview()
-{
+@Composable
+fun RecordItemPreview() {
     Column {
         RecordItem(
             title = "데일리 질문 답변",
             subtitle = "매일 다른 질문들에 나를 남겨 보세요.",
             onClick = {}
         )
-        Spacer(modifier = Modifier
-            .width(8.dp)
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
         )
         RecordItem(
             title = "일기",
@@ -137,5 +137,4 @@ fun RecordItem(
             onClick = {}
         )
     }
-
 }

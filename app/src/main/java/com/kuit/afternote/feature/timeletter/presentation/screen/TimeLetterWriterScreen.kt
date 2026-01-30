@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -92,247 +91,246 @@ fun TimeLetterWriterScreen(
     Box(modifier = modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxWidth(),
-        topBar = {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .height(40.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 24.dp)
-                            .clickable { keyboardController?.hide() }
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.vending),
-                            contentDescription = "키보드 숨기기",
-                            modifier = Modifier.size(width = 20.dp, height = 22.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
+            topBar = {
+                Column {
                     Row(
-                        modifier = Modifier.clickable { onRecipientClick() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .height(43.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "${recipientName}님께",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight(700),
-                            fontFamily = FontFamily(Font(R.font.sansneobold)),
-                            color = Color(0xFF212121)
-                        )
-                        Image(
-                            painter = painterResource(R.drawable.ic_down),
-                            contentDescription = "수신자 선택",
-                            modifier = Modifier.padding(start = 14.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = "등록",
-                        color = Color(0xFF9E9E9E),
-                        textAlign = TextAlign.Center,
-                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        lineHeight = 20.sp,
-                        modifier = Modifier
-                            .padding(end = 24.dp)
-                            .clickable { onRegisterClick() }
-                    )
-                }
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color(0xFF9E9E9E),
-                    thickness = 0.4.dp
-                )
-            }
-        },
-        bottomBar = {
-            TimeLetterWriterBottomBar(
-                draftCount = draftCount,
-                onAddClick = {},
-                onSaveDraftClick = onSaveDraftClick,
-                onDraftCountClick = onDraftCountClick,
-                onLinkClick = {}
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding)
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier
-                    .height(62.dp)
-                    .padding(horizontal = 20.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { onDateClick() }
-                ) {
-                    Text(
-                        text = "발송 날짜",
-                        color = Color(0xFF000000),
-                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        lineHeight = 18.sp
-                    )
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        // 선택된 날짜 표시
-                        if (sendDate.isNotEmpty()) {
-                            Text(
-                                text = sendDate,
-                                color = Color(0xFF212121),
-                                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal,
-                                modifier = Modifier.padding(top = 10.dp)
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 24.dp)
+                                .clickable { keyboardController?.hide() }
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.vending),
+                                contentDescription = "키보드 숨기기",
+                                modifier = Modifier.size(width = 20.dp, height = 22.dp)
                             )
                         }
-                        Image(
-                            painter = painterResource(R.drawable.ic_down_vector),
-                            contentDescription = "날짜 선택",
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(
+                            modifier = Modifier.clickable { onRecipientClick() },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${recipientName}님께",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                color = Color(0xFF212121)
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.ic_down),
+                                contentDescription = "수신자 선택",
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Text(
+                            text = "등록",
+                            color = Color(0xFF9E9E9E),
+                            textAlign = TextAlign.Center,
+                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 20.sp,
                             modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(top = 15.dp)
-                                .size(width = 12.dp, height = 6.dp)
+                                .padding(end = 24.dp)
+                                .clickable { onRegisterClick() }
                         )
                     }
                     HorizontalDivider(
-                        modifier = Modifier.padding(top = 15.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         color = Color(0xFF9E9E9E),
                         thickness = 0.4.dp
                     )
                 }
-
-                Spacer(modifier = Modifier.width(26.dp))
-
-                Column(
-                    modifier = Modifier
-                        .width(106.dp)
-                        .clickable { onTimeClick() }
-                ) {
-                    Text(
-                        text = "발송 시간",
-                        color = Color(0xFF000000),
-                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        lineHeight = 18.sp
-                    )
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_down_vector),
-                            contentDescription = "시간 선택",
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(top = 15.dp)
-                                .size(width = 12.dp, height = 6.dp)
-                        )
-                    }
-                    HorizontalDivider(
-                        modifier = Modifier.padding(top = 15.dp),
-                        color = Color(0xFF9E9E9E),
-                        thickness = 0.4.dp
-                    )
-                }
+            },
+            bottomBar = {
+                TimeLetterWriterBottomBar(
+                    draftCount = draftCount,
+                    onAddClick = {},
+                    onSaveDraftClick = onSaveDraftClick,
+                    onDraftCountClick = onDraftCountClick,
+                    onLinkClick = {}
+                )
             }
-
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 16.dp)
+                    .padding(innerPadding)
             ) {
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier
+                        .height(62.dp)
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onDateClick() }
+                    ) {
+                        Text(
+                            text = "발송 날짜",
+                            color = Color(0xFF000000),
+                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 18.sp
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // 선택된 날짜 표시
+                            if (sendDate.isNotEmpty()) {
+                                Text(
+                                    text = sendDate,
+                                    color = Color(0xFF212121),
+                                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.padding(top = 10.dp)
+                                )
+                            }
+                            Image(
+                                painter = painterResource(R.drawable.ic_down_vector),
+                                contentDescription = "날짜 선택",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(top = 15.dp)
+                                    .size(width = 12.dp, height = 6.dp)
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier.padding(top = 15.dp),
+                            color = Color(0xFF9E9E9E),
+                            thickness = 0.4.dp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(26.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .width(106.dp)
+                            .clickable { onTimeClick() }
+                    ) {
+                        Text(
+                            text = "발송 시간",
+                            color = Color(0xFF000000),
+                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 18.sp
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_down_vector),
+                                contentDescription = "시간 선택",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(top = 15.dp)
+                                    .size(width = 12.dp, height = 6.dp)
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier.padding(top = 15.dp),
+                            color = Color(0xFF9E9E9E),
+                            thickness = 0.4.dp
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 16.dp)
+                ) {
+                    BasicTextField(
+                        value = title,
+                        onValueChange = onTitleChange,
+                        textStyle = TextStyle(
+                            color = Color(0xFF000000),
+                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        cursorBrush = SolidColor(Color(0xFF000000)),
+                        singleLine = true,
+                        decorationBox = { innerTextField ->
+                            Box {
+                                if (title.isEmpty()) {
+                                    Text(
+                                        text = "제목",
+                                        // BodyLarge-R
+                                        style = TextStyle(
+                                            fontSize = 18.sp,
+                                            lineHeight = 24.sp,
+                                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                            fontWeight = FontWeight(400),
+                                            color = Color(0xFF212121),
+                                        )
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(top = 15.dp),
+                        color = Color(0xFF9E9E9E),
+                        thickness = 0.4.dp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(17.dp))
+
                 BasicTextField(
-                    value = title,
-                    onValueChange = onTitleChange,
+                    value = content,
+                    onValueChange = onContentChange,
                     textStyle = TextStyle(
-                        color = Color(0xFF000000),
+                        color = Color(0xFF212121),
                         fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Normal
                     ),
-                    cursorBrush = SolidColor(Color(0xFF000000)),
-                    singleLine = true,
+                    cursorBrush = SolidColor(Color(0xFF212121)),
                     decorationBox = { innerTextField ->
-                        Box {
-                            if (title.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (content.isEmpty()) {
                                 Text(
-                                    text = "제목",
-
-                                    // BodyLarge-R
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        lineHeight = 24.sp,
-                                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                                        fontWeight = FontWeight(400),
-                                        color = Color(0xFF212121),
-                                    )
+                                    text = "소중한 사람에게 타임 레터를 작성하세요.",
+                                    color = Color(0xFF9E9E9E),
+                                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal
                                 )
                             }
                             innerTextField()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                HorizontalDivider(
-                    modifier = Modifier.padding(top = 15.dp),
-                    color = Color(0xFF9E9E9E),
-                    thickness = 0.4.dp
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .weight(1f)
+                        .fillMaxWidth()
                 )
             }
-
-            Spacer(modifier = Modifier.height(17.dp))
-
-            BasicTextField(
-                value = content,
-                onValueChange = onContentChange,
-                textStyle = TextStyle(
-                    color = Color(0xFF212121),
-                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal
-                ),
-                cursorBrush = SolidColor(Color(0xFF212121)),
-                decorationBox = { innerTextField ->
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        if (content.isEmpty()) {
-                            Text(
-                                text = "소중한 사람에게 타임 레터를 작성하세요.",
-                                color = Color(0xFF9E9E9E),
-                                fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
-                        innerTextField()
-                    }
-                },
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .weight(1f)
-                    .fillMaxWidth()
-            )
         }
-    }
 
         // DatePicker 오버레이
         if (showDatePicker) {
@@ -363,8 +361,7 @@ fun TimeLetterWriterScreen(
                         .shadow(
                             elevation = 8.dp,
                             shape = RoundedCornerShape(12.dp)
-                        )
-                        .clip(RoundedCornerShape(12.dp))
+                        ).clip(RoundedCornerShape(12.dp))
                         .background(Color.White)
                         .clickable(
                             indication = null,

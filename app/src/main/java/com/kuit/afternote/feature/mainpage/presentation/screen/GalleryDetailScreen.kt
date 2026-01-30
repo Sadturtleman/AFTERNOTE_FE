@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -27,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -37,13 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialogContent
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialogContent
+import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
+import com.kuit.afternote.core.ui.component.detail.InfoCard
+import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.ui.screen.AfternoteDetailState
+import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
@@ -62,9 +63,9 @@ data class GalleryDetailState(
     val serviceName: String = "갤러리",
     val userName: String = "서영",
     val finalWriteDate: String = "2025.11.26.",
-    val recipients: List<Recipient> = listOf(
-        Recipient(id = "1", name = "김지은", label = "친구"),
-        Recipient(id = "2", name = "김지은", label = "친구")
+    val mainPageEditReceivers: List<MainPageEditReceiver> = listOf(
+        MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
+        MainPageEditReceiver(id = "2", name = "김지은", label = "친구")
     ),
     val processingMethods: List<String> = listOf(
         "'엽사' 폴더 박선호에게 전송",
@@ -156,18 +157,18 @@ private fun GalleryDetailContent(
             GalleryDetailScrollableContent(detailState = detailState)
         }
 
-        GalleryDetailDropdownOverlay(
-            showDropdown = uiState.showDropdownMenu,
-            onDismiss = uiState::hideDropdownMenu,
-            onEditClick = {
-                uiState.hideDropdownMenu()
-                callbacks.onEditClick()
-            },
-            onDeleteClick = {
-                uiState.hideDropdownMenu()
-                uiState.showDeleteDialog()
-            }
-        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 20.dp)
+        ) {
+            EditDropdownMenu(
+                expanded = uiState.showDropdownMenu,
+                onDismissRequest = uiState::hideDropdownMenu,
+                onEditClick = { callbacks.onEditClick() },
+                onDeleteClick = { uiState.showDeleteDialog() }
+            )
+        }
 
         GalleryDetailDeleteDialog(
             showDialog = uiState.showDeleteDialog,
@@ -212,7 +213,7 @@ private fun GalleryDetailDeleteDialog(
         ) {
             // 피그마 기준: 네비게이션 바로부터 247dp 비율에 맞게 weight 적용
             Spacer(modifier = Modifier.weight(1f))
-            
+
             Box(
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
@@ -250,7 +251,7 @@ private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
 private fun CardSection(detailState: GalleryDetailState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         DateAndMethodCard(finalWriteDate = detailState.finalWriteDate)
-        RecipientsCard(recipients = detailState.recipients)
+        MainPageEditReceiversCard(mainPageEditReceivers = detailState.mainPageEditReceivers)
         ProcessingMethodsCard(processingMethods = detailState.processingMethods)
         MessageCard(message = detailState.message)
     }
@@ -279,9 +280,7 @@ private fun TitleSection(
 }
 
 @Composable
-private fun DateAndMethodCard(
-    finalWriteDate: String
-) {
+private fun DateAndMethodCard(finalWriteDate: String) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
         content = {
@@ -317,8 +316,8 @@ private fun DateAndMethodCard(
 }
 
 @Composable
-private fun RecipientsCard(recipients: List<Recipient>) {
-    if (recipients.isEmpty()) return
+private fun MainPageEditReceiversCard(mainPageEditReceivers: List<MainPageEditReceiver>) {
+    if (mainPageEditReceivers.isEmpty()) return
 
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
@@ -338,8 +337,8 @@ private fun RecipientsCard(recipients: List<Recipient>) {
                         color = Gray9
                     )
                 )
-                recipients.forEachIndexed { _, recipient ->
-                    RecipientDetailItem(recipient = recipient)
+                mainPageEditReceivers.forEachIndexed { _, receiver ->
+                    MainPageEditReceiverDetailItem(receiver = receiver)
                 }
             }
         }
@@ -411,45 +410,14 @@ private fun MessageCard(message: String) {
     )
 }
 
-@Composable
-private fun GalleryDetailDropdownOverlay(
-    showDropdown: Boolean,
-    onDismiss: () -> Unit,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit
-) {
-    if (!showDropdown) return
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onDismiss() }
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = (-20).dp, y = 48.dp)
-        ) {
-            EditDropdownMenu(
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick
-            )
-        }
-    }
-}
-
 /**
  * 수신자 상세 아이템 컴포넌트
  * 갤러리 상세 화면에서 사용하는 수신자 정보 표시
  */
 @Composable
-private fun RecipientDetailItem(
+private fun MainPageEditReceiverDetailItem(
     modifier: Modifier = Modifier,
-    recipient: Recipient
+    receiver: MainPageEditReceiver
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -467,10 +435,10 @@ private fun RecipientDetailItem(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
         Column {
             Text(
-                text = recipient.name,
+                text = receiver.name,
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
@@ -480,7 +448,7 @@ private fun RecipientDetailItem(
                 )
             )
             Text(
-                text = recipient.label,
+                text = receiver.label,
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
@@ -520,7 +488,7 @@ private fun GalleryDetailScreenWithDialogPreview() {
     MainPageLightTheme {
         val uiState = rememberAfternoteDetailState()
         uiState.showDeleteDialog()
-        
+
         GalleryDetailScreen(
             detailState = GalleryDetailState(),
             callbacks = GalleryDetailCallbacks(

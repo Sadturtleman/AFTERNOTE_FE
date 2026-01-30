@@ -18,18 +18,16 @@ object Spacing {
     /** Medium: 16dp */
     val m = 16.dp
 
+    /** Medium-Large: 20dp */
+    val ml = 20.dp
+
     /** Large: 24dp */
     val l = 24.dp
 
     /** Extra Large: 32dp */
     val xl = 32.dp
 
-    /** Social Network Bottom Spacing: 81dp (소셜네트워크 탭 하단 여백) */
-    val socialNetworkBottom = 81.dp
-
-    /** Gallery and File Bottom Spacing: 459dp (갤러리 및 파일 탭 하단 여백) */
-    val galleryAndFileBottom = 459.dp
-
-    /** Memorial Guideline Bottom Spacing: 272dp (추모 가이드라인 탭 하단 여백) */
-    val memorialGuidelineBottom = 272.dp
+    // 주의: 큰 하단 여백(socialNetworkBottom, galleryAndFileBottom, memorialGuidelineBottom)은
+    // 스크롤 컨테이너에서 반응형 간격을 위해 LocalConfiguration 기반으로 변경되었습니다.
+    // 각 Content 컴포넌트에서 screenHeight * percentage 형태로 직접 계산합니다.
 }

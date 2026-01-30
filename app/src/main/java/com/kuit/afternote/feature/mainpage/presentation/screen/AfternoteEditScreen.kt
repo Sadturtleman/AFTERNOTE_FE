@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.mainpage.presentation.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,36 +14,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.AddRecipientDialogParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.CustomServiceDialogParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.DropdownMenuStyle
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.SelectionDropdown
+import com.kuit.afternote.core.ui.component.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
+private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
 /**
  * 애프터노트 수정/작성 화면
@@ -55,29 +59,32 @@ private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
  * - 계정 처리 방법 선택 (라디오 버튼)
  * - 처리 방법 리스트 (체크박스)
  * - 남기실 말씀 (멀티라인 텍스트 필드)
+ *
+ * @param onNavigateToAddSong Called when user taps "노래 추가하기" in the MemorialPlaylist card on this edit screen; should navigate to MemorialPlaylistRouteScreen (full playlist screen).
  */
 @Composable
 fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: (String) -> Unit = {},
-    onNavigateToPlaylist: () -> Unit = {},
     onNavigateToAddSong: () -> Unit = {},
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null
 ) {
     val focusManager = LocalFocusManager.current
-    
+
     // 플레이리스트 상태 홀더가 전달되면 설정
     LaunchedEffect(playlistStateHolder) {
         playlistStateHolder?.let { state.setPlaylistStateHolder(it) }
     }
-    
+
     // 플레이리스트 노래 개수 변경 감지 및 동기화
-    val songCount by playlistStateHolder?.songs?.let { 
-        androidx.compose.runtime.derivedStateOf { it.size } 
-    } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
-    
+    val songCount by remember {
+        playlistStateHolder?.songs?.let {
+            androidx.compose.runtime.derivedStateOf { it.size }
+        } ?: androidx.compose.runtime.derivedStateOf { state.playlistSongCount }
+    }
+
     LaunchedEffect(songCount) {
         if (playlistStateHolder != null) {
             state.updatePlaylistSongCount()
@@ -110,28 +117,26 @@ fun AfternoteEditScreen(
         ) {
             EditContent(
                 state = state,
-                onBackClick = onBackClick,
-                onRegisterClick = onRegisterClick,
-                onNavigateToPlaylist = onNavigateToPlaylist,
-                onNavigateToAddSong = onNavigateToAddSong
+                onNavigateToAddSong = onNavigateToAddSong,
+                bottomPadding = paddingValues
             )
 
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
             state.activeDialog?.let { dialogType ->
                 when (dialogType) {
-                    DialogType.ADD_RECIPIENT -> {
-                        AddRecipientDialog(
-                            params = AddRecipientDialogParams(
-                                recipientNameState = state.recipientNameState,
+                    DialogType.ADD_MAINPAGE_EDIT_RECEIVER -> {
+                        AddMainPageEditReceiverDialog(
+                            params = AddMainPageEditReceiverDialogParams(
+                                mainPageEditReceiverNameState = state.mainPageEditReceiverNameState,
                                 phoneNumberState = state.phoneNumberState,
                                 relationshipSelectedValue = state.relationshipSelectedValue,
                                 relationshipOptions = state.relationshipOptions,
-                                callbacks = AddRecipientDialogCallbacks(
+                                callbacks = AddMainPageEditReceiverDialogCallbacks(
                                     onDismiss = state::dismissDialog,
-                                    onAddClick = state::onAddRecipient,
+                                    onAddClick = state::onAddMainPageEditReceiver,
                                     onRelationshipSelected = state::onRelationshipSelected,
                                     onImportContactsClick = {
-                                        // TODO: 연락처 가져오기 로직
+                                        // 연락처 가져오기 기능은 추후 구현 예정
                                     }
                                 )
                             )
@@ -158,10 +163,8 @@ fun AfternoteEditScreen(
 @Composable
 private fun EditContent(
     state: AfternoteEditState,
-    onBackClick: () -> Unit,
-    onRegisterClick: (String) -> Unit,
-    onNavigateToPlaylist: () -> Unit,
-    onNavigateToAddSong: () -> Unit
+    onNavigateToAddSong: () -> Unit,
+    bottomPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -190,7 +193,7 @@ private fun EditContent(
             )
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
-            if (state.selectedCategory != "추모 가이드라인") {
+            if (state.selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) {
                 Spacer(modifier = Modifier.height(Spacing.m))
 
                 SelectionDropdown(
@@ -211,7 +214,8 @@ private fun EditContent(
             // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
             CategoryContent(
                 state = state,
-                onNavigateToAddSong = onNavigateToAddSong
+                onNavigateToAddSong = onNavigateToAddSong,
+                bottomPadding = bottomPadding
             )
         }
     }
@@ -220,15 +224,20 @@ private fun EditContent(
 @Composable
 private fun CategoryContent(
     state: AfternoteEditState,
-    onNavigateToAddSong: () -> Unit
+    onNavigateToAddSong: () -> Unit,
+    bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
-        "추모 가이드라인" -> {
+        CATEGORY_MEMORIAL_GUIDELINE -> {
+            val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
+                (1..songs.size).map { AlbumCover(id = "$it") }
+            } ?: state.playlistAlbumCovers
             MemorialGuidelineEditContent(
+                bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
                     memorialPhotoUrl = state.memorialPhotoUrl,
                     playlistSongCount = state.playlistSongCount,
-                    playlistAlbumCovers = state.playlistAlbumCovers,
+                    playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
                     funeralVideoUrl = state.funeralVideoUrl,
@@ -246,19 +255,20 @@ private fun CategoryContent(
 
         CATEGORY_GALLERY_AND_FILE -> {
             GalleryAndFileEditContent(
+                bottomPadding = bottomPadding,
                 params = GalleryAndFileEditContentParams(
                     messageState = state.messageState,
                     infoMethodSection = InfoMethodSection(
                         selectedMethod = state.selectedInformationProcessingMethod,
                         onMethodSelected = state::onInformationProcessingMethodSelected
                     ),
-                    recipientSection = if (
+                    mainPageEditReceiverSection = if (
                         state.selectedInformationProcessingMethod ==
-                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT
+                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER
                     ) {
-                        RecipientSection(
-                            recipients = state.recipients,
-                            callbacks = state.galleryRecipientCallbacks
+                        MainPageEditReceiverSection(
+                            mainPageEditReceivers = state.mainPageEditReceivers,
+                            callbacks = state.galleryMainPageEditReceiverCallbacks
                         )
                     } else {
                         null
@@ -273,6 +283,7 @@ private fun CategoryContent(
 
         else -> {
             SocialNetworkEditContent(
+                bottomPadding = bottomPadding,
                 params = SocialNetworkEditContentParams(
                     messageState = state.messageState,
                     accountSection = AccountSection(
@@ -312,9 +323,8 @@ private fun AfternoteEditScreenPreview() {
 @Composable
 private fun AfternoteEditScreenGalleryAndFilePreview() {
     MainPageLightTheme {
-        val state = rememberAfternoteEditState()
-        LaunchedEffect(Unit) {
-            state.onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+        val state = rememberAfternoteEditState().apply {
+            onCategorySelected(CATEGORY_GALLERY_AND_FILE)
         }
         AfternoteEditScreen(
             onBackClick = {},
@@ -331,9 +341,8 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 @Composable
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
     MainPageLightTheme {
-        val state = rememberAfternoteEditState()
-        LaunchedEffect(Unit) {
-            state.onCategorySelected("추모 가이드라인")
+        val state = rememberAfternoteEditState().apply {
+            onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
         }
         AfternoteEditScreen(
             onBackClick = {},

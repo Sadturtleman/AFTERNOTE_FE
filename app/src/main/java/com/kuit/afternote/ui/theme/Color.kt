@@ -31,3 +31,5 @@ val B3 = Color(0xFFBDE0FF)
 val White = Color(0xFFFFFFFF)
 val LightBlue = Color(0xFFE3F2FD) // 아이콘 배경용
 val ShadowBlack = Color.Black.copy(alpha = 0.05f) // 그림자용
+
+val ErrorRed = Color(0xFFFF0C0C) // 에러 메시지용 빨간색

@@ -37,7 +37,7 @@ fun TimeLetterDeletePopUp(modifier: Modifier = Modifier) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Text(
                 text = "타임레터를 삭제하시겠습니까?",
                 fontSize = 16.sp,

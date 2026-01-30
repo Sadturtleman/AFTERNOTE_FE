@@ -13,10 +13,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun DropdownSelector(label: String, options: List<Int>, selected: Int, onSelect: (Int) -> Unit) {
+fun DropdownSelector(
+    label: String,
+    options: List<Int>,
+    selected: Int,
+    onSelect: (Int) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-
-
 
     Box {
         Text(

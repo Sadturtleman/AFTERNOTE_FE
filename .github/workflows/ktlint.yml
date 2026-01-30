@@ -21,6 +21,13 @@ jobs:
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
 
+            - name: Ensure no org.gradle.java.home in project (CI runs on Linux)
+              run: |
+                if grep -q '^org\.gradle\.java\.home=' gradle.properties 2>/dev/null; then
+                  sed -i '/^org\.gradle\.java\.home=/d' gradle.properties
+                  echo "Removed org.gradle.java.home from gradle.properties for CI"
+                fi
+
             - name: Create local.properties
               run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 

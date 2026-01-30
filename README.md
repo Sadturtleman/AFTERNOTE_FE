@@ -8,16 +8,30 @@ git Flow 전략을 사용하며 commit, PR은 다음 규칙을 사용합니다.
 
 ## Java 설정 (필수)
 
-프로젝트는 JDK 21을 사용합니다. JDK 25는 Kotlin 컴파일러 호환성 문제로 사용할 수 없습니다.
+프로젝트는 JDK 11을 사용합니다. JDK 25는 Kotlin 컴파일러 호환성 문제로 사용할 수 없습니다.
 
-### 권장: Eclipse Adoptium JDK 사용
+### 기본 동작
 
-프로젝트는 **Eclipse Adoptium JDK 21**을 사용하도록 설정되어 있습니다. `gradle.properties`에 이미 설정되어 있으므로 추가 설정이 필요 없습니다.
+프로젝트는 `compileOptions`에서 Java 11을 명시적으로 설정합니다. Gradle은 시스템에 설치된 JDK를 자동으로 감지하여 사용합니다.
 
-만약 다른 JDK를 사용해야 하는 경우, `gradle.properties`에서 다음 설정을 수정할 수 있습니다:
+**추가 설정이 필요 없는 경우:**
+- 시스템에 JDK 11이 설치되어 있고 `JAVA_HOME` 환경 변수가 올바르게 설정된 경우
+- Android Studio가 자동으로 JDK를 감지하는 경우
 
+### 수동 설정이 필요한 경우
+
+Gradle이 자동으로 JDK를 찾지 못하거나 특정 JDK를 사용해야 하는 경우, 각자 로컬 설정 파일에 경로를 지정할 수 있습니다:
+
+**Windows:**
+`C:\Users\YourName\.gradle\gradle.properties` 파일 생성:
 ```properties
-org.gradle.java.home=C:\\Users\\YourName\\AppData\\Local\\Programs\\Eclipse Adoptium\\jdk-21.x.x.x-hotspot
+org.gradle.java.home=C:/Program Files/Eclipse Adoptium/jdk-11.x.x.x-hotspot
+```
+
+**macOS/Linux:**
+`~/.gradle/gradle.properties` 파일 생성:
+```properties
+org.gradle.java.home=/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home
 ```
 
 ### ⚠️ Windows 환경 주의사항
@@ -25,10 +39,36 @@ org.gradle.java.home=C:\\Users\\YourName\\AppData\\Local\\Programs\\Eclipse Adop
 Windows에서 Git Bash를 통해 pre-commit hook을 실행할 때, Android Studio JBR을 사용하면 `java.lang.InternalError: Error loading java.security file` 에러가 발생할 수 있습니다.
 
 **해결 방법:**
-- Eclipse Adoptium JDK를 사용하세요 (이미 프로젝트에 설정되어 있음)
-- 또는 `gradle.properties`에서 `org.gradle.java.home`을 Eclipse Adoptium JDK 경로로 설정하세요
+- Eclipse Adoptium JDK를 사용하세요 (Gradle Toolchain이 자동으로 찾습니다)
+- 또는 위의 수동 설정 방법으로 `~/.gradle/gradle.properties`에 Eclipse Adoptium JDK 경로를 설정하세요
 
 자세한 내용은 [트러블슈팅 문서](docs/troubleshooting-gradle-java-issues.md)를 참고하세요.
+
+## 개발자 모드 테스트 계정 설정
+
+개발자 모드에서 빠른 로그인 기능을 사용하려면 `local.properties`에 테스트 계정 정보를 설정해야 합니다.
+
+**프로젝트 루트의 `local.properties` 파일에 추가:**
+```properties
+# Test credentials for DevMode quick login
+TEST_EMAIL=your_test_email@example.com
+TEST_PASSWORD=your_test_password
+```
+
+> **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다.
+
+### ⚠️ 중요: OS별 경로 하드코딩 금지
+
+**절대 `gradle.properties`에 `org.gradle.java.home`을 커밋하지 마세요!**
+
+프로젝트의 `gradle.properties`에는 OS별 경로를 포함하지 않습니다. 로컬 JDK 경로가 필요한 경우:
+- 각자 `~/.gradle/gradle.properties` (또는 Windows: `C:\Users\YourName\.gradle\gradle.properties`)에 설정하세요
+- Pre-commit hook이 실수로 커밋하는 것을 자동으로 방지합니다
+
+**Git Hook 설정:**
+```bash
+bash scripts/setup-git-hooks.sh
+```
 
 # Commitlint 규칙 가이드
 
@@ -139,8 +179,8 @@ Refs: 676104e, a215868
 
 Windows에서 pre-commit hook 실행 시 `java.lang.InternalError: Error loading java.security file` 에러가 발생하는 경우:
 
-1. Eclipse Adoptium JDK 21이 설치되어 있는지 확인
-2. `gradle.properties`의 `org.gradle.java.home` 설정 확인
+1. Eclipse Adoptium JDK 11이 설치되어 있는지 확인
+2. Gradle Toolchain이 자동으로 JDK를 찾지 못하는 경우, `~/.gradle/gradle.properties`에 Eclipse Adoptium JDK 경로 설정
 3. 자세한 해결 방법은 [트러블슈팅 문서](docs/troubleshooting-gradle-java-issues.md) 참고
 
 ### Pre-commit Hook이 작동하지 않는 경우
