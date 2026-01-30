@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
@@ -134,7 +135,7 @@ private fun SocialNetworkEditContentContent(
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = params.messageState,
-            isMultiline = true
+            multiline = Multiline
         )
 
         // 소셜네트워크 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)

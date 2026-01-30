@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.MainPageEditReceiverList
@@ -124,7 +125,7 @@ private fun GalleryAndFileEditContentContent(
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = params.messageState,
-            isMultiline = true
+            multiline = Multiline
         )
 
         // 갤러리 및 파일 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)

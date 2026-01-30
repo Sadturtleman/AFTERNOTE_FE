@@ -113,57 +113,8 @@ Each `.mdc` file uses `globs` pattern so rules are injected only when opening or
 2. **Search All Usages**: Search all locations where file to move/change is used with `grep` and list them
 3. **Batch Import Path Changes**: Change import paths at all usages at once (don't do step by step, understand whole first)
 4. **Variable/Function Name Changes**: When changing variable/function names, check all usages with `grep` then change in batch
-5. **Post-change Build Verification**: Request build from user or only when user explicitly requests after file move/change (`./gradlew :app:compileDebugKotlin`)
 6. **State/Params Class Moves**: When moving State or Params classes, check import paths of all components using that class
 7. **Duplicate Removal**: Before removing duplicate files, check all usages, unify to one, then update all import paths
-
-### ⚠️ Critical: macOS Git Index Permission Issue Resolution
-**When `fatal: .git/index: index file open failed: Operation not permitted` error occurs on macOS:**
-
-1. **Immediate Solution**: Always set `.git/index` file permissions before executing Git commands.
-   ```bash
-   chmod 666 .git/index && <git command>
-   ```
-   Example: `chmod 666 .git/index && git status`
-   Example: `chmod 666 .git/index && git add .`
-   Example: `chmod 666 .git/index && git commit -m "message"`
-
-2. **Root Cause**: Caused by macOS security policy (TCC) or extended attributes (xattr) conflicts. Setting `chmod 666` enables read/write.
-
-3. **Cautions**: 
-   - Permission setting may be needed each time Git commands are executed
-   - Can bypass sandbox restrictions using `required_permissions: ['all']`
-   - If problem persists, guide user to execute directly in terminal
-
-4. **Prevent Repetition**: When executing Git-related commands, first check `.git/index` file permissions, and if needed, execute `chmod 666 .git/index` then execute Git command
-
-### ⚠️ Critical: GitHub Authentication and PR Work Requirements
-**When GitHub CLI (`gh`) command execution results in authentication errors:**
-
-1. **Always Use `required_permissions: ['all']`**: GitHub-related work (PR creation, merge, authentication, etc.) must use `required_permissions: ['all']` to bypass sandbox restrictions.
-
-2. **GitHub CLI Authentication Check and Setup**:
-   ```bash
-   gh auth status  # Check authentication status
-   gh auth login   # Login if not authenticated
-   ```
-   - Authentication is done once and can be used continuously
-   - `gh auth login` completes authentication in web browser
-
-3. **Git Push Authentication Issue Resolution**:
-   - When `fatal: could not read Username for 'https://github.com': Device not configured` error occurs
-   - Using `required_permissions: ['all']` enables access to stored authentication info
-   - Git credential helper (`osxkeychain`) is automatically used if configured
-
-4. **PR Creation and Merge**:
-   - PR Creation: `gh pr create --title "..." --body "..." --base main`
-   - PR Merge: `gh pr merge <PR_NUMBER> --merge --delete-branch`
-   - All GitHub CLI commands execute with `required_permissions: ['all']`
-
-5. **Prevent Repetition**: 
-   - Always use `required_permissions: ['all']` for GitHub-related work
-   - On authentication errors, first check with `gh auth status`, execute `gh auth login` if needed
-   - Do not guide user to "execute directly in terminal", I will resolve directly
 
 ### Perplexity Prompt Writing Request Rules - Critical
 **When user explicitly requests "퍼플렉시티 프롬프트 작성해" or "Perplexity 프롬프트 작성해":**
@@ -180,7 +131,6 @@ Each `.mdc` file uses `globs` pattern so rules are injected only when opening or
 
 ## Highest Priority Rules (Never Ignore)
 1. **Git Work Pre-Verification**: Before commit/push command generation, **must first verify** that current branch is not `main`/`develop`
-2. **Never commit/push without explicit user request**
 3. **`.cursorrules` Length Management**: If this file exceeds 300 lines, consider splitting or keeping only core rules
 
 ## Core Technical Rules

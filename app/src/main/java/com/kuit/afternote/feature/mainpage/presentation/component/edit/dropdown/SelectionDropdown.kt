@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.ui.expand.bottomBorder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
@@ -72,6 +73,7 @@ data class DropdownMenuStyle(
 fun SelectionDropdown(
     modifier: Modifier = Modifier,
     label: String,
+    useRequiredLabelAsLabel: Boolean = false,
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
@@ -87,16 +89,20 @@ fun SelectionDropdown(
         )
     ) {
         // 라벨
-        Text(
-            text = label,
-            style = TextStyle(
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
+        if (useRequiredLabelAsLabel) {
+            RequiredLabel(text = label)
+        } else {
+            Text(
+                text = label,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9
+                )
             )
-        )
+        }
 
         // 드롭다운 필드
         Box(
@@ -183,6 +189,20 @@ private fun SelectionDropdownPreview() {
     AfternoteTheme {
         SelectionDropdown(
             label = "종류",
+            selectedValue = CATEGORY_SOCIAL_NETWORK,
+            options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
+            onValueSelected = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Required label")
+@Composable
+private fun SelectionDropdownRequiredLabelPreview() {
+    AfternoteTheme {
+        SelectionDropdown(
+            label = "종류",
+            useRequiredLabelAsLabel = true,
             selectedValue = CATEGORY_SOCIAL_NETWORK,
             options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
             onValueSelected = {}

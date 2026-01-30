@@ -2,7 +2,9 @@ package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -68,6 +70,12 @@ fun RequiredLabel(
 @Composable
 private fun RequiredLabelPreview() {
     AfternoteTheme {
-        RequiredLabel(text = "정보 처리 방법")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp) // give room on the right
+        ) {
+            RequiredLabel(text = "정보 처리 방법")
+        }
     }
 }
