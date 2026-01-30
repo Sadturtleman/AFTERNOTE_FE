@@ -31,12 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.Label
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
+import com.kuit.afternote.feature.setting.presentation.component.DatePickerDialog
+import com.kuit.afternote.feature.setting.presentation.component.SelectedDateText
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import java.time.LocalDate
 
 /**
  * 정보 전달 방법 옵션 (첫 번째 섹션)
@@ -79,8 +83,6 @@ sealed interface TriggerConditionOption {
     }
 }
 
-private val BulletOpticalOffset = 7.dp
-
 @Composable
 fun PostDeliveryConditionScreen(
     modifier: Modifier = Modifier,
@@ -93,6 +95,8 @@ fun PostDeliveryConditionScreen(
     var selectedTriggerCondition by remember {
         mutableStateOf<TriggerConditionOption>(TriggerConditionOption.AppInactivity)
     }
+    var showDatePickerDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val deliveryMethods = listOf(
         DeliveryMethodOption.AutomaticTransfer,
@@ -111,10 +115,7 @@ fun PostDeliveryConditionScreen(
             TopBar(
                 title = "사후 전달 조건",
                 onBackClick = onBackClick,
-                onActionClick = {
-                    // TODO: 사후 전달 조건 저장 API 호출
-                    onRegisterClick()
-                },
+                onActionClick = onRegisterClick,
                 actionText = "등록"
             )
         }
@@ -143,7 +144,7 @@ fun PostDeliveryConditionScreen(
                     deliveryMethods.forEach { method ->
                         ProcessingMethodRadioButton(
                             modifier = Modifier.fillMaxWidth(),
-                            option = object : com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodOption {
+                            option = object : ProcessingMethodOption {
                                 override val title: String = method.title
                                 override val description: String = method.description
                             },
@@ -166,18 +167,30 @@ fun PostDeliveryConditionScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // SelectedDateText - 특정 날짜가 선택되었을 때만 표시
+                if (selectedTriggerCondition == TriggerConditionOption.SpecificDate && selectedDate != null) {
+                    SelectedDateText(date = selectedDate!!)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     triggerConditions.forEach { condition ->
                         ProcessingMethodRadioButton(
                             modifier = Modifier.fillMaxWidth(),
-                            option = object : com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodOption {
+                            option = object : ProcessingMethodOption {
                                 override val title: String = condition.title
                                 override val description: String = condition.description
                             },
                             selected = selectedTriggerCondition == condition,
-                            onClick = { selectedTriggerCondition = condition }
+                            onClick = {
+                                selectedTriggerCondition = condition
+                                // 특정 날짜에 전달 선택 시 다이얼로그 표시
+                                if (condition == TriggerConditionOption.SpecificDate) {
+                                    showDatePickerDialog = true
+                                }
+                            }
                         )
                     }
                 }
@@ -208,6 +221,20 @@ fun PostDeliveryConditionScreen(
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
+
+    // DatePickerDialog
+    if (showDatePickerDialog) {
+        DatePickerDialog(
+            onDismiss = {
+                showDatePickerDialog = false
+            },
+            onDateChanged = { date ->
+                selectedDate = date
+                showDatePickerDialog = false
+            },
+            initialDate = selectedDate ?: LocalDate.now()
+        )
+    }
 }
 
 @Composable
@@ -221,7 +248,7 @@ private fun BulletItem(
     ) {
         Box(
             modifier = Modifier
-                .padding(top = BulletOpticalOffset)
+                .padding(top = 7.dp)
                 .size(4.dp)
                 .background(color = Gray9, shape = CircleShape)
         )

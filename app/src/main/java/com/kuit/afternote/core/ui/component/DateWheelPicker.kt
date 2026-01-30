@@ -1,9 +1,10 @@
-package com.kuit.afternote.feature.timeletter.presentation.component
+package com.kuit.afternote.core.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -34,11 +35,11 @@ import java.time.LocalDate
  */
 @Composable
 fun DateWheelPicker(
+    modifier: Modifier = Modifier,
     initialYear: Int = LocalDate.now().year,
     initialMonth: Int = LocalDate.now().monthValue,
     initialDay: Int = LocalDate.now().dayOfMonth,
-    onDateChanged: (year: Int, month: Int, day: Int) -> Unit,
-    modifier: Modifier = Modifier
+    onDateChanged: (year: Int, month: Int, day: Int) -> Unit
 ) {
     val currentYear = LocalDate.now().year
     val years = (currentYear..currentYear + 10).toList()
@@ -166,13 +167,20 @@ private fun Divider() {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 360, heightDp = 260)
 @Composable
 private fun DateWheelPickerPreview() {
-    DateWheelPicker(
-        initialYear = 2025,
-        initialMonth = 11,
-        initialDay = 26,
-        onDateChanged = { _, _, _ -> }
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        DateWheelPicker(
+            initialYear = 2025,
+            initialMonth = 11,
+            initialDay = 26,
+            onDateChanged = { _, _, _ -> }
+        )
+    }
 }
