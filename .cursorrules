@@ -36,7 +36,9 @@
 11. **Local State Management**: Never manage screen state with `remember { mutableStateOf() }` inside Composable (move to ViewModel)
 
 ## CRITICAL PATTERNS
-- **Named Arguments Pattern**: Use explicit parameter names for readability and safety. Use `FontWeight.Medium` instead of `FontWeight(500)`. No calculation expressions (`Spacing.l - 8.dp`)
+- **Tokenized Spacing**: Avoid hardcoded spacing `dp` literals (padding/Spacer/spacedBy/offset). Use named tokens
+ (local `Dimens`/constants or any design-tokens object). Allow `0.dp`. No arithmetic like `token - 8.dp`.
+- **Named Arguments Pattern**: Use explicit parameter names for readability and safety. Use `FontWeight.Medium` instead of `FontWeight(500)`.
 - **Rem-based Design**: Large spacing (24dp+) uses `weight` and `Arrangement`, small spacing (≤8dp) uses `Spacer`, component sizes always fixed dp
 - **Maximize Core Component Reuse**: Maximize reuse of common components in `core` module (`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, etc.)
 - **Component Overloading**: When overall structure is similar but details differ, use **overloading** instead of separate components

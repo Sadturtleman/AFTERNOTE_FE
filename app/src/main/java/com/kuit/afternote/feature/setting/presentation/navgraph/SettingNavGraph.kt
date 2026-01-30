@@ -120,7 +120,11 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onRegisterClick = {
+                // TODO: 사후 전달 조건 저장 후 이전 화면으로 이동
+                navController.popBackStack()
+            }
         )
     }
 

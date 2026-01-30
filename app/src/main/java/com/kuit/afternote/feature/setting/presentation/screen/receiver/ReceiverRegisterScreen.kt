@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -125,7 +126,12 @@ fun ReceiverRegisterScreen(
                 // 관계 (Required)
                 SelectionDropdown(
                     label = "관계",
-                    useRequiredLabelAsLabel = true,
+                    isRequired = true,
+                    labelStyle = LabelStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
                     selectedValue = relationshipSelectedValue,
                     options = relationshipOptions,
                     onValueSelected = { relationshipSelectedValue = it },
@@ -135,7 +141,7 @@ fun ReceiverRegisterScreen(
                         shadowElevation = 0.dp,
                         tonalElevation = 0.dp
                     ),
-                    state = dropdownState,
+                    state = dropdownState
                 )
 
                 // 이메일

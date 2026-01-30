@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.RequiredLabel
+import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.ui.expand.bottomBorder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
@@ -63,17 +64,33 @@ data class DropdownMenuStyle(
  * 선택 드롭다운 컴포넌트
  *
  * 피그마 디자인 기반:
- * - 라벨: 12sp, Regular, Gray9
+ * - 라벨: 기본 12sp, Regular, Gray9 (LabelStyle로 커스터마이징 가능)
  * - 드롭다운 필드: 흰색 배경, 하단 보더
  * - 선택된 값: 16sp, Regular, Gray8
  * - 드롭다운 아이콘: 오른쪽 정렬
  * - 드롭다운 메뉴 offset: 기본 4.dp
+ *
+ * @param modifier Modifier for the component
+ * @param label Label text
+ * @param isRequired Whether to show the required indicator (blue dot)
+ * @param labelStyle Style configuration for the label
+ * @param selectedValue Currently selected value
+ * @param options List of selectable options
+ * @param onValueSelected Callback when an option is selected
+ * @param menuStyle Style configuration for the dropdown menu
+ * @param state State holder for the dropdown
  */
 @Composable
 fun SelectionDropdown(
     modifier: Modifier = Modifier,
     label: String,
-    useRequiredLabelAsLabel: Boolean = false,
+    isRequired: Boolean = false,
+    labelStyle: LabelStyle = LabelStyle(
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.Normal,
+        requiredDotOffsetY = 2.dp
+    ),
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
@@ -89,20 +106,11 @@ fun SelectionDropdown(
         )
     ) {
         // 라벨
-        if (useRequiredLabelAsLabel) {
-            RequiredLabel(text = label)
-        } else {
-            Text(
-                text = label,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray9
-                )
-            )
-        }
+        Label(
+            text = label,
+            isRequired = isRequired,
+            style = labelStyle
+        )
 
         // 드롭다운 필드
         Box(
@@ -201,10 +209,15 @@ private fun SelectionDropdownPreview() {
 private fun SelectionDropdownRequiredLabelPreview() {
     AfternoteTheme {
         SelectionDropdown(
-            label = "종류",
-            useRequiredLabelAsLabel = true,
-            selectedValue = CATEGORY_SOCIAL_NETWORK,
-            options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
+            label = "관계",
+            isRequired = true,
+            labelStyle = LabelStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Medium
+            ),
+            selectedValue = "딸",
+            options = listOf("딸", "아들", "친구", "가족"),
             onValueSelected = {}
         )
     }

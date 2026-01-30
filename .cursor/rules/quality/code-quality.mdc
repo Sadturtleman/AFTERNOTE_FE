@@ -20,25 +20,6 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 - **NO Wildcard Imports**: Never use `import foo.*`. Always import individual classes.
 - **Import Order**: Imports must be ordered in lexicographic order without any empty lines in-between with "java", "javax", "kotlin" and aliases in the end.
 
-### 3. Formatting - Critical
-
-#### Formatting Rules
-- **Indentation**: Use **4 spaces** for indentation. Do not use tabs.
-- **Spacing**:
-  - Put spaces around operators (`+`, `-`, `=`, etc.).
-  - Put a space before `{` and after `if`, `for`, `while`.
-  - Example: `if (condition) {` ✅, `if(condition){` ❌
-- **Trailing Comma**: Use trailing commas in multi-line parameter lists or value arguments (if Kotlin version supports it).
-- **Final Newline**: Ensure every file ends with a single newline character.
-- **Blank Lines**: Limit consecutive blank lines to one.
-- **Line Breaks**: Avoid unexpected newlines before `.` in chained calls. Keep chained modifiers on the same line or properly formatted.
-
-#### Common Formatting Issues to Avoid
-- Unexpected newline before `.` in modifier chains
-- Missing newline after `,` in multi-line parameter lists
-- Unused imports (always remove unused imports)
-- Import ordering violations
-
 ### 4. Complexity & Smells - Critical
 
 #### Function Complexity
@@ -81,12 +62,6 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
     * Private 함수 활용 (외부 노출 불필요한 함수는 `private`으로 변경)
   - **원칙**: `@Suppress`는 구조적 개선이 불가능할 때만 사용하고, 항상 먼저 코드 구조 개선을 시도해야 합니다.
 
-### 5. Naming Convention
-- Composable: `PascalCase` (예: `LoginScreen`)
-- ViewModel: `PascalCase` + `ViewModel` (예: `LoginViewModel`)
-- Repository/UseCase: `PascalCase` + `Repository`/`UseCase` (예: `LoginRepository`, `LoginUseCase`)
-- Route: `PascalCase` + `Route` (예: `LoginRoute`)
-
 ## Output Format
 - Provide clean, production-ready Kotlin code.
 - Do not include comments like "// formatting fix" unless necessary for explanation.
@@ -94,7 +69,6 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 
 ### PR/CI 준수 (Commitlint)
 - **PR이 merge되려면** PR **제목**이 commitlint(Conventional Commits) 규칙을 만족해야 합니다.
-- 커밋 메시지는 Conventional Commits 형식을 **권장**하며, 필수 검증 대상은 PR 제목입니다.
 
 ## Testing Rules
 

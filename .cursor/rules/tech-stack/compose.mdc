@@ -72,6 +72,47 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
    - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
    - **원칙**: 공통 구조는 유지하고, 선택적 파라미터로 차이점만 추가
 
+### Spacing Tokens (하드코딩 방지) - Critical
+간격(padding, Spacer, spacedBy, offset 등)은 **raw `dp` 리터럴을 직접 사용하지 않고**, 반드시 **이름이 있는 토큰**을 통해 표현합니다.
+- 토큰은 특정 파일(`Spacing.kt`)에 고정되지 않습니다.
+- 토큰 정의 위치는 다음 중 아무거나 허용합니다:
+  - 같은 파일의 `private object Dimens` / `private val`
+  - feature 단위의 `*Dimens.kt` / design token object
+  - (프로젝트에서 사용 중이라면) `CompositionLocal` (`LocalDimens.current.*`)
+- 예외: `0.dp` 는 허용합니다.
+- 금지: 토큰/상수에 대한 산술 연산(예: `Dimens.L - 8.dp`)으로 “새 간격”을 만들지 않습니다. 새로운 토큰을 정의하세요.
+
+<rule id="no_spacing_dp_literals">
+<description>
+Do not hardcode spacing with raw dp literals.
+Use named spacing tokens (local or feature-level). 0.dp is allowed.
+</description>
+
+<bad_example>
+Column(
+    modifier = Modifier.padding(horizontal = 20.dp),
+    verticalArrangement = Arrangement.spacedBy(12.dp),
+) {
+    Spacer(modifier = Modifier.height(16.dp))
+}
+</bad_example>
+
+<good_example>
+private object Dimens {
+    val ScreenHorizontalPadding = 20.dp
+    val ItemSpacing = 12.dp
+    val SectionSpacing = 16.dp
+}
+
+Column(
+    modifier = Modifier.padding(horizontal = Dimens.ScreenHorizontalPadding),
+    verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing),
+) {
+    Spacer(modifier = Modifier.height(Dimens.SectionSpacing))
+}
+</good_example>
+</rule>
+
 ### 적용 우선순위
 1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
    - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
