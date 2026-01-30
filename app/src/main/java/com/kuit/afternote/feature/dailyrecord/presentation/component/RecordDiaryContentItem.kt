@@ -25,9 +25,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray5
@@ -171,6 +173,70 @@ fun RecordDiaryContentItem(
                 }
                 innerTextField()
             }
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, name = "Diary - empty")
+@Composable
+private fun RecordDiaryContentItemDiaryPreview() {
+    AfternoteTheme {
+        RecordDiaryContentItem(
+            standard = DIARY_STANDARD_TEXT,
+            onDateSelected = { _, _, _ -> },
+            title = "",
+            onTitleChange = {},
+            content = "",
+            onContentChange = {}
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, name = "Diary - filled")
+@Composable
+private fun RecordDiaryContentItemDiaryFilledPreview() {
+    AfternoteTheme {
+        RecordDiaryContentItem(
+            standard = DIARY_STANDARD_TEXT,
+            onDateSelected = { _, _, _ -> },
+            title = "A day worth remembering",
+            onTitleChange = {},
+            content = "I felt grateful today. I want to keep this moment close.",
+            onContentChange = {}
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, name = "Topic - filled")
+@Composable
+private fun RecordDiaryContentItemTopicPreview() {
+    AfternoteTheme {
+        RecordDiaryContentItem(
+            standard = "topic",
+            onDateSelected = { _, _, _ -> },
+            title = "My values",
+            onTitleChange = {},
+            content = "Today I want to remember what truly matters to me.",
+            onContentChange = {}
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, name = "Topic - empty")
+@Composable
+private fun RecordDiaryContentItemTopicEmptyPreview() {
+    AfternoteTheme {
+        RecordDiaryContentItem(
+            standard = "topic",
+            onDateSelected = { _, _, _ -> },
+            title = "",
+            onTitleChange = {},
+            content = "",
+            onContentChange = {}
         )
     }
 }
