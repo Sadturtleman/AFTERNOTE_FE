@@ -26,13 +26,13 @@ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
     }
     composable<RecordRoute.ListRoute> {
         RecordFirstDiaryListScreen(
-            onLeftClick = { navController.popBackStack() },
+            onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute) },
         )
     }
     composable<RecordRoute.QuestionRouteList> {
         RecordDailyQuestionScreen(
-            onLeftClick = { navController.popBackStack() },
+            onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.QuestionRoute) }
         )
     }
@@ -54,7 +54,7 @@ fun NavGraphBuilder.recordNavGraph(navController: NavController) {
     }
     composable<RecordRoute.WeekendReportRoute> {
         RecordWeekendReportScreen(
-            onLeftClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

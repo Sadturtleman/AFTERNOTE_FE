@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
@@ -32,7 +33,6 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -96,7 +96,7 @@ private fun MemorialPlaylistAddButton(
         )
         RightArrowIcon(
             iconSpec = ArrowIconSpec(
-                iconRes = com.kuit.afternote.R.drawable.ic_arrow_right_playlist,
+                iconRes = R.drawable.ic_arrow_right_playlist,
                 contentDescription = "추가"
             ),
             backgroundColor = B1,
@@ -127,7 +127,7 @@ fun MemorialPlaylist(
 ) {
     val isEditMode = onAddSongClick != null
     Column(
-        verticalArrangement = Arrangement.spacedBy(space = Spacing.m)
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
         Text(
             text = label,
@@ -201,7 +201,7 @@ private fun MemorialPlaylistEditPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             MemorialPlaylist(
                 songCount = 4,
@@ -223,7 +223,7 @@ private fun MemorialPlaylistViewPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             MemorialPlaylist(
                 songCount = 16,

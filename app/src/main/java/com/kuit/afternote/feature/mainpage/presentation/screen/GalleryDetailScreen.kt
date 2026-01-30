@@ -53,7 +53,6 @@ import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 갤러리 상세 화면의 데이터 상태
@@ -237,12 +236,12 @@ private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp)
     ) {
-        Spacer(modifier = Modifier.height(Spacing.l))
+        Spacer(modifier = Modifier.height(24.dp))
         TitleSection(
             serviceName = detailState.serviceName,
             userName = detailState.userName
         )
-        Spacer(modifier = Modifier.height(Spacing.l))
+        Spacer(modifier = Modifier.height(24.dp))
         CardSection(detailState = detailState)
     }
 }

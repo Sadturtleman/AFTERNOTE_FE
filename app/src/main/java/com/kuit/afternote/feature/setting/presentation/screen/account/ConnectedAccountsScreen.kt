@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

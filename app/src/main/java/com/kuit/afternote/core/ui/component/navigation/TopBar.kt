@@ -31,7 +31,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    title: String,
+    title: String = "",
     onBackClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

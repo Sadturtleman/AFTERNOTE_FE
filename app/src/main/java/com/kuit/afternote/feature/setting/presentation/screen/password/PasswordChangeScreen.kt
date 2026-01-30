@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.password
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement

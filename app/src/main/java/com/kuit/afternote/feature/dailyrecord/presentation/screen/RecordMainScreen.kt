@@ -34,8 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.ui.theme.Gray1
 
 /**
@@ -103,11 +103,8 @@ fun RecordMainScreen(
                 .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
             // 샹단 제목
-            RecordMainTopbar(
-                modifier = modifier,
-                "나의 모든 기록",
-                showLeftArrow = false,
-                onLeftClock = {}
+            TopBar(
+                title="나의 모든 기록"
             )
             // 리스트
             val allItems = listOf(

@@ -10,7 +10,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * Slot API for [MemorialGuidelineContent]: one composable per section.
@@ -37,7 +36,7 @@ data class MemorialGuidelineSlots(
 fun MemorialGuidelineContent(
     modifier: Modifier = Modifier,
     slots: MemorialGuidelineSlots,
-    sectionSpacing: Dp = Spacing.xl,
+    sectionSpacing: Dp = 32.dp,
     trailingSpacerHeight: Dp = 0.dp
 ) {
     Column(modifier = modifier.fillMaxWidth()) {

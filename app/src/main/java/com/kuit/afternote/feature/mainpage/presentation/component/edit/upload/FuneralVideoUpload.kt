@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.mainpage.presentation.component.edit.upload
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,6 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 import com.kuit.afternote.ui.theme.White
 
 /**
@@ -44,6 +44,9 @@ fun FuneralVideoUpload(
     videoUrl: String? = null,
     onAddVideoClick: () -> Unit
 ) {
+    val hasVideo = !videoUrl.isNullOrBlank()
+    val addContentDescription = if (hasVideo) "영상 변경" else "영상 추가"
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(space = 16.dp),
@@ -64,6 +67,7 @@ fun FuneralVideoUpload(
                 .fillMaxWidth()
                 .height(80.dp)
                 .background(color = White, shape = RoundedCornerShape(size = 16.dp))
+                .clickable(onClick = onAddVideoClick)
         ) {
             Column(
                 modifier = Modifier
@@ -74,7 +78,7 @@ fun FuneralVideoUpload(
                 Spacer(modifier = Modifier.height(24.dp))
                 Image(
                     painter = painterResource(R.drawable.ic_add_circle),
-                    contentDescription = "영상 추가",
+                    contentDescription = addContentDescription,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
@@ -89,7 +93,7 @@ private fun FuneralVideoUploadPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(Spacing.l)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // 영상 없음
             FuneralVideoUpload(

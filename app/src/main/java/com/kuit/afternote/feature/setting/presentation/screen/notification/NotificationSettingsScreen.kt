@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.screen
+package com.kuit.afternote.feature.setting.presentation.screen.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -83,7 +83,13 @@ fun NotificationSettingsScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             // 섹션 2: 마케팅 및 광고 알림 설정
-            Text("마케팅 및 광고 알림 설정", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Gray9, fontFamily = Sansneo)
+            Text(
+                "마케팅 및 광고 알림 설정",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Gray9,
+                fontFamily = Sansneo
+            )
             Spacer(modifier = Modifier.height(24.dp))
 
             MarketingOptionRow("문자 메시지", isSmsEnabled) { isSmsEnabled = it }

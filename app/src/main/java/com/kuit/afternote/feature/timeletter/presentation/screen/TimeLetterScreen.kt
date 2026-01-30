@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +35,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
-import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterBlockItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
@@ -66,8 +67,8 @@ fun TimeLetterScreen(
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val viewMode by viewModel.viewMode.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val viewMode by viewModel.viewMode.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -135,10 +136,13 @@ fun TimeLetterScreen(
                     Spacer(modifier = Modifier.height(28.dp))
 
                     // 리스트/블록 뷰
-                    LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(letters) { letter ->
-                            when (viewMode) {
-                                ViewMode.LIST -> {
+                    when (viewMode) {
+                        ViewMode.LIST -> {
+                            LazyColumn(modifier = Modifier.weight(1f)) {
+                                items(
+                                    items = letters,
+                                    key = { it.id }
+                                ) { letter ->
                                     TimeLetterListItem(
                                         receiverName = letter.receivername,
                                         sendDate = letter.sendDate,
@@ -148,18 +152,14 @@ fun TimeLetterScreen(
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
-                                ViewMode.BLOCK -> {
-                                    TimeLetterBlockItem(
-                                        receiverName = letter.receivername,
-                                        sendDate = letter.sendDate,
-                                        title = letter.title,
-                                        content = letter.content,
-                                        imageResId = letter.imageResId,
-                                        theme = letter.theme
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                }
                             }
+                        }
+                        ViewMode.BLOCK -> {
+                            TimeLetterBlockList(
+                                modifier = Modifier.weight(1f),
+                                timeLetterItemList = letters,
+                                contentPadding = PaddingValues(bottom = 16.dp)
+                            )
                         }
                     }
                 }
@@ -336,10 +336,13 @@ private fun TimeLetterScreenPreviewContent(viewMode: ViewMode) {
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(mockLetters) { letter ->
-                    when (currentViewMode) {
-                        ViewMode.LIST -> {
+            when (currentViewMode) {
+                ViewMode.LIST -> {
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(
+                            items = mockLetters,
+                            key = { it.id }
+                        ) { letter ->
                             TimeLetterListItem(
                                 receiverName = letter.receivername,
                                 sendDate = letter.sendDate,
@@ -349,19 +352,14 @@ private fun TimeLetterScreenPreviewContent(viewMode: ViewMode) {
                             )
                             Spacer(modifier = Modifier.height(18.dp))
                         }
-                        ViewMode.BLOCK -> {
-                            TimeLetterBlockItem(
-                                receiverName = letter.receivername,
-                                sendDate = letter.sendDate,
-                                title = letter.title,
-                                content = letter.content,
-                                imageResId = letter.imageResId,
-                                theme = letter.theme,
-                                modifier = Modifier.padding(horizontal = 20.dp)
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
                     }
+                }
+                ViewMode.BLOCK -> {
+                    TimeLetterBlockList(
+                        modifier = Modifier.weight(1f),
+                        timeLetterItemList = mockLetters,
+                        contentPadding = PaddingValues(bottom = 16.dp)
+                    )
                 }
             }
         }
