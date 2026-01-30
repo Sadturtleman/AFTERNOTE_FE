@@ -186,26 +186,27 @@ fun TimeLetterScreen(
 // 공통 헤더 분리
 @Composable
 private fun TimeLetterHeader(onBackClick: () -> Unit) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(29.dp),
-        verticalAlignment = Alignment.CenterVertically
+        contentAlignment = Alignment.Center // 자식들을 중앙 정렬
     ) {
         Image(
             painter = painterResource(id = R.drawable.vector),
             contentDescription = "뒤로가기",
             modifier = Modifier
+                .align(Alignment.CenterStart) // 왼쪽 중앙에 배치
                 .padding(start = 23.dp)
                 .size(width = 6.dp, height = 12.dp)
                 .clickable { onBackClick() }
         )
+
         Text(
             text = "타임 레터",
             color = Color(0xFF212121),
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 131.dp, top = 5.dp)
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -393,7 +394,6 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                                 }
 
                                 ViewMode.BLOCK -> {
-                                    // ✅ 실제 TimeLetterScreen과 동일하게 "추가 패딩" 없이 호출
                                     TimeLetterBlockItem(
                                         receiverName = letter.receivername,
                                         sendDate = letter.sendDate,
