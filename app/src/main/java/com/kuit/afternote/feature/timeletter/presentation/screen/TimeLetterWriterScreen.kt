@@ -42,6 +42,7 @@ import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
+import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
  * 타임레터 작성 화면
@@ -334,38 +335,64 @@ fun TimeLetterWriterScreen(
 
         // DatePicker 오버레이
         if (showDatePicker) {
-            // 배경 딤 처리 + 클릭 시 닫기
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { onDatePickerDismiss() }
-                    .zIndex(1f)
-            )
+            DatePickerOverlay(onDatePickerDismiss, onDateSelected)
+        }
+    }
+}
 
-            // DateWheelPicker 오버레이 (발송 날짜 아래 위치)
-            Box(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp)
-                    ).clip(RoundedCornerShape(12.dp))
-                    .background(Color.White)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
-                    .padding(vertical = 16.dp)
-            ) {
-                DateWheelPicker(
-                    onDateChanged = { year, month, day ->
-                        onDateSelected(year, month, day)
-                    }
-                )
+@Composable
+private fun DatePickerOverlay(
+    onDatePickerDismiss: () -> Unit,
+    onDateSelected: (Int, Int, Int) -> Unit
+) {
+    // 배경 딤 처리 + 클릭 시 닫기
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.3f))
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onDatePickerDismiss() }
+            .zIndex(1f)
+    )
+
+    // DateWheelPicker 오버레이 (발송 날짜 아래 위치)
+    Box(
+        modifier = Modifier
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White)
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
+            .padding(vertical = 16.dp)
+            .zIndex(2f)
+    ) {
+        DateWheelPicker(
+            onDateChanged = { year, month, day ->
+                onDateSelected(year, month, day)
             }
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+)
+@Composable
+private fun DatePickerOverlayPreview() {
+    AfternoteTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            DatePickerOverlay(
+                onDatePickerDismiss = {},
+                onDateSelected = { _, _, _ -> }
+            )
         }
     }
 }

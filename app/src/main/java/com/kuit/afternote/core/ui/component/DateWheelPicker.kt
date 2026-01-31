@@ -4,7 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -167,20 +166,13 @@ private fun Divider() {
     )
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 260)
+@Preview(showBackground = true)
 @Composable
 private fun DateWheelPickerPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
         DateWheelPicker(
             initialYear = 2025,
             initialMonth = 11,
             initialDay = 26,
             onDateChanged = { _, _, _ -> }
         )
-    }
 }

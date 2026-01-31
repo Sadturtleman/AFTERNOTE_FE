@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +12,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Sansneo
-import org.w3c.dom.Text
 
 @Composable
 fun EmailInputContent(
