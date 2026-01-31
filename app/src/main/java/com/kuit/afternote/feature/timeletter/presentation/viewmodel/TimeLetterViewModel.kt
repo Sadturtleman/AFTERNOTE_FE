@@ -50,8 +50,7 @@ class TimeLetterViewModel
         private fun loadLetters() {
             viewModelScope.launch {
                 _uiState.value = TimeLetterUiState.Loading
-                getTimeLettersUseCase()
-                    .onSuccess { list ->
+                getTimeLettersUseCase().onSuccess { list ->
                         val items = list.timeLetters.mapIndexed { index, timeLetter ->
                             toTimeLetterItem(timeLetter, index)
                         }

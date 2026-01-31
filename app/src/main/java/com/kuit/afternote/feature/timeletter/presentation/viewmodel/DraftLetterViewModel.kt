@@ -42,8 +42,7 @@ class DraftLetterViewModel
         fun loadTemporaryLetters() {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
-                getTemporaryTimeLettersUseCase()
-                    .onSuccess { list ->
+                getTemporaryTimeLettersUseCase().onSuccess { list ->
                         val items = list.timeLetters.map { toDraftLetterItem(it) }
                         _uiState.update {
                             it.copy(

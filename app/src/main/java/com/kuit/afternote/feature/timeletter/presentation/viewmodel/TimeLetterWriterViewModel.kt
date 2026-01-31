@@ -39,11 +39,12 @@ class TimeLetterWriterViewModel
          */
         private fun loadDraftCount() {
             viewModelScope.launch {
-                getTemporaryTimeLettersUseCase().onSuccess { list ->
-                    _uiState.update { it.copy(draftCount = list.totalCount) }
-                }.onFailure {
-                    _uiState.update { it.copy(draftCount = 0) }
-                }
+                getTemporaryTimeLettersUseCase()
+                    .onSuccess { list ->
+                        _uiState.update { it.copy(draftCount = list.totalCount) }
+                    }.onFailure {
+                        _uiState.update { it.copy(draftCount = 0) }
+                    }
             }
         }
 
@@ -177,7 +178,7 @@ class TimeLetterWriterViewModel
                     mediaList = null
                 )
                 _uiState.update { it.copy(isLoading = false) }
-                result.onSuccess { onSuccess() }
+                result.onSuccess { _ -> onSuccess() }
                 result.onFailure {
                     // TODO: 에러 메시지 UiState에 반영
                 }

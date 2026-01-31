@@ -27,13 +27,12 @@ class CreateTimeLetterUseCase
             sendAt: String?,
             status: TimeLetterStatus,
             mediaList: List<Pair<TimeLetterMediaType, String>>?
-        ): Result<TimeLetter> {
-            return timeLetterRepository.createTimeLetter(
+        ): Result<TimeLetter> =
+            timeLetterRepository.createTimeLetter(
                 title,
                 content,
                 sendAt,
                 status,
                 mediaList
             )
-        }
     }

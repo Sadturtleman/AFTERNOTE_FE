@@ -14,7 +14,6 @@ class GetTemporaryTimeLettersUseCase
     constructor(
         private val timeLetterRepository: TimeLetterRepository
     ) {
-        suspend operator fun invoke(): Result<TimeLetterList> {
-            return timeLetterRepository.getTemporaryTimeLetters()
-        }
+        suspend operator fun invoke(): Result<TimeLetterList> =
+            timeLetterRepository.getTemporaryTimeLetters()
     }

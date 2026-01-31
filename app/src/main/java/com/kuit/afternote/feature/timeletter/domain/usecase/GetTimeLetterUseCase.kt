@@ -15,7 +15,6 @@ class GetTimeLetterUseCase
     constructor(
         private val timeLetterRepository: TimeLetterRepository
     ) {
-        suspend operator fun invoke(timeLetterId: Long): Result<TimeLetter> {
-            return timeLetterRepository.getTimeLetter(timeLetterId)
-        }
+        suspend operator fun invoke(timeLetterId: Long): Result<TimeLetter> =
+            timeLetterRepository.getTimeLetter(timeLetterId)
     }

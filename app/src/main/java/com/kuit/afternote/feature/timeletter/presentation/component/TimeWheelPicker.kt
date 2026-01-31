@@ -140,7 +140,6 @@ fun TimeWheelPicker(
             }
         }
     }
-
 }
 
 private fun convertTo24Hour(
@@ -153,6 +152,7 @@ private fun convertTo24Hour(
         amPm == "오후" && hour12 == 12 -> 12
         else -> hour12 + 12
     }
+
 @Composable
 private fun TimePickerText(
     text: String,
