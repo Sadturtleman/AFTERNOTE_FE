@@ -21,7 +21,6 @@ import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWr
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
  */
 fun NavGraphBuilder.timeLetterNavGraph(
-
     navController: NavController,
     onNavItemSelected: (BottomNavItem) -> Unit = {}
 ) {

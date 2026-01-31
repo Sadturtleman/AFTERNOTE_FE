@@ -83,7 +83,6 @@ fun TimeWheelPicker(
             .width(204.dp)
             .height(152.dp)
     ) {
-
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -154,7 +153,6 @@ private fun convertTo24Hour(
         amPm == "오후" && hour12 == 12 -> 12
         else -> hour12 + 12
     }
-
 @Composable
 private fun TimePickerText(
     text: String,

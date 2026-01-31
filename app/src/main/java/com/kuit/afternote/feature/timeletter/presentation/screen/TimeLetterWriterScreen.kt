@@ -380,14 +380,9 @@ fun TimeLetterWriterScreen(
                         shape = RoundedCornerShape(12.dp)
                     ).clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
                     .padding(vertical = 16.dp)
             ) {
                 DateWheelPicker(
-
                     modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
                     currentDate = selectedDate,
                     onDateChanged = { date ->
@@ -407,8 +402,12 @@ fun TimeLetterWriterScreen(
                     val h = parts[0].toIntOrNull() ?: now.hour
                     val m = parts[1].toIntOrNull() ?: now.minute
                     h to m
-                } else now.hour to now.minute
-            } else now.hour to now.minute
+                } else {
+                    now.hour to now.minute
+                }
+            } else {
+                now.hour to now.minute
+            }
 
             Box(
                 modifier = Modifier
@@ -428,10 +427,6 @@ fun TimeLetterWriterScreen(
                         shape = RoundedCornerShape(12.dp)
                     ).clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
                     .padding(vertical = 16.dp)
             ) {
                 TimeWheelPicker(

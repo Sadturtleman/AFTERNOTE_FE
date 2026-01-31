@@ -27,76 +27,78 @@ class TimeLetterViewModel
     constructor(
         private val getTimeLettersUseCase: GetTimeLettersUseCase
     ) : ViewModel() {
+        private val _viewMode = MutableStateFlow(ViewMode.LIST)
+        val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
 
-    private val _viewMode = MutableStateFlow(ViewMode.LIST)
-    val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
+        private val _uiState = MutableStateFlow<TimeLetterUiState>(TimeLetterUiState.Loading)
+        val uiState: StateFlow<TimeLetterUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow<TimeLetterUiState>(TimeLetterUiState.Loading)
-    val uiState: StateFlow<TimeLetterUiState> = _uiState.asStateFlow()
+        init {
+            loadLetters()
+        }
 
-    init {
-        loadLetters()
-    }
+        /**
+         * 뷰 모드 변경 (리스트 / 블록)
+         */
+        fun updateViewMode(mode: ViewMode) {
+            _viewMode.value = mode
+        }
 
-    /**
-     * 뷰 모드 변경 (리스트 / 블록)
-     */
-    fun updateViewMode(mode: ViewMode) {
-        _viewMode.value = mode
-    }
-
-    /**
-     * 타임레터 목록 로드 (GET /time-letters)
-     */
-    private fun loadLetters() {
-        viewModelScope.launch {
-            _uiState.value = TimeLetterUiState.Loading
-            getTimeLettersUseCase()
-                .onSuccess { list ->
-                    val items = list.timeLetters.mapIndexed { index, timeLetter ->
-                        toTimeLetterItem(timeLetter, index)
+        /**
+         * 타임레터 목록 로드 (GET /time-letters)
+         */
+        private fun loadLetters() {
+            viewModelScope.launch {
+                _uiState.value = TimeLetterUiState.Loading
+                getTimeLettersUseCase()
+                    .onSuccess { list ->
+                        val items = list.timeLetters.mapIndexed { index, timeLetter ->
+                            toTimeLetterItem(timeLetter, index)
+                        }
+                        _uiState.value = if (items.isEmpty()) {
+                            TimeLetterUiState.Empty
+                        } else {
+                            TimeLetterUiState.Success(items)
+                        }
                     }
-                    _uiState.value = if (items.isEmpty()) {
-                        TimeLetterUiState.Empty
-                    } else {
-                        TimeLetterUiState.Success(items)
+                    .onFailure {
+                        _uiState.value = TimeLetterUiState.Empty
                     }
-                }
-                .onFailure {
-                    _uiState.value = TimeLetterUiState.Empty
-                }
+            }
+        }
+
+        /**
+         * 데이터 새로고침
+         */
+        fun refreshLetters() {
+            loadLetters()
+        }
+
+        /**
+         * Domain TimeLetter → UI TimeLetterItem 변환
+         */
+        private fun toTimeLetterItem(
+            t: TimeLetter,
+            index: Int
+        ): TimeLetterItem {
+            val themes = listOf(LetterTheme.PEACH, LetterTheme.BLUE, LetterTheme.YELLOW)
+            return TimeLetterItem(
+                id = t.id.toString(),
+                receivername = "", // API에 수신자 필드 없음
+                sendDate = formatSendAtForDisplay(t.sendAt),
+                title = t.title ?: "",
+                content = t.content ?: "",
+                imageResId = null,
+                theme = themes[index % themes.size]
+            )
+        }
+
+        /**
+         * sendAt (yyyy-MM-ddTHH:mm:ss 등) -> "yyyy. MM. dd" 표시
+         */
+        private fun formatSendAtForDisplay(sendAt: String?): String {
+            if (sendAt.isNullOrBlank()) return ""
+            val datePart = sendAt.take(10) // yyyy-MM-dd
+            return datePart.replace("-", ". ")
         }
     }
-
-    /**
-     * 데이터 새로고침
-     */
-    fun refreshLetters() {
-        loadLetters()
-    }
-
-    /**
-     * Domain TimeLetter → UI TimeLetterItem 변환
-     */
-    private fun toTimeLetterItem(t: TimeLetter, index: Int): TimeLetterItem {
-        val themes = listOf(LetterTheme.PEACH, LetterTheme.BLUE, LetterTheme.YELLOW)
-        return TimeLetterItem(
-            id = t.id.toString(),
-            receivername = "", // API에 수신자 필드 없음
-            sendDate = formatSendAtForDisplay(t.sendAt),
-            title = t.title ?: "",
-            content = t.content ?: "",
-            imageResId = null,
-            theme = themes[index % themes.size]
-        )
-    }
-
-    /**
-     * sendAt (yyyy-MM-ddTHH:mm:ss 등) -> "yyyy. MM. dd" 표시
-     */
-    private fun formatSendAtForDisplay(sendAt: String?): String {
-        if (sendAt.isNullOrBlank()) return ""
-        val datePart = sendAt.take(10) // yyyy-MM-dd
-        return datePart.replace("-", ". ")
-    }
-}

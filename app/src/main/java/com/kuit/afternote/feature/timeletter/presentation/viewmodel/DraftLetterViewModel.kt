@@ -29,130 +29,129 @@ class DraftLetterViewModel
         private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
         private val deleteAllTemporaryUseCase: DeleteAllTemporaryUseCase
     ) : ViewModel() {
+        private val _uiState = MutableStateFlow(DraftLetterUiState())
+        val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(DraftLetterUiState())
-    val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
+        init {
+            loadTemporaryLetters()
+        }
 
-    init {
-        loadTemporaryLetters()
-    }
-
-    /**
-     * 임시저장 목록 로드 (GET /time-letters/temporary)
-     */
-    fun loadTemporaryLetters() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            getTemporaryTimeLettersUseCase()
-                .onSuccess { list ->
-                    val items = list.timeLetters.map { toDraftLetterItem(it) }
-                    _uiState.update {
-                        it.copy(
-                            draftLetters = items,
-                            isLoading = false
-                        )
+        /**
+         * 임시저장 목록 로드 (GET /time-letters/temporary)
+         */
+        fun loadTemporaryLetters() {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true) }
+                getTemporaryTimeLettersUseCase()
+                    .onSuccess { list ->
+                        val items = list.timeLetters.map { toDraftLetterItem(it) }
+                        _uiState.update {
+                            it.copy(
+                                draftLetters = items,
+                                isLoading = false
+                            )
+                        }
                     }
-                }
-                .onFailure {
-                    _uiState.update {
-                        it.copy(
-                            draftLetters = emptyList(),
-                            isLoading = false
-                        )
+                    .onFailure {
+                        _uiState.update {
+                            it.copy(
+                                draftLetters = emptyList(),
+                                isLoading = false
+                            )
+                        }
                     }
-                }
-        }
-    }
-
-    /**
-     * 편집 모드 진입
-     */
-    fun enterEditMode() {
-        _uiState.update {
-            it.copy(isEditMode = true, selectedIds = emptySet())
-        }
-    }
-
-    /**
-     * 편집 모드 완료
-     */
-    fun exitEditMode() {
-        _uiState.update {
-            it.copy(isEditMode = false, selectedIds = emptySet())
-        }
-    }
-
-    /**
-     * 아이템 선택/해제 토글
-     */
-    fun toggleSelection(id: String) {
-        _uiState.update { state ->
-            val newSet = if (state.selectedIds.contains(id)) {
-                state.selectedIds - id
-            } else {
-                state.selectedIds + id
             }
-            state.copy(selectedIds = newSet)
         }
-    }
 
-    /**
-     * 선택된 항목 삭제 (POST /time-letters/delete)
-     */
-    fun deleteSelected(onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val ids = _uiState.value.selectedIds.mapNotNull { it.toLongOrNull() }
-            if (ids.isEmpty()) return@launch
-            deleteTimeLettersUseCase(ids)
-                .onSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isEditMode = false,
-                            selectedIds = emptySet()
-                        )
-                    }
-                    loadTemporaryLetters()
-                    onSuccess()
+        /**
+         * 편집 모드 진입
+         */
+        fun enterEditMode() {
+            _uiState.update {
+                it.copy(isEditMode = true, selectedIds = emptySet())
+            }
+        }
+
+        /**
+         * 편집 모드 완료
+         */
+        fun exitEditMode() {
+            _uiState.update {
+                it.copy(isEditMode = false, selectedIds = emptySet())
+            }
+        }
+
+        /**
+         * 아이템 선택/해제 토글
+         */
+        fun toggleSelection(id: String) {
+            _uiState.update { state ->
+                val newSet = if (state.selectedIds.contains(id)) {
+                    state.selectedIds - id
+                } else {
+                    state.selectedIds + id
                 }
+                state.copy(selectedIds = newSet)
+            }
         }
-    }
 
-    /**
-     * 전체 임시저장 삭제 (DELETE /time-letters/temporary)
-     */
-    fun deleteAll(onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            deleteAllTemporaryUseCase()
-                .onSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isEditMode = false,
-                            selectedIds = emptySet(),
-                            draftLetters = emptyList()
-                        )
+        /**
+         * 선택된 항목 삭제 (POST /time-letters/delete)
+         */
+        fun deleteSelected(onSuccess: () -> Unit) {
+            viewModelScope.launch {
+                val ids = _uiState.value.selectedIds.mapNotNull { it.toLongOrNull() }
+                if (ids.isEmpty()) return@launch
+                deleteTimeLettersUseCase(ids)
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                isEditMode = false,
+                                selectedIds = emptySet()
+                            )
+                        }
+                        loadTemporaryLetters()
+                        onSuccess()
                     }
-                    onSuccess()
-                }
+            }
+        }
+
+        /**
+         * 전체 임시저장 삭제 (DELETE /time-letters/temporary)
+         */
+        fun deleteAll(onSuccess: () -> Unit) {
+            viewModelScope.launch {
+                deleteAllTemporaryUseCase()
+                    .onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                isEditMode = false,
+                                selectedIds = emptySet(),
+                                draftLetters = emptyList()
+                            )
+                        }
+                        onSuccess()
+                    }
+            }
+        }
+
+        private fun toDraftLetterItem(t: TimeLetter): DraftLetterItem =
+            DraftLetterItem(
+                id = t.id.toString(),
+                receiverName = "", // API에 수신자 필드 없음
+                sendDate = formatSendAtForDisplay(t.sendAt),
+                title = t.title ?: ""
+            )
+
+        /**
+         * sendAt (yyyy-MM-ddTHH:mm:ss 등) -> "yyyy. MM. dd" 표시
+         */
+        private fun formatSendAtForDisplay(sendAt: String?): String {
+            if (sendAt.isNullOrBlank()) return ""
+            val datePart = sendAt.take(10) // yyyy-MM-dd
+            return datePart.replace("-", ". ")
         }
     }
-
-    private fun toDraftLetterItem(t: TimeLetter): DraftLetterItem =
-        DraftLetterItem(
-            id = t.id.toString(),
-            receiverName = "", // API에 수신자 필드 없음
-            sendDate = formatSendAtForDisplay(t.sendAt),
-            title = t.title ?: ""
-        )
-
-    /**
-     * sendAt (yyyy-MM-ddTHH:mm:ss 등) -> "yyyy. MM. dd" 표시
-     */
-    private fun formatSendAtForDisplay(sendAt: String?): String {
-        if (sendAt.isNullOrBlank()) return ""
-        val datePart = sendAt.take(10) // yyyy-MM-dd
-        return datePart.replace("-", ". ")
-    }
-}
 
 /**
  * 임시저장 목록 화면 UI 상태

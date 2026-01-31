@@ -39,13 +39,11 @@ class TimeLetterWriterViewModel
          */
         private fun loadDraftCount() {
             viewModelScope.launch {
-                getTemporaryTimeLettersUseCase()
-                    .onSuccess { list ->
-                        _uiState.update { it.copy(draftCount = list.totalCount) }
-                    }
-                    .onFailure {
-                        _uiState.update { it.copy(draftCount = 0) }
-                    }
+                getTemporaryTimeLettersUseCase().onSuccess { list ->
+                    _uiState.update { it.copy(draftCount = list.totalCount) }
+                }.onFailure {
+                    _uiState.update { it.copy(draftCount = 0) }
+                }
             }
         }
 
@@ -152,7 +150,10 @@ class TimeLetterWriterViewModel
         /**
          * sendAt 문자열 생성 (yyyy. MM. dd + HH:mm -> yyyy-MM-ddTHH:mm:00)
          */
-        private fun buildSendAt(sendDate: String, sendTime: String): String? {
+        private fun buildSendAt(
+            sendDate: String,
+            sendTime: String
+        ): String? {
             if (sendDate.isBlank() || sendTime.isBlank()) return null
             val normalizedDate = sendDate.replace(". ", "-").trim()
             return "${normalizedDate}T${sendTime}:00"
