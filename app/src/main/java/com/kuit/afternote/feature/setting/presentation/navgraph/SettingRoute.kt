@@ -7,6 +7,24 @@ sealed interface SettingRoute {
     data object SettingMainRoute : SettingRoute
 
     @Serializable
+    data object ConnectedAccountsRoute : SettingRoute
+
+    @Serializable
+    data object NotificationSettingsRoute : SettingRoute
+
+    @Serializable
+    data object PushToastSettingRoute : SettingRoute
+
+    @Serializable
+    data object PassKeyAddRoute : SettingRoute
+
+    @Serializable
+    data object AppLockPasswordConfirmRoute : SettingRoute
+
+    @Serializable
+    data object AppLockPasswordModifyRoute : SettingRoute
+
+    @Serializable
     data class ReceiverDetailRoute(
         val receiverId: String = ""
     ) : SettingRoute

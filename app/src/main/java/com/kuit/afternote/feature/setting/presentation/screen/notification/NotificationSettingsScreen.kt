@@ -35,7 +35,10 @@ import com.kuit.afternote.ui.theme.Sansneo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationSettingsScreen() {
+fun NotificationSettingsScreen(
+    onBackClick: () -> Unit = {},
+    onDeviceSettingsClick: () -> Unit = {}
+) {
     val scrollState = rememberScrollState()
 
     // 상태 관리
@@ -45,7 +48,10 @@ fun NotificationSettingsScreen() {
 
     Scaffold(
         topBar = {
-            TopBar("푸시 알림 설정") {}
+            TopBar(
+                title = "푸시 알림 설정",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(
@@ -65,7 +71,7 @@ fun NotificationSettingsScreen() {
                     fontWeight = FontWeight.Medium,
                     fontFamily = Sansneo,
                     color = Gray9,
-                    modifier = Modifier.clickable {}
+                    modifier = Modifier.clickable { onDeviceSettingsClick() }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("꺼짐", fontSize = 14.sp, color = Gray5, fontFamily = Sansneo)

@@ -30,7 +30,10 @@ import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadModifyVie
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel()) {
+fun PasswordModifyScreen(
+    onBackClick: () -> Unit = {},
+    keyPadViewModel: KeyPadModifyViewModel = hiltViewModel()
+) {
     val password by keyPadViewModel.inputCode.collectAsStateWithLifecycle()
     val step by keyPadViewModel.currentStep.collectAsStateWithLifecycle()
     val onKeyAction: (KeyAction) -> Unit = remember {
@@ -39,7 +42,10 @@ fun PasswordModifyScreen(keyPadViewModel: KeyPadModifyViewModel = hiltViewModel(
 
     Scaffold(
         topBar = {
-            TopBar(title = "앱 잠금 비밀번호 변경") {}
+            TopBar(
+                title = "앱 잠금 비밀번호 변경",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(
