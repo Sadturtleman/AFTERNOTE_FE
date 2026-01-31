@@ -21,7 +21,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +44,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
+import java.time.LocalDate
 import java.time.LocalTime
 
 /**
@@ -354,6 +359,7 @@ fun TimeLetterWriterScreen(
 
         // DatePicker 오버레이
         if (showDatePicker) {
+            var selectedDate by remember { mutableStateOf(LocalDate.now()) }
             // 배경 딤 처리 + 클릭 시 닫기
             Box(
                 modifier = Modifier
@@ -381,8 +387,12 @@ fun TimeLetterWriterScreen(
                     .padding(vertical = 16.dp)
             ) {
                 DateWheelPicker(
-                    onDateChanged = { year, month, day ->
-                        onDateSelected(year, month, day)
+
+                    modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
+                    currentDate = selectedDate,
+                    onDateChanged = { date ->
+                        selectedDate = date
+                        onDateSelected(date.year, date.monthValue, date.dayOfMonth)
                     }
                 )
             }

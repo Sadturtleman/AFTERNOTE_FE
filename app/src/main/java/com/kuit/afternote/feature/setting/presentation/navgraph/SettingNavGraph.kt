@@ -10,10 +10,15 @@ import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
+import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
+import com.kuit.afternote.feature.setting.presentation.screen.notification.NotificationSettingsScreen
+import com.kuit.afternote.feature.setting.presentation.screen.notification.PushToastSettingScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
+import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordConfirmScreen
+import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordModifyScreen
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
@@ -22,6 +27,7 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
+import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 
@@ -32,12 +38,53 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                 when (title) {
                     "프로필 수정" -> navController.navigate(SettingRoute.ReceiverDetailRoute())
                     "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
+                    "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
+                    "알림 설정" -> navController.navigate(SettingRoute.NotificationSettingsRoute)
                     "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
                     "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
                     "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)
-                    // 나머지는 다른 사람 담당
+                    "패스키 관리" -> navController.navigate(SettingRoute.PassKeyAddRoute)
+                    "앱 잠금 설정" -> navController.navigate(SettingRoute.AppLockPasswordModifyRoute)
+                    // TODO: 나머지는 추후 연결 (FAQ, 1:1 문의, 공지사항, 약관 등)
                 }
             }
+        )
+    }
+
+    composable<SettingRoute.ConnectedAccountsRoute> {
+        ConnectedAccountsScreen(
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.NotificationSettingsRoute> {
+        NotificationSettingsScreen(
+            onBackClick = { navController.popBackStack() },
+            onDeviceSettingsClick = { navController.navigate(SettingRoute.PushToastSettingRoute) }
+        )
+    }
+
+    composable<SettingRoute.PushToastSettingRoute> {
+        PushToastSettingScreen(
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.PassKeyAddRoute> {
+        PassKeyAddScreen(
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.AppLockPasswordConfirmRoute> {
+        PasswordConfirmScreen(
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+
+    composable<SettingRoute.AppLockPasswordModifyRoute> {
+        PasswordModifyScreen(
+            onBackClick = { navController.popBackStack() }
         )
     }
 

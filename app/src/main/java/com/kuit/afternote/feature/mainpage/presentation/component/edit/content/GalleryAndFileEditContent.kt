@@ -14,9 +14,10 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.MainPageEditReceiverList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
@@ -62,7 +63,11 @@ private fun GalleryAndFileEditContentContent(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // 정보 처리 방법 섹션
-        RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
+        Label(
+            text = "정보 처리 방법",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 4.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -89,7 +94,11 @@ private fun GalleryAndFileEditContentContent(
             Spacer(modifier = Modifier.height(32.dp))
 
             // 수신자 추가 섹션 제목
-            RequiredLabel(text = "수신자 추가", offsetY = 3f)
+            Label(
+                text = "수신자 추가",
+                isRequired = true,
+                style = LabelStyle(requiredDotOffsetY = 3.dp)
+            )
 
             Spacer(modifier = Modifier.height(9.dp))
 
@@ -102,7 +111,11 @@ private fun GalleryAndFileEditContentContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // 처리 방법 리스트 섹션
-        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
+        Label(
+            text = "처리 방법 리스트",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 2.dp)
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 

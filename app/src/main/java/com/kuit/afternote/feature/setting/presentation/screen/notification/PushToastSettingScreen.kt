@@ -32,7 +32,7 @@ data class PushDomain(
 )
 
 @Composable
-fun PushToastSettingScreen() {
+fun PushToastSettingScreen(onBackClick: () -> Unit = {}) {
     // 2. 상태 관리: 리스트 전체를 상태로 관리하거나 ViewModel에서 가져옵니다.
     // 여기서는 간단히 SnapshotStateList를 사용해 변경을 감지하게 합니다.
     val domainList = remember {
@@ -45,7 +45,10 @@ fun PushToastSettingScreen() {
 
     Scaffold(
         topBar = {
-            TopBar("푸시 알림 설정") { /* 뒤로가기 로직 */ }
+            TopBar(
+                title = "푸시 알림 설정",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(
