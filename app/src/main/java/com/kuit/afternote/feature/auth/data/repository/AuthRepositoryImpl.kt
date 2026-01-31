@@ -71,7 +71,6 @@ class AuthRepositoryImpl
 
         override suspend fun kakaoLogin(accessToken: String): Result<LoginResult> =
             runCatching {
-                Log.d(TAG, "kakaoLogin: accessToken=${accessToken.take(n = 20)}...")
                 val response = api.kakaoLogin(KakaoLoginRequest(accessToken))
                 Log.d(TAG, "kakaoLogin: response status=${response.status}, message=${response.message}")
                 AuthMapper.toLoginResult(response.requireData())

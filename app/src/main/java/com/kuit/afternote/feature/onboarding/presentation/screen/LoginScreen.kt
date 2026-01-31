@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
+import com.kuit.afternote.BuildConfig
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -101,6 +102,9 @@ fun LoginScreen(
                     return@loginWithKakao
                 }
 
+                if (BuildConfig.DEBUG) {
+                    Log.e("KakaoLogin", "Kakao accessToken=$accessToken")
+                }
                 Log.e("KakaoLogin", "Kakao SDK login success. Calling /auth/kakao.")
                 viewModel.kakaoLogin(accessToken)
             }
