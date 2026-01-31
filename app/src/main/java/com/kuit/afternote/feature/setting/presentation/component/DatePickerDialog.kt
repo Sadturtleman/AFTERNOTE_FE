@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,9 +68,9 @@ fun DatePickerDialogContent(
     val containerShape = RoundedCornerShape(16.dp)
     val buttonShape = RoundedCornerShape(8.dp)
 
-    var selectedYear by remember { mutableIntStateOf(initialYear) }
-    var selectedMonth by remember { mutableIntStateOf(initialMonth) }
-    var selectedDay by remember { mutableIntStateOf(initialDay) }
+    var selectedDate by remember {
+        mutableStateOf(LocalDate.of(initialYear, initialMonth, initialDay))
+    }
 
     Column(
         modifier = modifier
@@ -107,14 +107,10 @@ fun DatePickerDialogContent(
 
         // DateWheelPicker
         DateWheelPicker(
-            initialYear = initialYear,
-            initialMonth = initialMonth,
-            initialDay = initialDay,
-            onDateChanged = { year, month, day ->
-                selectedYear = year
-                selectedMonth = month
-                selectedDay = day
-            }
+//            modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
+            modifier = Modifier.fillMaxWidth(),
+            currentDate = selectedDate,
+            onDateChanged = { date -> selectedDate = date }
         )
 
         // Confirm Button
@@ -140,7 +136,7 @@ fun DatePickerDialogContent(
                 ).clip(buttonShape)
                 .background(B3)
                 .clickable {
-                    onConfirm(LocalDate.of(selectedYear, selectedMonth, selectedDay))
+                    onConfirm(selectedDate)
                 }.padding(
                     horizontal = 24.dp,
                     vertical = 16.dp

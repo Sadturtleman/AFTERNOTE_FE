@@ -21,7 +21,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +44,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import java.time.LocalDate
 
 /**
  * 타임레터 작성 화면
@@ -345,6 +350,8 @@ private fun DatePickerOverlay(
     onDatePickerDismiss: () -> Unit,
     onDateSelected: (Int, Int, Int) -> Unit
 ) {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
     // 배경 딤 처리 + 클릭 시 닫기
     Box(
         modifier = Modifier
@@ -363,8 +370,7 @@ private fun DatePickerOverlay(
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(12.dp)
-            )
-            .clip(RoundedCornerShape(12.dp))
+            ).clip(RoundedCornerShape(12.dp))
             .background(Color.White)
             .clickable(
                 indication = null,
@@ -374,8 +380,11 @@ private fun DatePickerOverlay(
             .zIndex(2f)
     ) {
         DateWheelPicker(
-            onDateChanged = { year, month, day ->
-                onDateSelected(year, month, day)
+            modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
+            currentDate = selectedDate,
+            onDateChanged = { date ->
+                selectedDate = date
+                onDateSelected(date.year, date.monthValue, date.dayOfMonth)
             }
         )
     }
