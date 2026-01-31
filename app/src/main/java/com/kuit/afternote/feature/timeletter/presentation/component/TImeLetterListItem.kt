@@ -99,8 +99,8 @@ fun TimeLetterListItem(
             text = title,
             color = Color(0xFF212121),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily(Font(R.font.sansneobold))
+            fontFamily = FontFamily(Font(R.font.sansneomedium)),
+            fontWeight = FontWeight(500)
         )
 
         Spacer(modifier = Modifier.height(4.dp))

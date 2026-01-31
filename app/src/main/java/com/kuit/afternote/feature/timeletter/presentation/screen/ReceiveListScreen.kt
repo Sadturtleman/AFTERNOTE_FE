@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.BottomNavItem
+import com.kuit.afternote.core.BottomNavigationBar
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
 import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
@@ -41,9 +41,9 @@ import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosu
 @Composable
 fun ReceiveListScreen(
     receivers: List<TimeLetterReceiver>,
-    modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onNavItemSelected: (BottomNavItem) -> Unit = {}
+    onNavItemSelected: (BottomNavItem) -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     // 초성별로 그룹화
     val groupedReceivers = groupByChosung(receivers) { it.receiver_name }
@@ -85,6 +85,7 @@ fun ReceiveListScreen(
             )
         }
     ) { innerPadding ->
+        // 초성별 그룹화된 수신자 리스트 (스크롤 가능)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

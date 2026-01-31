@@ -30,13 +30,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftDeleteBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftLetterHeader
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftLetterListItem
+import com.kuit.afternote.feature.timeletter.presentation.viewmodel.DraftLetterViewModel
 
 /**
- * 임시저장 편지 데이터 모델
+ * 임시저장 편지 데이터 모델 (UI)
  */
 data class DraftLetterItem(
     val id: String,
@@ -50,59 +53,36 @@ data class DraftLetterItem(
  *
  * @param modifier Modifier
  * @param onCloseClick 닫기 클릭 콜백
+ * @param viewModel DraftLetterViewModel (hiltViewModel() 기본)
  */
 @Composable
 fun DraftLetterScreen(
     modifier: Modifier = Modifier,
-    onCloseClick: () -> Unit = {}
+    onCloseClick: () -> Unit = {},
+    viewModel: DraftLetterViewModel = hiltViewModel()
 ) {
-    // 편집 모드 상태
-    var isEditMode by remember { mutableStateOf(false) }
-    // 선택된 아이템 ID 목록
-    var selectedItems by remember { mutableStateOf(setOf<String>()) }
-
-    // 임시 목업 데이터
-    val draftLetters = remember {
-        listOf(
-            DraftLetterItem("1", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("2", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("3", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("4", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("5", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("6", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("7", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("8", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("9", "김지은", "2029. 11. 20", "지은아 결혼을 축하해"),
-            DraftLetterItem("10", "김지은", "2029. 11. 20", "지은아 결혼을 축하해")
-        )
-    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
                 DraftLetterHeader(
-                    isEditMode = isEditMode,
+                    isEditMode = uiState.isEditMode,
                     onCloseClick = onCloseClick,
-                    onEditClick = {
-                        isEditMode = true
-                        selectedItems = emptySet()
-                    },
-                    onCompleteClick = {
-                        isEditMode = false
-                        selectedItems = emptySet()
-                    }
+                    onEditClick = viewModel::enterEditMode,
+                    onCompleteClick = viewModel::exitEditMode
                 )
             }
         },
         bottomBar = {
-            if (isEditMode) {
+            if (uiState.isEditMode) {
                 DraftDeleteBottomBar(
                     onDeleteAll = {
-                        // TODO: 전체 삭제 로직
+                        viewModel.deleteAll { viewModel.loadTemporaryLetters() }
                     },
                     onDeleteSelected = {
-                        // TODO: 선택 삭제 로직
+                        viewModel.deleteSelected { viewModel.loadTemporaryLetters() }
                     }
                 )
             }
@@ -115,32 +95,26 @@ fun DraftLetterScreen(
         ) {
             Spacer(modifier = Modifier.height(26.dp))
 
-            // 카운트 텍스트
             DraftCountText(
-                isEditMode = isEditMode,
-                totalCount = draftLetters.size,
-                selectedCount = selectedItems.size
+                isEditMode = uiState.isEditMode,
+                totalCount = uiState.draftLetters.size,
+                selectedCount = uiState.selectedIds.size
             )
 
             Spacer(modifier = Modifier.height(23.dp))
 
-            // 리스트
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(draftLetters) { letter ->
+                items(uiState.draftLetters) { letter ->
                     DraftLetterListItem(
                         item = letter,
-                        isEditMode = isEditMode,
-                        isSelected = selectedItems.contains(letter.id),
+                        isEditMode = uiState.isEditMode,
+                        isSelected = uiState.selectedIds.contains(letter.id),
                         onItemClick = {
-                            if (isEditMode) {
-                                selectedItems = if (selectedItems.contains(letter.id)) {
-                                    selectedItems - letter.id
-                                } else {
-                                    selectedItems + letter.id
-                                }
+                            if (uiState.isEditMode) {
+                                viewModel.toggleSelection(letter.id)
                             }
                         }
                     )
@@ -193,7 +167,6 @@ private fun DraftLetterScreenPreview() {
 )
 @Composable
 private fun DraftLetterScreenEditPreview() {
-    // 편집 모드 프리뷰용
     var selectedItems by remember { mutableStateOf(setOf("1", "3")) }
 
     val draftLetters = listOf(
