@@ -35,11 +35,13 @@ import com.kuit.afternote.ui.theme.Sansneo
 // 1. 데이터 모델 정의
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectedAccountsScreen() {
+fun ConnectedAccountsScreen(onBackClick: () -> Unit = {}) {
     Scaffold(
         topBar = {
-            TopBar("연결된 게정") {
-            }
+            TopBar(
+                title = "연결된 계정",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(

@@ -31,13 +31,16 @@ import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDateTime
 
 @Composable
-fun PassKeyAddScreen() {
+fun PassKeyAddScreen(onBackClick: () -> Unit = {}) {
     val passKeyList = listOf<PassKey>(
         PassKey(name = "icloud keychain", createdTime = LocalDateTime.now())
     )
     Scaffold(
         topBar = {
-            TopBar("패스키 관리") {}
+            TopBar(
+                title = "패스키 관리",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(

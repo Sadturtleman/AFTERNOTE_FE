@@ -67,9 +67,7 @@ fun SettingMainScreen(
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "설정"
-            ) { }
+            TopBar(title = "설정")
         },
         bottomBar = { BottomNavigationBar(selectedItem = BottomNavItem.HOME) { } }
     ) { paddingValues ->

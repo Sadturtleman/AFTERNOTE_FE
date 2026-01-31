@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,7 +23,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LoginUiState
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LoginViewModel
+import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6
@@ -48,6 +51,31 @@ fun LoginScreen(
         }
     }
 
+    LoginScreenContent(
+        modifier = modifier,
+        email = email,
+        pw = pw,
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onLoginClick = { emailText, passwordText ->
+            viewModel.login(emailText, passwordText)
+        },
+        onSignUpClick = onSignUpClick,
+        onFindIdClick = onFindIdClick
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    modifier: Modifier = Modifier,
+    email: TextFieldState,
+    pw: TextFieldState,
+    uiState: LoginUiState,
+    onBackClick: () -> Unit,
+    onLoginClick: (email: String, password: String) -> Unit,
+    onSignUpClick: () -> Unit,
+    onFindIdClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopBar(
@@ -92,7 +120,7 @@ fun LoginScreen(
             ClickButton(
                 title = "로그인",
                 onButtonClick = {
-                    viewModel.login(
+                    onLoginClick(
                         email.text.toString().trim(),
                         pw.text.toString()
                     )
@@ -128,10 +156,17 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
-    LoginScreen(
-        onBackClick = {},
-        onFindIdClick = {},
-        onLoginSuccess = {},
-        onSignUpClick = {}
-    )
+    AfternoteTheme {
+        val email = rememberTextFieldState()
+        val pw = rememberTextFieldState()
+        LoginScreenContent(
+            email = email,
+            pw = pw,
+            uiState = LoginUiState(errorMessage = "로그인에 실패했습니다."),
+            onBackClick = {},
+            onLoginClick = { _, _ -> },
+            onSignUpClick = {},
+            onFindIdClick = {}
+        )
+    }
 }

@@ -30,7 +30,10 @@ import com.kuit.afternote.feature.setting.presentation.viewmodel.KeyPadViewModel
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
+fun PasswordConfirmScreen(
+    onBackClick: () -> Unit = {},
+    keyPadViewModel: KeyPadViewModel = hiltViewModel()
+) {
     val password by keyPadViewModel.inputCode.collectAsStateWithLifecycle()
     val step by keyPadViewModel.currentStep.collectAsStateWithLifecycle()
     val onKeyAction: (KeyAction) -> Unit = remember {
@@ -39,7 +42,10 @@ fun PasswordConfirmScreen(keyPadViewModel: KeyPadViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopBar(title = "앱 잠금 비밀번호 설정") {}
+            TopBar(
+                title = "앱 잠금 비밀번호 설정",
+                onBackClick = onBackClick
+            )
         }
     ) { paddingValues ->
         Column(
