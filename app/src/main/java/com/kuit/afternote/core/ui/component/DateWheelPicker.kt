@@ -80,11 +80,10 @@ fun DateWheelPicker(
         onDateChanged(selectedYear, selectedMonth, selectedDay)
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier
+        .width(228.dp)
+        .height(152.dp)) {
         Row(
-            modifier = Modifier
-                .width(228.dp)
-                .height(152.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -135,7 +134,6 @@ fun DateWheelPicker(
         // 선택 영역 테두리
         Box(
             modifier = Modifier
-                .align(Alignment.Center)
                 .width(220.dp)
                 .height(40.dp)
                 .border(1.dp, Color(0xFF6B8FF8), RoundedCornerShape(8.dp))
@@ -150,10 +148,10 @@ private fun PickerText(
 ) {
     Text(
         text = text,
-        fontSize = if (isSelected) 18.sp else 14.sp,
-        fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+        fontSize = 16.sp,
+        fontWeight = FontWeight(400),
         color = if (isSelected) Color(0xFF212121) else Color(0xFFBDBDBD),
-        fontFamily = FontFamily(Font(R.font.sansneomedium))
+        fontFamily = FontFamily(Font(R.font.sansneoregular))
     )
 }
 
@@ -172,7 +170,6 @@ private fun Divider() {
 private fun DateWheelPickerPreview() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {

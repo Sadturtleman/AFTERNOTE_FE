@@ -3,7 +3,8 @@ package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterStatus
-import com.kuit.afternote.feature.timeletter.domain.repository.TimeLetterRepository
+import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWriterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,13 +18,14 @@ import javax.inject.Inject
  * 타임레터 작성 화면의 ViewModel
  *
  * 편지 작성에 필요한 상태를 관리하고, 임시저장(DRAFT)/정식등록(SCHEDULED)을
- * TimeLetterRepository.createTimeLetter(status)로 처리합니다.
+ * CreateTimeLetterUseCase로 처리합니다.
  */
 @HiltViewModel
 class TimeLetterWriterViewModel
     @Inject
     constructor(
-        private val timeLetterRepository: TimeLetterRepository
+        private val createTimeLetterUseCase: CreateTimeLetterUseCase,
+        private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(TimeLetterWriterUiState())
         val uiState: StateFlow<TimeLetterWriterUiState> = _uiState.asStateFlow()
@@ -37,7 +39,7 @@ class TimeLetterWriterViewModel
          */
         private fun loadDraftCount() {
             viewModelScope.launch {
-                timeLetterRepository.getTemporaryTimeLetters()
+                getTemporaryTimeLettersUseCase()
                     .onSuccess { list ->
                         _uiState.update { it.copy(draftCount = list.totalCount) }
                     }
@@ -166,7 +168,7 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
-                val result = timeLetterRepository.createTimeLetter(
+                val result = createTimeLetterUseCase(
                     title = state.title.ifBlank { null },
                     content = state.content.ifBlank { null },
                     sendAt = sendAt,
@@ -193,7 +195,7 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
-                val result = timeLetterRepository.createTimeLetter(
+                val result = createTimeLetterUseCase(
                     title = state.title.ifBlank { null },
                     content = state.content.ifBlank { null },
                     sendAt = sendAt,

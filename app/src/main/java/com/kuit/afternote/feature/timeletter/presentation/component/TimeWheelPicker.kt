@@ -83,19 +83,28 @@ fun TimeWheelPicker(
             .width(204.dp)
             .height(152.dp)
     ) {
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .height(40.dp)
+                .border(1.dp, Color(0xFF6B8FF8), RoundedCornerShape(8.dp))
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 21.dp, bottom = 21.dp, start = 10.dp, end = 10.dp),
+                .padding(horizontal = 10.dp, vertical = 21.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 오전/오후
             FVerticalWheelPicker(
                 count = amPmList.size,
                 state = amPmState,
                 modifier = Modifier.width(60.dp),
-                focus = {} // 구분선 제거
+                focus = {}
             ) { index ->
                 TimePickerText(
                     text = amPmList[index],
@@ -105,12 +114,11 @@ fun TimeWheelPicker(
 
             TimeDivider()
 
-            // 시
             FVerticalWheelPicker(
                 count = hours.size,
                 state = hourState,
                 modifier = Modifier.width(50.dp),
-                focus = {} // 구분선 제거
+                focus = {}
             ) { index ->
                 TimePickerText(
                     text = "${hours[index]}",
@@ -120,12 +128,11 @@ fun TimeWheelPicker(
 
             TimeDivider()
 
-            // 분
             FVerticalWheelPicker(
                 count = minutes.size,
                 state = minuteState,
                 modifier = Modifier.width(50.dp),
-                focus = {} // 구분선 제거
+                focus = {}
             ) { index ->
                 TimePickerText(
                     text = minutes[index].toString().padStart(2, '0'),
@@ -133,16 +140,8 @@ fun TimeWheelPicker(
                 )
             }
         }
-
-        // 선택 영역 테두리
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .width(184.dp)
-                .height(40.dp)
-                .border(1.dp, Color(0xFF6B8FF8), RoundedCornerShape(8.dp))
-        )
     }
+
 }
 
 private fun convertTo24Hour(
@@ -163,10 +162,10 @@ private fun TimePickerText(
 ) {
     Text(
         text = text,
-        fontSize = if (isSelected) 18.sp else 14.sp,
-        fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+        fontSize = 16.sp,
+        fontWeight = FontWeight(400),
         color = if (isSelected) Color(0xFF212121) else Color(0xFFBDBDBD),
-        fontFamily = FontFamily(Font(R.font.sansneomedium))
+        fontFamily = FontFamily(Font(R.font.sansneoregular))
     )
 }
 

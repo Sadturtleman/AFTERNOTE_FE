@@ -3,7 +3,9 @@ package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetter
-import com.kuit.afternote.feature.timeletter.domain.repository.TimeLetterRepository
+import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteAllTemporaryUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteTimeLettersUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,13 +18,16 @@ import javax.inject.Inject
 /**
  * 임시저장 편지 목록 화면 ViewModel
  *
- * GET /time-letters/temporary, POST /time-letters/delete, DELETE /time-letters/temporary 연동.
+ * GetTemporaryTimeLettersUseCase, DeleteTimeLettersUseCase, DeleteAllTemporaryUseCase를 통해
+ * 임시저장 목록 조회/삭제를 처리합니다.
  */
 @HiltViewModel
 class DraftLetterViewModel
     @Inject
     constructor(
-        private val timeLetterRepository: TimeLetterRepository
+        private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
+        private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
+        private val deleteAllTemporaryUseCase: DeleteAllTemporaryUseCase
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DraftLetterUiState())
@@ -38,7 +43,7 @@ class DraftLetterViewModel
     fun loadTemporaryLetters() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            timeLetterRepository.getTemporaryTimeLetters()
+            getTemporaryTimeLettersUseCase()
                 .onSuccess { list ->
                     val items = list.timeLetters.map { toDraftLetterItem(it) }
                     _uiState.update {
@@ -98,7 +103,7 @@ class DraftLetterViewModel
         viewModelScope.launch {
             val ids = _uiState.value.selectedIds.mapNotNull { it.toLongOrNull() }
             if (ids.isEmpty()) return@launch
-            timeLetterRepository.deleteTimeLetters(ids)
+            deleteTimeLettersUseCase(ids)
                 .onSuccess {
                     _uiState.update {
                         it.copy(
@@ -117,7 +122,7 @@ class DraftLetterViewModel
      */
     fun deleteAll(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            timeLetterRepository.deleteAllTemporary()
+            deleteAllTemporaryUseCase()
                 .onSuccess {
                     _uiState.update {
                         it.copy(

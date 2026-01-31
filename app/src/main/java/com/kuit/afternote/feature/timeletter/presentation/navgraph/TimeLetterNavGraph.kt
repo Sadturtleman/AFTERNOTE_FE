@@ -12,6 +12,7 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScre
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
+import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
 /**
@@ -21,12 +22,13 @@ import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWr
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
  */
 fun NavGraphBuilder.timeLetterNavGraph(
-
     navController: NavController,
     onNavItemSelected: (BottomNavItem) -> Unit = {}
 ) {
     composable<TimeLetterRoute.TimeLetterMainRoute> {
+        val viewModel: TimeLetterViewModel = hiltViewModel()
         TimeLetterScreen(
+            viewModel = viewModel,
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
