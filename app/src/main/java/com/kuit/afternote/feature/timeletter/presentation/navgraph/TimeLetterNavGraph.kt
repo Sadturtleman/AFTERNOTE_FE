@@ -12,7 +12,6 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScre
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
-import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
 /**
@@ -22,13 +21,12 @@ import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWr
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
  */
 fun NavGraphBuilder.timeLetterNavGraph(
+
     navController: NavController,
     onNavItemSelected: (BottomNavItem) -> Unit = {}
 ) {
     composable<TimeLetterRoute.TimeLetterMainRoute> {
-        val viewModel: TimeLetterViewModel = hiltViewModel()
         TimeLetterScreen(
-            viewModel = viewModel,
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
@@ -44,7 +42,9 @@ fun NavGraphBuilder.timeLetterNavGraph(
             title = uiState.title,
             content = uiState.content,
             sendDate = uiState.sendDate,
+            sendTime = uiState.sendTime,
             showDatePicker = uiState.showDatePicker,
+            showTimePicker = uiState.showTimePicker,
             draftCount = uiState.draftCount,
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
@@ -71,6 +71,10 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onDateSelected = { year, month, day ->
                 val formattedDate = "$year. ${month.toString().padStart(2, '0')}. ${day.toString().padStart(2, '0')}"
                 viewModel.updateSendDate(formattedDate)
+            },
+            onTimePickerDismiss = viewModel::hideTimePicker,
+            onTimeSelected = { hour, minute ->
+                viewModel.updateSendTime("%02d:%02d".format(hour, minute))
             }
         )
     }
