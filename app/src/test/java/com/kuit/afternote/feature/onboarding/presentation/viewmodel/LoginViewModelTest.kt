@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
+import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import com.kuit.afternote.util.MainCoroutineRule
@@ -32,6 +33,7 @@ class LoginViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var loginUseCase: LoginUseCase
+    private lateinit var kakaoLoginUseCase: KakaoLoginUseCase
     private lateinit var tokenManager: TokenManager
     private lateinit var testAccountManager: TestAccountManager
     private lateinit var viewModel: LoginViewModel
@@ -39,11 +41,12 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         loginUseCase = mockk()
+        kakaoLoginUseCase = mockk()
         tokenManager = mockk()
         testAccountManager = mockk()
         coJustRun { tokenManager.saveTokens(any(), any(), any()) }
         coJustRun { testAccountManager.updateStoredPassword(any()) }
-        viewModel = LoginViewModel(loginUseCase, tokenManager, testAccountManager)
+        viewModel = LoginViewModel(loginUseCase, kakaoLoginUseCase, tokenManager, testAccountManager)
     }
 
     @Test
@@ -199,5 +202,109 @@ class LoginViewModelTest {
 
             assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
             assertFalse(viewModel.uiState.value.loginSuccess)
+        }
+
+    // ========== Kakao Login ==========
+
+    @Test
+    fun kakaoLogin_whenBlankToken_setsErrorMessage() {
+        viewModel.kakaoLogin("")
+
+        assertEquals("카카오 로그인에 실패했습니다.", viewModel.uiState.value.errorMessage)
+        assertFalse(viewModel.uiState.value.loginSuccess)
+    }
+
+    @Test
+    fun kakaoLogin_whenSuccess_setsLoginSuccess() =
+        runTest {
+            coEvery { kakaoLoginUseCase(any()) } returns Result.success(
+                LoginResult(accessToken = "at", refreshToken = "rt")
+            )
+
+            viewModel.kakaoLogin("kakaoAccessToken")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.loginSuccess)
+            assertNull(viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun kakaoLogin_when400BadRequest_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":400,"code":400,"message":"Invalid access token"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
+            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
+
+            viewModel.kakaoLogin("badToken")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun kakaoLogin_when401Unauthorized_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
+            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
+
+            viewModel.kakaoLogin("expiredToken")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.errorMessage?.contains("401") == true)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun kakaoLogin_when404NotFound_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
+            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
+
+            viewModel.kakaoLogin("token")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.errorMessage?.contains("404") == true)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun kakaoLogin_when500ServerError_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
+            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
+
+            viewModel.kakaoLogin("token")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun kakaoLogin_whenNetworkError_setsErrorMessage() =
+        runTest {
+            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(
+                java.io.IOException("Network unavailable")
+            )
+
+            viewModel.kakaoLogin("token")
+            advanceUntilIdle()
+
+            assertEquals("Network unavailable", viewModel.uiState.value.errorMessage)
+            assertFalse(viewModel.uiState.value.loginSuccess)
+            assertFalse(viewModel.uiState.value.isLoading)
         }
 }

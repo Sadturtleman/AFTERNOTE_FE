@@ -1,8 +1,10 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,7 @@ class LoginViewModel
     @Inject
     constructor(
         private val loginUseCase: LoginUseCase,
+        private val kakaoLoginUseCase: KakaoLoginUseCase,
         private val tokenManager: TokenManager,
         private val testAccountManager: TestAccountManager
     ) : ViewModel() {
@@ -74,6 +77,44 @@ class LoginViewModel
         }
 
         /**
+         * 카카오 로그인 시도.
+         *
+         * 성공 시 토큰 저장 후 loginSuccess=true, 실패 시 errorMessage 설정.
+         */
+        fun kakaoLogin(kakaoAccessToken: String) {
+            if (kakaoAccessToken.isBlank()) {
+                _uiState.update { it.copy(errorMessage = "카카오 로그인에 실패했습니다.") }
+                return
+            }
+
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                kakaoLoginUseCase(kakaoAccessToken)
+                    .onSuccess { result ->
+                        val accessToken = result.accessToken
+                        val refreshToken = result.refreshToken
+                        if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
+                            tokenManager.saveTokens(
+                                accessToken = accessToken,
+                                refreshToken = refreshToken
+                            )
+                        }
+                        _uiState.update {
+                            it.copy(isLoading = false, errorMessage = null, loginSuccess = true)
+                        }
+                    }.onFailure { e ->
+                    Log.e("KakaoLogin", "Server /auth/kakao failed. type=${e::class.java.name}", e)
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = e.message ?: "카카오 로그인에 실패했습니다."
+                            )
+                        }
+                    }
+            }
+        }
+
+        /**
          * loginSuccess 소비 후 호출 (네비게이션 후).
          */
         fun clearLoginSuccess() {
@@ -85,5 +126,12 @@ class LoginViewModel
          */
         fun clearError() {
             _uiState.update { it.copy(errorMessage = null) }
+        }
+
+        /**
+         * 화면에서 발생한 에러 메시지를 표시합니다. (예: 소셜 로그인 실패 등)
+         */
+        fun setErrorMessage(message: String) {
+            _uiState.update { it.copy(errorMessage = message) }
         }
     }

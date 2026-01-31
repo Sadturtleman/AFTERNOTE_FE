@@ -40,6 +40,11 @@ data class LoginRequest(
 )
 
 @Serializable
+data class KakaoLoginRequest(
+    @SerialName("accessToken") val accessToken: String
+)
+
+@Serializable
 data class LoginData(
     @SerialName("accessToken") val accessToken: String? = null,
     @SerialName("refreshToken") val refreshToken: String? = null

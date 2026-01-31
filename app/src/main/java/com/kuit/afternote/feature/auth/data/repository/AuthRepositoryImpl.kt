@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.auth.data.repository
 import android.util.Log
 import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
+import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
 import com.kuit.afternote.feature.auth.data.dto.PasswordChangeRequest
@@ -31,7 +32,6 @@ class AuthRepositoryImpl
                 Log.d(TAG, "sendEmailCode: email=$email")
                 api.sendEmailCode(SendEmailCodeRequest(email))
                 Log.d(TAG, "sendEmailCode: SUCCESS")
-                Unit
             }
 
         override suspend fun verifyEmail(
@@ -69,6 +69,14 @@ class AuthRepositoryImpl
                 AuthMapper.toLoginResult(response.requireData())
             }
 
+        override suspend fun kakaoLogin(accessToken: String): Result<LoginResult> =
+            runCatching {
+                Log.d(TAG, "kakaoLogin: accessToken=${accessToken.take(n = 20)}...")
+                val response = api.kakaoLogin(KakaoLoginRequest(accessToken))
+                Log.d(TAG, "kakaoLogin: response status=${response.status}, message=${response.message}")
+                AuthMapper.toLoginResult(response.requireData())
+            }
+
         override suspend fun reissue(refreshToken: String): Result<ReissueResult> =
             runCatching {
                 Log.d(TAG, "reissue: refreshToken=${refreshToken.take(n = 20)}...")
@@ -82,7 +90,6 @@ class AuthRepositoryImpl
                 Log.d(TAG, "logout: refreshToken=${refreshToken.take(n = 20)}...")
                 api.logout(LogoutRequest(refreshToken))
                 Log.d(TAG, "logout: SUCCESS")
-                Unit
             }
 
         override suspend fun passwordChange(
@@ -95,7 +102,6 @@ class AuthRepositoryImpl
                 Log.d(TAG, "passwordChange: newPassword length=${newPassword.length}")
                 val response = api.passwordChange(PasswordChangeRequest(currentPassword, newPassword))
                 Log.d(TAG, "passwordChange: response status=${response.status}, message=${response.message}")
-                Unit
             }
 
         companion object {

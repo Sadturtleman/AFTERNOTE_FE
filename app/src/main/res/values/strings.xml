@@ -20,4 +20,10 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+
+    <!-- Onboarding / Login -->
+    <string name="login_kakao_button">카카오로 로그인</string>
+    <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
+    <string name="login_kakao_failed">카카오 로그인에 실패했습니다.</string>
+    <string name="login_kakao_sdk_not_initialized">카카오 SDK가 초기화되지 않았습니다. KAKAO_NATIVE_APP_KEY를 확인해주세요.</string>
 </resources>
