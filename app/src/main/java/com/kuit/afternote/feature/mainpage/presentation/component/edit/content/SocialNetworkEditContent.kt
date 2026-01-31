@@ -15,9 +15,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.RequiredLabel
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.AccountProcessingRadioButton
@@ -60,7 +61,11 @@ private fun SocialNetworkEditContentContent(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // 계정 정보 섹션
-        RequiredLabel(text = "계정 정보", offsetY = 4f)
+        Label(
+            text = "계정 정보",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 4.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -83,7 +88,11 @@ private fun SocialNetworkEditContentContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // 계정 처리 방법 섹션
-        RequiredLabel(text = "계정 처리 방법", offsetY = 2f)
+        Label(
+            text = "계정 처리 방법",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 2.dp)
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -112,7 +121,11 @@ private fun SocialNetworkEditContentContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // 처리 방법 리스트 섹션
-        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
+        Label(
+            text = "처리 방법 리스트",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 2.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.component
+package com.kuit.afternote.core.ui.component.icon
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
