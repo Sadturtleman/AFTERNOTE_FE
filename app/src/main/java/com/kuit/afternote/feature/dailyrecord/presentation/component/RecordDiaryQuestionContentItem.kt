@@ -51,7 +51,7 @@ fun RecordDiaryQuestionContentItem(
         Divider(color = Color.LightGray, thickness = 0.8.dp)
         BasicTextField(
             value = title,
-            onValueChange = onTitleChange,
+            onValueChange = { title = it },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,7 +76,7 @@ fun RecordDiaryQuestionContentItem(
 
         BasicTextField(
             value = content,
-            onValueChange = onContentChange,
+            onValueChange = { content = it },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
