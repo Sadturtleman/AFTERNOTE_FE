@@ -43,17 +43,11 @@ import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.ui.dummy.DefaultAlbumCovers
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-
-private val DEFAULT_ALBUM_COVERS = listOf(
-    AlbumCover("1"),
-    AlbumCover("2"),
-    AlbumCover("3"),
-    AlbumCover("4")
-)
 
 @Suppress("AssignedValueIsNeverRead")
 @Composable
@@ -62,7 +56,7 @@ fun ReceiverAfterNoteMainScreen(
     onNavigateToFullList: () -> Unit = {},
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
-    albumCovers: List<AlbumCover> = DEFAULT_ALBUM_COVERS,
+    albumCovers: List<AlbumCover> = DefaultAlbumCovers.list,
     songCount: Int = 16
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }

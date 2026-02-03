@@ -30,6 +30,7 @@ import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -176,10 +177,7 @@ private fun MainPageEditReceiverItem(
 private fun MainPageEditReceiverListPreview() {
     AfternoteTheme {
         MainPageEditReceiverList(
-            mainPageEditReceivers = listOf(
-                MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-                MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
-            ),
+            mainPageEditReceivers = AfternoteEditDummyData.defaultMainPageEditReceivers(),
             events = MainPageEditReceiverCallbacks()
         )
     }

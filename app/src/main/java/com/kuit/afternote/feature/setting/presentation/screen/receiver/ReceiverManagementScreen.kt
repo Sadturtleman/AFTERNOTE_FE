@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray1
@@ -214,13 +215,7 @@ private fun ReceiverManagementScreenWithDataPreview() {
     AfternoteTheme {
         ReceiverManagementScreen(
             onBackClick = {},
-            receivers = listOf(
-                MainPageEditReceiver(id = "1", name = "김지은", label = "조카"),
-                MainPageEditReceiver(id = "2", name = "김혜성", label = "조카"),
-                MainPageEditReceiver(id = "3", name = "박서연", label = "딸"),
-                MainPageEditReceiver(id = "4", name = "황은주", label = "언니"),
-                MainPageEditReceiver(id = "5", name = "황은경", label = "동생")
-            )
+            receivers = ReceiverDummyData.receiverList
         )
     }
 }

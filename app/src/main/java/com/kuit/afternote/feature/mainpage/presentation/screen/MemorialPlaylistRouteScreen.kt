@@ -32,7 +32,7 @@ import com.kuit.afternote.core.ui.component.list.SongPlaylistScreen
 import com.kuit.afternote.core.ui.component.list.SongPlaylistScreenManagementContent
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
@@ -260,11 +260,7 @@ private fun MemorialPlaylistActionBar(
 private fun MemorialPlaylistRouteScreenPreview() {
     MainPageLightTheme {
         val holder = MemorialPlaylistStateHolder().apply {
-            initializeSongs(
-                (1..3).map {
-                    Song(id = "$it", title = "노래 제목", artist = "가수 이름")
-                }
-            )
+            initializeSongs(AfternoteEditDummyData.defaultSongs().take(3))
         }
         MemorialPlaylistRouteScreen(
             playlistStateHolder = holder,
@@ -279,11 +275,7 @@ private fun MemorialPlaylistRouteScreenPreview() {
 private fun MemorialPlaylistRouteScreenSelectionModePreview() {
     MainPageLightTheme {
         val holder = MemorialPlaylistStateHolder().apply {
-            initializeSongs(
-                (1..4).map {
-                    Song(id = "$it", title = "노래 제목 $it", artist = "가수 이름")
-                }
-            )
+            initializeSongs(AfternoteEditDummyData.defaultSongs().take(4))
         }
         MemorialPlaylistRouteScreen(
             playlistStateHolder = holder,

@@ -21,11 +21,11 @@ import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.MainPageEditReceiverList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
@@ -188,10 +188,7 @@ private fun GalleryAndFileEditContentWithMainPageEditReceiversPreview() {
                         onMethodSelected = {}
                     ),
                     mainPageEditReceiverSection = MainPageEditReceiverSection(
-                        mainPageEditReceivers = listOf(
-                            MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-                            MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
-                        )
+                        mainPageEditReceivers = AfternoteEditDummyData.defaultMainPageEditReceivers()
                     )
                 )
             )

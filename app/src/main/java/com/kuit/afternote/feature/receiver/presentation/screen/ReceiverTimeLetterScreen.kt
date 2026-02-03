@@ -61,7 +61,7 @@ fun TimeLetterScreen(onBackClick: () -> Unit) {
         topBar = {
             TopBar(
                 title = "타임 레터",
-                onBackClick = {onBackClick() }
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {
@@ -301,6 +301,6 @@ fun TimeLetterActionCard(
 @Composable
 fun PreviewTimeLetter() {
     MaterialTheme {
-        TimeLetterScreen(){}
+        TimeLetterScreen {}
     }
 }

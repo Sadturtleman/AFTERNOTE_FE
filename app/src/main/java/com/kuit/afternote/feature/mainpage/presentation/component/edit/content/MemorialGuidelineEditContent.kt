@@ -17,8 +17,8 @@ import com.kuit.afternote.core.ui.component.LastWishOption
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
-import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
+import com.kuit.afternote.core.ui.dummy.DefaultAlbumCovers
 import com.kuit.afternote.feature.mainpage.presentation.common.util.PlaceholderDrawables
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.upload.FuneralVideoUpload
@@ -115,12 +115,7 @@ private fun MemorialGuidelineEditContentPreview() {
             params = MemorialGuidelineEditContentParams(
                 memorialPhotoUrl = null,
                 playlistSongCount = 16,
-                playlistAlbumCovers = listOf(
-                    AlbumCover("1"),
-                    AlbumCover("2"),
-                    AlbumCover("3"),
-                    AlbumCover("4")
-                ),
+                playlistAlbumCovers = DefaultAlbumCovers.list,
                 selectedLastWish = "calm",
                 lastWishOptions = lastWishOptions,
                 funeralVideoUrl = null,
