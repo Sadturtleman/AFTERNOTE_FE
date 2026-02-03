@@ -207,10 +207,9 @@
 ## 6. API 구현 기준 및 배포 관련
 
 ### API 구현 기준
-- **⚠️ Critical: Swagger-First Implementation**: API 구현은 반드시 스웨거(Swagger)에 문서화된 API만 진행해야 합니다. (상세 규칙: `.cursor/rules/workflow/api-implementation.mdc` 참조)
-- **스웨거(OpenAPI)가 가장 정확한 기준**: 스웨거가 준비되면 스웨거를 기준으로 구현합니다.
-- **명세서는 보조 자료**: `docs/API_SPECIFICATION.md`는 스웨거를 참고하여 작성한 문서로, 스웨거와 불일치 시 스웨거를 우선합니다.
-- **스웨거 테스트**: 스웨거 UI에서 직접 API 테스트가 가능하므로 구현 전 테스트 권장.
+- **참고 자료**: `docs/API_SPECIFICATION.md` 및 Swagger(OpenAPI)를 참고하여 구현할 수 있습니다.
+- **불일치 시**: 명세서·Swagger와 요청이 다를 경우 팀 합의 또는 백엔드 담당자 확인을 권장합니다.
+- **테스트**: Swagger UI에서 API 테스트가 가능하므로 구현 전 테스트를 권장합니다.
 
 ### 프론트엔드 배포 URL 제공
 - **배포 시 백엔드에 프론트엔드 배포 URL 제공 필요**

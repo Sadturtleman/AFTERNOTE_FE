@@ -21,7 +21,7 @@
 11. **ViewModel Injection**: `@HiltViewModel` uses `hiltViewModel()`, regular ViewModel uses `viewModel()`
 12. **StateFlow Collection**: Use `collectAsStateWithLifecycle()` (never use `collectAsState()`)
 13. **`.cursorrules` Management**: If this file exceeds 300 lines, consider splitting or keeping only core rules
-15. **HTTP Status Code Tests Required**: ViewModels using Swagger-documented APIs must include HTTP error tests
+15. **HTTP Status Code Tests Required**: ViewModels that call APIs must include HTTP error tests
     - 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error
     - Network Error (IOException)
     - See `.cursor/rules/quality/code-quality.mdc` for details
@@ -71,7 +71,7 @@ This project uses `.cursor/rules/*.mdc` file structure to separate rules:
 
 - **`.cursor/rules/workflow/git-policy.mdc`**: Git operations and branch management policy (always applied: `alwaysApply: true`)
 - **`.cursor/rules/workflow/branch-workflow.mdc`**: Branch work and workflow rules (always applied: `alwaysApply: true`)
-- **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules (Swagger-first)
+- **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules
 - **`.cursor/rules/workflow/pull-request-review.mdc`**: Pull Request and code review rules
 - **`.cursor/rules/workflow/pr-ci-checks.mdc`**: Required checks (commitlint, ktlint, build) before merge
 - **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture and layer separation rules

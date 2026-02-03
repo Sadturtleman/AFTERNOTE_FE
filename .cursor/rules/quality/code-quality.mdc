@@ -132,7 +132,7 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 
 ### ⚠️ Critical: HTTP Status Code Testing (API 테스트 필수 규칙)
 
-**스웨거(Swagger)에 문서화가 완료된 API를 사용하는 ViewModel은 반드시 HTTP 상태 코드별 테스트를 포함해야 합니다.**
+**API를 사용하는 ViewModel은 반드시 HTTP 상태 코드별 테스트를 포함해야 합니다.**
 
 #### 필수 테스트 케이스
 
@@ -188,7 +188,7 @@ import retrofit2.Response
 ```
 
 #### 적용 대상
-- **스웨거에 등록된 API**를 호출하는 모든 ViewModel
+- API를 호출하는 모든 ViewModel
 - 현재 적용 대상 (Auth API):
   * `LoginViewModel` ✅
   * `LogoutViewModel` ✅
