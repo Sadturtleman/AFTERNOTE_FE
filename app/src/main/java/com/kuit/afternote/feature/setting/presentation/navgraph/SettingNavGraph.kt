@@ -2,15 +2,20 @@ package com.kuit.afternote.feature.setting.presentation.navgraph
 
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
+import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notification.NotificationSettingsScreen
@@ -27,7 +32,14 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverM
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
+import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverAfterNotesViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverTimeLettersViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.SettingMainRoute> {
@@ -88,37 +100,56 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.ReceiverDetailRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.ReceiverDetailRoute>()
-        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+        val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
+        val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
+        val receiverIdLong = route.receiverId.toLongOrNull()
+
+        LaunchedEffect(receiverIdLong) {
+            if (receiverIdLong != null) detailViewModel.loadReceiverDetail(receiverIdLong)
+        }
 
         val phoneNumberState = rememberTextFieldState()
         val emailState = rememberTextFieldState()
+        LaunchedEffect(detailState.receiverId, detailState.name) {
+            if (detailState.receiverId != 0L && detailState.name.isNotEmpty()) {
+                phoneNumberState.edit {
+                    replace(0, length, detailState.phone ?: "")
+                }
+                emailState.edit {
+                    replace(0, length, detailState.email ?: "")
+                }
+            }
+        }
 
-        LaunchedEffect(receiverDetail.receiverId) {
-            phoneNumberState.edit {
-                replace(
-                    start = 0,
-                    end = length,
-                    text = receiverDetail.phoneNumber
-                )
-            }
-            emailState.edit {
-                replace(
-                    start = 0,
-                    end = length,
-                    text = receiverDetail.email
-                )
-            }
+        val name: String
+        val relationship: String
+        val dailyQuestionCount: Int
+        val timeLetterCount: Int
+        val afternoteCount: Int
+        if (receiverIdLong != null && detailState.name.isNotEmpty()) {
+            name = detailState.name
+            relationship = detailState.relation
+            dailyQuestionCount = detailState.dailyQuestionCount
+            timeLetterCount = detailState.timeLetterCount
+            afternoteCount = detailState.afterNoteCount
+        } else {
+            val fallback = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+            name = fallback.name
+            relationship = fallback.relationship
+            dailyQuestionCount = fallback.dailyQuestionCount
+            timeLetterCount = fallback.timeLetterCount
+            afternoteCount = fallback.afternoteCount
         }
 
         ReceiverDetailScreen(
             params = ReceiverDetailScreenParams(
-                name = receiverDetail.name,
-                relationship = receiverDetail.relationship,
+                name = name,
+                relationship = relationship,
                 phoneNumberState = phoneNumberState,
                 emailState = emailState,
-                dailyQuestionCount = receiverDetail.dailyQuestionCount,
-                timeLetterCount = receiverDetail.timeLetterCount,
-                afternoteCount = receiverDetail.afternoteCount
+                dailyQuestionCount = dailyQuestionCount,
+                timeLetterCount = timeLetterCount,
+                afternoteCount = afternoteCount
             ),
             callbacks = ReceiverDetailEditCallbacks(
                 onBackClick = { navController.popBackStack() },
@@ -127,21 +158,24 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
                 onDailyQuestionClick = {
                     navController.navigate(
                         SettingRoute.DailyAnswerRoute(
-                            receiverId = receiverDetail.receiverId
+                            receiverId = route.receiverId,
+                            receiverName = name
                         )
                     )
                 },
                 onTimeLetterClick = {
                     navController.navigate(
                         SettingRoute.ReceiverTimeLetterListRoute(
-                            receiverId = receiverDetail.receiverId
+                            receiverId = route.receiverId,
+                            receiverName = name
                         )
                     )
                 },
                 onAfternoteClick = {
                     navController.navigate(
                         SettingRoute.ReceiverAfternoteListRoute(
-                            receiverId = receiverDetail.receiverId
+                            receiverId = route.receiverId,
+                            receiverName = name
                         )
                     )
                 }
@@ -156,10 +190,16 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
 
     composable<SettingRoute.ReceiverListRoute> {
+        val listViewModel: ReceiverListViewModel = hiltViewModel()
+        val listState by listViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) { listViewModel.loadReceivers() }
+        val receiversAsMainPage: List<MainPageEditReceiver> = listState.receivers.map { r ->
+            MainPageEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
+        }
         ReceiverManagementScreen(
             onBackClick = { navController.popBackStack() },
             onRegisterClick = { navController.navigate(SettingRoute.ReceiverRegisterRoute) },
-            receivers = ReceiverDummyData.receiverList,
+            receivers = receiversAsMainPage,
             onReceiverClick = { receiver ->
                 navController.navigate(SettingRoute.ReceiverDetailRoute(receiverId = receiver.id))
             }
@@ -167,9 +207,18 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
 
     composable<SettingRoute.ReceiverRegisterRoute> {
+        val registerViewModel: RegisterReceiverViewModel = hiltViewModel()
+        val registerState by registerViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(registerState.registeredReceiverId) {
+            if (registerState.registeredReceiverId != null) {
+                registerViewModel.clearRegisteredReceiverId()
+                navController.popBackStack()
+            }
+        }
         ReceiverRegisterScreen(
             onBackClick = { navController.popBackStack() },
-            onRegisterClick = { navController.popBackStack() }
+            onRegisterClick = { navController.popBackStack() },
+            registerViewModel = registerViewModel
         )
     }
 
@@ -185,38 +234,55 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.DailyAnswerRoute>()
-        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-        val sampleQuestion = stringResource(R.string.daily_answer_sample_question)
-        val sampleAnswer = stringResource(R.string.daily_answer_sample_answer)
-        val sampleDateText = stringResource(R.string.daily_answer_sample_date)
-        val dailyAnswerItems = ReceiverDummyData.dailyAnswerItems(
-            receiverId = route.receiverId,
-            question = sampleQuestion,
-            answer = sampleAnswer,
-            dateText = sampleDateText
-        )
+        val receiverIdLong = route.receiverId.toLongOrNull()
+        val dailyQuestionsViewModel: ReceiverDailyQuestionsViewModel = hiltViewModel()
+        val dailyState by dailyQuestionsViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(receiverIdLong) {
+            if (receiverIdLong != null) dailyQuestionsViewModel.loadDailyQuestions(receiverIdLong)
+        }
+        val items = dailyState.items.map { item ->
+            DailyAnswerItemUiModel(
+                question = item.question,
+                answer = item.answer,
+                dateText = item.createdAt
+            )
+        }
+        val receiverName = route.receiverName.ifBlank { "수신인" }
 
         DailyAnswerScreen(
-            receiverName = receiverDetail.name,
-            items = dailyAnswerItems,
+            receiverName = receiverName,
+            items = items,
             onBackClick = { navController.popBackStack() }
         )
     }
 
     composable<SettingRoute.ReceiverAfternoteListRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.ReceiverAfternoteListRoute>()
-        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-        val afternoteItems = ReceiverDummyData.defaultAfternoteListSeedsForReceiverDetail().map { seed ->
+        val receiverIdLong = route.receiverId.toLongOrNull()
+        val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
+        val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(receiverIdLong) {
+            if (receiverIdLong != null) afterNotesViewModel.loadAfterNotes(receiverIdLong)
+        }
+        val afternoteItems = afterNotesState.items.map { item ->
+            val (serviceName, iconResId) = when (item.sourceType) {
+                "INSTAGRAM" -> stringResource(R.string.receiver_afternote_item_instagram) to R.drawable.img_insta_pattern
+                "GALLERY" -> stringResource(R.string.receiver_afternote_item_gallery) to R.drawable.ic_gallery
+                "GUIDE" -> stringResource(R.string.receiver_afternote_item_memorial_guideline) to R.drawable.ic_memorial_guideline
+                "NAVER_MAIL" -> stringResource(R.string.receiver_afternote_item_naver_mail) to R.drawable.img_naver_mail
+                else -> item.sourceType to R.drawable.img_logo
+            }
             AfternoteListDisplayItem(
-                id = seed.id,
-                serviceName = seed.serviceNameResId?.let { stringResource(it) } ?: (seed.serviceNameLiteral ?: ""),
-                date = seed.date,
-                iconResId = seed.iconResId
+                id = item.sourceType,
+                serviceName = serviceName,
+                date = item.lastUpdatedAt,
+                iconResId = iconResId
             )
         }
+        val receiverName = route.receiverName.ifBlank { "수신인" }
 
         ReceiverAfternoteListScreen(
-            receiverName = receiverDetail.name,
+            receiverName = receiverName,
             items = afternoteItems,
             onBackClick = { navController.popBackStack() },
             onItemClick = { /* TODO: 애프터노트 상세로 이동 */ }
@@ -225,12 +291,27 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.ReceiverTimeLetterListRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
-        val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-        val timeLetterItems: List<TimeLetterItem> =
-            ReceiverDummyData.defaultTimeLetterItems(receiverId = route.receiverId)
+        val receiverIdLong = route.receiverId.toLongOrNull()
+        val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
+        val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(receiverIdLong) {
+            if (receiverIdLong != null) timeLettersViewModel.loadTimeLetters(receiverIdLong)
+        }
+        val timeLetterItems: List<TimeLetterItem> = timeLettersState.items.map { item ->
+            TimeLetterItem(
+                id = item.timeLetterId.toString(),
+                receivername = item.receiverName,
+                sendDate = item.sendAt,
+                title = item.title,
+                content = item.content,
+                imageResId = null,
+                theme = LetterTheme.BLUE
+            )
+        }
+        val receiverName = route.receiverName.ifBlank { "수신인" }
 
         ReceiverTimeLetterListScreen(
-            receiverName = receiverDetail.name,
+            receiverName = receiverName,
             items = timeLetterItems,
             onBackClick = { navController.popBackStack() },
             onItemClick = { /* TODO: 타임레터 상세로 이동 */ }
