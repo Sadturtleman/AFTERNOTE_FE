@@ -240,7 +240,7 @@
 
 ---
 
-## USER ENDPOINTS (12개)
+## USER ENDPOINTS (10개)
 
 ---
 
@@ -295,31 +295,7 @@
 
 ---
 
-### 3. 연결된 계정 조회 (Get Connected Accounts)
-
-- **Method**: GET
-- **URL**: `/users/connected-accounts`
-- **Header Required**: Yes (포함 O)
-- **Description**: 연결된 계정을 조회합니다.
-- **Status**: 시작 전 (Not Started)
-- **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
-
----
-
-### 4. 연결된 계정 해제 (Disconnect Account)
-
-- **Method**: DELETE
-- **URL**: `/users/connected-accounts/{provider}`
-- **Header Required**: Yes (포함 O)
-- **Description**: 연결된 계정을 해제합니다.
-- **Status**: 시작 전 (Not Started)
-- **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
-
----
-
-### 5. 푸시 알림 상태 조회 (Get Push Notification Settings)
+### 3. 푸시 알림 상태 조회 (Get Push Notification Settings)
 
 - **Method**: GET
 - **URL**: `/users/push-settings`
@@ -344,7 +320,7 @@
 
 ---
 
-### 6. 푸시 알림 설정 변경 (Update Push Notification Settings)
+### 4. 푸시 알림 설정 변경 (Update Push Notification Settings)
 
 - **Method**: PATCH
 - **URL**: `/users/push-settings`
@@ -369,7 +345,7 @@
 
 ---
 
-### 7. 수신인 목록 조회 (Get Recipient List)
+### 5. 수신인 목록 조회 (Get Recipient List)
 
 - **Method**: GET
 - **URL**: `/users/receivers`
@@ -395,7 +371,7 @@
 
 ---
 
-### 8. 수신자 등록 (Register Receiver)
+### 6. 수신자 등록 (Register Receiver)
 
 - **Method**: POST
 - **URL**: `/users/receivers`
@@ -428,7 +404,7 @@
 
 ---
 
-### 9. 수신인 상세 조회 (Get Receiver Detail)
+### 7. 수신인 상세 조회 (Get Receiver Detail)
 
 - **Method**: GET
 - **URL**: `/users/receivers/{receiverId}`
@@ -459,7 +435,7 @@
 
 ---
 
-### 10. 수신인별 데일리 질문 답변 목록 조회 (Get Daily Question Answers by Receiver)
+### 8. 수신인별 데일리 질문 답변 목록 조회 (Get Daily Question Answers by Receiver)
 
 - **Method**: GET
 - **URL**: `/users/receivers/{receiverId}/daily-questions`
@@ -488,7 +464,7 @@
 
 ---
 
-### 11. 수신인별 애프터노트 목록 조회 (Get After-Notes by Receiver)
+### 9. 수신인별 애프터노트 목록 조회 (Get After-Notes by Receiver)
 
 - **Method**: GET
 - **URL**: `/users/receivers/{receiverId}/after-notes`
@@ -515,7 +491,7 @@
 
 ---
 
-### 12. 수신인별 타임레터 목록 조회 (Get Time-Letters by Receiver)
+### 10. 수신인별 타임레터 목록 조회 (Get Time-Letters by Receiver)
 
 - **Method**: GET
 - **URL**: `/users/receivers/{receiverId}/time-letters`
@@ -959,11 +935,77 @@
 
 (출처: `docs/Private & Shared/API 기본 명세서/erd`)
 
-- **Core Domain**: User (자기 정보 조회/수정), Receiver (받는 사람), UserReceiver (User–Receiver N:M).
-- **Mind-Record Domain**: DailyQuestion, DailyQuestionAnswer, DeepThought, Diary, Emotion.
-- **TimeLetter Domain**: TimeLetter, TimeLetterMedia, TimeLetterReceiver (TimeLetter ↔ Receiver N:M).
-- **Afternote Domain**: Afternote, AfternoteCategory, AfternoteSecureContent, AfternoteAction, AfternoteActionMapping, AfternotePlaylist.
-- **Auth / Audit Domain**: EmailVerification, RecieverAuth (열람 전 인증), AccessLog.
+### 도메인 추출
+
+**Core Domain (사람/관계)**
+
+- **User**: 자기 자신의 정보만 조회, 수정
+- **Receiver**: 받는 사람
+- **UserReceiver**: 누구의 Receiver인지 — 이 Receiver는 어떤 User의 수신자인가를 나타냄
+
+**Mind-Record Domain (기록)**
+
+- **DailyQuestion**: 일일 질문
+- **DailyQuestionAnswer**
+- **DeepThought**
+- **Diary**: 일기
+- **Emotion**
+
+**TimeLetter Domain**
+
+- **TimeLetter**: 예약 발송되는 타임레터 본문
+- **TimeLetterMedia**: 이미지, 미디어 첨부
+- **TimeLetterReceiver**: 타임레터 ↔ 수신자 연결
+
+**Afternote Domain**
+
+- **Afternote**: 애프터노트 기본 정보
+- **AfternoteCategory**
+- **AfternoteSecureContent**: 아이디, 비번 같은 민감 정보
+- **AfternoteAction**: 처리 방법
+- **AfternoteActionMapping**: 애프터노트 ↔ 처리 방법 연결
+- **AfternotePlaylist**
+
+**Auth / Audit Domain**
+
+- **EmailVerification**: 이메일 인증 코드 및 검증 정보
+- **RecieverAuth**: 애프터노트, 타임레터 열람 전 인증
+- **AccessLog**: 사용자/수신자의 접근 기록
+
+### 관계 정의
+
+**Core Domain**
+
+- User ↔ Receiver: N:M (한 User는 여러 Receiver를 가질 수 있고, 한 Receiver는 여러 User의 수신자가 될 수 있음)
+- UserReceiver: User와 Receiver의 관계 Entity 역할
+
+**Mind-Record Domain**
+
+- User ↔ DailyQuestionAnswer: 1:N (한 User는 여러 데일리 질문 답변 가질 수 있음, 답변은 반드시 한 User에 속함)
+- DailyQuestion ↔ DailyQuestionAnswer: 1:N (하나의 질문에 여러 사용자 답변 가능)
+- User ↔ Diary: 1:N (일기는 User 소유)
+- User ↔ DeepThought: 1:N (깊은 생각은 User 소유)
+- User ↔ Emotion: Emotion은 User 기록에서 추출됨
+
+**TimeLetter Domain**
+
+- User ↔ TimeLetter: 1:N (타임레터는 User 기준으로 생성)
+- TimeLetter ↔ TimeLetterReceiver ↔ Receiver: N:M (하나의 타임레터를 여러 수신자에게 보낼 수 있고, 한 Receiver는 여러 타임레터 받을 수 있음)
+- TimeLetter ↔ TimeLetterMedia: 1:N (하나의 타임레터에 여러 미디어 첨부 가능)
+
+**Afternote Domain**
+
+- User ↔ Afternote: 1:N (애프터노트는 User 소유)
+- Afternote ↔ AfternoteCategory: N:1 (하나의 애프터노트는 하나의 카테고리에 속하고, 카테고리는 여러 애프터노트에 사용)
+- Afternote ↔ AfternoteSecureContent: 1:1 (민감정보 분리)
+- Afternote ↔ AfternoteAction ↔ AfternoteActionMapping: N:M (하나의 애프터노트에 여러 처리 방법 선택 가능, 처리 방법은 여러 애프터노트에서 재사용)
+- Afternote ↔ AfternotePlaylist: 1:1
+
+**Auth / Audit Domain**
+
+- User ↔ EmailVerification: 1:N (이메일 인증은 여러 번 발생 가능)
+- Receiver ↔ ReceiverAuth: 1:N (수신자는 로그인 없이 인증만)
+- User / Receiver ↔ AccessLog: 1:N (사용자/수신자의 접근 기록 — 열람 대상은 MindRecord, TimeLetter, Afternote)
 
 ---
 
