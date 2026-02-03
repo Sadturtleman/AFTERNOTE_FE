@@ -170,7 +170,8 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.ReceiverRegisterRoute> {
         ReceiverRegisterScreen(
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onRegisterClick = { navController.popBackStack() }
         )
     }
 

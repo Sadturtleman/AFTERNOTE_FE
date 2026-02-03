@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.security
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun PassKeyAddScreen(onBackClick: () -> Unit = {}) {
+    BackHandler(onBack = onBackClick)
     val passKeyList = listOf<PassKey>(
         PassKey(name = "icloud keychain", createdTime = LocalDateTime.now())
     )
