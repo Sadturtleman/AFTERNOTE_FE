@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.auth.data.repository
 
 import android.util.Log
 import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.remote.requireSuccess
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
@@ -17,6 +18,8 @@ import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.ReissueResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import javax.inject.Inject
 
 /**
@@ -42,7 +45,12 @@ class AuthRepositoryImpl
                 Log.d(TAG, "verifyEmail: email=$email, code=$certificateCode")
                 val response = api.verifyEmail(VerifyEmailRequest(email, certificateCode))
                 Log.d(TAG, "verifyEmail: response=$response")
-                AuthMapper.toEmailVerifyResult(response.requireData())
+                response.requireSuccess()
+
+                val isVerifiedFromResponse =
+                    (response.data?.get("isVerified") as? JsonPrimitive)?.booleanOrNull
+
+                EmailVerifyResult(isVerified = isVerifiedFromResponse ?: true)
             }
 
         override suspend fun signUp(
