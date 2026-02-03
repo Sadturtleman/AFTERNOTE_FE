@@ -1,6 +1,22 @@
 package com.kuit.afternote.feature.setting.presentation.dummy
 
+import com.kuit.afternote.R
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
+import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
+import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
+
+/**
+ * Seed for building [com.kuit.afternote.core.uimodel.AfternoteListDisplayItem].
+ * Use [serviceNameResId] when non-null (resolve with stringResource); otherwise [serviceNameLiteral].
+ */
+internal data class AfternoteListItemSeed(
+    val id: String,
+    val serviceNameResId: Int?,
+    val serviceNameLiteral: String?,
+    val date: String,
+    val iconResId: Int
+)
 
 internal data class ReceiverDummyDetail(
     val receiverId: String,
@@ -76,4 +92,106 @@ internal object ReceiverDummyData {
     )
 
     fun detailOf(receiverId: String): ReceiverDummyDetail = receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
+
+    /**
+     * Seeds for receiver afternote list (dev mode, NavGraph "receiver_afternote_list").
+     * Replace with API load when backend is ready.
+     */
+    fun defaultAfternoteListSeedsForReceiverList(): List<AfternoteListItemSeed> =
+        listOf(
+            AfternoteListItemSeed(
+                id = "1",
+                serviceNameResId = null,
+                serviceNameLiteral = "추모 가이드라인",
+                date = "2025.12.01",
+                iconResId = R.drawable.img_logo
+            ),
+            AfternoteListItemSeed(
+                id = "2",
+                serviceNameResId = null,
+                serviceNameLiteral = "갤러리",
+                date = "2025.12.02",
+                iconResId = R.drawable.img_insta_pattern
+            ),
+            AfternoteListItemSeed(
+                id = "3",
+                serviceNameResId = null,
+                serviceNameLiteral = "인스타그램",
+                date = "2025.12.03",
+                iconResId = R.drawable.img_insta_pattern
+            )
+        )
+
+    /**
+     * Seeds for receiver afternote detail list (Setting > Receiver > 애프터노트 목록).
+     * Replace with API load by receiverId when backend is ready.
+     */
+    fun defaultAfternoteListSeedsForReceiverDetail(): List<AfternoteListItemSeed> =
+        listOf(
+            AfternoteListItemSeed(
+                id = "instagram",
+                serviceNameResId = R.string.receiver_afternote_item_instagram,
+                serviceNameLiteral = null,
+                date = "2025.11.26",
+                iconResId = R.drawable.img_insta_pattern
+            ),
+            AfternoteListItemSeed(
+                id = "gallery",
+                serviceNameResId = R.string.receiver_afternote_item_gallery,
+                serviceNameLiteral = null,
+                date = "2025.11.26",
+                iconResId = R.drawable.ic_gallery
+            ),
+            AfternoteListItemSeed(
+                id = "memorial_guideline",
+                serviceNameResId = R.string.receiver_afternote_item_memorial_guideline,
+                serviceNameLiteral = null,
+                date = "2025.11.26",
+                iconResId = R.drawable.ic_memorial_guideline
+            ),
+            AfternoteListItemSeed(
+                id = "naver_mail",
+                serviceNameResId = R.string.receiver_afternote_item_naver_mail,
+                serviceNameLiteral = null,
+                date = "2025.11.26",
+                iconResId = R.drawable.img_naver_mail
+            )
+        )
+
+    /**
+     * Dummy time letter items for a receiver. Replace with API load by receiverId when backend is ready.
+     */
+    fun defaultTimeLetterItems(receiverId: String): List<TimeLetterItem> {
+        val detail = detailOf(receiverId)
+        return List(detail.timeLetterCount.coerceAtLeast(1)) { index ->
+            TimeLetterItem(
+                id = "timeletter_$index",
+                receivername = detail.name,
+                sendDate = "2027. 11. 24",
+                title = "채연아 20번째 생일을 축하해",
+                content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
+                imageResId = if (index == 0) R.drawable.ic_test_block else null,
+                theme = when (index % 3) {
+                    0 -> LetterTheme.BLUE
+                    1 -> LetterTheme.YELLOW
+                    else -> LetterTheme.PEACH
+                }
+            )
+        }
+    }
+
+    /**
+     * Dummy daily answer items for a receiver. Replace with API load by receiverId when backend is ready.
+     */
+    fun dailyAnswerItems(
+        receiverId: String,
+        question: String,
+        answer: String,
+        dateText: String
+    ): List<DailyAnswerItemUiModel> {
+        val count = detailOf(receiverId).dailyQuestionCount
+        return List(count) {
+            DailyAnswerItemUiModel(question = question, answer = answer, dateText = dateText)
+        }
+    }
 }

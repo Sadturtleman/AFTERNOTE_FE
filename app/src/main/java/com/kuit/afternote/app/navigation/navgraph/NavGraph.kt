@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
@@ -39,6 +38,7 @@ import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNote
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
@@ -219,38 +219,26 @@ fun NavGraph(navHostController: NavHostController) {
         composable("receiver_afternote_main") {
             ReceiverAfterNoteMainScreen(
                 title = "박서연",
-                onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") }
+                onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") },
+                onBackClick = { navHostController.popBackStack() }
             )
         }
 
         // 수신자 애프터노트 전체 목록 (애프터노트 전체 확인하기 진입)
         composable("receiver_afternote_list") {
             BackHandler { navHostController.popBackStack() }
-            var listState by remember {
-                mutableStateOf(
-                    ReceiverAfternoteListUiState(
-                        items = listOf(
-                            AfternoteListDisplayItem(
-                                id = "1",
-                                serviceName = "추모 가이드라인",
-                                date = "2025.12.01",
-                                iconResId = R.drawable.img_logo
-                            ),
-                            AfternoteListDisplayItem(
-                                id = "2",
-                                serviceName = "갤러리",
-                                date = "2025.12.02",
-                                iconResId = R.drawable.img_insta_pattern
-                            ),
-                            AfternoteListDisplayItem(
-                                id = "3",
-                                serviceName = "인스타그램",
-                                date = "2025.12.03",
-                                iconResId = R.drawable.img_insta_pattern
-                            )
-                        )
+            val afternoteItems = remember {
+                ReceiverDummyData.defaultAfternoteListSeedsForReceiverList().map { seed ->
+                    AfternoteListDisplayItem(
+                        id = seed.id,
+                        serviceName = seed.serviceNameLiteral ?: "",
+                        date = seed.date,
+                        iconResId = seed.iconResId
                     )
-                )
+                }
+            }
+            var listState by remember {
+                mutableStateOf(ReceiverAfternoteListUiState(items = afternoteItems))
             }
             ReceiverAfternoteListRoute(
                 uiState = listState,

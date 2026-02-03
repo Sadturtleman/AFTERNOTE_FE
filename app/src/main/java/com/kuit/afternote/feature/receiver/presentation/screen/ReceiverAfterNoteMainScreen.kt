@@ -48,19 +48,31 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
+private val DEFAULT_ALBUM_COVERS = listOf(
+    AlbumCover("1"),
+    AlbumCover("2"),
+    AlbumCover("3"),
+    AlbumCover("4")
+)
+
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun ReceiverAfterNoteMainScreen(
     title: String,
-    onNavigateToFullList: () -> Unit = {}
+    onNavigateToFullList: () -> Unit = {},
+    onBackClick: () -> Unit = {},
+    profileImageResId: Int? = null,
+    albumCovers: List<AlbumCover> = DEFAULT_ALBUM_COVERS,
+    songCount: Int = 16
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
+    val profileResId = profileImageResId ?: R.drawable.img_profile_placeholder
 
     Scaffold(
         topBar = {
             TopBar(
                 title = "故${title}님의 애프터노트",
-                onBackClick = { }
+                onBackClick = onBackClick
             )
         },
         bottomBar = {
@@ -96,7 +108,7 @@ fun ReceiverAfterNoteMainScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.img_profile_placeholder),
+                                    painter = painterResource(profileResId),
                                     contentDescription = null,
                                     modifier = Modifier.size(140.dp)
                                 )
@@ -105,13 +117,8 @@ fun ReceiverAfterNoteMainScreen(
                         playlistContent = {
                             MemorialPlaylist(
                                 label = "추모 플레이리스트",
-                                songCount = 16,
-                                albumCovers = listOf(
-                                    AlbumCover("1"),
-                                    AlbumCover("2"),
-                                    AlbumCover("3"),
-                                    AlbumCover("4")
-                                ),
+                                songCount = songCount,
+                                albumCovers = albumCovers,
                                 onAddSongClick = null
                             )
                         },
