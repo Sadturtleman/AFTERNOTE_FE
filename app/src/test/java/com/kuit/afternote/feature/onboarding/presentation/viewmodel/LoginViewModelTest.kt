@@ -240,7 +240,10 @@ class LoginViewModelTest {
             viewModel.kakaoLogin("badToken")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage?.contains("400") == true)
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("400") == true
+            )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -256,7 +259,10 @@ class LoginViewModelTest {
             viewModel.kakaoLogin("expiredToken")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage?.contains("401") == true)
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("401") == true
+            )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -272,7 +278,10 @@ class LoginViewModelTest {
             viewModel.kakaoLogin("token")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage?.contains("404") == true)
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("404") == true
+            )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -288,7 +297,10 @@ class LoginViewModelTest {
             viewModel.kakaoLogin("token")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage?.contains("500") == true)
+            assertTrue(
+                viewModel.uiState.value.errorMessage
+                    ?.contains("500") == true
+            )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
         }

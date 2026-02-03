@@ -103,7 +103,7 @@ class LoginViewModel
                             it.copy(isLoading = false, errorMessage = null, loginSuccess = true)
                         }
                     }.onFailure { e ->
-                    Log.e("KakaoLogin", "Server /auth/kakao failed. type=${e::class.java.name}", e)
+                        Log.e("KakaoLogin", "Server /auth/kakao failed. type=${e::class.java.name}", e)
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
