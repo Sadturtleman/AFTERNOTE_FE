@@ -219,6 +219,7 @@ fun NavGraph(navHostController: NavHostController) {
         composable("receiver_afternote_main") {
             ReceiverAfterNoteMainScreen(
                 title = "박서연",
+                onBackClick = {navHostController.popBackStack()},
                 onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") }
             )
         }

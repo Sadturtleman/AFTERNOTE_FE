@@ -52,6 +52,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun ReceiverAfterNoteMainScreen(
     title: String,
+    onBackClick: () -> Unit = {},
     onNavigateToFullList: () -> Unit = {}
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
@@ -60,7 +61,7 @@ fun ReceiverAfterNoteMainScreen(
         topBar = {
             TopBar(
                 title = "故${title}님의 애프터노트",
-                onBackClick = { }
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {
