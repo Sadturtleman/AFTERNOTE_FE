@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.setting.presentation.navgraph
 
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
@@ -43,278 +44,285 @@ import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverVi
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.SettingMainRoute> {
-        SettingMainScreen(
-            onClick = { title ->
-                when (title) {
-                    "프로필 수정" -> navController.navigate(SettingRoute.ReceiverDetailRoute())
-                    "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
-                    "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
-                    "알림 설정" -> navController.navigate(SettingRoute.NotificationSettingsRoute)
-                    "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
-                    "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
-                    "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)
-                    "패스키 관리" -> navController.navigate(SettingRoute.PassKeyAddRoute)
-                    "앱 잠금 설정" -> navController.navigate(SettingRoute.AppLockPasswordModifyRoute)
-                    // TODO: 나머지는 추후 연결 (FAQ, 1:1 문의, 공지사항, 약관 등)
-                }
-            }
-        )
+        SettingMainRouteContent(navController)
     }
-
     composable<SettingRoute.ConnectedAccountsRoute> {
-        ConnectedAccountsScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        ConnectedAccountsScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.NotificationSettingsRoute> {
         NotificationSettingsScreen(
             onBackClick = { navController.popBackStack() },
             onDeviceSettingsClick = { navController.navigate(SettingRoute.PushToastSettingRoute) }
         )
     }
-
     composable<SettingRoute.PushToastSettingRoute> {
-        PushToastSettingScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        PushToastSettingScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.PassKeyAddRoute> {
-        PassKeyAddScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        PassKeyAddScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.AppLockPasswordConfirmRoute> {
-        PasswordConfirmScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        PasswordConfirmScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.AppLockPasswordModifyRoute> {
-        PasswordModifyScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        PasswordModifyScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.ReceiverDetailRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<SettingRoute.ReceiverDetailRoute>()
-        val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
-        val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
-        val receiverIdLong = route.receiverId.toLongOrNull()
-
-        LaunchedEffect(receiverIdLong) {
-            if (receiverIdLong != null) detailViewModel.loadReceiverDetail(receiverIdLong)
-        }
-
-        val phoneNumberState = rememberTextFieldState()
-        val emailState = rememberTextFieldState()
-        LaunchedEffect(detailState.receiverId, detailState.name) {
-            if (detailState.receiverId != 0L && detailState.name.isNotEmpty()) {
-                phoneNumberState.edit {
-                    replace(0, length, detailState.phone ?: "")
-                }
-                emailState.edit {
-                    replace(0, length, detailState.email ?: "")
-                }
-            }
-        }
-
-        val name: String
-        val relationship: String
-        val dailyQuestionCount: Int
-        val timeLetterCount: Int
-        val afternoteCount: Int
-        if (receiverIdLong != null && detailState.name.isNotEmpty()) {
-            name = detailState.name
-            relationship = detailState.relation
-            dailyQuestionCount = detailState.dailyQuestionCount
-            timeLetterCount = detailState.timeLetterCount
-            afternoteCount = detailState.afterNoteCount
-        } else {
-            val fallback = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-            name = fallback.name
-            relationship = fallback.relationship
-            dailyQuestionCount = fallback.dailyQuestionCount
-            timeLetterCount = fallback.timeLetterCount
-            afternoteCount = fallback.afternoteCount
-        }
-
-        ReceiverDetailScreen(
-            params = ReceiverDetailScreenParams(
-                name = name,
-                relationship = relationship,
-                phoneNumberState = phoneNumberState,
-                emailState = emailState,
-                dailyQuestionCount = dailyQuestionCount,
-                timeLetterCount = timeLetterCount,
-                afternoteCount = afternoteCount
-            ),
-            callbacks = ReceiverDetailEditCallbacks(
-                onBackClick = { navController.popBackStack() },
-                onEditClick = { /* TODO: 프로필 수정 저장 */ },
-                onReceiverDetailImageClick = { /* TODO: 프로필 이미지 변경 */ },
-                onDailyQuestionClick = {
-                    navController.navigate(
-                        SettingRoute.DailyAnswerRoute(
-                            receiverId = route.receiverId,
-                            receiverName = name
-                        )
-                    )
-                },
-                onTimeLetterClick = {
-                    navController.navigate(
-                        SettingRoute.ReceiverTimeLetterListRoute(
-                            receiverId = route.receiverId,
-                            receiverName = name
-                        )
-                    )
-                },
-                onAfternoteClick = {
-                    navController.navigate(
-                        SettingRoute.ReceiverAfternoteListRoute(
-                            receiverId = route.receiverId,
-                            receiverName = name
-                        )
-                    )
-                }
-            )
-        )
+        ReceiverDetailRouteContent(navController, backStackEntry.toRoute())
     }
-
     composable<SettingRoute.PasswordChangeRoute> {
-        PasswordChangeScreen(
-            onBackClick = { navController.popBackStack() }
-        )
+        PasswordChangeScreen(onBackClick = { navController.popBackStack() })
     }
-
     composable<SettingRoute.ReceiverListRoute> {
-        val listViewModel: ReceiverListViewModel = hiltViewModel()
-        val listState by listViewModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(Unit) { listViewModel.loadReceivers() }
-        val receiversAsMainPage: List<MainPageEditReceiver> = listState.receivers.map { r ->
-            MainPageEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
-        }
-        ReceiverManagementScreen(
-            onBackClick = { navController.popBackStack() },
-            onRegisterClick = { navController.navigate(SettingRoute.ReceiverRegisterRoute) },
-            receivers = receiversAsMainPage,
-            onReceiverClick = { receiver ->
-                navController.navigate(SettingRoute.ReceiverDetailRoute(receiverId = receiver.id))
-            }
-        )
+        ReceiverListRouteContent(navController)
     }
-
     composable<SettingRoute.ReceiverRegisterRoute> {
-        val registerViewModel: RegisterReceiverViewModel = hiltViewModel()
-        val registerState by registerViewModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(registerState.registeredReceiverId) {
-            if (registerState.registeredReceiverId != null) {
-                registerViewModel.clearRegisteredReceiverId()
-                navController.popBackStack()
-            }
-        }
-        ReceiverRegisterScreen(
-            onBackClick = { navController.popBackStack() },
-            onRegisterClick = { navController.popBackStack() },
-            registerViewModel = registerViewModel
-        )
+        ReceiverRegisterRouteContent(navController)
     }
-
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
             onBackClick = { navController.popBackStack() },
-            onRegisterClick = {
-                // TODO: 사후 전달 조건 저장 후 이전 화면으로 이동
-                navController.popBackStack()
-            }
+            onRegisterClick = { navController.popBackStack() }
         )
     }
-
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<SettingRoute.DailyAnswerRoute>()
-        val receiverIdLong = route.receiverId.toLongOrNull()
-        val dailyQuestionsViewModel: ReceiverDailyQuestionsViewModel = hiltViewModel()
-        val dailyState by dailyQuestionsViewModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(receiverIdLong) {
-            if (receiverIdLong != null) dailyQuestionsViewModel.loadDailyQuestions(receiverIdLong)
-        }
-        val items = dailyState.items.map { item ->
-            DailyAnswerItemUiModel(
-                question = item.question,
-                answer = item.answer,
-                dateText = item.createdAt
-            )
-        }
-        val receiverName = route.receiverName.ifBlank { "수신인" }
-
-        DailyAnswerScreen(
-            receiverName = receiverName,
-            items = items,
-            onBackClick = { navController.popBackStack() }
-        )
+        DailyAnswerRouteContent(navController, backStackEntry.toRoute())
     }
-
     composable<SettingRoute.ReceiverAfternoteListRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<SettingRoute.ReceiverAfternoteListRoute>()
-        val receiverIdLong = route.receiverId.toLongOrNull()
-        val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
-        val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(receiverIdLong) {
-            if (receiverIdLong != null) afterNotesViewModel.loadAfterNotes(receiverIdLong)
-        }
-        val afternoteItems = afterNotesState.items.map { item ->
-            val (serviceName, iconResId) = when (item.sourceType) {
-                "INSTAGRAM" -> stringResource(R.string.receiver_afternote_item_instagram) to R.drawable.img_insta_pattern
-                "GALLERY" -> stringResource(R.string.receiver_afternote_item_gallery) to R.drawable.ic_gallery
-                "GUIDE" -> stringResource(R.string.receiver_afternote_item_memorial_guideline) to R.drawable.ic_memorial_guideline
-                "NAVER_MAIL" -> stringResource(R.string.receiver_afternote_item_naver_mail) to R.drawable.img_naver_mail
-                else -> item.sourceType to R.drawable.img_logo
-            }
-            AfternoteListDisplayItem(
-                id = item.sourceType,
-                serviceName = serviceName,
-                date = item.lastUpdatedAt,
-                iconResId = iconResId
-            )
-        }
-        val receiverName = route.receiverName.ifBlank { "수신인" }
-
-        ReceiverAfternoteListScreen(
-            receiverName = receiverName,
-            items = afternoteItems,
-            onBackClick = { navController.popBackStack() },
-            onItemClick = { /* TODO: 애프터노트 상세로 이동 */ }
-        )
+        ReceiverAfternoteListRouteContent(navController, backStackEntry.toRoute())
     }
-
     composable<SettingRoute.ReceiverTimeLetterListRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
-        val receiverIdLong = route.receiverId.toLongOrNull()
-        val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
-        val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
-        LaunchedEffect(receiverIdLong) {
-            if (receiverIdLong != null) timeLettersViewModel.loadTimeLetters(receiverIdLong)
-        }
-        val timeLetterItems: List<TimeLetterItem> = timeLettersState.items.map { item ->
-            TimeLetterItem(
-                id = item.timeLetterId.toString(),
-                receivername = item.receiverName,
-                sendDate = item.sendAt,
-                title = item.title,
-                content = item.content,
-                imageResId = null,
-                theme = LetterTheme.BLUE
-            )
-        }
-        val receiverName = route.receiverName.ifBlank { "수신인" }
+        ReceiverTimeLetterListRouteContent(navController, backStackEntry.toRoute())
+    }
+}
 
-        ReceiverTimeLetterListScreen(
-            receiverName = receiverName,
-            items = timeLetterItems,
+@Composable
+private fun SettingMainRouteContent(navController: NavController) {
+    SettingMainScreen(
+        onClick = { title ->
+            when (title) {
+                "프로필 수정" -> navController.navigate(SettingRoute.ReceiverDetailRoute())
+                "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
+                "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
+                "알림 설정" -> navController.navigate(SettingRoute.NotificationSettingsRoute)
+                "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
+                "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
+                "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)
+                "패스키 관리" -> navController.navigate(SettingRoute.PassKeyAddRoute)
+                "앱 잠금 설정" -> navController.navigate(SettingRoute.AppLockPasswordModifyRoute)
+                else -> { /* TODO: 나머지는 추후 연결 */ }
+            }
+        }
+    )
+}
+
+@Composable
+private fun ReceiverDetailRouteContent(
+    navController: NavController,
+    route: SettingRoute.ReceiverDetailRoute
+) {
+    val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
+    val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
+    val receiverIdLong = route.receiverId.toLongOrNull()
+
+    LaunchedEffect(receiverIdLong) {
+        if (receiverIdLong != null) detailViewModel.loadReceiverDetail(receiverIdLong)
+    }
+
+    val phoneNumberState = rememberTextFieldState()
+    val emailState = rememberTextFieldState()
+    LaunchedEffect(detailState.receiverId, detailState.name) {
+        if (detailState.receiverId != 0L && detailState.name.isNotEmpty()) {
+            phoneNumberState.edit { replace(0, length, detailState.phone ?: "") }
+            emailState.edit { replace(0, length, detailState.email ?: "") }
+        }
+    }
+
+    val name: String
+    val relationship: String
+    val dailyQuestionCount: Int
+    val timeLetterCount: Int
+    val afternoteCount: Int
+    if (receiverIdLong != null && detailState.name.isNotEmpty()) {
+        name = detailState.name
+        relationship = detailState.relation
+        dailyQuestionCount = detailState.dailyQuestionCount
+        timeLetterCount = detailState.timeLetterCount
+        afternoteCount = detailState.afterNoteCount
+    } else {
+        val fallback = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+        name = fallback.name
+        relationship = fallback.relationship
+        dailyQuestionCount = fallback.dailyQuestionCount
+        timeLetterCount = fallback.timeLetterCount
+        afternoteCount = fallback.afternoteCount
+    }
+
+    ReceiverDetailScreen(
+        params = ReceiverDetailScreenParams(
+            name = name,
+            relationship = relationship,
+            phoneNumberState = phoneNumberState,
+            emailState = emailState,
+            dailyQuestionCount = dailyQuestionCount,
+            timeLetterCount = timeLetterCount,
+            afternoteCount = afternoteCount
+        ),
+        callbacks = ReceiverDetailEditCallbacks(
             onBackClick = { navController.popBackStack() },
-            onItemClick = { /* TODO: 타임레터 상세로 이동 */ }
+            onEditClick = { },
+            onReceiverDetailImageClick = { },
+            onDailyQuestionClick = {
+                navController.navigate(
+                    SettingRoute.DailyAnswerRoute(
+                        receiverId = route.receiverId,
+                        receiverName = name
+                    )
+                )
+            },
+            onTimeLetterClick = {
+                navController.navigate(
+                    SettingRoute.ReceiverTimeLetterListRoute(
+                        receiverId = route.receiverId,
+                        receiverName = name
+                    )
+                )
+            },
+            onAfternoteClick = {
+                navController.navigate(
+                    SettingRoute.ReceiverAfternoteListRoute(
+                        receiverId = route.receiverId,
+                        receiverName = name
+                    )
+                )
+            }
+        )
+    )
+}
+
+@Composable
+private fun ReceiverListRouteContent(navController: NavController) {
+    val listViewModel: ReceiverListViewModel = hiltViewModel()
+    val listState by listViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { listViewModel.loadReceivers() }
+    val receiversAsMainPage = listState.receivers.map { r ->
+        MainPageEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
+    }
+    ReceiverManagementScreen(
+        onBackClick = { navController.popBackStack() },
+        onRegisterClick = { navController.navigate(SettingRoute.ReceiverRegisterRoute) },
+        receivers = receiversAsMainPage,
+        onReceiverClick = { receiver ->
+            navController.navigate(SettingRoute.ReceiverDetailRoute(receiverId = receiver.id))
+        }
+    )
+}
+
+@Composable
+private fun ReceiverRegisterRouteContent(navController: NavController) {
+    val registerViewModel: RegisterReceiverViewModel = hiltViewModel()
+    val registerState by registerViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(registerState.registeredReceiverId) {
+        if (registerState.registeredReceiverId != null) {
+            registerViewModel.clearRegisteredReceiverId()
+            navController.popBackStack()
+        }
+    }
+    ReceiverRegisterScreen(
+        onBackClick = { navController.popBackStack() },
+        onRegisterClick = { navController.popBackStack() },
+        registerViewModel = registerViewModel
+    )
+}
+
+@Composable
+private fun DailyAnswerRouteContent(
+    navController: NavController,
+    route: SettingRoute.DailyAnswerRoute
+) {
+    val receiverIdLong = route.receiverId.toLongOrNull()
+    val dailyQuestionsViewModel: ReceiverDailyQuestionsViewModel = hiltViewModel()
+    val dailyState by dailyQuestionsViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(receiverIdLong) {
+        if (receiverIdLong != null) dailyQuestionsViewModel.loadDailyQuestions(receiverIdLong)
+    }
+    val items = dailyState.items.map { item ->
+        DailyAnswerItemUiModel(
+            question = item.question,
+            answer = item.answer,
+            dateText = item.createdAt
         )
     }
+    val receiverName = route.receiverName.ifBlank { "수신인" }
+    DailyAnswerScreen(
+        receiverName = receiverName,
+        items = items,
+        onBackClick = { navController.popBackStack() }
+    )
+}
+
+@Composable
+private fun ReceiverAfternoteListRouteContent(
+    navController: NavController,
+    route: SettingRoute.ReceiverAfternoteListRoute
+) {
+    val receiverIdLong = route.receiverId.toLongOrNull()
+    val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
+    val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(receiverIdLong) {
+        if (receiverIdLong != null) afterNotesViewModel.loadAfterNotes(receiverIdLong)
+    }
+    val afternoteItems = afterNotesState.items.map { item ->
+        val (serviceName, iconResId) = when (item.sourceType) {
+            "INSTAGRAM" -> stringResource(R.string.receiver_afternote_item_instagram) to R.drawable.img_insta_pattern
+            "GALLERY" -> stringResource(R.string.receiver_afternote_item_gallery) to R.drawable.ic_gallery
+            "GUIDE" -> stringResource(R.string.receiver_afternote_item_memorial_guideline) to R.drawable.ic_memorial_guideline
+            "NAVER_MAIL" -> stringResource(R.string.receiver_afternote_item_naver_mail) to R.drawable.img_naver_mail
+            else -> item.sourceType to R.drawable.img_logo
+        }
+        AfternoteListDisplayItem(
+            id = item.sourceType,
+            serviceName = serviceName,
+            date = item.lastUpdatedAt,
+            iconResId = iconResId
+        )
+    }
+    val receiverName = route.receiverName.ifBlank { "수신인" }
+    ReceiverAfternoteListScreen(
+        receiverName = receiverName,
+        items = afternoteItems,
+        onBackClick = { navController.popBackStack() },
+        onItemClick = { }
+    )
+}
+
+@Composable
+private fun ReceiverTimeLetterListRouteContent(
+    navController: NavController,
+    route: SettingRoute.ReceiverTimeLetterListRoute
+) {
+    val receiverIdLong = route.receiverId.toLongOrNull()
+    val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
+    val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(receiverIdLong) {
+        if (receiverIdLong != null) timeLettersViewModel.loadTimeLetters(receiverIdLong)
+    }
+    val timeLetterItems = timeLettersState.items.map { item ->
+        TimeLetterItem(
+            id = item.timeLetterId.toString(),
+            receivername = item.receiverName,
+            sendDate = item.sendAt,
+            title = item.title,
+            content = item.content,
+            imageResId = null,
+            theme = LetterTheme.BLUE
+        )
+    }
+    val receiverName = route.receiverName.ifBlank { "수신인" }
+    ReceiverTimeLetterListScreen(
+        receiverName = receiverName,
+        items = timeLetterItems,
+        onBackClick = { navController.popBackStack() },
+        onItemClick = { }
+    )
 }
