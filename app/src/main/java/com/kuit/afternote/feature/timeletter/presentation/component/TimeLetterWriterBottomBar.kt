@@ -29,6 +29,7 @@ import com.kuit.afternote.R
  * @param onAddClick 추가 클릭 콜백
  * @param onSaveDraftClick 임시저장 클릭 콜백
  * @param onDraftCountClick 임시저장 개수 클릭 콜백 (DraftLetterScreen으로 이동)
+ * @param onMoreClick 더보기(추가 메뉴) 클릭 콜백
  * @param modifier Modifier
  */
 @Composable
@@ -38,6 +39,7 @@ fun TimeLetterWriterBottomBar(
     onAddClick: () -> Unit,
     onSaveDraftClick: () -> Unit,
     onDraftCountClick: () -> Unit,
+    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -60,6 +62,7 @@ fun TimeLetterWriterBottomBar(
             modifier = Modifier
                 .padding(start = 16.33.dp)
                 .size(24.dp)
+                .clickable { onMoreClick() }
         )
         Text(
             text = "임시저장",
@@ -100,6 +103,7 @@ private fun TimeLetterWriterBottomBarPreview() {
         onAddClick = {},
         onLinkClick = {},
         onSaveDraftClick = {},
-        onDraftCountClick = {}
+        onDraftCountClick = {},
+        onMoreClick = {}
     )
 }

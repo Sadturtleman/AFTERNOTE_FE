@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
@@ -62,8 +63,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 @Composable
 fun TimeLetterScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimeLetterViewModel = androidx.lifecycle.viewmodel.compose
-        .viewModel(),
+    viewModel: TimeLetterViewModel = hiltViewModel(),
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {},
     onAddClick: () -> Unit = {}
@@ -163,7 +163,8 @@ fun TimeLetterScreen(
                                         sendDate = letter.sendDate,
                                         title = letter.title,
                                         content = letter.content,
-                                        imageResId = letter.imageResId
+                                        imageResId = letter.imageResId,
+                                        onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
@@ -391,7 +392,8 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                                         sendDate = letter.sendDate,
                                         title = letter.title,
                                         content = letter.content,
-                                        imageResId = letter.imageResId
+                                        imageResId = letter.imageResId,
+                                        onDeleteClick = {}
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }

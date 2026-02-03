@@ -96,6 +96,20 @@ class TimeLetterWriterViewModel
         }
 
         /**
+         * 더보기(작성 플러스) 메뉴 표시
+         */
+        fun showPlusMenu() {
+            _uiState.update { it.copy(showWritingPlusMenu = true) }
+        }
+
+        /**
+         * 더보기(작성 플러스) 메뉴 숨김
+         */
+        fun hidePlusMenu() {
+            _uiState.update { it.copy(showWritingPlusMenu = false) }
+        }
+
+        /**
          * 발송 시간 업데이트
          *
          * @param time 발송 시간 (HH:mm 형식)

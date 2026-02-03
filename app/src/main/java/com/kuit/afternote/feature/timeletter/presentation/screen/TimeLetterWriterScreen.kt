@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -39,10 +40,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
@@ -74,6 +79,9 @@ import java.time.LocalTime
  * @param onDateSelected 날짜 선택 완료 콜백
  * @param onTimePickerDismiss TimePicker 닫기 콜백
  * @param onTimeSelected 시간 선택 콜백 (24시간 형식 hour, minute)
+ * @param showWritingPlusMenu 더보기(작성 플러스) 메뉴 표시 여부
+ * @param onMoreClick 더보기 아이콘 클릭 콜백
+ * @param onDismissPlusMenu 더보기 메뉴 닫기 콜백
  * @param modifier Modifier
  */
 @Composable
@@ -99,11 +107,28 @@ fun TimeLetterWriterScreen(
     onDatePickerDismiss: () -> Unit = {},
     onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> },
     onTimePickerDismiss: () -> Unit = {},
-    onTimeSelected: (hour: Int, minute: Int) -> Unit = { _, _ -> }
+    onTimeSelected: (hour: Int, minute: Int) -> Unit = { _, _ -> },
+    showWritingPlusMenu: Boolean = false,
+    onMoreClick: () -> Unit = {},
+    onDismissPlusMenu: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val density = LocalDensity.current
 
     Box(modifier = modifier.fillMaxSize()) {
+        if (showWritingPlusMenu) {
+            Popup(
+                alignment = Alignment.BottomStart,
+                offset = IntOffset(
+                    with(density) { 64.dp.roundToPx() },
+                    with(density) { (-232).dp.roundToPx() }
+                ),
+                onDismissRequest = onDismissPlusMenu,
+                properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+            ) {
+                WritingPlusMenu()
+            }
+        }
         Scaffold(
             modifier = Modifier.fillMaxWidth(),
             topBar = {
@@ -175,7 +200,8 @@ fun TimeLetterWriterScreen(
                     onAddClick = {},
                     onSaveDraftClick = onSaveDraftClick,
                     onDraftCountClick = onDraftCountClick,
-                    onLinkClick = {}
+                    onLinkClick = {},
+                    onMoreClick = onMoreClick
                 )
             }
         ) { innerPadding ->

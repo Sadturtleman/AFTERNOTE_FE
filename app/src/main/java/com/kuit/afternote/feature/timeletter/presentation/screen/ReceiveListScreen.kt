@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,8 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.BottomNavItem
-import com.kuit.afternote.core.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
 import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
@@ -51,17 +52,19 @@ fun ReceiveListScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .height(44.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .height(44.dp)
             ) {
+                // 1. 왼쪽 뒤로가기 버튼 영역
                 Box(
                     modifier = Modifier
+                        .fillMaxHeight()
                         .padding(start = 23.dp)
-                        .clickable { onBackClick() }
+                        .clickable { onBackClick() },
+                    contentAlignment = Alignment.Center // 아이콘을 박스 중앙에 배치
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector),
@@ -69,13 +72,19 @@ fun ReceiveListScreen(
                         modifier = Modifier.size(width = 6.dp, height = 12.dp)
                     )
                 }
-                Text(
-                    text = "수신자 목록",
-                    color = Color(0xFF212121),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 131.dp)
-                )
+
+                // 2. 중앙 타이틀 영역 (부모 Box의 중앙에 위치)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "수신자 목록",
+                        color = Color(0xFF212121),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         },
         bottomBar = {

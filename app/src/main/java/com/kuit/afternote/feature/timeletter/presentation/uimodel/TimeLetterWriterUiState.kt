@@ -13,6 +13,7 @@ package com.kuit.afternote.feature.timeletter.presentation.uimodel
  * @property showDatePicker DatePicker 표시 여부
  * @property showTimePicker TimePicker 표시 여부
  * @property draftCount 임시저장된 레터 개수
+ * @property showWritingPlusMenu 더보기(작성 플러스) 메뉴 표시 여부
  */
 data class TimeLetterWriterUiState(
     val recipientName: String = "",
@@ -24,5 +25,6 @@ data class TimeLetterWriterUiState(
     val isSaveEnabled: Boolean = false,
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
-    val draftCount: Int = 0
+    val draftCount: Int = 0,
+    val showWritingPlusMenu: Boolean = false
 )

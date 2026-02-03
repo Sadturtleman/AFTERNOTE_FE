@@ -74,7 +74,10 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTimePickerDismiss = viewModel::hideTimePicker,
             onTimeSelected = { hour, minute ->
                 viewModel.updateSendTime("%02d:%02d".format(hour, minute))
-            }
+            },
+            showWritingPlusMenu = uiState.showWritingPlusMenu,
+            onMoreClick = viewModel::showPlusMenu,
+            onDismissPlusMenu = viewModel::hidePlusMenu
         )
     }
 
