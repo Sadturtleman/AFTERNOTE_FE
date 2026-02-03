@@ -41,14 +41,14 @@ import com.kuit.afternote.ui.theme.Gray9
 
 @Composable
 @Suppress("AssignedValueIsNeverRead")
-fun MindRecordDetailScreen() {
+fun MindRecordDetailScreen(onBackClick: () -> Unit) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
 
     Scaffold(
         topBar = {
             TopBar(
                 title = "마음의 기록",
-                onBackClick = { }
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {
@@ -127,6 +127,6 @@ fun MindRecordDetailScreen() {
 @Composable
 fun PreviewMindRecordDetail() {
     MaterialTheme {
-        MindRecordDetailScreen()
+        MindRecordDetailScreen(){}
     }
 }
