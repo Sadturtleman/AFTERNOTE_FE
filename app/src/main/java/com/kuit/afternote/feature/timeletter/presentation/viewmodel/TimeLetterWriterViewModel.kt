@@ -157,7 +157,7 @@ class TimeLetterWriterViewModel
         ): String? {
             if (sendDate.isBlank() || sendTime.isBlank()) return null
             val normalizedDate = sendDate.replace(". ", "-").trim()
-            return "${normalizedDate}T${sendTime}:00"
+            return "$normalizedDate" + "T" + "$sendTime" + ":00"
         }
 
         /**

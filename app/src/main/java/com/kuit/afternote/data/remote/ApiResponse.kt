@@ -34,3 +34,16 @@ fun <T> ApiResponse<T>.requireData(): T & Any {
         message = message.ifBlank { "data is null" }
     )
 }
+
+/**
+ * 응답 status가 200이 아니면 [ApiException]을 던진다.
+ *
+ * data가 없는(또는 의미 없는) API에서도 성공 여부만 확인할 때 사용한다.
+ *
+ * @throws ApiException 서버가 에러 응답을 반환한 경우
+ */
+fun ApiResponse<*>.requireSuccess() {
+    if (status != 200) {
+        throw ApiException(status = status, code = code, message = message)
+    }
+}

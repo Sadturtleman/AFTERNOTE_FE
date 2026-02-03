@@ -66,6 +66,11 @@ android {
         val testPassword = properties["TEST_PASSWORD"] as? String ?: ""
         buildConfigField("String", "TEST_EMAIL", "\"$testEmail\"")
         buildConfigField("String", "TEST_PASSWORD", "\"$testPassword\"")
+
+        // Kakao
+        val kakaoNativeAppKey = properties["KAKAO_NATIVE_APP_KEY"] as? String ?: ""
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
 
     buildTypes {
@@ -154,6 +159,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.kakao.sdk.user)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)

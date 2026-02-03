@@ -13,6 +13,5 @@ class DeleteAllTemporaryUseCase
     constructor(
         private val timeLetterRepository: TimeLetterRepository
     ) {
-        suspend operator fun invoke(): Result<Unit> =
-            timeLetterRepository.deleteAllTemporary()
+        suspend operator fun invoke(): Result<Unit> = timeLetterRepository.deleteAllTemporary()
     }

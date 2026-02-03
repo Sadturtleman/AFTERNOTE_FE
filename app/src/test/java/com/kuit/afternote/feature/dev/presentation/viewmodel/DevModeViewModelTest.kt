@@ -5,6 +5,10 @@ import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LogoutUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
+import com.kuit.afternote.feature.dev.domain.LocalPropertiesManager
+import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -42,6 +46,10 @@ class DevModeViewModelTest {
     private lateinit var tokenManager: TokenManager
     private lateinit var loginUseCase: LoginUseCase
     private lateinit var logoutUseCase: LogoutUseCase
+    private lateinit var passwordChangeUseCase: PasswordChangeUseCase
+    private lateinit var signUpUseCase: SignUpUseCase
+    private lateinit var testAccountManager: TestAccountManager
+    private lateinit var localPropertiesManager: LocalPropertiesManager
     private lateinit var viewModel: DevModeViewModel
 
     private val isLoggedInFlow = MutableStateFlow(false)
@@ -58,14 +66,29 @@ class DevModeViewModelTest {
         tokenManager = mockk()
         loginUseCase = mockk()
         logoutUseCase = mockk()
+        passwordChangeUseCase = mockk()
+        signUpUseCase = mockk()
+        testAccountManager = mockk()
+        localPropertiesManager = mockk()
 
         every { tokenManager.isLoggedInFlow } returns isLoggedInFlow
         every { tokenManager.userEmailFlow } returns userEmailFlow
         coJustRun { tokenManager.saveTokens(any(), any(), any()) }
         coJustRun { tokenManager.clearTokens() }
         coEvery { tokenManager.getRefreshToken() } returns "refresh_token"
+        coJustRun { testAccountManager.updateStoredPassword(any()) }
+        coEvery { testAccountManager.getCurrentPassword() } returns "password123!"
+        coEvery { localPropertiesManager.updateTestPassword(any()) } returns true
 
-        viewModel = DevModeViewModel(tokenManager, loginUseCase, logoutUseCase)
+        viewModel = DevModeViewModel(
+            tokenManager = tokenManager,
+            loginUseCase = loginUseCase,
+            logoutUseCase = logoutUseCase,
+            passwordChangeUseCase = passwordChangeUseCase,
+            signUpUseCase = signUpUseCase,
+            testAccountManager = testAccountManager,
+            localPropertiesManager = localPropertiesManager
+        )
     }
 
     @After
