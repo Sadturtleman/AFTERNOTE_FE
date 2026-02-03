@@ -93,6 +93,9 @@ internal object ReceiverDummyData {
 
     fun detailOf(receiverId: String): ReceiverDummyDetail = receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
 
+    /** Default receiver name for dev "receiver afternote main" screen. */
+    fun defaultReceiverTitleForDev(): String = "박서연"
+
     /**
      * Seeds for receiver afternote list (dev mode, NavGraph "receiver_afternote_list").
      * Replace with API load when backend is ready.

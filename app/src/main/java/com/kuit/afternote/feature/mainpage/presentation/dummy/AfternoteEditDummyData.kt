@@ -9,6 +9,16 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Son
  */
 internal object AfternoteEditDummyData {
     /**
+     * Default main page items (service name to date) for dev "main with items" screen.
+     * Replace with API load when backend is ready.
+     */
+    fun defaultMainPageItemsForDev(): List<Pair<String, String>> =
+        listOf(
+            "갤러리" to "2025.01.28",
+            "추모 가이드라인" to "2025.01.28"
+        )
+
+    /**
      * Default main page edit receivers for edit screen. Replace with API load when backend is ready.
      */
     fun defaultMainPageEditReceivers(): List<MainPageEditReceiver> =

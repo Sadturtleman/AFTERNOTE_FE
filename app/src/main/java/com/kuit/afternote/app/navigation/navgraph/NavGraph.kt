@@ -38,6 +38,7 @@ import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNote
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
@@ -149,12 +150,7 @@ fun NavGraph(navHostController: NavHostController) {
                     onNavigateToDetail = { navHostController.navigate(MainPageRoute.DetailRoute) },
                     onNavigateToGalleryDetail = { navHostController.navigate(MainPageRoute.GalleryDetailRoute) },
                     onNavigateToAdd = { navHostController.navigate(MainPageRoute.EditRoute) },
-                    initialItems = AfternoteItemMapper.toAfternoteItems(
-                        listOf(
-                            "갤러리" to "2025.01.28",
-                            "추모 가이드라인" to "2025.01.28"
-                        )
-                    )
+                    initialItems = AfternoteItemMapper.toAfternoteItems(AfternoteEditDummyData.defaultMainPageItemsForDev())
                 )
             }
         }
@@ -218,7 +214,7 @@ fun NavGraph(navHostController: NavHostController) {
         // 수신자 애프터노트 메인 (개발자 모드용)
         composable("receiver_afternote_main") {
             ReceiverAfterNoteMainScreen(
-                title = "박서연",
+                title = ReceiverDummyData.defaultReceiverTitleForDev(),
                 onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") },
                 onBackClick = { navHostController.popBackStack() }
             )
