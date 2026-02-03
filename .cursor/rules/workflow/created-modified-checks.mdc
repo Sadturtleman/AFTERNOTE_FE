@@ -1,0 +1,40 @@
+---
+description: Require commitlint, ktlint, and app distribution checks for created or modified files
+globs: "**/*.kt,**/*.kts,.github/**/*.yml,.github/**/*.yaml,commitlint.config.cjs,build.gradle.kts,settings.gradle.kts,**/build.gradle.kts,gradle.properties"
+alwaysApply: true
+---
+
+# Required Checks for Created or Modified Files
+
+**Scope**: This rule applies only to **files that you create or modify**. Existing files that are not touched are out of scope. For any new file or any file you change, ensure the following checks pass before considering the work done.
+
+## 1. Commitlint
+
+- **When**: You create or modify commits or PR titles (e.g. when suggesting commit messages or PR text).
+- **Requirement**: Use Conventional Commits; every line (subject, body, footer) ≤ 100 characters.
+- **Config**: `commitlint.config.cjs`.
+- **Verify**: `echo "type(scope): subject" | npx commitlint`
+- **CI**: `.github/workflows/commitlint.yml` runs on PR.
+
+## 2. Ktlint
+
+- **When**: You create or modify Kotlin sources (`.kt`, `.kts`) or Gradle scripts.
+- **Requirement**: New or changed code must pass ktlint; follow `.editorconfig` and any `app/config/ktlint/baseline.xml` for existing exceptions.
+- **Verify**: `./gradlew ktlintCheck`
+- **CI**: `.github/workflows/ktlint.yml` runs on PR (main/develop).
+
+## 3. App Distribution Automation
+
+- **When**: You create or modify code, Gradle config, or CI workflows that affect the build or distribution pipeline.
+- **Requirement**: Changes must not introduce errors in the app distribution automation (debug build + Firebase App Distribution).
+- **Steps to avoid breaking**:
+  - `./gradlew assembleDebug` must succeed.
+  - Workflow steps in `.github/workflows/firebase_app_distribution.yml` (e.g. Create google-services.json, Build Debug APK, Upload to Firebase App Distribution) must remain valid.
+- **Verify**: `./gradlew assembleDebug` locally; ensure no workflow syntax or step errors in modified `.github/workflows/*.yml`.
+
+## Before Pushing / Opening PR (for created or modified work)
+
+- Ensure commit/PR message follows Conventional Commits.
+- Run `./gradlew ktlintCheck` and fix any issues in modified Kotlin/Gradle files.
+- Run `./gradlew assembleDebug` to confirm the distribution pipeline will not fail.
+- Optionally: `./scripts/check-pr-commitlint-ktlint.sh` to verify commitlint + ktlint together.
