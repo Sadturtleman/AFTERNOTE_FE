@@ -10,6 +10,16 @@ import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterMediaResponse
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterMediaType
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterResponse
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterStatus
+import com.kuit.afternote.feature.user.data.dto.DailyQuestionAnswerItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNoteSourceItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNotesResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLetterItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLettersResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiversListResponseDto
+import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
 import kotlinx.serialization.json.Json
@@ -130,6 +140,89 @@ class MockApiInterceptor(
                 ),
                 message = "푸시 알림 설정 수정 성공"
             )
+
+            path == "/users/receivers" && method == "GET" -> createSuccessResponse(
+                request = request,
+                data = ReceiversListResponseDto(
+                    receivers = listOf(
+                        ReceiverItemDto(receiverId = 1L, name = "김지은", relation = "딸"),
+                        ReceiverItemDto(receiverId = 2L, name = "김혜성", relation = "아들")
+                    )
+                ),
+                message = "수신인 목록 조회 성공"
+            )
+
+            path == "/users/receivers" && method == "POST" -> createSuccessResponse(
+                request = request,
+                data = RegisterReceiverResponseDto(receiverId = 1L),
+                message = "수신자 등록 성공"
+            )
+
+            path.matches(Regex("/users/receivers/\\d+$")) && method == "GET" -> createSuccessResponse(
+                request = request,
+                data = ReceiverDetailResponseDto(
+                    receiverId = 1L,
+                    name = "김지은",
+                    relation = "딸",
+                    phone = "010-1234-1234",
+                    email = "jieun@naver.com",
+                    dailyQuestionCount = 8,
+                    timeLetterCount = 12,
+                    afterNoteCount = 4
+                ),
+                message = "수신인 상세 조회 성공"
+            )
+
+            path.matches(Regex("/users/receivers/\\d+/daily-questions")) && method == "GET" ->
+                createSuccessResponse(
+                    request = request,
+                    data = ReceiverDailyQuestionsResponseDto(
+                        items = listOf(
+                            DailyQuestionAnswerItemDto(
+                                dailyQuestionAnswerId = 130L,
+                                question = "오늘 하루, 누구에게 가장 고마웠나요?",
+                                answer = "아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다.",
+                                createdAt = "2025-10-09"
+                            )
+                        )
+                    ),
+                    message = "데일리 질문 답변 목록 조회 성공"
+                )
+
+            path.matches(Regex("/users/receivers/\\d+/time-letters")) && method == "GET" ->
+                createSuccessResponse(
+                    request = request,
+                    data = ReceiverTimeLettersResponseDto(
+                        items = listOf(
+                            ReceiverTimeLetterItemDto(
+                                timeLetterId = 12L,
+                                receiverName = "박채연",
+                                sendAt = "2027-11-24",
+                                title = "채연아 20번째 생일을 축하해",
+                                content = "네가 태어난 게 엊그제 같은데..."
+                            )
+                        )
+                    ),
+                    message = "타임레터 목록 조회 성공"
+                )
+
+            path.matches(Regex("/users/receivers/\\d+/after-notes")) && method == "GET" ->
+                createSuccessResponse(
+                    request = request,
+                    data = ReceiverAfterNotesResponseDto(
+                        items = listOf(
+                            ReceiverAfterNoteSourceItemDto(
+                                sourceType = "INSTAGRAM",
+                                lastUpdatedAt = "2025-11-26"
+                            ),
+                            ReceiverAfterNoteSourceItemDto(
+                                sourceType = "GALLERY",
+                                lastUpdatedAt = "2025-11-26"
+                            )
+                        )
+                    ),
+                    message = "애프터노트 목록 조회 성공"
+                )
 
             // TimeLetter API Mock 응답
             path == "/time-letters" && method == "GET" -> createSuccessResponse(
