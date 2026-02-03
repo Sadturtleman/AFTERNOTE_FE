@@ -12,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.kuit.afternote.core.ui.component.LastWishOption
-import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.dummy.DefaultAlbumCovers
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
@@ -22,6 +22,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Mai
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 
 /**
  * 추모 플레이리스트 상태 홀더
@@ -111,10 +112,7 @@ class AfternoteEditState(
         private set
 
     // MainPageEditReceivers
-    private val initialMainPageEditReceivers = listOf(
-        MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-        MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
-    )
+    private val initialMainPageEditReceivers = AfternoteEditDummyData.defaultMainPageEditReceivers()
     var mainPageEditReceivers by mutableStateOf(initialMainPageEditReceivers)
         private set
 
@@ -204,12 +202,7 @@ class AfternoteEditState(
             value = "other"
         )
     )
-    val playlistAlbumCovers = listOf(
-        AlbumCover("1"),
-        AlbumCover("2"),
-        AlbumCover("3"),
-        AlbumCover("4")
-    )
+    val playlistAlbumCovers = DefaultAlbumCovers.list
 
     // Computed Properties (Line 295 해결: 삼항 연산자 제거)
     val currentServiceOptions: List<String>

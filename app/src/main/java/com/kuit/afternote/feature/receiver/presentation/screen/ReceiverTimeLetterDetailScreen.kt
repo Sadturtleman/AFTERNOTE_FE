@@ -43,7 +43,7 @@ fun TimeLetterDetailScreen(onBackClick: () -> Unit) {
         topBar = {
             TopBar(
                 title = "타임레터",
-                onBackClick = {onBackClick() }
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {

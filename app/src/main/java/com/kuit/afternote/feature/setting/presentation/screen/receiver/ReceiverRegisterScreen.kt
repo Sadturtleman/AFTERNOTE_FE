@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,16 +55,14 @@ fun ReceiverRegisterScreen(
     val relationshipOptions = listOf("딸", "아들", "친구", "가족", "연인", "동료", "기타")
     val dropdownState = rememberSelectionDropdownState()
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
             TopBar(
                 title = "수신자 등록",
                 onBackClick = onBackClick,
-                onActionClick = {
-                    // TODO: 수신자 등록 API 호출
-                    onRegisterClick()
-                },
+                onActionClick = onRegisterClick,
                 actionText = "등록"
             )
         }

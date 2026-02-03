@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.postdelivery
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -109,6 +110,7 @@ fun PostDeliveryConditionScreen(
         TriggerConditionOption.ReceiverRequest
     )
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {

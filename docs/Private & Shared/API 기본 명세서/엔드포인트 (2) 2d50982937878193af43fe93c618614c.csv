@@ -1,0 +1,6 @@
+﻿BE,FE,기능,카테고리,사용자,Method,URL,param,설명,기타
+test 완료,test 완료,로그인 하기,인증,유저,POST,/auth/login,,로그인 합니다.,
+test 완료,구현 완료,모든 유저 목록,유저,관리자,GET,/users,,"모든 유저 목록을 조회합니다. ",응답에는 page_size보다 적은 수의 결과가 나올 수 있습니다.
+구현 완료,구현 완료,유저 조회,유저,관리자,GET,/users/{user_id},,ID를 사용하여 학생을 조회합니다.,
+구현 완료,시작 전,출결 검색,검색,관리자,GET,/search,"id , date","ID 와 Date를 사용하여 유저의 출결 정보를 검색합니다. ",
+시작 전,시작 전,new Endpoint,,,,,,,

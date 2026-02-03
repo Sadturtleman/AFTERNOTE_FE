@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -88,6 +89,7 @@ fun ReceiverDetailScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    BackHandler(onBack = callbacks.onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {

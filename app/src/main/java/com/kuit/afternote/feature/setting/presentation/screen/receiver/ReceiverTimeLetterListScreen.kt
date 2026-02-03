@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +43,7 @@ fun ReceiverTimeLetterListScreen(
     onBackClick: () -> Unit,
     onItemClick: (TimeLetterItem) -> Unit = {}
 ) {
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {

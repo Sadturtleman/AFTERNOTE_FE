@@ -127,6 +127,6 @@ fun MindRecordDetailScreen(onBackClick: () -> Unit) {
 @Composable
 fun PreviewMindRecordDetail() {
     MaterialTheme {
-        MindRecordDetailScreen(){}
+        MindRecordDetailScreen {}
     }
 }
