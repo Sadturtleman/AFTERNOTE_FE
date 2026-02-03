@@ -27,7 +27,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
     composable<TimeLetterRoute.TimeLetterMainRoute> {
         TimeLetterScreen(
             onBackClick = { navController.popBackStack() },
-            onNavItemSelected = onNavItemSelected
+            onNavItemSelected = onNavItemSelected,
+            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
         )
     }
 
@@ -40,7 +41,9 @@ fun NavGraphBuilder.timeLetterNavGraph(
             title = uiState.title,
             content = uiState.content,
             sendDate = uiState.sendDate,
+            sendTime = uiState.sendTime,
             showDatePicker = uiState.showDatePicker,
+            showTimePicker = uiState.showTimePicker,
             draftCount = uiState.draftCount,
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
@@ -67,6 +70,10 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onDateSelected = { year, month, day ->
                 val formattedDate = "$year. ${month.toString().padStart(2, '0')}. ${day.toString().padStart(2, '0')}"
                 viewModel.updateSendDate(formattedDate)
+            },
+            onTimePickerDismiss = viewModel::hideTimePicker,
+            onTimeSelected = { hour, minute ->
+                viewModel.updateSendTime("%02d:%02d".format(hour, minute))
             }
         )
     }
