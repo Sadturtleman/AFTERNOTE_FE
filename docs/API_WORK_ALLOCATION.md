@@ -37,7 +37,7 @@
 ### 1-2. Auth API (8개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (Auth만)**  
-**대상 API** (참고: `docs/API_SPECIFICATION.md`):
+**대상 API** (참고: `docs/API specification from notion/엔드포인트` 및 동일 폴더 CSV):
 
 1. 이메일 인증번호 보내기 `POST /auth/email/send`
 2. 이메일 인증번호 확인 `POST /auth/email/verify`
@@ -63,7 +63,7 @@
 ### 1-3. User API (12개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (User)**  
-**대상 API** (참고: `docs/API_SPECIFICATION.md` USER ENDPOINTS 12개):
+**대상 API** (참고: `docs/API specification from notion/엔드포인트` 및 동일 폴더 CSV, User 카테고리):
 
 1. 내 프로필 조회 `GET /users/me`
 2. 프로필 수정 `PATCH /users/me`
@@ -94,6 +94,21 @@
 
 **담당 계층**: **미확정** (내용 확정 시 Data → 필요 시 Domain + UI)  
 **대상**: API 명세 상 카테고리 미배정 1건. 내용 확정 후 정일혁이 담당.
+
+---
+
+### 1-5. 추가 엔드포인트 (Notion 명세 기준, 정일혁 Data 담당)
+
+**담당 계층**: **Data Layer** (1-1과 동일: API·DataSource·Mapper·RepositoryImpl)  
+**출처**: `docs/API specification from notion/엔드포인트` 및 동일 폴더의 CSV에 있으나 위 1-2·1-3·2-1·2-2·3-1·3-2 번호 목록에 미기재된 항목. 모두 정일혁이 Data 계층 담당.
+
+**대상 API**:
+
+1. 마음의기록 단건 수정화면 조회 `GET /mind-records/{recordId}`
+2. 데일리 질문 조회 `GET /daily-question` (Notion 명세 경로; 실제 서버가 `/mind-records/daily-question`이면 동일 API로 간주 가능)
+3. new Endpoint (Notion CSV placeholder, URL·내용 확정 시 정일혁 Data 담당)
+
+> **참고**: 위 1·2는 Mind-Record 도메인이며, **Domain·UI(Repository·UseCase·ViewModel·UIModel)** 는 기존대로 안현지 담당. 정일혁은 해당 엔드포인트의 **Data 계층(API·DataSource·Mapper·RepositoryImpl)** 만 담당.
 
 ---
 
@@ -207,7 +222,7 @@
 
 ## 5. 참고
 
-- **API 상세**: `docs/API_SPECIFICATION.md`
+- **API 상세**: `docs/API specification from notion/엔드포인트` 및 동일 폴더의 `엔드포인트 2d50982937878141a5cce5c9b5d1e61f_all.csv` (Notion 명세만 사용)
 - **아키텍처·의존성**: `.cursor/rules/tech-stack/architecture.mdc`
 - **백엔드 명세가 잘 되어, 여러 Repository 조합이 필요 없으면** UseCase를 건너뛰고 ViewModel+UIModel만 분배하는 경우도 팀 합의 하에 가능.
 
@@ -216,7 +231,7 @@
 ## 6. API 구현 기준 및 배포 관련
 
 ### API 구현 기준
-- **참고 자료**: `docs/API_SPECIFICATION.md` 및 Swagger(OpenAPI)를 참고하여 구현할 수 있습니다.
+- **참고 자료**: `docs/API specification from notion/엔드포인트` 및 Swagger(OpenAPI)를 참고하여 구현할 수 있습니다.
 - **불일치 시**: 명세서·Swagger와 요청이 다를 경우 팀 합의 또는 백엔드 담당자 확인을 권장합니다.
 - **테스트**: Swagger UI에서 API 테스트가 가능하므로 구현 전 테스트를 권장합니다.
 
