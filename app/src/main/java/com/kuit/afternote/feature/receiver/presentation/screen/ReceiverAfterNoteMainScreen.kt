@@ -72,7 +72,7 @@ fun ReceiverAfterNoteMainScreen(
         topBar = {
             TopBar(
                 title = "故${title}님의 애프터노트",
-                onBackClick = onBackClick
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {
