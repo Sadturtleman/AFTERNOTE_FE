@@ -124,6 +124,8 @@
 | userId | int64 | 가입한 회원 ID (스웨거: `userId`) |
 | email | string | 가입 이메일 |
 
+**Response message**: 200 — 회원가입이 완료되었습니다.
+
 ---
 
 ### 4. 로그인 (Login)
@@ -149,6 +151,8 @@
 |-----------|------|------|
 | accessToken | string | 액세스 토큰 |
 | refreshToken | string | 리프레시 토큰 |
+
+**Response message**: 200 — 로그인에 성공하였습니다.
 
 ---
 
@@ -252,7 +256,7 @@
 - **Description**: 프로필 수정 진입 시 기존 정보를 표시합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -278,7 +282,7 @@
 - **Description**: 프로필을 수정합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body — 모든 필드 선택)
 
@@ -303,7 +307,7 @@
 - **Description**: 로그인한 사용자의 푸시 알림 수신 설정 현재 상태를 조회합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -328,7 +332,7 @@
 - **Description**: 푸시 알림 수신 설정을 변경합니다. 각 알림 종류별 최종 수신 여부(true/false)를 서버로 전달합니다. (해제는 해당 항목을 false로 설정)
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body)
 
@@ -353,7 +357,7 @@
 - **Description**: 수신인 목록을 조회합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -379,7 +383,7 @@
 - **Description**: 수신인을 등록합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body)
 
@@ -412,7 +416,7 @@
 - **Description**: 특정 수신인의 상세 정보를 조회합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -443,7 +447,7 @@
 - **Description**: 특정 수신인에게 전달될 데일리 질문 답변 목록을 최신순으로 조회합니다.
 - **Status**: 시작 전 (Not Started)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -472,7 +476,7 @@
 - **Description**: 특정 수신인에게 전달될 애프터노트 출처별 목록을 조회합니다.
 - **Status**: 시작 전 (Not Started)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -499,7 +503,7 @@
 - **Description**: 특정 수신인에게 전달될 타임레터 목록을 조회합니다.
 - **Status**: 시작 전 (Not Started)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data 필드)
 
@@ -534,7 +538,7 @@
 - **Description**: category 없으면 전체. 필터링할 카테고리, 페이지, 사이즈로 목록 조회.
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: (Not specified)
 
 **Query Parameters**
 
@@ -558,7 +562,7 @@
 - **Description**: 상세 목록. 공통: afternoteId, category, title, createdAt, updatedAt. 카테고리별: credentials (SOCIAL), receivers (GALLERY), processMethod, actions, leaveMessage, playlist (PLAYLIST).
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: (Not specified)
 
 **Path**: afternote_id (int)
 
@@ -574,7 +578,7 @@
 - **Description**: afternote를 생성합니다. 카테고리별 필수/null 필드: SOCIAL (category, title, processMethod, actions, credentials; receivers, playlist null), GALLERY (receivers 필수; credentials, playlist null), PLAYLIST (playlist 필수; processMethod, actions, leaveMessage, credentials, receivers null).
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body): category, title, processMethod, actions, leaveMessage, credentials / receivers / playlist (카테고리별)
 
@@ -592,7 +596,7 @@
 - **Description**: afternote를 수정합니다. 카테고리 변경 불가. 수정하지 않을 필드는 생략. SOCIAL: title, processMethod, actions, leaveMessage, credentials. GALLERY: title, processMethod, actions, leaveMessage, receivers. PLAYLIST: title, playlist.
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body): 카테고리별 수정 가능 필드만 전송
 
@@ -610,7 +614,7 @@
 - **Description**: afternote를 삭제합니다. Body 없음.
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data): afternote_id
 
@@ -726,7 +730,7 @@
 - **Description**: 기록 목록 조회. type 파라미터로 데일리 질문(DAILY_QUESTION), 일기(DIARY), 깊은생각(DEEP_THOUGHT) 구분. view=LIST 또는 CALENDAR. CALENDAR일 때 year, month 사용.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Query Parameters**
 
@@ -751,7 +755,7 @@
 - **Description**: 기록 수정 화면 진입 시 기존 기록 조회.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data): recordId, type, title, content, date, isDraft, category (DEEP_THOUGHT일 때만)
 
@@ -767,7 +771,7 @@
 - **Description**: 기록 작성. type으로 DAILY_QUESTION / DIARY / DEEP_THOUGHT 구분. DAILY_QUESTION 시 questionId, DEEP_THOUGHT 시 category 포함.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body): type, title, content, date, isDraft, questionId (DAILY_QUESTION), category (DEEP_THOUGHT)
 
@@ -785,7 +789,7 @@
 - **Description**: 기록 수정. 타입 변경 불가. type별 questionId/category 규칙 동일.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Request** (Body): title, content, date, isDraft, questionId, category (타입별)
 
@@ -803,7 +807,7 @@
 - **Description**: 기록 ID 기준 삭제.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **HTTP Status Codes**: 200, 400, 404
 
@@ -817,7 +821,7 @@
 - **Description**: 날짜 기준 하루 1개 질문. 해당 날짜에 이미 노출된 질문 있으면 기존 반환, 없으면 서버에서 새 질문 생성 후 반환. 서버 시간 자정 기준.
 - **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 김소희 (Kim Sohee)
-- **Frontend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: (Not specified)
 
 **Response** (data): questionId, content
 
@@ -830,16 +834,55 @@
 - **Method**: GET
 - **URL**: `/mind-records/weekly`
 - **Header Required**: Yes (포함 O)
-- **Description**: 선택한 주차에 해당하는 사용자 기록 목록 조회. year, week (ISO week) 쿼리.
+- **Description**: 선택한 주차에 해당하는 사용자의 기록 목록을 조회합니다. 해당 주차에 작성된 기록들을 반환합니다.
 - **Status**: 시작 전 (Not Started)
 - **Backend Manager**: (Not specified)
 - **Frontend Manager**: (Not specified)
 
-**Query Parameters**: year (int), week (int, ISO week)
+**Query Parameters**
 
-**Response** (data): records (recordId, type, title, contentPreview, date)
+| 파라미터 | 타입 | 필수 | 설명 | 예시 |
+|----------|------|------|------|------|
+| year | Integer | O | 조회 연도 | 2025 |
+| week | Integer | O | 연중 주차 (ISO week 기준) | 46 |
 
-**HTTP Status Codes**: 200, 400
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| records | array | 기록 다시 읽기 목록 |
+| records[].recordId | long | 기록 ID |
+| records[].title | string | 기록 제목 |
+| records[].contentPreview | string | 기록 내용 미리보기 |
+| records[].date | string | 기록 날짜 (yyyy-MM-dd) |
+| records[].type | string | 기록 유형 (DAILY_QUESTION / AFTERNOTE / DEEP_THOUGHT) |
+
+**Example**
+
+```json
+{
+  "records": [
+    {
+      "recordId": 12,
+      "type": "DAILY_QUESTION",
+      "title": "오늘 하루, 누구에게 가장 고마웠나요?",
+      "contentPreview": "아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다.",
+      "date": "2025-10-09"
+    },
+    {
+      "recordId": 13,
+      "type": "AFTERNOTE",
+      "title": "오늘의 기록",
+      "contentPreview": "날씨가 좋아서 기분이 한결 나아졌다.",
+      "date": "2025-10-11"
+    }
+  ]
+}
+```
+
+**HTTP Status Codes**:
+- 200: 주간 리포트 조회 성공
+- 400: 잘못된 요청 또는 인증 오류
 
 ---
 
@@ -888,124 +931,6 @@
 - **Frontend Manager**: 박경민 (Park Kyungmin)
 
 **HTTP Status Codes**: 200, 400
-
----
-
-## 공통 응답 형식
-
-```json
-{
-  "status": [HTTP 상태 코드],
-  "code": [내부 코드],
-  "message": "[메시지]",
-  "data": [데이터 객체 또는 null]
-}
-```
-
----
-
-## 공통 오류 응답
-
-### 인증/인가 관련
-
-| HTTP | code | message |
-|------|------|---------|
-| 401 | 999 | 인증이 필요합니다. 로그인해주세요. (유효한 액세스 토큰 없음) |
-| 403 | 999 | 권한이 부족합니다. |
-| 404 | 999 | 존재하지 않는 엔드포인트입니다. |
-
-### 토큰 관련 (status 400)
-
-| code | message |
-|------|---------|
-| 400 | Authorization 헤더 미설정 |
-| 401 | 쿠키 값 미설정 |
-| 402 | 엑세스 토큰 만료 |
-| 403 | 유효하지 않은 엑세스 토큰 |
-| 404 | 엑세스 토큰 타입 미일치 |
-| 405 | 리프레시 토큰 미설정 |
-| 406 | 리프레시 토큰 만료 |
-| 407 | 유효하지 않은 리프레시 토큰 |
-| 408 | 리프레시 토큰 타입 미일치 |
-| 409 | 사용이 제한된 리프레시 토큰 |
-
----
-
-## ERD / 도메인 개요
-
-(출처: `docs/Private & Shared/API 기본 명세서/erd`)
-
-### 도메인 추출
-
-**Core Domain (사람/관계)**
-
-- **User**: 자기 자신의 정보만 조회, 수정
-- **Receiver**: 받는 사람
-- **UserReceiver**: 누구의 Receiver인지 — 이 Receiver는 어떤 User의 수신자인가를 나타냄
-
-**Mind-Record Domain (기록)**
-
-- **DailyQuestion**: 일일 질문
-- **DailyQuestionAnswer**
-- **DeepThought**
-- **Diary**: 일기
-- **Emotion**
-
-**TimeLetter Domain**
-
-- **TimeLetter**: 예약 발송되는 타임레터 본문
-- **TimeLetterMedia**: 이미지, 미디어 첨부
-- **TimeLetterReceiver**: 타임레터 ↔ 수신자 연결
-
-**Afternote Domain**
-
-- **Afternote**: 애프터노트 기본 정보
-- **AfternoteCategory**
-- **AfternoteSecureContent**: 아이디, 비번 같은 민감 정보
-- **AfternoteAction**: 처리 방법
-- **AfternoteActionMapping**: 애프터노트 ↔ 처리 방법 연결
-- **AfternotePlaylist**
-
-**Auth / Audit Domain**
-
-- **EmailVerification**: 이메일 인증 코드 및 검증 정보
-- **RecieverAuth**: 애프터노트, 타임레터 열람 전 인증
-- **AccessLog**: 사용자/수신자의 접근 기록
-
-### 관계 정의
-
-**Core Domain**
-
-- User ↔ Receiver: N:M (한 User는 여러 Receiver를 가질 수 있고, 한 Receiver는 여러 User의 수신자가 될 수 있음)
-- UserReceiver: User와 Receiver의 관계 Entity 역할
-
-**Mind-Record Domain**
-
-- User ↔ DailyQuestionAnswer: 1:N (한 User는 여러 데일리 질문 답변 가질 수 있음, 답변은 반드시 한 User에 속함)
-- DailyQuestion ↔ DailyQuestionAnswer: 1:N (하나의 질문에 여러 사용자 답변 가능)
-- User ↔ Diary: 1:N (일기는 User 소유)
-- User ↔ DeepThought: 1:N (깊은 생각은 User 소유)
-- User ↔ Emotion: Emotion은 User 기록에서 추출됨
-
-**TimeLetter Domain**
-
-- User ↔ TimeLetter: 1:N (타임레터는 User 기준으로 생성)
-- TimeLetter ↔ TimeLetterReceiver ↔ Receiver: N:M (하나의 타임레터를 여러 수신자에게 보낼 수 있고, 한 Receiver는 여러 타임레터 받을 수 있음)
-- TimeLetter ↔ TimeLetterMedia: 1:N (하나의 타임레터에 여러 미디어 첨부 가능)
-
-**Afternote Domain**
-
-- User ↔ Afternote: 1:N (애프터노트는 User 소유)
-- Afternote ↔ AfternoteCategory: N:1 (하나의 애프터노트는 하나의 카테고리에 속하고, 카테고리는 여러 애프터노트에 사용)
-- Afternote ↔ AfternoteSecureContent: 1:1 (민감정보 분리)
-- Afternote ↔ AfternoteAction ↔ AfternoteActionMapping: N:M (하나의 애프터노트에 여러 처리 방법 선택 가능, 처리 방법은 여러 애프터노트에서 재사용)
-- Afternote ↔ AfternotePlaylist: 1:1
-
-**Auth / Audit Domain**
-
-- User ↔ EmailVerification: 1:N (이메일 인증은 여러 번 발생 가능)
-- Receiver ↔ ReceiverAuth: 1:N (수신자는 로그인 없이 인증만)
-- User / Receiver ↔ AccessLog: 1:N (사용자/수신자의 접근 기록 — 열람 대상은 MindRecord, TimeLetter, Afternote)
 
 ---
 
