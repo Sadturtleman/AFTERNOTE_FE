@@ -67,8 +67,6 @@
 
 1. 내 프로필 조회 `GET /users/me`
 2. 프로필 수정 `PATCH /users/me`
-3. 연결된 계정 조회 `GET /users/connected-accounts`
-4. 연결된 계정 해제 `DELETE /users/connected-accounts/{provider}`
 5. 푸시 알림 설정 조회 `GET /users/push-settings`
 6. 푸시 알림 설정 수정 `PATCH /users/push-settings`
 7. 수신인 목록 조회 `GET /users/receivers`
