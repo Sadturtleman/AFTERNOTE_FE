@@ -60,25 +60,40 @@
 
 ---
 
-### 1-3. User API (4개): UseCase → ViewModel + UIModel
+### 1-3. User API (12개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (User)**  
-**대상 API** (스웨거 등록 완료):
+**대상 API** (참고: `docs/API_SPECIFICATION.md` USER ENDPOINTS 12개):
 
 1. 내 프로필 조회 `GET /users/me`
 2. 프로필 수정 `PATCH /users/me`
-3. 푸시 알림 설정 조회 `GET /users/push-settings`
-4. 푸시 알림 설정 수정 `PATCH /users/push-settings`
+3. 연결된 계정 조회 `GET /users/connected-accounts`
+4. 연결된 계정 해제 `DELETE /users/connected-accounts/{provider}`
+5. 푸시 알림 설정 조회 `GET /users/push-settings`
+6. 푸시 알림 설정 수정 `PATCH /users/push-settings`
+7. 수신인 목록 조회 `GET /users/receivers`
+8. 수신자 등록 `POST /users/receivers`
+9. 수신인 상세 조회 `GET /users/receivers/{receiverId}`
+10. 수신인별 데일리 질문 답변 목록 조회 `GET /users/receivers/{receiverId}/daily-questions`
+11. 수신인별 애프터노트 목록 조회 `GET /users/receivers/{receiverId}/after-notes`
+12. 수신인별 타임레터 목록 조회 `GET /users/receivers/{receiverId}/time-letters`
 
 **할 일**:
 | 구성요소 | 설명 |
 |----------|------|
 | **Repository** | User `Repository` 인터페이스 정의 (Domain 계층) |
-| **UseCase** | User `Repository` 인터페이스 사용, 프로필·푸시 설정 비즈니스 로직 |
+| **UseCase** | User `Repository` 인터페이스 사용, 프로필·푸시·연결계정·수신인 비즈니스 로직 |
 | **ViewModel** | UseCase 호출, UI 상태·이벤트 관리 |
 | **UIModel** | 화면에 필요한 데이터만 가공, View/ViewModel에서 사용 |
 
-> User API도 스웨거 등록 완료로, **DTO→RepoImpl(1-1) + Repository 인터페이스 정의 + UseCase→ViewModel+UIModel** 까지 한 명이 담당.
+> User API 전체(12개) **DTO→RepoImpl(1-1) + Repository 인터페이스 정의 + UseCase→ViewModel+UIModel** 까지 정일혁이 담당.
+
+---
+
+### 1-4. No카테고리 (1개): 정일혁 담당
+
+**담당 계층**: **미확정** (내용 확정 시 Data → 필요 시 Domain + UI)  
+**대상**: API 명세 상 카테고리 미배정 1건. 내용 확정 후 정일혁이 담당.
 
 ---
 
@@ -184,15 +199,9 @@
 
 | 구분 | Data (API·DataSource·RepoImpl·Entity·Mapper) | Domain (Repository·UseCase·Model) | UI (ViewModel·View·UIModel) |
 |------|-----------------------------------------------|-----------------------------------|------------------------------|
-| **정일혁** | 29개 API 전체 (RepositoryImpl 포함) | Auth 8개, User 4개 (Repository·UseCase·Model) | Auth 8개, User 4개 (ViewModel·UIModel) |
+| **정일혁** | 29개 API 전체 (RepositoryImpl 포함) | Auth 8개, User 12개 (Repository·UseCase·Model) | Auth 8개, User 12개 (ViewModel·UIModel) |
 | **박경민** | — | Time-Letters 7, Received 3 (Repository·UseCase·Model) | Time-Letters 7, Received 3 (ViewModel·UIModel) |
 | **안현지** | — | Mind-Record 11, Afternote 5 (Repository·UseCase·Model) | Mind-Record 11, Afternote 5 (ViewModel·UIModel) |
-
-- **미배분 구간**:
-  - ~~**User API 7개**~~ → ✅ **배분 완료** (정일혁, 스웨거 등록된 4개 기준)
-  - **No카테고리(1개)**: (내용 미확정)
-  
-  → 추후 팀 논의 후 배분 예정
 
 ---
 
