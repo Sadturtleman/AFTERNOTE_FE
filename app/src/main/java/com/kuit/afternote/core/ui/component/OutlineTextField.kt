@@ -58,7 +58,8 @@ data class LabeledTextFieldStyle(
     val labelSpacing: Dp = 6.dp,
     val labelFontSize: TextUnit = 12.sp,
     val labelLineHeight: TextUnit = 18.sp,
-    val labelFontWeight: FontWeight = FontWeight.Normal
+    val labelFontWeight: FontWeight = FontWeight.Normal,
+    val labelColor: Color = Gray9
 )
 
 private val PasswordOutputTransformation = OutputTransformation {

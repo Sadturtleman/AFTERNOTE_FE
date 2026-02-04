@@ -23,6 +23,8 @@ import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordC
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordConfirmScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordModifyScreen
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditCallbacks
+import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
@@ -69,6 +71,13 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.ReceiverDetailRoute> { backStackEntry ->
         ReceiverDetailRouteContent(navController, backStackEntry.toRoute())
     }
+    composable<SettingRoute.ProfileEditRoute> {
+        ProfileEditScreen(
+            callbacks = ProfileEditCallbacks(
+                onBackClick = { navController.popBackStack() }
+            )
+        )
+    }
     composable<SettingRoute.PasswordChangeRoute> {
         PasswordChangeScreen(onBackClick = { navController.popBackStack() })
     }
@@ -100,7 +109,7 @@ private fun SettingMainRouteContent(navController: NavController) {
     SettingMainScreen(
         onClick = { title ->
             when (title) {
-                "프로필 수정" -> navController.navigate(SettingRoute.ReceiverDetailRoute())
+                "프로필 수정" -> navController.navigate(SettingRoute.ProfileEditRoute)
                 "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
                 "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
                 "알림 설정" -> navController.navigate(SettingRoute.NotificationSettingsRoute)
