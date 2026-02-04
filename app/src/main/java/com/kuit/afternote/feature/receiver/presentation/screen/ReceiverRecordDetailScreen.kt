@@ -47,10 +47,7 @@ fun ReceiverRecordDetailScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {
-            ProfileImage(
-                containerSize = 133.dp,
-                isEditable = false
-            )
+            ProfileImage(isEditable = false)
 
             Spacer(modifier = Modifier.height(20.dp))
 
