@@ -51,7 +51,7 @@ import com.kuit.afternote.ui.theme.White
 private const val RECEIVER_DETAIL_FIELD_PLACEHOLDER = "Text Field"
 
 /**
- * 프로필 수정 화면 콜백 그룹
+ * 수신자 목록 상세 화면 콜백 그룹
  */
 data class ReceiverDetailEditCallbacks(
     val onBackClick: () -> Unit = {},
