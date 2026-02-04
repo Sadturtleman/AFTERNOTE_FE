@@ -78,6 +78,15 @@ data class ProfileEditFormState(
 )
 
 /**
+ * 프로필 이미지 섹션 파라미터 (LongParameterList 해결)
+ */
+data class ProfileSectionParams(
+    val savedProfileImageUrl: String?,
+    val pickedProfileImageUri: String?,
+    val onProfileImageEditClick: () -> Unit
+)
+
+/**
  * 프로필 수정 화면 콜백 그룹
  */
 data class ProfileEditCallbacks(
@@ -155,13 +164,15 @@ fun ProfileEditScreen(
                 emailState = emailState
             ),
             callbacks = callbacks,
-            savedProfileImageUrl = uiState.savedProfileImageUrl,
-            pickedProfileImageUri = uiState.pickedProfileImageUri,
-            onProfileImageEditClick = {
-                profileImagePickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            },
+            profileSectionParams = ProfileSectionParams(
+                savedProfileImageUrl = uiState.savedProfileImageUrl,
+                pickedProfileImageUri = uiState.pickedProfileImageUri,
+                onProfileImageEditClick = {
+                    profileImagePickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
+            ),
             onEditClick = {
                 viewModel.updateProfile(
                     name = nameState.text.toString().ifBlank { null },
@@ -179,9 +190,7 @@ private fun ProfileEditContent(
     scrollState: ScrollState,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
-    savedProfileImageUrl: String?,
-    pickedProfileImageUri: String?,
-    onProfileImageEditClick: () -> Unit,
+    profileSectionParams: ProfileSectionParams,
     onEditClick: () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -190,9 +199,7 @@ private fun ProfileEditContent(
             maxHeight = maxHeight,
             formState = formState,
             callbacks = callbacks,
-            savedProfileImageUrl = savedProfileImageUrl,
-            pickedProfileImageUri = pickedProfileImageUri,
-            onProfileImageEditClick = onProfileImageEditClick,
+            profileSectionParams = profileSectionParams,
             onEditClick = onEditClick
         )
     }
@@ -204,9 +211,7 @@ private fun ProfileEditScrollColumn(
     maxHeight: Dp,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
-    savedProfileImageUrl: String?,
-    pickedProfileImageUri: String?,
-    onProfileImageEditClick: () -> Unit,
+    profileSectionParams: ProfileSectionParams,
     onEditClick: () -> Unit
 ) {
     Column(
@@ -216,9 +221,9 @@ private fun ProfileEditScrollColumn(
     ) {
         // 프로필 섹션
         ProfileSection(
-            savedProfileImageUrl = savedProfileImageUrl,
-            pickedProfileImageUri = pickedProfileImageUri,
-            onProfileImageEditClick = onProfileImageEditClick
+            savedProfileImageUrl = profileSectionParams.savedProfileImageUrl,
+            pickedProfileImageUri = profileSectionParams.pickedProfileImageUri,
+            onProfileImageEditClick = profileSectionParams.onProfileImageEditClick
         )
 
         Spacer(modifier = Modifier.height((maxHeight.value * 0.056f).dp))
@@ -445,7 +450,7 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
         // No-op: Fake for Preview only; no state update.
     }
 
-    override fun setSelectedProfileImageUri(uri: android.net.Uri?) {
+    override fun setSelectedProfileImageUri(uri: Uri?) {
         // No-op: Fake for Preview only.
     }
 
