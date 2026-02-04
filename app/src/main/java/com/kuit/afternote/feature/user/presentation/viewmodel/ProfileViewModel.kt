@@ -58,7 +58,7 @@ class ProfileViewModel
                                 name = profile.name,
                                 email = profile.email,
                                 phone = profile.phone,
-                                profileImageUrl = profile.profileImageUrl,
+                                savedProfileImageUrl = profile.profileImageUrl,
                                 errorMessage = null
                             )
                         }
@@ -102,7 +102,7 @@ class ProfileViewModel
                     userId = userId,
                     name = name,
                     phone = phone,
-                    profileImageUrl = profileImageUrl
+                    profileImageUrl = profileImageUrl  // API param name unchanged
                 ).onSuccess { profile ->
                     _uiState.update {
                         it.copy(
@@ -110,7 +110,7 @@ class ProfileViewModel
                             name = profile.name,
                             email = profile.email,
                             phone = profile.phone,
-                            profileImageUrl = profile.profileImageUrl,
+                            savedProfileImageUrl = profile.profileImageUrl,
                             errorMessage = null,
                             updateSuccess = true
                         )
@@ -125,6 +125,13 @@ class ProfileViewModel
                     }
                 }
             }
+        }
+
+        /**
+         * 프로필 이미지 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+         */
+        override fun setSelectedProfileImageUri(uri: android.net.Uri?) {
+            _uiState.update { it.copy(pickedProfileImageUri = uri?.toString()) }
         }
 
         /**

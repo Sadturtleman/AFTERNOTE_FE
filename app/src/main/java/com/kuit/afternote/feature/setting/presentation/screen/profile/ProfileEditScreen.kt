@@ -1,6 +1,10 @@
 package com.kuit.afternote.feature.setting.presentation.screen.profile
 
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -96,6 +100,11 @@ fun ProfileEditScreen(
     val contactState = rememberTextFieldState()
     val emailState = rememberTextFieldState()
 
+    val profileImagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            viewModel.setSelectedProfileImageUri(uri)
+        }
+
     LaunchedEffect(uiState.name) {
         Log.d(TAG_PROFILE_EDIT, "LaunchedEffect(name): uiState.name='${uiState.name}' syncing to field")
         if (nameState.text != uiState.name) {
@@ -146,11 +155,18 @@ fun ProfileEditScreen(
                 emailState = emailState
             ),
             callbacks = callbacks,
+            savedProfileImageUrl = uiState.savedProfileImageUrl,
+            pickedProfileImageUri = uiState.pickedProfileImageUri,
+            onProfileImageEditClick = {
+                profileImagePickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
             onEditClick = {
                 viewModel.updateProfile(
                     name = nameState.text.toString().ifBlank { null },
                     phone = contactState.text.toString().ifBlank { null },
-                    profileImageUrl = uiState.profileImageUrl
+                    profileImageUrl = uiState.savedProfileImageUrl
                 )
             }
         )
@@ -163,6 +179,9 @@ private fun ProfileEditContent(
     scrollState: ScrollState,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
+    savedProfileImageUrl: String?,
+    pickedProfileImageUri: String?,
+    onProfileImageEditClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -171,6 +190,9 @@ private fun ProfileEditContent(
             maxHeight = maxHeight,
             formState = formState,
             callbacks = callbacks,
+            savedProfileImageUrl = savedProfileImageUrl,
+            pickedProfileImageUri = pickedProfileImageUri,
+            onProfileImageEditClick = onProfileImageEditClick,
             onEditClick = onEditClick
         )
     }
@@ -182,6 +204,9 @@ private fun ProfileEditScrollColumn(
     maxHeight: Dp,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
+    savedProfileImageUrl: String?,
+    pickedProfileImageUri: String?,
+    onProfileImageEditClick: () -> Unit,
     onEditClick: () -> Unit
 ) {
     Column(
@@ -190,7 +215,11 @@ private fun ProfileEditScrollColumn(
             .verticalScroll(scrollState)
     ) {
         // 프로필 섹션
-        ProfileSection()
+        ProfileSection(
+            savedProfileImageUrl = savedProfileImageUrl,
+            pickedProfileImageUri = pickedProfileImageUri,
+            onProfileImageEditClick = onProfileImageEditClick
+        )
 
         Spacer(modifier = Modifier.height((maxHeight.value * 0.056f).dp))
 
@@ -252,6 +281,9 @@ private fun ProfileEditScrollColumn(
 @Composable
 private fun ProfileSection(
     modifier: Modifier = Modifier,
+    savedProfileImageUrl: String? = null,
+    pickedProfileImageUri: String? = null,
+    onProfileImageEditClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -273,7 +305,9 @@ private fun ProfileSection(
         Spacer(modifier = Modifier.height(29.dp))
 
         ProfileImage(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            displayImageUri = pickedProfileImageUri ?: savedProfileImageUrl,
+            onEditClick = onProfileImageEditClick
         )
     }
 }
@@ -409,6 +443,10 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
         profileImageUrl: String?
     ) {
         // No-op: Fake for Preview only; no state update.
+    }
+
+    override fun setSelectedProfileImageUri(uri: android.net.Uri?) {
+        // No-op: Fake for Preview only.
     }
 
     override fun clearUpdateSuccess() {

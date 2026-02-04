@@ -9,7 +9,7 @@ import com.kuit.afternote.core.ui.component.list.AlbumCover
  */
 @Immutable
 data class MemorialGuidelineEditContentParams(
-    val memorialPhotoUrl: String?,
+    val displayMemorialPhotoUri: String?,
     val playlistSongCount: Int,
     val playlistAlbumCovers: List<AlbumCover>,
     val selectedLastWish: String?,
@@ -17,5 +17,6 @@ data class MemorialGuidelineEditContentParams(
     val funeralVideoUrl: String?,
     val onSongAddClick: () -> Unit,
     val onLastWishSelected: (String) -> Unit,
+    val onPhotoAddClick: () -> Unit,
     val onVideoAddClick: () -> Unit
 )

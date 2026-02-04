@@ -101,7 +101,7 @@ fun ReceiverAfterNoteMainScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 ProfileImage(
-                                    profileImageRes = profileResId,
+                                    fallbackImageRes = profileResId,
                                     containerSize = 140.dp,
                                     profileImageSize = 140.dp,
                                     isEditable = false

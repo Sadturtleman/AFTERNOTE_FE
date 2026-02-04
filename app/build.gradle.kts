@@ -159,6 +159,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kakao.sdk.user)
+    implementation(libs.coil.compose)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)

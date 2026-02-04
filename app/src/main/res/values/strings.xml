@@ -5,6 +5,8 @@
     <string name="add_button">추가하기</string>
 
     <string name="content_description_back">뒤로가기</string>
+    <string name="content_description_profile_image">프로필 이미지</string>
+    <string name="content_description_profile_edit_button">프로필 수정 버튼</string>
 
     <string name="daily_answer_title">나의 모든 기록</string>
     <string name="daily_answer_intro_line1_suffix">님에게 전달 될</string>

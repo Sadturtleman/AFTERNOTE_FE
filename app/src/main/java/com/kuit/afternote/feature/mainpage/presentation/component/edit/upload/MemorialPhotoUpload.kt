@@ -33,6 +33,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun MemorialPhotoUpload(
     modifier: Modifier = Modifier,
     label: String = "영정사진 추가",
+    displayImageUri: String? = null,
+    onAddPhotoClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -53,8 +55,10 @@ fun MemorialPhotoUpload(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProfileImage(
-                profileImageRes = R.drawable.img_default_profile_deceased,
-                profileImageSize = 144.dp
+                fallbackImageRes = R.drawable.img_default_profile_deceased,
+                profileImageSize = 144.dp,
+                displayImageUri = displayImageUri,
+                onEditClick = onAddPhotoClick
             )
         }
     }

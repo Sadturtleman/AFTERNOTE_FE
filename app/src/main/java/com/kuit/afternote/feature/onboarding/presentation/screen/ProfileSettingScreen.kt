@@ -1,5 +1,8 @@
 package com.kuit.afternote.feature.onboarding.presentation.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -58,9 +61,20 @@ fun ProfileSettingScreen(
         }
     }
 
+    val profileImagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            signUpViewModel.setSelectedProfileImageUri(uri)
+        }
+
     ProfileSettingContent(
         modifier = modifier,
         nameState = name,
+        pickedProfileImageUri = uiState.pickedProfileImageUri,
+        onProfileImageEditClick = {
+            profileImagePickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        },
         onBackClick = onBackClick,
         snackBarHostState = snackBarHostState
     ) {
@@ -79,6 +93,8 @@ fun ProfileSettingScreen(
 private fun ProfileSettingContent(
     modifier: Modifier = Modifier,
     nameState: androidx.compose.foundation.text.input.TextFieldState,
+    pickedProfileImageUri: String? = null,
+    onProfileImageEditClick: () -> Unit = {},
     onBackClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onSignUpClick: () -> Unit
@@ -103,7 +119,9 @@ private fun ProfileSettingContent(
             Spacer(modifier = Modifier.weight(0.4f))
 
             ProfileImage(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                displayImageUri = pickedProfileImageUri,
+                onEditClick = onProfileImageEditClick
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -138,8 +156,11 @@ private fun ProfileSettingScreenPreview() {
 
         ProfileSettingContent(
             nameState = nameState,
+            pickedProfileImageUri = null,
+            onProfileImageEditClick = {},
             onBackClick = {},
-            snackBarHostState = snackBarHostState
-        ) {}
+            snackBarHostState = snackBarHostState,
+            onSignUpClick = {}
+        )
     }
 }
