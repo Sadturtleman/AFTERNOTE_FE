@@ -206,8 +206,7 @@ fun NavGraph(navHostController: NavHostController) {
                 email = email,
                 password = password,
                 onFinishClick = { navHostController.navigate(MainPageRoute.MainRoute) },
-                onBackClick = { navHostController.popBackStack() },
-                onAddProfileAvatarClick = {}
+                onBackClick = { navHostController.popBackStack() }
             )
         }
 

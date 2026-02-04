@@ -1,6 +1,10 @@
 package com.kuit.afternote.feature.setting.presentation.screen.profile
 
-import androidx.compose.foundation.Image
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,13 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import android.util.Log
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
@@ -57,6 +56,8 @@ import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 private const val TAG_PROFILE_EDIT = "ProfileEdit"
@@ -77,13 +78,20 @@ data class ProfileEditFormState(
 )
 
 /**
+ * 프로필 이미지 섹션 파라미터 (LongParameterList 해결)
+ */
+data class ProfileSectionParams(
+    val savedProfileImageUrl: String?,
+    val pickedProfileImageUri: String?,
+    val onProfileImageEditClick: () -> Unit
+)
+
+/**
  * 프로필 수정 화면 콜백 그룹
  */
 data class ProfileEditCallbacks(
     val onBackClick: () -> Unit = {},
     val onRegisterClick: () -> Unit = {},
-    val onProfileImageClick: () -> Unit = {},
-    val onEditProfileClick: () -> Unit = {},
     val onChangeEmailClick: () -> Unit = {},
     val onWithdrawClick: () -> Unit = {},
     val onUpdateSuccess: () -> Unit = {}
@@ -100,6 +108,11 @@ fun ProfileEditScreen(
     val nameState = rememberTextFieldState()
     val contactState = rememberTextFieldState()
     val emailState = rememberTextFieldState()
+
+    val profileImagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            viewModel.setSelectedProfileImageUri(uri)
+        }
 
     LaunchedEffect(uiState.name) {
         Log.d(TAG_PROFILE_EDIT, "LaunchedEffect(name): uiState.name='${uiState.name}' syncing to field")
@@ -151,11 +164,20 @@ fun ProfileEditScreen(
                 emailState = emailState
             ),
             callbacks = callbacks,
+            profileSectionParams = ProfileSectionParams(
+                savedProfileImageUrl = uiState.savedProfileImageUrl,
+                pickedProfileImageUri = uiState.pickedProfileImageUri,
+                onProfileImageEditClick = {
+                    profileImagePickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
+            ),
             onEditClick = {
                 viewModel.updateProfile(
                     name = nameState.text.toString().ifBlank { null },
                     phone = contactState.text.toString().ifBlank { null },
-                    profileImageUrl = uiState.profileImageUrl
+                    profileImageUrl = uiState.savedProfileImageUrl
                 )
             }
         )
@@ -168,6 +190,7 @@ private fun ProfileEditContent(
     scrollState: ScrollState,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
+    profileSectionParams: ProfileSectionParams,
     onEditClick: () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -176,6 +199,7 @@ private fun ProfileEditContent(
             maxHeight = maxHeight,
             formState = formState,
             callbacks = callbacks,
+            profileSectionParams = profileSectionParams,
             onEditClick = onEditClick
         )
     }
@@ -187,6 +211,7 @@ private fun ProfileEditScrollColumn(
     maxHeight: Dp,
     formState: ProfileEditFormState,
     callbacks: ProfileEditCallbacks,
+    profileSectionParams: ProfileSectionParams,
     onEditClick: () -> Unit
 ) {
     Column(
@@ -196,7 +221,9 @@ private fun ProfileEditScrollColumn(
     ) {
         // 프로필 섹션
         ProfileSection(
-            onProfileImageClick = callbacks.onProfileImageClick
+            savedProfileImageUrl = profileSectionParams.savedProfileImageUrl,
+            pickedProfileImageUri = profileSectionParams.pickedProfileImageUri,
+            onProfileImageEditClick = profileSectionParams.onProfileImageEditClick
         )
 
         Spacer(modifier = Modifier.height((maxHeight.value * 0.056f).dp))
@@ -259,7 +286,9 @@ private fun ProfileEditScrollColumn(
 @Composable
 private fun ProfileSection(
     modifier: Modifier = Modifier,
-    onProfileImageClick: () -> Unit
+    savedProfileImageUrl: String? = null,
+    pickedProfileImageUri: String? = null,
+    onProfileImageEditClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -280,18 +309,11 @@ private fun ProfileSection(
 
         Spacer(modifier = Modifier.height(29.dp))
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.img_profile),
-                contentDescription = "프로필 이미지",
-                modifier = Modifier
-                    .clickable { onProfileImageClick() }
-                    .size(135.dp)
-            )
-        }
+        ProfileImage(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            displayImageUri = pickedProfileImageUri ?: savedProfileImageUrl,
+            onEditClick = onProfileImageEditClick
+        )
     }
 }
 
@@ -416,13 +438,25 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
             )
         )
     override val uiState: StateFlow<ProfileUiState> = _uiState
-    override fun loadProfile() {}
+    override fun loadProfile() {
+        // No-op: Fake for Preview only; no API call.
+    }
+
     override fun updateProfile(
         name: String?,
         phone: String?,
         profileImageUrl: String?
-    ) {}
-    override fun clearUpdateSuccess() {}
+    ) {
+        // No-op: Fake for Preview only; no state update.
+    }
+
+    override fun setSelectedProfileImageUri(uri: Uri?) {
+        // No-op: Fake for Preview only.
+    }
+
+    override fun clearUpdateSuccess() {
+        // No-op: Fake for Preview only.
+    }
 }
 
 @Preview(showBackground = true)
@@ -430,16 +464,5 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
 private fun ProfileEditScreenPreview() {
     AfternoteTheme {
         ProfileEditScreen(viewModel = remember { FakeProfileEditViewModel() })
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SmallActionButtonPreview() {
-    AfternoteTheme {
-        SmallActionButton(
-            text = "수정하기",
-            onClick = {}
-        )
     }
 }

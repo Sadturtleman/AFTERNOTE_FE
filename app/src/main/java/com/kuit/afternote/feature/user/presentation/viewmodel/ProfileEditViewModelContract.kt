@@ -10,5 +10,6 @@ interface ProfileEditViewModelContract {
     val uiState: StateFlow<ProfileUiState>
     fun loadProfile()
     fun updateProfile(name: String?, phone: String?, profileImageUrl: String?)
+    fun setSelectedProfileImageUri(uri: android.net.Uri?)
     fun clearUpdateSuccess()
 }

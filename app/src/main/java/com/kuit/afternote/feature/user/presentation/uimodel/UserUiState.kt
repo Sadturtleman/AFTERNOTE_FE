@@ -8,7 +8,8 @@ data class ProfileUiState(
     val name: String = "",
     val email: String = "",
     val phone: String? = null,
-    val profileImageUrl: String? = null,
+    val savedProfileImageUrl: String? = null,
+    val pickedProfileImageUri: String? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val updateSuccess: Boolean = false

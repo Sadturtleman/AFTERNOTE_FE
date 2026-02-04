@@ -96,6 +96,13 @@ class SignUpViewModel
         }
 
         /**
+         * 프로필 이미지 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+         */
+        fun setSelectedProfileImageUri(uri: android.net.Uri?) {
+            _uiState.update { it.copy(pickedProfileImageUri = uri?.toString()) }
+        }
+
+        /**
          * signUpSuccess 소비 후 호출.
          */
         fun clearSignUpSuccess() {

@@ -1,5 +1,9 @@
 package com.kuit.afternote.feature.mainpage.presentation.screen
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -90,6 +94,11 @@ fun AfternoteEditScreen(
         }
     }
 
+    val memorialPhotoPickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            state.onMemorialPhotoSelected(uri)
+        }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -117,6 +126,11 @@ fun AfternoteEditScreen(
             EditContent(
                 state = state,
                 onNavigateToAddSong = onNavigateToAddSong,
+                onPhotoAddClick = {
+                    memorialPhotoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
                 bottomPadding = paddingValues
             )
 
@@ -163,6 +177,7 @@ fun AfternoteEditScreen(
 private fun EditContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
+    onPhotoAddClick: () -> Unit,
     bottomPadding: PaddingValues
 ) {
     Column(
@@ -214,6 +229,7 @@ private fun EditContent(
             CategoryContent(
                 state = state,
                 onNavigateToAddSong = onNavigateToAddSong,
+                onPhotoAddClick = onPhotoAddClick,
                 bottomPadding = bottomPadding
             )
         }
@@ -224,6 +240,7 @@ private fun EditContent(
 private fun CategoryContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
+    onPhotoAddClick: () -> Unit,
     bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
@@ -234,17 +251,15 @@ private fun CategoryContent(
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
-                    memorialPhotoUrl = state.memorialPhotoUrl,
+                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri,
                     playlistSongCount = state.playlistSongCount,
                     playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
                     funeralVideoUrl = state.funeralVideoUrl,
-                    onPhotoAddClick = {
-                        // TODO: 사진 선택 로직
-                    },
                     onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
+                    onPhotoAddClick = onPhotoAddClick,
                     onVideoAddClick = {
                         // TODO: 영상 선택 로직
                     }

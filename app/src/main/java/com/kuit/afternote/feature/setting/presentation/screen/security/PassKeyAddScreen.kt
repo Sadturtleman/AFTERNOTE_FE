@@ -88,7 +88,7 @@ fun PassKeyAddScreen(onBackClick: () -> Unit = {}) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.pass_key),
+                        painter = painterResource(R.drawable.ic_pass_key),
                         contentDescription = null,
                         modifier = Modifier.size(width = 320.dp, height = 260.dp)
                     )

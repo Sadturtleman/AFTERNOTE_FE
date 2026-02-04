@@ -53,8 +53,7 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
                 navController.navigate(MainPageRoute.MainRoute)
                 android.util.Log.d("OnboardingNavGraph", "navigate 호출 완료")
             },
-            onBackClick = { navController.popBackStack() },
-            onAddProfileAvatarClick = { }
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

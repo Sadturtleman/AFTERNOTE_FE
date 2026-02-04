@@ -49,7 +49,7 @@ fun MemorialGuidelineEditContent(
             introContent = { LastMomentQuestion() },
             photoContent = {
                 MemorialPhotoUpload(
-                    imageUrl = params.memorialPhotoUrl,
+                    displayImageUri = params.displayMemorialPhotoUri,
                     onAddPhotoClick = params.onPhotoAddClick
                 )
             },
@@ -113,15 +113,15 @@ private fun MemorialGuidelineEditContentPreview() {
         MemorialGuidelineEditContent(
             bottomPadding = PaddingValues(bottom = 88.dp),
             params = MemorialGuidelineEditContentParams(
-                memorialPhotoUrl = null,
+                displayMemorialPhotoUri = null,
                 playlistSongCount = 16,
                 playlistAlbumCovers = DefaultAlbumCovers.list,
                 selectedLastWish = "calm",
                 lastWishOptions = lastWishOptions,
                 funeralVideoUrl = null,
-                onPhotoAddClick = {},
                 onSongAddClick = {},
                 onLastWishSelected = {},
+                onPhotoAddClick = {},
                 onVideoAddClick = {}
             )
         )
