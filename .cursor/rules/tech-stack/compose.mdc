@@ -57,10 +57,14 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 
 ## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
 
+### REM 구현 시 우선순위 (Implementation preference)
+- **1순위: `Spacer(Modifier.weight())` 사용**: 레이아웃에 제한된 높이가 있을 때(스크롤 없음) 큰 간격(24dp 이상)은 **반드시 weight으로 구현**한다. 비율 계산이나 `BoxWithConstraints`보다 단순하고 유지보수에 유리하다.
+- **2순위: BoxWithConstraints**: 스크롤 가능한 컨테이너(`verticalScroll`, `LazyColumn`) 내부에서는 `weight()`를 쓸 수 없으므로, 이 경우에만 `BoxWithConstraints` + 비율 기반 `Spacer(Modifier.height(...))`를 사용한다.
+
 ### 핵심 규칙
 3. **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween`, `Arrangement.SpaceEvenly` 등을 사용
    - **❌ 금지**: `padding(top = 100.dp)` 같은 큰 padding 값
-   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(1f))`
+   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(0.056f))` 등 비율 weight
 4. **공통 컴포넌트 최대한 활용**: `core` 모듈에 있는 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, `BottomNavigationBar` 등)를 최대한 재사용
 5. **컴포넌트 오버로딩**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 **오버로딩**으로 처리
    - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
@@ -71,7 +75,7 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 - 금지: 의미 없는 산술로 새 값을 만들지 않습니다 (예: `16.dp - 8.dp`).
 
 ### 적용 우선순위
-1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
+1. **큰 간격 (24dp 이상)**: **REM 구현 시 weight 우선** — `Spacer(Modifier.weight(ratio))` 또는 `Arrangement` 사용 (예: `weight(0.056f)`, `weight(0.08f)`로 비율 간격)
    - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
 2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
 3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)

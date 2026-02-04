@@ -40,7 +40,7 @@
 - **Figma parity**: Hardcoded `dp` values are allowed in UI to quickly verify margins match Figma.
  Avoid creating “new” values via meaningless arithmetic (e.g. `16.dp - 8.dp`).
 - **Named Arguments Pattern**: Use explicit parameter names for readability and safety. Use `FontWeight.Medium` instead of `FontWeight(500)`. 
-- **Rem-based Design**: Large spacing (24dp+) uses `weight` and `Arrangement`, small spacing (≤8dp) uses `Spacer`, component sizes always fixed dp
+- **Rem-based Design**: REM 구현 시 **weight 우선** — 큰 간격(24dp+)은 `Spacer(Modifier.weight(ratio))` 또는 `Arrangement` 사용. 스크롤 내부일 때만 `BoxWithConstraints`. 작은 간격(≤8dp)은 `Spacer`, 컴포넌트 크기는 고정 dp
 - **Maximize Core Component Reuse**: Maximize reuse of common components in `core` module (`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, etc.)
 - **Component Overloading**: When overall structure is similar but details differ, use **overloading** instead of separate components
 - **Component Reuse**: If uncertain, use `private` function; if reuse confirmed, separate file

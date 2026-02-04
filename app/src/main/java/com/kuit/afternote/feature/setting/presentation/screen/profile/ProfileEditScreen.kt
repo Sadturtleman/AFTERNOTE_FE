@@ -1,10 +1,12 @@
 package com.kuit.afternote.feature.setting.presentation.screen.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -50,6 +53,15 @@ private val PROFILE_EDIT_LABELED_STYLE = LabeledTextFieldStyle(
     labelFontSize = 14.sp,
     labelLineHeight = 20.sp,
     labelColor = Color(0xFF000000)
+)
+
+/**
+ * 프로필 수정 화면 텍스트 필드 상태 그룹 (LongParameterList 해결)
+ */
+data class ProfileEditFormState(
+    val nameState: TextFieldState,
+    val contactState: TextFieldState,
+    val emailState: TextFieldState
 )
 
 /**
@@ -84,73 +96,109 @@ fun ProfileEditScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        ProfileEditContent(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(scrollState)
-        ) {
-            // 프로필 섹션
-            ProfileSection(
-                onProfileImageClick = callbacks.onProfileImageClick
-            )
-
-            Spacer(modifier = Modifier.height(44.5.dp))
-
-            // 이름, 연락처 필드 및 수정하기 버튼
-            ProfileInfoSection(
+                .padding(paddingValues),
+            scrollState = scrollState,
+            formState = ProfileEditFormState(
                 nameState = nameState,
                 contactState = contactState,
-                onEditClick = callbacks.onEditProfileClick
-            )
+                emailState = emailState
+            ),
+            callbacks = callbacks
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.height(64.dp))
+@Composable
+private fun ProfileEditContent(
+    modifier: Modifier,
+    scrollState: ScrollState,
+    formState: ProfileEditFormState,
+    callbacks: ProfileEditCallbacks
+) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        ProfileEditScrollColumn(
+            scrollState = scrollState,
+            maxHeight = maxHeight,
+            formState = formState,
+            callbacks = callbacks
+        )
+    }
+}
 
-            // 구분선
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 25.dp),
-                thickness = 1.dp,
-                color = Gray3
-            )
+@Composable
+private fun ProfileEditScrollColumn(
+    scrollState: ScrollState,
+    maxHeight: Dp,
+    formState: ProfileEditFormState,
+    callbacks: ProfileEditCallbacks
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+    ) {
+        // 프로필 섹션
+        ProfileSection(
+            onProfileImageClick = callbacks.onProfileImageClick
+        )
 
-            Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height((maxHeight.value * 0.056f).dp))
 
-            // 이메일 섹션
-            EmailSection(
-                emailState = emailState,
-                onChangeClick = callbacks.onChangeEmailClick
-            )
+        // 이름, 연락처 필드 및 수정하기 버튼
+        ProfileInfoSection(
+            nameState = formState.nameState,
+            contactState = formState.contactState,
+            onEditClick = callbacks.onEditProfileClick
+        )
 
-            Spacer(Modifier.height(180.dp))
-            // 회원 탈퇴하기
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+        Spacer(modifier = Modifier.height((maxHeight.value * 0.08f).dp))
+
+        // 구분선
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 25.dp),
+            thickness = 1.dp,
+            color = Gray3
+        )
+
+        Spacer(modifier = Modifier.height((maxHeight.value * 0.05f).dp))
+
+        // 이메일 섹션
+        EmailSection(
+            emailState = formState.emailState,
+            onChangeClick = callbacks.onChangeEmailClick
+        )
+
+        Spacer(Modifier.height((maxHeight.value * 0.225f).dp))
+        // 회원 탈퇴하기
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "회원 탈퇴하기",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray4
-                        ),
-                        modifier = Modifier.clickable { callbacks.onWithdrawClick() }
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.width(93.dp),
-                        thickness = 1.dp,
-                        color = Gray3
-                    )
-                }
+                Text(
+                    text = "회원 탈퇴하기",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray4
+                    ),
+                    modifier = Modifier.clickable { callbacks.onWithdrawClick() }
+                )
+                HorizontalDivider(
+                    modifier = Modifier.width(93.dp),
+                    thickness = 1.dp,
+                    color = Gray3
+                )
             }
-            Spacer(Modifier.height(102.dp))
         }
+        Spacer(Modifier.height((maxHeight.value * 0.128f).dp))
     }
 }
 
