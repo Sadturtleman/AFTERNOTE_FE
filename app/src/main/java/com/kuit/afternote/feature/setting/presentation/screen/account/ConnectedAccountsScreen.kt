@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.account
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConnectedAccountsScreen(onBackClick: () -> Unit = {}) {
+    BackHandler(onBack = onBackClick)
     Scaffold(
         topBar = {
             TopBar(

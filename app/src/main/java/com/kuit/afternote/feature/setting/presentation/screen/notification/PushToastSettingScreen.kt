@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.notification
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ fun PushToastSettingScreen(onBackClick: () -> Unit = {}) {
         )
     }
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         topBar = {
             TopBar(

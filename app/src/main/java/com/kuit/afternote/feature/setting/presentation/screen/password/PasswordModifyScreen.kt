@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ fun PasswordModifyScreen(
         { action -> keyPadViewModel.handleKeyAction(action) }
     }
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         topBar = {
             TopBar(

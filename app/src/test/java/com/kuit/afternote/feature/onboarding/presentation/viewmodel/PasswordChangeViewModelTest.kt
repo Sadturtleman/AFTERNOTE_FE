@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import android.util.Log
 import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
+import com.kuit.afternote.feature.dev.domain.LocalPropertiesManager
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.every
@@ -33,6 +34,7 @@ class PasswordChangeViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var passwordChangeUseCase: PasswordChangeUseCase
+    private lateinit var localPropertiesManager: LocalPropertiesManager
     private lateinit var viewModel: PasswordChangeViewModel
 
     @Before
@@ -44,7 +46,9 @@ class PasswordChangeViewModelTest {
         every { Log.w(any(), any<String>()) } returns 0
 
         passwordChangeUseCase = mockk()
-        viewModel = PasswordChangeViewModel(passwordChangeUseCase)
+        localPropertiesManager = mockk()
+        coEvery { localPropertiesManager.updateTestPassword(any()) } returns true
+        viewModel = PasswordChangeViewModel(passwordChangeUseCase, localPropertiesManager)
     }
 
     @After

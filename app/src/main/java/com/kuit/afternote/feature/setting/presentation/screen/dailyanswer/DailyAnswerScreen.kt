@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.dailyanswer
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ fun DailyAnswerScreen(
     items: List<DailyAnswerItemUiModel>,
     onBackClick: () -> Unit
 ) {
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {

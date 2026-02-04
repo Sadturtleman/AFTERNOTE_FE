@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.auth.data.api
 
 import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
@@ -10,8 +11,8 @@ import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpData
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
-import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
+import kotlinx.serialization.json.JsonObject
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -30,7 +31,7 @@ interface AuthApiService {
     @POST("auth/email/verify")
     suspend fun verifyEmail(
         @Body body: VerifyEmailRequest
-    ): ApiResponse<VerifyEmailData?>
+    ): ApiResponse<JsonObject?>
 
     @POST("auth/sign-up")
     suspend fun signUp(
@@ -40,6 +41,11 @@ interface AuthApiService {
     @POST("auth/login")
     suspend fun login(
         @Body body: LoginRequest
+    ): ApiResponse<LoginData?>
+
+    @POST("auth/kakao")
+    suspend fun kakaoLogin(
+        @Body body: KakaoLoginRequest
     ): ApiResponse<LoginData?>
 
     @POST("auth/reissue")

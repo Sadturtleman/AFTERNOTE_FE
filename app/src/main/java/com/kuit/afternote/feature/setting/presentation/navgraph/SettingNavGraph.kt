@@ -11,7 +11,6 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
-import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notification.NotificationSettingsScreen
@@ -28,7 +27,6 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverM
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
-import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
@@ -170,7 +168,8 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
 
     composable<SettingRoute.ReceiverRegisterRoute> {
         ReceiverRegisterScreen(
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onRegisterClick = { navController.popBackStack() }
         )
     }
 
@@ -187,20 +186,19 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.DailyAnswerRoute>()
         val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-
         val sampleQuestion = stringResource(R.string.daily_answer_sample_question)
         val sampleAnswer = stringResource(R.string.daily_answer_sample_answer)
         val sampleDateText = stringResource(R.string.daily_answer_sample_date)
+        val dailyAnswerItems = ReceiverDummyData.dailyAnswerItems(
+            receiverId = route.receiverId,
+            question = sampleQuestion,
+            answer = sampleAnswer,
+            dateText = sampleDateText
+        )
 
         DailyAnswerScreen(
             receiverName = receiverDetail.name,
-            items = List(receiverDetail.dailyQuestionCount) {
-                DailyAnswerItemUiModel(
-                    question = sampleQuestion,
-                    answer = sampleAnswer,
-                    dateText = sampleDateText
-                )
-            },
+            items = dailyAnswerItems,
             onBackClick = { navController.popBackStack() }
         )
     }
@@ -208,35 +206,18 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.ReceiverAfternoteListRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.ReceiverAfternoteListRoute>()
         val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+        val afternoteItems = ReceiverDummyData.defaultAfternoteListSeedsForReceiverDetail().map { seed ->
+            AfternoteListDisplayItem(
+                id = seed.id,
+                serviceName = seed.serviceNameResId?.let { stringResource(it) } ?: (seed.serviceNameLiteral ?: ""),
+                date = seed.date,
+                iconResId = seed.iconResId
+            )
+        }
 
         ReceiverAfternoteListScreen(
             receiverName = receiverDetail.name,
-            items = listOf(
-                AfternoteListDisplayItem(
-                    id = "instagram",
-                    serviceName = stringResource(R.string.receiver_afternote_item_instagram),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.img_insta_pattern
-                ),
-                AfternoteListDisplayItem(
-                    id = "gallery",
-                    serviceName = stringResource(R.string.receiver_afternote_item_gallery),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.ic_gallery
-                ),
-                AfternoteListDisplayItem(
-                    id = "memorial_guideline",
-                    serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.ic_memorial_guideline
-                ),
-                AfternoteListDisplayItem(
-                    id = "naver_mail",
-                    serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.img_naver_mail
-                )
-            ),
+            items = afternoteItems,
             onBackClick = { navController.popBackStack() },
             onItemClick = { /* TODO: 애프터노트 상세로 이동 */ }
         )
@@ -245,24 +226,12 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.ReceiverTimeLetterListRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
         val receiverDetail = ReceiverDummyData.detailOf(receiverId = route.receiverId)
+        val timeLetterItems: List<TimeLetterItem> =
+            ReceiverDummyData.defaultTimeLetterItems(receiverId = route.receiverId)
 
         ReceiverTimeLetterListScreen(
             receiverName = receiverDetail.name,
-            items = List(receiverDetail.timeLetterCount) { index ->
-                TimeLetterItem(
-                    id = "timeletter_$index",
-                    receivername = "박채연",
-                    sendDate = "2027. 11. 24",
-                    title = "채연아 20번째 생일을 축하해",
-                    content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
-                    imageResId = if (index == 0) R.drawable.ic_test_block else null,
-                    theme = when (index % 3) {
-                        0 -> LetterTheme.BLUE
-                        1 -> LetterTheme.YELLOW
-                        else -> LetterTheme.PEACH
-                    }
-                )
-            },
+            items = timeLetterItems,
             onBackClick = { navController.popBackStack() },
             onItemClick = { /* TODO: 타임레터 상세로 이동 */ }
         )

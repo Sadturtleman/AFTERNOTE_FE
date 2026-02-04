@@ -14,6 +14,5 @@ class DeleteTimeLettersUseCase
     constructor(
         private val timeLetterRepository: TimeLetterRepository
     ) {
-        suspend operator fun invoke(timeLetterIds: List<Long>): Result<Unit> =
-            timeLetterRepository.deleteTimeLetters(timeLetterIds)
+        suspend operator fun invoke(timeLetterIds: List<Long>): Result<Unit> = timeLetterRepository.deleteTimeLetters(timeLetterIds)
     }

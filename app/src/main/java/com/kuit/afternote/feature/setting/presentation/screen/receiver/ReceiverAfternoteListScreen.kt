@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.AfternoteListItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
@@ -41,6 +43,7 @@ fun ReceiverAfternoteListScreen(
     onBackClick: () -> Unit,
     onItemClick: (String) -> Unit
 ) {
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
@@ -109,34 +112,17 @@ private fun ReceiverAfternoteIntro(
 @Composable
 private fun ReceiverAfternoteListScreenPreview() {
     AfternoteTheme {
+        val items = ReceiverDummyData.defaultAfternoteListSeedsForReceiverDetail().map { seed ->
+            AfternoteListDisplayItem(
+                id = seed.id,
+                serviceName = seed.serviceNameResId?.let { stringResource(it) } ?: (seed.serviceNameLiteral ?: ""),
+                date = seed.date,
+                iconResId = seed.iconResId
+            )
+        }
         ReceiverAfternoteListScreen(
             receiverName = "김지은",
-            items = listOf(
-                AfternoteListDisplayItem(
-                    id = "instagram",
-                    serviceName = stringResource(R.string.receiver_afternote_item_instagram),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.img_insta_pattern
-                ),
-                AfternoteListDisplayItem(
-                    id = "gallery",
-                    serviceName = stringResource(R.string.receiver_afternote_item_gallery),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.ic_gallery
-                ),
-                AfternoteListDisplayItem(
-                    id = "memorial_guideline",
-                    serviceName = stringResource(R.string.receiver_afternote_item_memorial_guideline),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.ic_memorial_guideline
-                ),
-                AfternoteListDisplayItem(
-                    id = "naver_mail",
-                    serviceName = stringResource(R.string.receiver_afternote_item_naver_mail),
-                    date = "2025.11.26",
-                    iconResId = R.drawable.img_naver_mail
-                )
-            ),
+            items = items,
             onBackClick = {},
             onItemClick = {}
         )

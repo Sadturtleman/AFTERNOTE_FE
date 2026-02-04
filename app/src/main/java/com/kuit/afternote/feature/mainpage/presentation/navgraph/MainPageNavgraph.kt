@@ -7,7 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
@@ -89,22 +89,9 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.EditRoute> {
-        val defaultSongs = listOf(
-            Song(id = "1", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "2", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "3", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "4", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "5", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "6", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "7", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "8", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "9", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "10", title = "노래 제목", artist = "가수 이름"),
-            Song(id = "11", title = "노래 제목", artist = "가수 이름")
-        )
         LaunchedEffect(playlistStateHolder) {
             if (playlistStateHolder.songs.isEmpty()) {
-                playlistStateHolder.initializeSongs(defaultSongs)
+                playlistStateHolder.initializeSongs(AfternoteEditDummyData.defaultSongs())
             }
         }
 

@@ -25,6 +25,7 @@
     - 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error
     - Network Error (IOException)
     - See `.cursor/rules/quality/code-quality.mdc` for details
+16. **Required checks**: Code must pass commitlint, ktlint, and build checks before merge (see `.cursor/rules/workflow/pr-ci-checks.mdc`)
 
 ## MUST NOT DO
 3. `android.R` import
@@ -72,6 +73,7 @@ This project uses `.cursor/rules/*.mdc` file structure to separate rules:
 - **`.cursor/rules/workflow/branch-workflow.mdc`**: Branch work and workflow rules (always applied: `alwaysApply: true`)
 - **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules (Swagger-first)
 - **`.cursor/rules/workflow/pull-request-review.mdc`**: Pull Request and code review rules
+- **`.cursor/rules/workflow/pr-ci-checks.mdc`**: Required checks (commitlint, ktlint, build) before merge
 - **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture and layer separation rules
 - **`.cursor/rules/tech-stack/compose.mdc`**: Jetpack Compose coding rules and patterns
 - **`.cursor/rules/tech-stack/android-kotlin.mdc`**: Android/Kotlin coding conventions and Import rules

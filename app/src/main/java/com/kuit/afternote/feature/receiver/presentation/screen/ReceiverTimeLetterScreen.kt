@@ -54,14 +54,14 @@ import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 @Suppress("AssignedValueIsNeverRead")
-fun TimeLetterScreen() {
+fun TimeLetterScreen(onBackClick: () -> Unit) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
 
     Scaffold(
         topBar = {
             TopBar(
                 title = "타임 레터",
-                onBackClick = { }
+                onBackClick = { onBackClick() }
             )
         },
         bottomBar = {
@@ -301,6 +301,6 @@ fun TimeLetterActionCard(
 @Composable
 fun PreviewTimeLetter() {
     MaterialTheme {
-        TimeLetterScreen()
+        TimeLetterScreen {}
     }
 }

@@ -45,6 +45,7 @@ import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.ui.screen.AfternoteDetailState
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
@@ -62,10 +63,7 @@ data class GalleryDetailState(
     val serviceName: String = "갤러리",
     val userName: String = "서영",
     val finalWriteDate: String = "2025.11.26.",
-    val mainPageEditReceivers: List<MainPageEditReceiver> = listOf(
-        MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-        MainPageEditReceiver(id = "2", name = "김지은", label = "친구")
-    ),
+    val mainPageEditReceivers: List<MainPageEditReceiver> = AfternoteEditDummyData.defaultMainPageEditReceivers(),
     val processingMethods: List<String> = listOf(
         "'엽사' 폴더 박선호에게 전송",
         "'흑역사' 폴더 삭제"

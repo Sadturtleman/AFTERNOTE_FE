@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.auth.data.repository
 
-import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.LoginData
@@ -12,7 +11,6 @@ import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpData
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
-import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
 import com.kuit.afternote.feature.auth.domain.model.EmailVerifyResult
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
@@ -22,6 +20,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -58,11 +60,13 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_whenSuccess_returnsEmailVerifyResult() =
         runTest {
-            val response = ApiResponse<VerifyEmailData?>(
+            val response = ApiResponse<JsonObject?>(
                 status = 200,
                 code = 200,
                 message = "Success",
-                data = VerifyEmailData(isVerified = true)
+                data = buildJsonObject {
+                    put("isVerified", JsonPrimitive(true))
+                }
             )
             coEvery { api.verifyEmail(any()) } returns response
 
@@ -74,15 +78,15 @@ class AuthRepositoryImplTest {
         }
 
     @Test
-    fun verifyEmail_whenDataIsNull_returnsFailure() =
+    fun verifyEmail_whenSuccessWithNullData_returnsEmailVerifyResultDefaultTrue() =
         runTest {
-            val response = ApiResponse<VerifyEmailData?>(200, 200, "Success", null)
+            val response = ApiResponse<JsonObject?>(200, 200, "Success", null)
             coEvery { api.verifyEmail(any()) } returns response
 
             val result = repository.verifyEmail("test@example.com", "123456")
 
-            assertTrue(result.isFailure)
-            assertTrue(result.exceptionOrNull() is ApiException)
+            assertTrue(result.isSuccess)
+            assertEquals(EmailVerifyResult(isVerified = true), result.getOrNull())
         }
 
     @Test
@@ -273,7 +277,7 @@ class AuthRepositoryImplTest {
             val errorBody = """{"status":400,"code":400,"message":"Invalid verification code"}"""
                 .toResponseBody("application/json".toMediaType())
             coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<VerifyEmailData>(400, errorBody)
+                Response.error<JsonObject>(400, errorBody)
             )
 
             val result = repository.verifyEmail("test@example.com", "000000")
@@ -415,7 +419,7 @@ class AuthRepositoryImplTest {
             val errorBody = """{"status":401,"code":401,"message":"Verification code expired"}"""
                 .toResponseBody("application/json".toMediaType())
             coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<VerifyEmailData>(401, errorBody)
+                Response.error<JsonObject>(401, errorBody)
             )
 
             val result = repository.verifyEmail("test@example.com", "123456")
@@ -432,7 +436,7 @@ class AuthRepositoryImplTest {
             val errorBody = """{"status":404,"code":404,"message":"Email not found"}"""
                 .toResponseBody("application/json".toMediaType())
             coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<VerifyEmailData>(404, errorBody)
+                Response.error<JsonObject>(404, errorBody)
             )
 
             val result = repository.verifyEmail("nonexistent@example.com", "123456")
@@ -449,7 +453,7 @@ class AuthRepositoryImplTest {
             val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
                 .toResponseBody("application/json".toMediaType())
             coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<VerifyEmailData>(500, errorBody)
+                Response.error<JsonObject>(500, errorBody)
             )
 
             val result = repository.verifyEmail("test@example.com", "123456")

@@ -22,7 +22,7 @@
 - **Description**: 이메일로 인증 번호를 보냅니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `EmailSendRequest`
 
@@ -59,7 +59,7 @@
 - **Description**: 받은 인증 번호로 인증을 합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `EmailVerifyRequest`
 
@@ -78,13 +78,13 @@
 {
   "status": 200,
   "code": 0,
-  "message": "유대로 변호 인증에 성공하였습니다.",
+  "message": "휴대폰 번호 인증에 성공하였습니다.",
   "data": null
 }
 ```
 
 **HTTP Status Codes**:
-- 200: 유대로 변호 인증에 성공하였습니다.
+- 200: 휴대폰 번호 인증에 성공하였습니다.
 - 400: (Error status)
 
 ---
@@ -105,14 +105,14 @@
 |------|------|------|------|
 | email | string | O | 이메일 주소 |
 | password | string | O | 8~20자, 영문+숫자+특수문자(@$!%*#?&) 각 1자 이상 |
-| name | string | O | 이름 (스웨거: `name`) |
-| profileUrl | string | - | 프로필 이미지 URL (스웨거: `profileUrl`) |
+| nickname | string | O | 닉네임 (Private & Shared 명세) |
+| profileUrl | string | - | 프로필 이미지 URL |
 
 ```json
 {
   "email": "user@example.com",
   "password": "password123!",
-  "name": "홍길동",
+  "nickname": "멋진개발자",
   "profileUrl": "https://s3.~~"
 }
 ```
@@ -134,7 +134,7 @@
 - **Description**: email과 비밀 번호로 로그인 합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `LoginRequest`
 
@@ -160,7 +160,7 @@
 - **Description**: 토큰을 다시 받습니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `ReissueRequest`
 
@@ -180,12 +180,22 @@
 ### 6. 카카오 로그인 (Kakao Login)
 
 - **Method**: POST
-- **URL**: `/auth/kakao`
+- **URL**: `/auth/social/login`
 - **Header Required**: No (포함 X)
-- **Description**: 카카오 로그인
-- **Status**: 시작 전 (Not Started)
+- **Description**: 소셜(카카오) 액세스 토큰으로 로그인합니다.
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
+
+**Request** (Body)
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| accessToken | string | O | 카카오 액세스 토큰 |
+
+**Response** `ApiResponse` (data: accessToken, refreshToken)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -197,7 +207,7 @@
 - **Description**: 비밀번호를 변경합니다.
 - **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
-- **Frontend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `PasswordChangeRequest`
 
@@ -217,8 +227,8 @@
 - **Header Required**: Yes (포함 O)
 - **Description**: 로그아웃합니다.
 - **Status**: 개발 완료 (Development Complete)
-- **Backend Manager**: (Not specified)
-- **Frontend Manager**: (Not specified)
+- **Backend Manager**: 황규운 (Hwang Gyuwun)
+- **Frontend Manager**: 정일혁 (Jeong Ilhyuk)
 
 **Request** `LogoutRequest`
 
@@ -230,7 +240,7 @@
 
 ---
 
-## USER ENDPOINTS (7개)
+## USER ENDPOINTS (12개)
 
 ---
 
@@ -240,9 +250,23 @@
 - **URL**: `/users/me`
 - **Header Required**: Yes (포함 O)
 - **Description**: 프로필 수정 진입 시 기존 정보를 표시합니다.
-- **Status**: 개발 진행 중 (In Progress)
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
 - **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | Nullable | 설명 |
+|------|------|----------|------|
+| name | string | N | 사용자 이름 |
+| email | string | N | 이메일 |
+| phone | string | O | 연락처 (미설정 시 null) |
+| profileImageUrl | string | O | 프로필 이미지 URL (미설정 시 null) |
+
+**HTTP Status Codes**:
+- 200: 프로필 조회 성공
+- 400: 잘못된 요청 또는 인증 오류
+- 401: 인증 필요
 
 ---
 
@@ -252,9 +276,22 @@
 - **URL**: `/users/me`
 - **Header Required**: Yes (포함 O)
 - **Description**: 프로필을 수정합니다.
-- **Status**: 개발 진행 중 (In Progress)
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
 - **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Request** (Body — 모든 필드 선택)
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| name | string | - | 사용자 이름 |
+| phone | string | - | 연락처 |
+| profileImageUrl | string | - | 프로필 이미지 URL |
+
+**HTTP Status Codes**:
+- 200: 프로필 수정 성공
+- 400: 잘못된 요청
+- 401: 인증 필요
 
 ---
 
@@ -282,39 +319,230 @@
 
 ---
 
-### 5. 푸시 알림 설정 (Push Notification Settings)
+### 5. 푸시 알림 상태 조회 (Get Push Notification Settings)
 
 - **Method**: GET
 - **URL**: `/users/push-settings`
 - **Header Required**: Yes (포함 O)
-- **Description**: 푸시 알림 설정을 조회합니다.
-- **Status**: 시작 전 (Not Started)
+- **Description**: 로그인한 사용자의 푸시 알림 수신 설정 현재 상태를 조회합니다.
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 김소희 (Kim Sohee)
 - **Frontend Manager**: 김소희 (Kim Sohee)
 
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| timeLetter | boolean | 타임레터 푸시 알림 수신 여부 |
+| mindRecord | boolean | 마음의 기록 푸시 알림 수신 여부 |
+| afterNote | boolean | 애프터노트 푸시 알림 수신 여부 |
+
+**HTTP Status Codes**:
+- 200: 조회 성공
+- 400: 잘못된 요청
+- 401: 인증되지 않은 사용자
+
 ---
 
-### 6. 푸시 알림 해제 (Disable Push Notifications)
+### 6. 푸시 알림 설정 변경 (Update Push Notification Settings)
 
-- **Method**: (Not specified)
-- **URL**: (Not specified)
+- **Method**: PATCH
+- **URL**: `/users/push-settings`
 - **Header Required**: Yes (포함 O)
-- **Description**: 푸시 알림을 해제합니다.
-- **Status**: 시작 전 (Not Started)
-- **Backend Manager**: (Not specified)
-- **Frontend Manager**: (Not specified)
+- **Description**: 푸시 알림 수신 설정을 변경합니다. 각 알림 종류별 최종 수신 여부(true/false)를 서버로 전달합니다. (해제는 해당 항목을 false로 설정)
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Request** (Body)
+
+| 필드 | 타입 | 필수 | 설명 |
+|------|------|------|------|
+| timeLetter | boolean | O | 타임레터 푸시 알림 수신 여부 |
+| mindRecord | boolean | O | 마음의 기록 푸시 알림 수신 여부 |
+| afterNote | boolean | O | 애프터노트 푸시 알림 수신 여부 |
+
+**HTTP Status Codes**:
+- 200: 설정 변경 성공
+- 400: 잘못된 요청
+- 401: 인증되지 않은 사용자
 
 ---
 
 ### 7. 수신인 목록 조회 (Get Recipient List)
 
-- **Method**: (Not specified)
-- **URL**: (Not specified)
+- **Method**: GET
+- **URL**: `/users/receivers`
 - **Header Required**: Yes (포함 O)
 - **Description**: 수신인 목록을 조회합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| receivers | array | 수신인 목록 |
+| receivers[].receiverId | long | 수신인 ID |
+| receivers[].name | string | 수신인 이름 |
+| receivers[].relation | string | 수신인과의 관계 (ENUM) |
+
+**HTTP Status Codes**:
+- 200: 수신인 목록 조회 성공
+- 401: 인증 실패 (토큰 없음 또는 만료)
+- 500: 서버 내부 오류
+
+---
+
+### 8. 수신자 등록 (Register Receiver)
+
+- **Method**: POST
+- **URL**: `/users/receivers`
+- **Header Required**: Yes (포함 O)
+- **Description**: 수신인을 등록합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Request** (Body)
+
+| 필드 | 타입 | 필수 | Nullable | 설명 |
+|------|------|------|----------|------|
+| name | string | O | N | 수신자 이름 |
+| phone | string | - | Y | 전화번호 |
+| relation | string (ENUM) | O | N | 사용자와의 관계 (예: DAUGHTER) |
+| email | string | - | Y | 이메일 |
+
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| receiverId | long | 생성된 수신자 ID |
+
+**HTTP Status Codes**:
+- 201: 수신자 등록 성공
+- 400: 요청 값 검증 실패
+- 401: 인증 실패
+- 500: 서버 내부 오류
+
+---
+
+### 9. 수신인 상세 조회 (Get Receiver Detail)
+
+- **Method**: GET
+- **URL**: `/users/receivers/{receiverId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 특정 수신인의 상세 정보를 조회합니다.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | Nullable | 설명 |
+|------|------|----------|------|
+| receiverId | long | N | 수신인 ID |
+| name | string | N | 수신인 이름 |
+| relation | string | N | 수신인과의 관계 |
+| phone | string | Y | 전화번호 |
+| email | string | Y | 이메일 |
+| dailyQuestionCount | int | N | 데일리 질문 답변 개수 |
+| timeLetterCount | int | N | 타임레터 개수 |
+| afterNoteCount | int | N | 애프터노트 개수 |
+
+**HTTP Status Codes**:
+- 200: 수신인 상세 조회 성공
+- 401: 인증 실패
+- 404: 수신인을 찾을 수 없음
+- 500: 서버 내부 오류
+
+---
+
+### 10. 수신인별 데일리 질문 답변 목록 조회 (Get Daily Question Answers by Receiver)
+
+- **Method**: GET
+- **URL**: `/users/receivers/{receiverId}/daily-questions`
+- **Header Required**: Yes (포함 O)
+- **Description**: 특정 수신인에게 전달될 데일리 질문 답변 목록을 최신순으로 조회합니다.
 - **Status**: 시작 전 (Not Started)
-- **Backend Manager**: (Not specified)
-- **Frontend Manager**: (Not specified)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| items | array | 데일리 질문 답변 목록 |
+| items[].dailyQuestionAnswerId | long | 답변 ID |
+| items[].question | string | 질문 내용 |
+| items[].answer | string | 답변 내용 |
+| items[].createdAt | string (LocalDate) | 작성 날짜 |
+
+**HTTP Status Codes**:
+- 200: 데일리 질문 답변 목록 조회 성공
+- 401: 인증 실패
+- 403: 내 수신인이 아님
+- 404: 수신인을 찾을 수 없음
+- 500: 서버 내부 오류
+
+---
+
+### 11. 수신인별 애프터노트 목록 조회 (Get After-Notes by Receiver)
+
+- **Method**: GET
+- **URL**: `/users/receivers/{receiverId}/after-notes`
+- **Header Required**: Yes (포함 O)
+- **Description**: 특정 수신인에게 전달될 애프터노트 출처별 목록을 조회합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| items | array | 애프터노트 출처 목록 |
+| items[].sourceType | string (ENUM) | INSTAGRAM / GALLERY / GUIDE / NAVER_MAIL |
+| items[].lastUpdatedAt | string (LocalDate) | 해당 출처의 최근 작성일 |
+
+**HTTP Status Codes**:
+- 200: 애프터노트 목록 조회 성공
+- 401: 인증 실패
+- 403: 내 수신인이 아님
+- 404: 수신인을 찾을 수 없음
+- 500: 서버 내부 오류
+
+---
+
+### 12. 수신인별 타임레터 목록 조회 (Get Time-Letters by Receiver)
+
+- **Method**: GET
+- **URL**: `/users/receivers/{receiverId}/time-letters`
+- **Header Required**: Yes (포함 O)
+- **Description**: 특정 수신인에게 전달될 타임레터 목록을 조회합니다.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data 필드)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| items | array | 타임레터 목록 |
+| items[].timeLetterId | long | 타임레터 ID |
+| items[].receiverName | string | 타임레터 수신인 이름 |
+| items[].sendAt | string (LocalDate) | 발송 예정일 |
+| items[].title | string | 타임레터 제목 |
+| items[].content | string | 타임레터 내용 전체 |
+
+**HTTP Status Codes**:
+- 200: 타임레터 목록 조회 성공
+- 400: 잘못된 요청
+- 401: 인증 실패
+- 403: 접근 권한 없음
+- 404: 수신인을 찾을 수 없음
+- 500: 서버 내부 오류
 
 ---
 
@@ -327,10 +555,22 @@
 - **Method**: GET
 - **URL**: `/afternotes?category=SOCIAL&page=0&size=10`
 - **Header Required**: Yes (포함 O)
-- **Description**: category 없으면 전체
-- **Status**: 시작 전 (Not Started)
+- **Description**: category 없으면 전체. 필터링할 카테고리, 페이지, 사이즈로 목록 조회.
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
 - **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+**Query Parameters**
+
+| 파라미터 | 타입 | 필수 | 설명 | 예시 |
+|----------|------|------|------|------|
+| category | string | 선택 | SOCIAL, GALLERY, MUSIC (없으면 전체) | SOCIAL |
+| page | int | 선택 | 페이지 번호 (0부터) | 0 |
+| size | int | 선택 | 한 번에 가져올 개수 (기본 10) | 10 |
+
+**Response** (data 필드): content (array: afternoteId, title, category, createdAt), page, size, hasNext
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -339,10 +579,14 @@
 - **Method**: GET
 - **URL**: `/afternotes/{afternote_id}`
 - **Header Required**: Yes (포함 O)
-- **Description**: 상세 목록
-- **Status**: 시작 전 (Not Started)
+- **Description**: 상세 목록. 공통: afternoteId, category, title, createdAt, updatedAt. 카테고리별: credentials (SOCIAL), receivers (GALLERY), processMethod, actions, leaveMessage, playlist (PLAYLIST).
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
 - **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+**Path**: afternote_id (int)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -351,10 +595,16 @@
 - **Method**: POST
 - **URL**: `/afternotes`
 - **Header Required**: Yes (포함 O)
-- **Description**: afternote를 생성합니다.
-- **Status**: 시작 전 (Not Started)
+- **Description**: afternote를 생성합니다. 카테고리별 필수/null 필드: SOCIAL (category, title, processMethod, actions, credentials; receivers, playlist null), GALLERY (receivers 필수; credentials, playlist null), PLAYLIST (playlist 필수; processMethod, actions, leaveMessage, credentials, receivers null).
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
 - **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+**Request** (Body): category, title, processMethod, actions, leaveMessage, credentials / receivers / playlist (카테고리별)
+
+**Response** (data): afternote_id
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -363,10 +613,16 @@
 - **Method**: PATCH
 - **URL**: `/afternotes/{afternote_id}`
 - **Header Required**: Yes (포함 O)
-- **Description**: afternote를 수정합니다.
-- **Status**: 시작 전 (Not Started)
+- **Description**: afternote를 수정합니다. 카테고리 변경 불가. 수정하지 않을 필드는 생략. SOCIAL: title, processMethod, actions, leaveMessage, credentials. GALLERY: title, processMethod, actions, leaveMessage, receivers. PLAYLIST: title, playlist.
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
 - **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+**Request** (Body): 카테고리별 수정 가능 필드만 전송
+
+**Response** (data): afternote_id
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -375,10 +631,14 @@
 - **Method**: DELETE
 - **URL**: `/afternotes/{afternote_id}`
 - **Header Required**: Yes (포함 O)
-- **Description**: afternote를 삭제합니다.
-- **Status**: 시작 전 (Not Started)
+- **Description**: afternote를 삭제합니다. Body 없음.
+- **Status**: 개발 진행 중 (In Progress)
 - **Backend Manager**: 황규운 (Hwang Gyuwun)
 - **Frontend Manager**: 황규운 (Hwang Gyuwun)
+
+**Response** (data): afternote_id
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -392,9 +652,9 @@
 - **URL**: `/time-letters`
 - **Header Required**: Yes (포함 O)
 - **Description**: List<TimeLetterInfoResponse>
-- **Status**: 개발 진행 중 (In Progress)
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 영탁 조 (Youngtack Cho)
-- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
 
 ---
 
@@ -404,9 +664,9 @@
 - **URL**: `/time-letters/{timeLetterId}`
 - **Header Required**: Yes (포함 O)
 - **Description**: 단일 조회 또는 임시저장 불러오기
-- **Status**: 개발 진행 중 (In Progress)
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 영탁 조 (Youngtack Cho)
-- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
 
 ---
 
@@ -416,9 +676,9 @@
 - **URL**: `/time-letters`
 - **Header Required**: Yes (포함 O)
 - **Description**: 날짜, 시간, 제목, 내용, 첨부파일, 임시저장여부, 수신자
-- **Status**: 개발 진행 중 (In Progress)
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 영탁 조 (Youngtack Cho)
-- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
 
 ---
 
@@ -427,10 +687,12 @@
 - **Method**: GET
 - **URL**: `/time-letters/temporary`
 - **Header Required**: Yes (포함 O)
-- **Description**: List<TimeLetterInfoResponse>
-- **Status**: 개발 진행 중 (In Progress)
+- **Description**: List<TimeLetterInfoResponse>. 임시저장된 타임레터 목록 조회.
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 영탁 조 (Youngtack Cho)
-- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -439,10 +701,12 @@
 - **Method**: POST
 - **URL**: `/time-letters/delete`
 - **Header Required**: Yes (포함 O)
-- **Description**: Body: List<TimeLetterId>
-- **Status**: 개발 진행 중 (In Progress)
+- **Description**: Body: List<TimeLetterId>. 단일 또는 다건 삭제.
+- **Status**: 개발 완료 (Development Complete)
 - **Backend Manager**: 영탁 조 (Youngtack Cho)
-- **Frontend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -452,9 +716,11 @@
 - **URL**: `/time-letters/temporary`
 - **Header Required**: Yes (포함 O)
 - **Description**: 임시저장 전체 삭제
-- **Status**: (Not specified)
-- **Backend Manager**: (Not specified)
-- **Frontend Manager**: (Not specified)
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -464,9 +730,188 @@
 - **URL**: `/time-letters/{timeLetterId}`
 - **Header Required**: Yes (포함 O)
 - **Description**: time-letter를 수정합니다.
-- **Status**: (Not specified)
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+## MIND-RECORD ENDPOINTS (7개)
+
+---
+
+### 1. 마음의기록 목록 조회 (Get Mind-Record List)
+
+- **Method**: GET
+- **URL**: `/mind-records`
+- **Header Required**: Yes (포함 O)
+- **Description**: 기록 목록 조회. type 파라미터로 데일리 질문(DAILY_QUESTION), 일기(DIARY), 깊은생각(DEEP_THOUGHT) 구분. view=LIST 또는 CALENDAR. CALENDAR일 때 year, month 사용.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Query Parameters**
+
+| 파라미터 | 타입 | 필수 | 설명 | 예시 |
+|----------|------|------|------|------|
+| type | string | O | DAILY_QUESTION, DIARY, DEEP_THOUGHT | DIARY |
+| view | string | O | LIST, CALENDAR | LIST |
+| year | int | O (CALENDAR 시) | 연도 | 2025 |
+| month | int | O (CALENDAR 시) | 1~12 | 1 |
+
+**Response** (data): records (recordId, type, title, date, isDraft), markedDates (캘린더용)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+### 2. 마음의기록 단건 수정화면 조회 (Get Mind-Record for Edit)
+
+- **Method**: GET
+- **URL**: `/mind-records/{recordId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 기록 수정 화면 진입 시 기존 기록 조회.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data): recordId, type, title, content, date, isDraft, category (DEEP_THOUGHT일 때만)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+### 3. 마음의기록 작성 (Create Mind-Record)
+
+- **Method**: POST
+- **URL**: `/mind-records`
+- **Header Required**: Yes (포함 O)
+- **Description**: 기록 작성. type으로 DAILY_QUESTION / DIARY / DEEP_THOUGHT 구분. DAILY_QUESTION 시 questionId, DEEP_THOUGHT 시 category 포함.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Request** (Body): type, title, content, date, isDraft, questionId (DAILY_QUESTION), category (DEEP_THOUGHT)
+
+**Response** (data): recordId
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+### 4. 마음의기록 수정 (Update Mind-Record)
+
+- **Method**: PATCH
+- **URL**: `/mind-records/{recordId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 기록 수정. 타입 변경 불가. type별 questionId/category 규칙 동일.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Request** (Body): title, content, date, isDraft, questionId, category (타입별)
+
+**Response** (data): recordId
+
+**HTTP Status Codes**: 200, 400, 404
+
+---
+
+### 5. 마음의기록 삭제 (Delete Mind-Record)
+
+- **Method**: DELETE
+- **URL**: `/mind-records/{recordId}`
+- **Header Required**: Yes (포함 O)
+- **Description**: 기록 ID 기준 삭제.
+- **Status**: 개발 완료 (Development Complete)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**HTTP Status Codes**: 200, 400, 404
+
+---
+
+### 6. 데일리 질문 조회 (Get Daily Question)
+
+- **Method**: GET
+- **URL**: `/daily-question`
+- **Header Required**: Yes (포함 O)
+- **Description**: 날짜 기준 하루 1개 질문. 해당 날짜에 이미 노출된 질문 있으면 기존 반환, 없으면 서버에서 새 질문 생성 후 반환. 서버 시간 자정 기준.
+- **Status**: 개발 진행 중 (In Progress)
+- **Backend Manager**: 김소희 (Kim Sohee)
+- **Frontend Manager**: 김소희 (Kim Sohee)
+
+**Response** (data): questionId, content
+
+**HTTP Status Codes**: 200, 400 (INVALID_INPUT_VALUE), 404 (DAILY_QUESTION_NOT_FOUND)
+
+---
+
+### 7. 주간 리포트 조회 (Get Weekly Report)
+
+- **Method**: GET
+- **URL**: `/mind-records/weekly`
+- **Header Required**: Yes (포함 O)
+- **Description**: 선택한 주차에 해당하는 사용자 기록 목록 조회. year, week (ISO week) 쿼리.
+- **Status**: 시작 전 (Not Started)
 - **Backend Manager**: (Not specified)
 - **Frontend Manager**: (Not specified)
+
+**Query Parameters**: year (int), week (int, ISO week)
+
+**Response** (data): records (recordId, type, title, contentPreview, date)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+## RECEIVER (수신인 화면) ENDPOINTS (3개)
+
+수신자가 로그인 없이 열람하는 API. Header 포함 X.
+
+---
+
+### 1. After-Note 조회 (Receiver)
+
+- **Method**: GET
+- **URL**: `/receiver/afternotes/{등록자Id}`
+- **Header Required**: No (포함 X)
+- **Description**: 수신인 화면에서 등록자별 애프터노트 조회.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+### 2. Mind-Record 조회 (Receiver)
+
+- **Method**: GET
+- **URL**: `/receiver/mind-records/{등록자Id}`
+- **Header Required**: No (포함 X)
+- **Description**: 수신인 화면에서 등록자별 마음의 기록 조회.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
+
+---
+
+### 3. Time-Letter 조회 (Receiver)
+
+- **Method**: GET
+- **URL**: `/receiver/time-letters/{등록자Id}`
+- **Header Required**: No (포함 X)
+- **Description**: 수신인 화면에서 등록자별 타임레터 조회.
+- **Status**: 시작 전 (Not Started)
+- **Backend Manager**: 영탁 조 (Youngtack Cho)
+- **Frontend Manager**: 박경민 (Park Kyungmin)
+
+**HTTP Status Codes**: 200, 400
 
 ---
 
@@ -483,7 +928,47 @@
 
 ---
 
+## 공통 오류 응답
+
+### 인증/인가 관련
+
+| HTTP | code | message |
+|------|------|---------|
+| 401 | 999 | 인증이 필요합니다. 로그인해주세요. (유효한 액세스 토큰 없음) |
+| 403 | 999 | 권한이 부족합니다. |
+| 404 | 999 | 존재하지 않는 엔드포인트입니다. |
+
+### 토큰 관련 (status 400)
+
+| code | message |
+|------|---------|
+| 400 | Authorization 헤더 미설정 |
+| 401 | 쿠키 값 미설정 |
+| 402 | 엑세스 토큰 만료 |
+| 403 | 유효하지 않은 엑세스 토큰 |
+| 404 | 엑세스 토큰 타입 미일치 |
+| 405 | 리프레시 토큰 미설정 |
+| 406 | 리프레시 토큰 만료 |
+| 407 | 유효하지 않은 리프레시 토큰 |
+| 408 | 리프레시 토큰 타입 미일치 |
+| 409 | 사용이 제한된 리프레시 토큰 |
+
+---
+
+## ERD / 도메인 개요
+
+(출처: `docs/Private & Shared/API 기본 명세서/erd`)
+
+- **Core Domain**: User (자기 정보 조회/수정), Receiver (받는 사람), UserReceiver (User–Receiver N:M).
+- **Mind-Record Domain**: DailyQuestion, DailyQuestionAnswer, DeepThought, Diary, Emotion.
+- **TimeLetter Domain**: TimeLetter, TimeLetterMedia, TimeLetterReceiver (TimeLetter ↔ Receiver N:M).
+- **Afternote Domain**: Afternote, AfternoteCategory, AfternoteSecureContent, AfternoteAction, AfternoteActionMapping, AfternotePlaylist.
+- **Auth / Audit Domain**: EmailVerification, RecieverAuth (열람 전 인증), AccessLog.
+
+---
+
 ## 참고
 
-- **Received API**와 **Mind-Record API**는 새 명세서에 포함되지 않았으나, 기존 명세는 유지됩니다.
-- 스웨거 미등록 API는 스웨거 등록 후 확인·보완 예정입니다.
+- 본 명세는 `docs/Private & Shared/API 기본 명세서` 내용을 통합하였습니다. 중복 없이 정리했습니다.
+- **Receiver (수신인 화면) API**는 수신인이 로그인 없이 열람하는 엔드포인트입니다.
+- 스웨거(OpenAPI) 우선. 스웨거 미등록 API는 스웨거 등록 후 확인·보완 예정입니다.

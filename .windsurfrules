@@ -5,7 +5,7 @@
 - **Architecture**: Clean Architecture (Data, Domain, Presentation Layers)
 - **Dependency Injection**: Hilt
 - **Navigation**: Navigation Compose (Type-safe with kotlinx.serialization)
-- **Code Quality**: Detekt, Ktlint
+- **Code Quality**: Detekt
 - **JDK**: JDK 21 (Eclipse Adoptium)
 
 ---
