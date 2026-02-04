@@ -48,10 +48,7 @@ fun MemorialGuidelineEditContent(
         slots = MemorialGuidelineSlots(
             introContent = { LastMomentQuestion() },
             photoContent = {
-                MemorialPhotoUpload(
-                    imageUrl = params.memorialPhotoUrl,
-                    onAddPhotoClick = params.onPhotoAddClick
-                )
+                MemorialPhotoUpload()
             },
             playlistContent = {
                 MemorialPlaylist(
@@ -119,11 +116,9 @@ private fun MemorialGuidelineEditContentPreview() {
                 selectedLastWish = "calm",
                 lastWishOptions = lastWishOptions,
                 funeralVideoUrl = null,
-                onPhotoAddClick = {},
                 onSongAddClick = {},
-                onLastWishSelected = {},
-                onVideoAddClick = {}
-            )
+                onLastWishSelected = {}
+            ) {}
         )
     }
 }

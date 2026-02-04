@@ -191,7 +191,7 @@ private fun ProfileImageWithAddButton(
     ) {
         // Profile Image
         Image(
-            painter = painterResource(R.drawable.img_profile),
+            painter = painterResource(R.drawable.img_default_profile),
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .size(135.dp)

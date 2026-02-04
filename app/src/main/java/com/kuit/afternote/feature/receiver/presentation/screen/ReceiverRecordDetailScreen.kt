@@ -7,21 +7,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.uimodel.Receiver
@@ -51,11 +47,9 @@ fun ReceiverRecordDetailScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {
-            Icon(
-                painter = painterResource(R.drawable.img_profile_placeholder),
-                contentDescription = null,
-                modifier = Modifier.size(130.dp),
-                tint = Color.White
+            ProfileImage(
+                containerSize = 133.dp,
+                isEditable = false
             )
 
             Spacer(modifier = Modifier.height(20.dp))

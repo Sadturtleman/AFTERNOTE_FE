@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
@@ -60,7 +59,7 @@ fun ReceiverAfterNoteMainScreen(
     songCount: Int = 16
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
-    val profileResId = profileImageResId ?: R.drawable.img_profile_placeholder
+    val profileResId = profileImageResId ?: R.drawable.img_default_profile_deceased
 
     Scaffold(
         topBar = {
@@ -101,10 +100,11 @@ fun ReceiverAfterNoteMainScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Image(
-                                    painter = painterResource(profileResId),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(140.dp)
+                                ProfileImage(
+                                    profileImageRes = profileResId,
+                                    containerSize = 140.dp,
+                                    profileImageSize = 140.dp,
+                                    isEditable = false
                                 )
                             }
                         },

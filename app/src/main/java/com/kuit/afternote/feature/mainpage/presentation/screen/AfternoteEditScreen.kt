@@ -240,15 +240,11 @@ private fun CategoryContent(
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
                     funeralVideoUrl = state.funeralVideoUrl,
-                    onPhotoAddClick = {
-                        // TODO: 사진 선택 로직
-                    },
                     onSongAddClick = onNavigateToAddSong,
-                    onLastWishSelected = state::onLastWishSelected,
-                    onVideoAddClick = {
-                        // TODO: 영상 선택 로직
-                    }
-                )
+                    onLastWishSelected = state::onLastWishSelected
+                ) {
+                    // TODO: 영상 선택 로직
+                }
             )
         }
 
