@@ -74,7 +74,8 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.ProfileEditRoute> {
         ProfileEditScreen(
             callbacks = ProfileEditCallbacks(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onUpdateSuccess = { navController.popBackStack() }
             )
         )
     }

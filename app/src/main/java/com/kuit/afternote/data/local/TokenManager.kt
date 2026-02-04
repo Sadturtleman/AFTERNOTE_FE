@@ -1,6 +1,7 @@
 package com.kuit.afternote.data.local
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -127,10 +128,20 @@ class TokenManager
          */
         suspend fun getUserId(): Long? {
             val accessToken = getAccessToken()
-            return if (!accessToken.isNullOrEmpty()) {
-                JwtDecoder.getUserId(accessToken)
-            } else {
-                null
+            if (accessToken.isNullOrEmpty()) {
+                Log.w(TAG, "getUserId: no access token stored")
+                return null
             }
+            val userId = JwtDecoder.getUserId(accessToken)
+            if (userId == null) {
+                val payload = JwtDecoder.getPayload(accessToken)
+                val keys = payload?.keys?.joinToString(", ") ?: "unknown"
+                Log.w(TAG, "getUserId: token present but no userId in JWT payload. Keys: [$keys]")
+            }
+            return userId
+        }
+
+        companion object {
+            private const val TAG = "TokenManager"
         }
     }
