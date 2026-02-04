@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -40,10 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import android.util.Log
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
@@ -57,6 +56,8 @@ import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
 private const val TAG_PROFILE_EDIT = "ProfileEdit"
@@ -281,16 +282,32 @@ private fun ProfileSection(
         Spacer(modifier = Modifier.height(29.dp))
 
         Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Image(
                 painter = painterResource(R.drawable.img_profile),
                 contentDescription = "프로필 이미지",
                 modifier = Modifier
-                    .clickable { onProfileImageClick() }
-                    .size(135.dp)
+                    .size(133.dp)
             )
+
+            Row {
+                Spacer(Modifier.width(99.dp))
+                Column {
+                    Spacer(Modifier.height(92.dp))
+                    Image(
+//                        painter = painterResource(R.drawable.ic_add_circle_profile),
+                        painter = painterResource(R.drawable.ic_add_circle_profile),
+                        contentDescription = "프로필 수정 버튼",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clickable(
+                                onClick = onProfileImageClick
+                            )
+                            .shadow(elevation = 10.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
+                    )
+                }
+            }
         }
     }
 }
@@ -416,13 +433,21 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
             )
         )
     override val uiState: StateFlow<ProfileUiState> = _uiState
-    override fun loadProfile() {}
+    override fun loadProfile() {
+        // No-op: Fake for Preview only; no API call.
+    }
+
     override fun updateProfile(
         name: String?,
         phone: String?,
         profileImageUrl: String?
-    ) {}
-    override fun clearUpdateSuccess() {}
+    ) {
+        // No-op: Fake for Preview only; no state update.
+    }
+
+    override fun clearUpdateSuccess() {
+        // No-op: Fake for Preview only.
+    }
 }
 
 @Preview(showBackground = true)
@@ -430,16 +455,5 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
 private fun ProfileEditScreenPreview() {
     AfternoteTheme {
         ProfileEditScreen(viewModel = remember { FakeProfileEditViewModel() })
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SmallActionButtonPreview() {
-    AfternoteTheme {
-        SmallActionButton(
-            text = "수정하기",
-            onClick = {}
-        )
     }
 }
