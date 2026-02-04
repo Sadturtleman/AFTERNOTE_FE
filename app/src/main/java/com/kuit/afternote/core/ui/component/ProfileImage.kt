@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.component
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
+
+private const val TAG = "ProfileImage"
 
 private val PROFILE_EDIT_BUTTON_SIZE = 52.dp
 private val PROFILE_EDIT_BUTTON_SHADOW_ELEVATION = 10.dp
@@ -47,13 +50,16 @@ fun ProfileImage(
     onEditClick: (() -> Unit)? = null,
     displayImageUri: String? = null
 ) {
+    Log.d(TAG, "displayImageUri=$displayImageUri fallbackImageRes=$fallbackImageRes")
     Box(
         modifier = modifier.size(containerSize)
     ) {
         val painter =
             if (displayImageUri != null) {
+                Log.d(TAG, "using Coil for uri=$displayImageUri")
                 rememberAsyncImagePainter(displayImageUri)
             } else {
+                Log.d(TAG, "using fallback drawable")
                 painterResource(fallbackImageRes)
             }
         Image(
