@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDetailUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +23,24 @@ import javax.inject.Inject
 class ReceiverDetailViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val getReceiverDetailUseCase: GetReceiverDetailUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiverDetailUiState())
         val uiState: StateFlow<ReceiverDetailUiState> = _uiState.asStateFlow()
+
+        private val receiverId: Long? = savedStateHandle.toRoute<SettingRoute.ReceiverDetailRoute>()
+            .receiverId.toLongOrNull()
+
+        init {
+            if (receiverId != null) {
+                loadReceiverDetail(receiverId)
+            } else {
+                _uiState.update {
+                    it.copy(name = "수신인", relation = "")
+                }
+            }
+        }
 
         fun loadReceiverDetail(receiverId: Long) {
             viewModelScope.launch {
@@ -49,7 +66,9 @@ class ReceiverDetailViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = e.message ?: "수신인 상세 조회에 실패했습니다."
+                                errorMessage = e.message ?: "수신인 상세 조회에 실패했습니다.",
+                                name = if (it.name.isEmpty()) "수신인" else it.name,
+                                relation = it.relation
                             )
                         }
                     }

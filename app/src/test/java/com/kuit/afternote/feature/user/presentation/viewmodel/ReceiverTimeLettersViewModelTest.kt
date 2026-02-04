@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.kuit.afternote.feature.user.domain.model.ReceiverTimeLetterItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverTimeLettersUseCase
 import com.kuit.afternote.util.MainCoroutineRule
@@ -29,13 +30,14 @@ class ReceiverTimeLettersViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var getReceiverTimeLettersUseCase: GetReceiverTimeLettersUseCase
-    private lateinit var viewModel: ReceiverTimeLettersViewModel
 
     @Before
     fun setUp() {
         getReceiverTimeLettersUseCase = mockk()
-        viewModel = ReceiverTimeLettersViewModel(getReceiverTimeLettersUseCase)
     }
+
+    private fun savedStateHandleWithReceiverId(receiverId: String): SavedStateHandle =
+        SavedStateHandle(mapOf("receiverId" to receiverId, "receiverName" to ""))
 
     @Test
     fun loadTimeLetters_whenSuccess_setsItems() =
@@ -50,7 +52,11 @@ class ReceiverTimeLettersViewModelTest {
                 )
             )
             coEvery { getReceiverTimeLettersUseCase(receiverId = 1L) } returns Result.success(list)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverTimeLettersViewModel(
+                savedStateHandle,
+                getReceiverTimeLettersUseCase
+            )
             viewModel.loadTimeLetters(receiverId = 1L)
             advanceUntilIdle()
 
@@ -66,7 +72,11 @@ class ReceiverTimeLettersViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(401, errorBody))
             coEvery { getReceiverTimeLettersUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverTimeLettersViewModel(
+                savedStateHandle,
+                getReceiverTimeLettersUseCase
+            )
             viewModel.loadTimeLetters(receiverId = 1L)
             advanceUntilIdle()
 
@@ -81,7 +91,11 @@ class ReceiverTimeLettersViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(404, errorBody))
             coEvery { getReceiverTimeLettersUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverTimeLettersViewModel(
+                savedStateHandle,
+                getReceiverTimeLettersUseCase
+            )
             viewModel.loadTimeLetters(receiverId = 1L)
             advanceUntilIdle()
 
@@ -96,7 +110,11 @@ class ReceiverTimeLettersViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(500, errorBody))
             coEvery { getReceiverTimeLettersUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverTimeLettersViewModel(
+                savedStateHandle,
+                getReceiverTimeLettersUseCase
+            )
             viewModel.loadTimeLetters(receiverId = 1L)
             advanceUntilIdle()
 
@@ -110,7 +128,11 @@ class ReceiverTimeLettersViewModelTest {
             coEvery { getReceiverTimeLettersUseCase(receiverId = any()) } returns Result.failure(
                 java.io.IOException("Network unavailable")
             )
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverTimeLettersViewModel(
+                savedStateHandle,
+                getReceiverTimeLettersUseCase
+            )
             viewModel.loadTimeLetters(receiverId = 1L)
             advanceUntilIdle()
 

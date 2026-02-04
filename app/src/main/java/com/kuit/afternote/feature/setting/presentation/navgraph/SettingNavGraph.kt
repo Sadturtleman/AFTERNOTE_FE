@@ -11,10 +11,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
-import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
@@ -32,6 +30,7 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.getAfternoteSourceDisplayResIds
 import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
@@ -123,11 +122,6 @@ private fun ReceiverDetailRouteContent(
 ) {
     val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
-    val receiverIdLong = route.receiverId.toLongOrNull()
-
-    LaunchedEffect(receiverIdLong) {
-        if (receiverIdLong != null) detailViewModel.loadReceiverDetail(receiverIdLong)
-    }
 
     val phoneNumberState = rememberTextFieldState()
     val emailState = rememberTextFieldState()
@@ -138,35 +132,15 @@ private fun ReceiverDetailRouteContent(
         }
     }
 
-    val name: String
-    val relationship: String
-    val dailyQuestionCount: Int
-    val timeLetterCount: Int
-    val afternoteCount: Int
-    if (receiverIdLong != null && detailState.name.isNotEmpty()) {
-        name = detailState.name
-        relationship = detailState.relation
-        dailyQuestionCount = detailState.dailyQuestionCount
-        timeLetterCount = detailState.timeLetterCount
-        afternoteCount = detailState.afterNoteCount
-    } else {
-        val fallback = ReceiverDummyData.detailOf(receiverId = route.receiverId)
-        name = fallback.name
-        relationship = fallback.relationship
-        dailyQuestionCount = fallback.dailyQuestionCount
-        timeLetterCount = fallback.timeLetterCount
-        afternoteCount = fallback.afternoteCount
-    }
-
     ReceiverDetailScreen(
         params = ReceiverDetailScreenParams(
-            name = name,
-            relationship = relationship,
+            name = detailState.name,
+            relationship = detailState.relation,
             phoneNumberState = phoneNumberState,
             emailState = emailState,
-            dailyQuestionCount = dailyQuestionCount,
-            timeLetterCount = timeLetterCount,
-            afternoteCount = afternoteCount
+            dailyQuestionCount = detailState.dailyQuestionCount,
+            timeLetterCount = detailState.timeLetterCount,
+            afternoteCount = detailState.afterNoteCount
         ),
         callbacks = ReceiverDetailEditCallbacks(
             onBackClick = { navController.popBackStack() },
@@ -176,7 +150,7 @@ private fun ReceiverDetailRouteContent(
                 navController.navigate(
                     SettingRoute.DailyAnswerRoute(
                         receiverId = route.receiverId,
-                        receiverName = name
+                        receiverName = detailState.name
                     )
                 )
             },
@@ -184,7 +158,7 @@ private fun ReceiverDetailRouteContent(
                 navController.navigate(
                     SettingRoute.ReceiverTimeLetterListRoute(
                         receiverId = route.receiverId,
-                        receiverName = name
+                        receiverName = detailState.name
                     )
                 )
             },
@@ -192,7 +166,7 @@ private fun ReceiverDetailRouteContent(
                 navController.navigate(
                     SettingRoute.ReceiverAfternoteListRoute(
                         receiverId = route.receiverId,
-                        receiverName = name
+                        receiverName = detailState.name
                     )
                 )
             }
@@ -240,12 +214,8 @@ private fun DailyAnswerRouteContent(
     navController: NavController,
     route: SettingRoute.DailyAnswerRoute
 ) {
-    val receiverIdLong = route.receiverId.toLongOrNull()
     val dailyQuestionsViewModel: ReceiverDailyQuestionsViewModel = hiltViewModel()
     val dailyState by dailyQuestionsViewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(receiverIdLong) {
-        if (receiverIdLong != null) dailyQuestionsViewModel.loadDailyQuestions(receiverIdLong)
-    }
     val items = dailyState.items.map { item ->
         DailyAnswerItemUiModel(
             question = item.question,
@@ -266,20 +236,11 @@ private fun ReceiverAfternoteListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverAfternoteListRoute
 ) {
-    val receiverIdLong = route.receiverId.toLongOrNull()
     val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(receiverIdLong) {
-        if (receiverIdLong != null) afterNotesViewModel.loadAfterNotes(receiverIdLong)
-    }
     val afternoteItems = afterNotesState.items.map { item ->
-        val (serviceName, iconResId) = when (item.sourceType) {
-            "INSTAGRAM" -> stringResource(R.string.receiver_afternote_item_instagram) to R.drawable.img_insta_pattern
-            "GALLERY" -> stringResource(R.string.receiver_afternote_item_gallery) to R.drawable.ic_gallery
-            "GUIDE" -> stringResource(R.string.receiver_afternote_item_memorial_guideline) to R.drawable.ic_memorial_guideline
-            "NAVER_MAIL" -> stringResource(R.string.receiver_afternote_item_naver_mail) to R.drawable.img_naver_mail
-            else -> item.sourceType to R.drawable.img_logo
-        }
+        val (stringResId, iconResId) = getAfternoteSourceDisplayResIds(item.sourceType)
+        val serviceName = stringResId?.let { stringResource(it) } ?: item.sourceType
         AfternoteListDisplayItem(
             id = item.sourceType,
             serviceName = serviceName,
@@ -301,12 +262,8 @@ private fun ReceiverTimeLetterListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverTimeLetterListRoute
 ) {
-    val receiverIdLong = route.receiverId.toLongOrNull()
     val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
     val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(receiverIdLong) {
-        if (receiverIdLong != null) timeLettersViewModel.loadTimeLetters(receiverIdLong)
-    }
     val timeLetterItems = timeLettersState.items.map { item ->
         TimeLetterItem(
             id = item.timeLetterId.toString(),

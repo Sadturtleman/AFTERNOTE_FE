@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDailyQuestionsUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.DailyQuestionAnswerItemUi
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverDailyQuestionsUiState
@@ -21,10 +24,17 @@ import javax.inject.Inject
 class ReceiverDailyQuestionsViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val getReceiverDailyQuestionsUseCase: GetReceiverDailyQuestionsUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiverDailyQuestionsUiState())
         val uiState: StateFlow<ReceiverDailyQuestionsUiState> = _uiState.asStateFlow()
+
+        init {
+            val receiverId = savedStateHandle.toRoute<SettingRoute.DailyAnswerRoute>()
+                .receiverId.toLongOrNull()
+            if (receiverId != null) loadDailyQuestions(receiverId)
+        }
 
         fun loadDailyQuestions(receiverId: Long) {
             viewModelScope.launch {

@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverAfterNotesUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverAfterNoteSourceItemUi
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverAfterNotesUiState
@@ -21,10 +24,17 @@ import javax.inject.Inject
 class ReceiverAfterNotesViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val getReceiverAfterNotesUseCase: GetReceiverAfterNotesUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiverAfterNotesUiState())
         val uiState: StateFlow<ReceiverAfterNotesUiState> = _uiState.asStateFlow()
+
+        init {
+            val receiverId = savedStateHandle.toRoute<SettingRoute.ReceiverAfternoteListRoute>()
+                .receiverId.toLongOrNull()
+            if (receiverId != null) loadAfterNotes(receiverId)
+        }
 
         fun loadAfterNotes(receiverId: Long) {
             viewModelScope.launch {

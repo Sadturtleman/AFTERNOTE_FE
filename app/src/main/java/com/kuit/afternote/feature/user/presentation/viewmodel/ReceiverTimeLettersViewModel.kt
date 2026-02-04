@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverTimeLettersUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverTimeLetterItemUi
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverTimeLettersUiState
@@ -21,10 +24,17 @@ import javax.inject.Inject
 class ReceiverTimeLettersViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val getReceiverTimeLettersUseCase: GetReceiverTimeLettersUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiverTimeLettersUiState())
         val uiState: StateFlow<ReceiverTimeLettersUiState> = _uiState.asStateFlow()
+
+        init {
+            val receiverId = savedStateHandle.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
+                .receiverId.toLongOrNull()
+            if (receiverId != null) loadTimeLetters(receiverId)
+        }
 
         fun loadTimeLetters(receiverId: Long) {
             viewModelScope.launch {

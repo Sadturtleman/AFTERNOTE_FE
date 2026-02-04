@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDailyQuestionsUseCase
 import com.kuit.afternote.util.MainCoroutineRule
@@ -29,13 +30,14 @@ class ReceiverDailyQuestionsViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var getReceiverDailyQuestionsUseCase: GetReceiverDailyQuestionsUseCase
-    private lateinit var viewModel: ReceiverDailyQuestionsViewModel
 
     @Before
     fun setUp() {
         getReceiverDailyQuestionsUseCase = mockk()
-        viewModel = ReceiverDailyQuestionsViewModel(getReceiverDailyQuestionsUseCase)
     }
+
+    private fun savedStateHandleWithReceiverId(receiverId: String): SavedStateHandle =
+        SavedStateHandle(mapOf("receiverId" to receiverId, "receiverName" to ""))
 
     @Test
     fun loadDailyQuestions_whenSuccess_setsItems() =
@@ -49,7 +51,11 @@ class ReceiverDailyQuestionsViewModelTest {
                 )
             )
             coEvery { getReceiverDailyQuestionsUseCase(receiverId = 1L) } returns Result.success(list)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverDailyQuestionsViewModel(
+                savedStateHandle,
+                getReceiverDailyQuestionsUseCase
+            )
             viewModel.loadDailyQuestions(receiverId = 1L)
             advanceUntilIdle()
 
@@ -65,7 +71,11 @@ class ReceiverDailyQuestionsViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(401, errorBody))
             coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverDailyQuestionsViewModel(
+                savedStateHandle,
+                getReceiverDailyQuestionsUseCase
+            )
             viewModel.loadDailyQuestions(receiverId = 1L)
             advanceUntilIdle()
 
@@ -80,7 +90,11 @@ class ReceiverDailyQuestionsViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(404, errorBody))
             coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverDailyQuestionsViewModel(
+                savedStateHandle,
+                getReceiverDailyQuestionsUseCase
+            )
             viewModel.loadDailyQuestions(receiverId = 1L)
             advanceUntilIdle()
 
@@ -95,7 +109,11 @@ class ReceiverDailyQuestionsViewModelTest {
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(500, errorBody))
             coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverDailyQuestionsViewModel(
+                savedStateHandle,
+                getReceiverDailyQuestionsUseCase
+            )
             viewModel.loadDailyQuestions(receiverId = 1L)
             advanceUntilIdle()
 
@@ -109,7 +127,11 @@ class ReceiverDailyQuestionsViewModelTest {
             coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(
                 java.io.IOException("Network unavailable")
             )
-
+            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val viewModel = ReceiverDailyQuestionsViewModel(
+                savedStateHandle,
+                getReceiverDailyQuestionsUseCase
+            )
             viewModel.loadDailyQuestions(receiverId = 1L)
             advanceUntilIdle()
 
