@@ -76,7 +76,7 @@ fun ProfileImage(
             ProfileImageContent(
                 displayImageUri = displayImageUri,
                 fallbackImageRes = fallbackImageRes,
-                imageModifier = imageModifier
+                modifier = imageModifier
             )
             Image(
                 painter = painterResource(R.drawable.ic_add_circle_profile),
@@ -97,14 +97,14 @@ fun ProfileImage(
         ProfileImageContent(
             displayImageUri = displayImageUri,
             fallbackImageRes = fallbackImageRes,
-            imageModifier = modifier.then(imageModifier)
+            modifier = modifier.then(imageModifier)
         )
     }
 }
 
 @Composable
 private fun ProfileImageContent(
-    imageModifier: Modifier,
+    modifier: Modifier,
     displayImageUri: String?,
     @DrawableRes fallbackImageRes: Int
 ) {
@@ -120,7 +120,7 @@ private fun ProfileImageContent(
                 )
                 .build(),
             contentDescription = stringResource(R.string.content_description_profile_image),
-            modifier = imageModifier,
+            modifier = modifier,
             contentScale = ContentScale.Crop,
             error = painterResource(fallbackImageRes),
             onError = { state: AsyncImagePainter.State.Error ->
@@ -137,7 +137,7 @@ private fun ProfileImageContent(
             painter = painterResource(fallbackImageRes),
             contentDescription = stringResource(R.string.content_description_profile_image),
             contentScale = ContentScale.Crop,
-            modifier = imageModifier
+            modifier = modifier
         )
     }
 }
