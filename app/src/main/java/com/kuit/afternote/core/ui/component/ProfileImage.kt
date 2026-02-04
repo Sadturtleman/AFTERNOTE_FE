@@ -14,12 +14,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
@@ -52,25 +57,45 @@ fun ProfileImage(
 ) {
     Log.d(TAG, "displayImageUri=$displayImageUri fallbackImageRes=$fallbackImageRes")
     Box(
-        modifier = modifier.size(containerSize)
+        modifier = modifier.size(containerSize),
+        contentAlignment = Alignment.Center
     ) {
-        val painter =
-            if (displayImageUri != null) {
-                Log.d(TAG, "using Coil for uri=$displayImageUri")
-                rememberAsyncImagePainter(displayImageUri)
-            } else {
-                Log.d(TAG, "using fallback drawable")
-                painterResource(fallbackImageRes)
-            }
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.content_description_profile_image),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(profileImageSize)
-                .clip(CircleShape)
-                .align(Alignment.Center)
-        )
+        if (!displayImageUri.isNullOrBlank()) {
+            Log.d(TAG, "using AsyncImage for uri=$displayImageUri")
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(displayImageUri)
+                    .httpHeaders(
+                        NetworkHeaders.Builder().apply {
+                            this["User-Agent"] = "Afternote Android App"
+                        }.build()
+                    )
+                    .build(),
+                contentDescription = stringResource(R.string.content_description_profile_image),
+                modifier = Modifier
+                    .size(profileImageSize)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(fallbackImageRes),
+                onError = { state: AsyncImagePainter.State.Error ->
+                    Log.e(
+                        TAG,
+                        "Coil load failed: uri=$displayImageUri",
+                        state.result.throwable
+                    )
+                }
+            )
+        } else {
+            Log.d(TAG, "using fallback drawable")
+            Image(
+                painter = painterResource(fallbackImageRes),
+                contentDescription = stringResource(R.string.content_description_profile_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(profileImageSize)
+                    .clip(CircleShape)
+            )
+        }
 
         if (isEditable) {
             Image(

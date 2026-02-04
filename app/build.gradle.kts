@@ -160,6 +160,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kakao.sdk.user)
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)
