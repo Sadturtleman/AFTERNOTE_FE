@@ -11,8 +11,8 @@ import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpData
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
+import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
-import kotlinx.serialization.json.JsonObject
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -31,7 +31,7 @@ interface AuthApiService {
     @POST("auth/email/verify")
     suspend fun verifyEmail(
         @Body body: VerifyEmailRequest
-    ): ApiResponse<JsonObject?>
+    ): ApiResponse<VerifyEmailData?>
 
     @POST("auth/sign-up")
     suspend fun signUp(

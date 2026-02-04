@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.ScaffoldContentWithOptionalFab
 import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
@@ -83,28 +84,17 @@ fun TimeLetterScreen(
                 selectedItem = BottomNavItem.TIME_LETTER,
                 onItemSelected = onNavItemSelected
             )
-        },
-        floatingActionButton = {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clickable { onAddClick() },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.plus),
-                    contentDescription = "add",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding)
-        ) {
-            Spacer(modifier = Modifier.height(18.dp))
+        ScaffoldContentWithOptionalFab(
+            paddingValues = innerPadding,
+            showFab = true,
+            onFabClick = onAddClick
+        ) { contentModifier ->
+            Column(
+                modifier = contentModifier.fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(18.dp))
 
             // 상태에 따른 조건부 렌더링
             when (uiState) {
@@ -178,6 +168,7 @@ fun TimeLetterScreen(
                         }
                     }
                 }
+            }
             }
         }
     }
@@ -318,30 +309,19 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                 selectedItem = BottomNavItem.TIME_LETTER,
                 onItemSelected = {}
             )
-        },
-        floatingActionButton = {
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clickable { /* preview */ },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.plus),
-                    contentDescription = "add",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding)
-        ) {
-            Spacer(modifier = Modifier.height(18.dp))
+        ScaffoldContentWithOptionalFab(
+            paddingValues = innerPadding,
+            showFab = true,
+            onFabClick = {}
+        ) { contentModifier ->
+            Column(
+                modifier = contentModifier.fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(18.dp))
 
-            when (uiState) {
+                when (uiState) {
                 is TimeLetterUiState.Loading -> {
                     Box(modifier = Modifier.weight(1f))
                 }
@@ -407,6 +387,7 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                         }
                     }
                 }
+            }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.user.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.user.domain.usecase.GetMyProfileUseCase
@@ -24,18 +25,20 @@ class ProfileViewModel
         private val getMyProfileUseCase: GetMyProfileUseCase,
         private val updateMyProfileUseCase: UpdateMyProfileUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
-    ) : ViewModel() {
+    ) : ViewModel(), ProfileEditViewModelContract {
         private val _uiState = MutableStateFlow(ProfileUiState())
-        val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+        override val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
         /**
          * 프로필 조회.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun loadProfile() {
+        override fun loadProfile() {
             viewModelScope.launch {
                 val userId = getUserIdUseCase()
+                Log.d(TAG, "loadProfile: userId=$userId")
                 if (userId == null) {
+                    Log.w(TAG, "loadProfile: no userId, skipping API call")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -48,6 +51,7 @@ class ProfileViewModel
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 getMyProfileUseCase(userId = userId)
                     .onSuccess { profile ->
+                        Log.d(TAG, "loadProfile: success name='${profile.name}' email='${profile.email}'")
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -58,7 +62,9 @@ class ProfileViewModel
                                 errorMessage = null
                             )
                         }
+                        Log.d(TAG, "loadProfile: uiState updated with name='${profile.name}' email='${profile.email}'")
                     }.onFailure { e ->
+                        Log.e(TAG, "loadProfile: failed", e)
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -73,7 +79,7 @@ class ProfileViewModel
          * 프로필 수정.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun updateProfile(
+        override fun updateProfile(
             name: String?,
             phone: String?,
             profileImageUrl: String?
@@ -124,7 +130,7 @@ class ProfileViewModel
         /**
          * updateSuccess 소비 후 호출 (네비게이션 후).
          */
-        fun clearUpdateSuccess() {
+        override fun clearUpdateSuccess() {
             _uiState.update { it.copy(updateSuccess = false) }
         }
 
@@ -133,5 +139,9 @@ class ProfileViewModel
          */
         fun clearError() {
             _uiState.update { it.copy(errorMessage = null) }
+        }
+
+        companion object {
+            private const val TAG = "ProfileViewModel"
         }
     }

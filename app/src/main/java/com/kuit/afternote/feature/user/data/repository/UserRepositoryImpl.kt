@@ -30,8 +30,11 @@ class UserRepositoryImpl
             runCatching {
                 Log.d(TAG, "getMyProfile: userId=$userId")
                 val response = api.getMyProfile(userId = userId)
-                Log.d(TAG, "getMyProfile: response=$response")
-                UserMapper.toUserProfile(response.requireData())
+                val data = response.requireData()
+                Log.d(TAG, "getMyProfile: API data name='${data.name}' email='${data.email}' phone='${data.phone}'")
+                val profile = UserMapper.toUserProfile(data)
+                Log.d(TAG, "getMyProfile: mapped profile name='${profile.name}' email='${profile.email}'")
+                profile
             }
 
         override suspend fun updateMyProfile(

@@ -25,6 +25,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,10 +39,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import android.util.Log
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray3
@@ -48,6 +59,7 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 private const val PLACEHOLDER_TEXT_FIELD = "Text Field"
+private const val TAG_PROFILE_EDIT = "ProfileEdit"
 
 private val PROFILE_EDIT_LABELED_STYLE = LabeledTextFieldStyle(
     labelFontSize = 14.sp,
@@ -73,18 +85,50 @@ data class ProfileEditCallbacks(
     val onProfileImageClick: () -> Unit = {},
     val onEditProfileClick: () -> Unit = {},
     val onChangeEmailClick: () -> Unit = {},
-    val onWithdrawClick: () -> Unit = {}
+    val onWithdrawClick: () -> Unit = {},
+    val onUpdateSuccess: () -> Unit = {}
 )
 
 @Composable
 fun ProfileEditScreen(
     modifier: Modifier = Modifier,
-    nameState: TextFieldState = rememberTextFieldState(),
-    contactState: TextFieldState = rememberTextFieldState(),
-    emailState: TextFieldState = rememberTextFieldState(),
+    viewModel: ProfileEditViewModelContract = hiltViewModel<ProfileViewModel>(),
     callbacks: ProfileEditCallbacks = ProfileEditCallbacks()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
+    val nameState = rememberTextFieldState()
+    val contactState = rememberTextFieldState()
+    val emailState = rememberTextFieldState()
+
+    LaunchedEffect(uiState.name) {
+        Log.d(TAG_PROFILE_EDIT, "LaunchedEffect(name): uiState.name='${uiState.name}' syncing to field")
+        if (nameState.text != uiState.name) {
+            nameState.edit { replace(0, length, uiState.name) }
+        }
+    }
+    LaunchedEffect(uiState.phone) {
+        val phone = uiState.phone ?: ""
+        if (contactState.text != phone) {
+            contactState.edit { replace(0, length, phone) }
+        }
+    }
+    LaunchedEffect(uiState.email) {
+        Log.d(TAG_PROFILE_EDIT, "LaunchedEffect(email): uiState.email='${uiState.email}' syncing to field")
+        if (emailState.text != uiState.email) {
+            emailState.edit { replace(0, length, uiState.email) }
+        }
+    }
+    LaunchedEffect(uiState.updateSuccess) {
+        if (uiState.updateSuccess) {
+            viewModel.clearUpdateSuccess()
+            callbacks.onUpdateSuccess()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
+    }
 
     Scaffold(
         topBar = {
@@ -106,7 +150,14 @@ fun ProfileEditScreen(
                 contactState = contactState,
                 emailState = emailState
             ),
-            callbacks = callbacks
+            callbacks = callbacks,
+            onEditClick = {
+                viewModel.updateProfile(
+                    name = nameState.text.toString().ifBlank { null },
+                    phone = contactState.text.toString().ifBlank { null },
+                    profileImageUrl = uiState.profileImageUrl
+                )
+            }
         )
     }
 }
@@ -116,14 +167,16 @@ private fun ProfileEditContent(
     modifier: Modifier,
     scrollState: ScrollState,
     formState: ProfileEditFormState,
-    callbacks: ProfileEditCallbacks
+    callbacks: ProfileEditCallbacks,
+    onEditClick: () -> Unit
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         ProfileEditScrollColumn(
             scrollState = scrollState,
             maxHeight = maxHeight,
             formState = formState,
-            callbacks = callbacks
+            callbacks = callbacks,
+            onEditClick = onEditClick
         )
     }
 }
@@ -133,7 +186,8 @@ private fun ProfileEditScrollColumn(
     scrollState: ScrollState,
     maxHeight: Dp,
     formState: ProfileEditFormState,
-    callbacks: ProfileEditCallbacks
+    callbacks: ProfileEditCallbacks,
+    onEditClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -151,7 +205,7 @@ private fun ProfileEditScrollColumn(
         ProfileInfoSection(
             nameState = formState.nameState,
             contactState = formState.contactState,
-            onEditClick = callbacks.onEditProfileClick
+            onEditClick = onEditClick
         )
 
         Spacer(modifier = Modifier.height((maxHeight.value * 0.08f).dp))
@@ -349,11 +403,33 @@ private fun SmallActionButton(
     }
 }
 
+/**
+ * Fake ViewModel for Preview so Hilt is not required.
+ */
+private class FakeProfileEditViewModel : ProfileEditViewModelContract {
+    private val _uiState =
+        MutableStateFlow(
+            ProfileUiState(
+                name = "김소희",
+                email = "afternote@example.com",
+                phone = "01012345678"
+            )
+        )
+    override val uiState: StateFlow<ProfileUiState> = _uiState
+    override fun loadProfile() {}
+    override fun updateProfile(
+        name: String?,
+        phone: String?,
+        profileImageUrl: String?
+    ) {}
+    override fun clearUpdateSuccess() {}
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun ProfileEditScreenPreview() {
     AfternoteTheme {
-        ProfileEditScreen()
+        ProfileEditScreen(viewModel = remember { FakeProfileEditViewModel() })
     }
 }
 
