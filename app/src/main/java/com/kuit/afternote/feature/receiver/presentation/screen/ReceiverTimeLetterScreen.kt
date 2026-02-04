@@ -252,7 +252,7 @@ fun TimeLetterActionCard(
         ) {
             // Background Decoration Icon (편지 모양)
             Image(
-                painter = painterResource(R.drawable.timeletter),
+                painter = painterResource(R.drawable.img_timeletter),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.BottomEnd) // 살짝 잘리게 배치

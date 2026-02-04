@@ -184,7 +184,7 @@ private fun TimeLetterHeader(onBackClick: () -> Unit) {
         contentAlignment = Alignment.Center // 자식들을 중앙 정렬
     ) {
         Image(
-            painter = painterResource(id = R.drawable.vector),
+            painter = painterResource(id = R.drawable.ic_vector),
             contentDescription = "뒤로가기",
             modifier = Modifier
                 .align(Alignment.CenterStart) // 왼쪽 중앙에 배치
@@ -211,7 +211,7 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.letter),
+            painter = painterResource(id = R.drawable.img_time_letter_placeholder),
             contentDescription = "편지이미지",
             modifier = Modifier
                 .width(88.dp)

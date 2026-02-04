@@ -60,7 +60,7 @@ fun PasswordConfirmScreen(
             Spacer(modifier = Modifier.height(50.dp))
 
             Image(
-                painter = painterResource(R.drawable.lock),
+                painter = painterResource(R.drawable.ic_lock),
                 contentDescription = null,
                 modifier = Modifier.size(56.dp)
             )

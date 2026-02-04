@@ -54,7 +54,7 @@ fun LetterEmptyScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.vector),
+                        painter = painterResource(id = R.drawable.ic_vector),
                         contentDescription = "뒤로가기",
                         modifier = Modifier
                             .size(width = 6.dp, height = 12.dp)
@@ -94,7 +94,7 @@ fun LetterEmptyScreen(
 
                 Column {
                 Image(
-                    painter = painterResource(id = R.drawable.letter),
+                    painter = painterResource(id = R.drawable.img_time_letter_placeholder),
                     contentDescription = "편지이미지",
                     modifier = Modifier
                         .padding(horizontal = 150.dp)

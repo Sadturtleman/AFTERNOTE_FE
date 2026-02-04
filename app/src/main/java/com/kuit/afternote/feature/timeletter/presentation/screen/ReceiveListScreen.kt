@@ -64,7 +64,7 @@ fun ReceiveListScreen(
                         .clickable { onBackClick() }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.vector),
+                        painter = painterResource(id = R.drawable.ic_vector),
                         contentDescription = "뒤로가기",
                         modifier = Modifier.size(width = 6.dp, height = 12.dp)
                     )
