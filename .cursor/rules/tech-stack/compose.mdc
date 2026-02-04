@@ -51,6 +51,19 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 - Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다.
 - 모든 상태를 보여 줘(선택됨/선택 안 됨, 활성화/비활성화 등).
 
+#### Preview + Hilt ViewModel (render 이슈 방지) - Critical
+**Compose Preview는 Hilt 컨테이너 없이 실행되므로, 화면에서 `hiltViewModel()`을 그대로 사용하면 Preview가 렌더되지 않습니다.**
+다음 패턴을 적용하여 Preview에서도 정상 렌더되도록 합니다.
+
+1. **ViewModel Contract 인터페이스**: 화면이 ViewModel에서 실제로 사용하는 멤버만 정의한 인터페이스를 작성합니다 (예: `XxxViewModelContract` — `uiState`, `loadXxx()`, `updateXxx()` 등).
+2. **실제 ViewModel**: `@HiltViewModel` ViewModel이 해당 인터페이스를 구현하도록 합니다 (`override` 적용).
+3. **화면 파라미터**: 화면 Composable의 ViewModel 파라미터 타입을 **인터페이스**로 두고, 기본값은 `hiltViewModel<실제ViewModel>()`로 합니다.
+4. **Fake ViewModel (Preview 전용)**: 인터페이스를 구현하는 Fake 클래스를 같은 화면 파일(또는 Preview 전용 위치)에 두고, 샘플 `UiState`와 no-op 메서드로 채웁니다.
+5. **Preview에서 Fake 사용**: `@Preview` Composable에서는 `hiltViewModel()`을 호출하지 말고, `remember { FakeXxxViewModel() }`를 넘깁니다.
+
+- **❌ 금지**: Preview에서 `hiltViewModel()`에 의존 (Preview 컨텍스트에 Hilt 없음 → 렌더 실패).
+- **✅ 권장**: Contract 인터페이스 + Fake ViewModel을 Preview에 전달하여 Hilt 없이 렌더.
+
 ## File Structure
 - **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
 - **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다.

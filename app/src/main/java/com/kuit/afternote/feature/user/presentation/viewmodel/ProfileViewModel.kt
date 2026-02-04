@@ -25,15 +25,15 @@ class ProfileViewModel
         private val getMyProfileUseCase: GetMyProfileUseCase,
         private val updateMyProfileUseCase: UpdateMyProfileUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
-    ) : ViewModel() {
+    ) : ViewModel(), ProfileEditViewModelContract {
         private val _uiState = MutableStateFlow(ProfileUiState())
-        val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+        override val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
         /**
          * 프로필 조회.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun loadProfile() {
+        override fun loadProfile() {
             viewModelScope.launch {
                 val userId = getUserIdUseCase()
                 Log.d(TAG, "loadProfile: userId=$userId")
@@ -79,7 +79,7 @@ class ProfileViewModel
          * 프로필 수정.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun updateProfile(
+        override fun updateProfile(
             name: String?,
             phone: String?,
             profileImageUrl: String?
@@ -130,7 +130,7 @@ class ProfileViewModel
         /**
          * updateSuccess 소비 후 호출 (네비게이션 후).
          */
-        fun clearUpdateSuccess() {
+        override fun clearUpdateSuccess() {
             _uiState.update { it.copy(updateSuccess = false) }
         }
 

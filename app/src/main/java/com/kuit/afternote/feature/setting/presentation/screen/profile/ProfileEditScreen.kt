@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,10 +42,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import android.util.Log
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
@@ -87,7 +92,7 @@ data class ProfileEditCallbacks(
 @Composable
 fun ProfileEditScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: ProfileEditViewModelContract = hiltViewModel<ProfileViewModel>(),
     callbacks: ProfileEditCallbacks = ProfileEditCallbacks()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -398,11 +403,33 @@ private fun SmallActionButton(
     }
 }
 
+/**
+ * Fake ViewModel for Preview so Hilt is not required.
+ */
+private class FakeProfileEditViewModel : ProfileEditViewModelContract {
+    private val _uiState =
+        MutableStateFlow(
+            ProfileUiState(
+                name = "김소희",
+                email = "afternote@example.com",
+                phone = "01012345678"
+            )
+        )
+    override val uiState: StateFlow<ProfileUiState> = _uiState
+    override fun loadProfile() {}
+    override fun updateProfile(
+        name: String?,
+        phone: String?,
+        profileImageUrl: String?
+    ) {}
+    override fun clearUpdateSuccess() {}
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun ProfileEditScreenPreview() {
     AfternoteTheme {
-        ProfileEditScreen()
+        ProfileEditScreen(viewModel = remember { FakeProfileEditViewModel() })
     }
 }
 

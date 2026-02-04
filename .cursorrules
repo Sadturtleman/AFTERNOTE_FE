@@ -13,7 +13,7 @@
 2. **Branch (Recommended)**: Prefer using an appropriate branch (`feat/`, `fix/`, `docs/`, etc.)
 3. **Branch Cleanup**: After a successful merge to `main`, delete merged branches
    - **Local**: Delete branches that are merged into `main` (excluding `main`/`develop`/`master`)
-4. **Preview**: All public Composables must have `@Preview`
+4. **Preview**: All public Composables must have `@Preview`. Screens using `hiltViewModel()` must use a ViewModel contract + Fake in Preview (see compose.mdc) so Previews render without Hilt.
 7. **Modifier**: If a Composable has a modifier parameter, it should be placed first.
 8. **State**: State hoisting to caller, Stateless composable preferred
    - **Complete State Hoisting**: All screen states (tabs, navigation items, etc.) must move to ViewModel
@@ -53,6 +53,7 @@
 - **Component Location Rules**: Common components must be in `core` module. Direct dependencies between Feature modules are prohibited, common components must be in `core`
 - **Code Structure Improvement Before @Suppress**: When detekt warning occurs, must try code structure improvement before using `@Suppress`. When parameters increase after State Hoisting pattern, group with Event Interface or State Class
 - **Required Verification on Structure Changes**: File moves, package changes, class refactoring must follow: pre/post build check, search all usages, batch import path changes
+- **Preview + Hilt ViewModel**: To avoid Preview render failure, use a ViewModel contract interface, real ViewModel implements it, screen takes contract with default `hiltViewModel<RealVM>()`, and Preview passes `remember { FakeXxxViewModel() }`. See `.cursor/rules/tech-stack/compose.mdc`.
 ---
 
 # Project Context
