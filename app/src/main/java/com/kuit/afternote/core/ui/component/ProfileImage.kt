@@ -58,7 +58,9 @@ fun ProfileImage(
                         spotColor = Color(0x26000000),
                         ambientColor = Color(0x26000000)
                     )
-                    .clickable(onClick = { })
+                    .clickable(onClick = {
+                        //TODO
+                    })
             )
         }
     }
