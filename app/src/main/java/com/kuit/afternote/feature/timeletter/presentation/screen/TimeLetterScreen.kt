@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,8 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.ScaffoldContentWithOptionalFab
 import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
+import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
@@ -237,7 +240,11 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
 @Composable
 private fun TimeLetterScreenListPreview() {
     AfternoteTheme {
-        TimeLetterScreenPreviewContent(initialViewMode = ViewMode.LIST)
+        CompositionLocalProvider(
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+        ) {
+            TimeLetterScreenPreviewContent(initialViewMode = ViewMode.LIST)
+        }
     }
 }
 
@@ -249,53 +256,20 @@ private fun TimeLetterScreenListPreview() {
 @Composable
 private fun TimeLetterScreenBlockPreview() {
     AfternoteTheme {
-        TimeLetterScreenPreviewContent(initialViewMode = ViewMode.BLOCK)
+        CompositionLocalProvider(
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+        ) {
+            TimeLetterScreenPreviewContent(initialViewMode = ViewMode.BLOCK)
+        }
     }
 }
 
 @Composable
 private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
-    val mockLetters = listOf(
-        TimeLetterItem(
-            id = "1",
-            receivername = "박채연",
-            sendDate = "2027. 11. 24",
-            title = "채연아 20번째 생일을 축하해",
-            content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
-            imageResId = R.drawable.ic_test_block,
-            theme = LetterTheme.PEACH
-        ),
-        TimeLetterItem(
-            id = "2",
-            receivername = "김민수",
-            sendDate = "2026. 05. 10",
-            title = "졸업 축하해 친구야",
-            content = "드디어 졸업이구나! 우리가 함께한 시간들이 정말 소중했어. 앞으로도 좋은 일만 가득하길...",
-            imageResId = null,
-            theme = LetterTheme.BLUE
-        ),
-        TimeLetterItem(
-            id = "3",
-            receivername = "이지은",
-            sendDate = "2028. 01. 01",
-            title = "새해 복 많이 받아",
-            content = "새해가 밝았어! 올해도 건강하고 행복하게 보내길 바라. 사랑해!",
-            imageResId = R.drawable.ic_test_block,
-            theme = LetterTheme.YELLOW
-        ),
-        TimeLetterItem(
-            id = "4",
-            receivername = "홍길동",
-            sendDate = "2029. 03. 15",
-            title = "오랜만이야 친구",
-            content = "정말 오랜만이다! 요즘 어떻게 지내? 다음에 시간 되면 같이 밥 먹자.",
-            imageResId = null,
-            theme = LetterTheme.PEACH
-        )
-    )
-
+    val provider = DataProviderLocals.LocalReceiverDataProvider.current
+    val letters = provider.getTimeLetterItemsForPreview()
     var currentViewMode by remember { mutableStateOf(initialViewMode) }
-    val uiState: TimeLetterUiState = TimeLetterUiState.Success(mockLetters)
+    val uiState: TimeLetterUiState = TimeLetterUiState.Success(letters)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

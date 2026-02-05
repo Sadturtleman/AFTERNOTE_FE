@@ -42,7 +42,6 @@ import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.core.ui.dummy.DefaultAlbumCovers
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
@@ -55,7 +54,7 @@ fun ReceiverAfterNoteMainScreen(
     onNavigateToFullList: () -> Unit = {},
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
-    albumCovers: List<AlbumCover> = DefaultAlbumCovers.list,
+    albumCovers: List<AlbumCover>,
     songCount: Int = 16
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
@@ -183,6 +182,6 @@ private fun ReceiverSectionHeader(title: String = LABEL_VIDEO_SECTION) {
 @Composable
 fun PreviewReceiverAfterNoteMain() {
     AfternoteTheme {
-        ReceiverAfterNoteMainScreen("박서연")
+        ReceiverAfterNoteMainScreen(title = "박서연", albumCovers = emptyList())
     }
 }

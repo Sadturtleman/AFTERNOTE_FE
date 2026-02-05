@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,8 @@ import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -176,9 +178,14 @@ private fun MainPageEditReceiverItem(
 @Composable
 private fun MainPageEditReceiverListPreview() {
     AfternoteTheme {
-        MainPageEditReceiverList(
-            mainPageEditReceivers = AfternoteEditDummyData.defaultMainPageEditReceivers(),
-            events = MainPageEditReceiverCallbacks()
-        )
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
+            MainPageEditReceiverList(
+                mainPageEditReceivers = provider.getMainPageEditReceivers(),
+                events = MainPageEditReceiverCallbacks()
+            )
+        }
     }
 }

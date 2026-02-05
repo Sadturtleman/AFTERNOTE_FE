@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.setting.presentation.dummy
+package com.kuit.afternote.core.dummy.receiver
 
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
@@ -10,7 +10,7 @@ import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
  * Seed for building [com.kuit.afternote.core.uimodel.AfternoteListDisplayItem].
  * Use [serviceNameResId] when non-null (resolve with stringResource); otherwise [serviceNameLiteral].
  */
-internal data class AfternoteListItemSeed(
+data class AfternoteListItemSeed(
     val id: String,
     val serviceNameResId: Int?,
     val serviceNameLiteral: String?,
@@ -18,7 +18,7 @@ internal data class AfternoteListItemSeed(
     val iconResId: Int
 )
 
-internal data class ReceiverDummyDetail(
+data class ReceiverDummyDetail(
     val receiverId: String,
     val name: String,
     val relationship: String,
@@ -29,7 +29,11 @@ internal data class ReceiverDummyDetail(
     val afternoteCount: Int
 )
 
-internal object ReceiverDummyData {
+/**
+ * Centralized dummy data for receiver-related screens (list, detail, time letters, daily answers).
+ * Replace with API load when backend is ready.
+ */
+object ReceiverDummies {
     val receiverList: List<MainPageEditReceiver> = listOf(
         MainPageEditReceiver(id = "receiver_1", name = "김지은", label = "딸"),
         MainPageEditReceiver(id = "receiver_2", name = "김혜성", label = "아들"),
@@ -91,7 +95,8 @@ internal object ReceiverDummyData {
         )
     )
 
-    fun detailOf(receiverId: String): ReceiverDummyDetail = receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
+    fun detailOf(receiverId: String): ReceiverDummyDetail =
+        receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
 
     /** Default receiver name for dev "receiver afternote main" screen. */
     fun defaultReceiverTitleForDev(): String = "박서연"
@@ -197,4 +202,47 @@ internal object ReceiverDummyData {
             DailyAnswerItemUiModel(question = question, answer = answer, dateText = dateText)
         }
     }
+
+    /**
+     * Sample time letter items for Previews. Shared so Previews and tests use the same data.
+     */
+    val sampleTimeLetterItemsForPreview: List<TimeLetterItem> =
+        listOf(
+            TimeLetterItem(
+                id = "1",
+                receivername = "박채연",
+                sendDate = "2027. 11. 24",
+                title = "채연아 20번째 생일을 축하해",
+                content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
+                imageResId = R.drawable.ic_test_block,
+                theme = LetterTheme.PEACH
+            ),
+            TimeLetterItem(
+                id = "2",
+                receivername = "김민수",
+                sendDate = "2026. 05. 10",
+                title = "졸업 축하해 친구야",
+                content = "드디어 졸업이구나! 우리가 함께한 시간들이 정말 소중했어. 앞으로도 좋은 일만 가득하길...",
+                imageResId = null,
+                theme = LetterTheme.BLUE
+            ),
+            TimeLetterItem(
+                id = "3",
+                receivername = "이지은",
+                sendDate = "2028. 01. 01",
+                title = "새해 복 많이 받아",
+                content = "새해가 밝았어! 올해도 건강하고 행복하게 보내길 바라. 사랑해!",
+                imageResId = R.drawable.ic_test_block,
+                theme = LetterTheme.YELLOW
+            ),
+            TimeLetterItem(
+                id = "4",
+                receivername = "홍길동",
+                sendDate = "2029. 03. 15",
+                title = "오랜만이야 친구",
+                content = "정말 오랜만이다! 요즘 어떻게 지내? 다음에 시간 되면 같이 밥 먹자.",
+                imageResId = null,
+                theme = LetterTheme.PEACH
+            )
+        )
 }
