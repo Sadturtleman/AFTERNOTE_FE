@@ -39,6 +39,13 @@ interface UserApiService {
         @Body body: UserUpdateProfileRequest
     ): ApiResponse<UserResponse?>
 
+    /**
+     * 푸시 알림 설정 조회.
+     * GET /users/push-settings — 로그인한 사용자의 푸시 알림 수신 설정을 불러옵니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @return data: timeLetter, mindRecord, afterNote
+     */
     @GET("users/push-settings")
     suspend fun getMyPushSettings(
         @Query("userId") userId: Long

@@ -22,6 +22,7 @@ data class UserUpdateProfileRequest(
     @SerialName("profileImageUrl") val profileImageUrl: String? = null
 )
 
+/** GET /users/push-settings 응답 data. 푸시 알림 수신 설정 (timeLetter, mindRecord, afterNote). */
 @Serializable
 data class UserPushSettingResponse(
     @SerialName("timeLetter") val timeLetter: Boolean,

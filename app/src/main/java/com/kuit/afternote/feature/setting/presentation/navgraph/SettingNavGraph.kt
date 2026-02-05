@@ -113,7 +113,7 @@ private fun SettingMainRouteContent(navController: NavController) {
                 "프로필 수정" -> navController.navigate(SettingRoute.ProfileEditRoute)
                 "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
                 "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
-                "알림 설정" -> navController.navigate(SettingRoute.NotificationSettingsRoute)
+                "알림 설정" -> navController.navigate(SettingRoute.PushToastSettingRoute)
                 "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
                 "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
                 "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)

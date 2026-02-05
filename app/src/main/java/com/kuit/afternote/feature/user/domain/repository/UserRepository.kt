@@ -21,6 +21,7 @@ interface UserRepository {
         profileImageUrl: String?
     ): Result<UserProfile>
 
+    /** GET /users/push-settings — 푸시 알림 설정 조회. */
     suspend fun getMyPushSettings(userId: Long): Result<PushSettings>
 
     suspend fun updateMyPushSettings(
