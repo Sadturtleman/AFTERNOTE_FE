@@ -6,20 +6,9 @@ alwaysApply: true
 
 # Branch Workflow Rules (브랜치 작업 규칙)
 
-## 기본 원칙
+## 브랜치 전환 가이드 (권장)
 
-**변경사항은 항상 주제에 맞는 브랜치에서 작업해야 합니다.**
-
-## ⚠️ Critical: 자동 브랜치 전환 규칙
-
-**사용자가 어떤 브랜치에서 작업을 요청하든, 반드시 다음 절차를 따라야 합니다:**
-
-1. **작업 요청 시 즉시 브랜치 확인 및 전환**
-   - 사용자의 작업 요청을 받으면 **먼저 현재 브랜치를 확인**합니다 (`git branch --show-current` 또는 `git status`)
-   - 작업 내용에 맞는 적절한 브랜치가 이미 존재하는지 확인합니다 (`git branch -a`)
-   - **적절한 브랜치가 있으면 즉시 해당 브랜치로 체크아웃**합니다 (`git checkout {branch-name}`)
-   - **적절한 브랜치가 없으면 새로 생성하고 체크아웃**합니다 (`git checkout -b {branch-name}`)
-   - **이 작업은 코드 생성/수정 전에 반드시 수행해야 합니다**
+**사용자가 어떤 브랜치에서 작업을 요청하든, 아래 절차를 권장합니다:**
 
 2. **브랜치 선택 기준**
    - 작업 내용을 분석하여 적절한 브랜치 타입을 결정합니다:
@@ -28,18 +17,12 @@ alwaysApply: true
      * 문서 수정 → `docs/{document-name}`
      * 설정/도구 변경 → `chore/{tool-name}`
      * 리팩토링 → `refactor/{component-name}`
-   - 기존 브랜치가 작업 내용과 일치하면 해당 브랜치를 사용합니다
-   - 기존 브랜치가 없거나 작업 내용과 맞지 않으면 새 브랜치를 생성합니다
 
 3. **예외: 현재 브랜치가 작업 내용과 일치하는 경우**
    - 현재 브랜치가 작업 요청 내용과 정확히 일치하는 경우에만 현재 브랜치에서 작업합니다
    - 예: `feat/login-screen` 브랜치에서 로그인 화면 관련 작업을 요청한 경우
 
 ### 규칙
-
-1. **현재 브랜치의 주제와 맞지 않는 변경사항은 별도 브랜치 생성**
-   - 예: `feat/afternote` 브랜치에서 작업 중인데 문서 수정이 필요한 경우
-   - → `docs/update-readme` 같은 별도 브랜치 생성
 
 2. **브랜치 네이밍 규칙**
    - `feat/`: 새로운 기능
@@ -53,43 +36,21 @@ alwaysApply: true
    사용자 작업 요청
    → 현재 브랜치 확인
    → 작업 내용 분석
-   → 적절한 브랜치 확인/생성
-   → 브랜치 체크아웃
    → 코드 생성/수정
    → 변경사항 커밋
    → 필요시 메인에 병합
+   → (병합 완료 후) 브랜치 정리
    ```
 
-4. **구현 요구 시 브랜치 생성 규칙**
-   - **사용자가 어떤 브랜치에서 작업을 요청하든, 작업 내용에 맞는 적절한 브랜치로 자동으로 이동하거나 생성해야 합니다**
-   - 사용자가 구현을 요구할 때마다:
-     1. 먼저 현재 브랜치를 확인합니다
-     2. 작업 내용에 맞는 브랜치가 있는지 확인합니다
-     3. 있으면 해당 브랜치로 체크아웃하고, 없으면 새로 생성하고 체크아웃합니다
-     4. 그 다음 코드를 생성/수정합니다
-   - 브랜치 이름은 작업 내용을 명확히 나타내야 합니다
-   - 예: `feat/add-custom-radio-button`, `fix/text-field-padding`, `refactor/move-component-to-core`
-   - 작업 완료 후 해당 브랜치에서 커밋하고, 필요시 메인에 병합합니다
+4. **구현 요구 시 브랜치 사용 가이드 (권장)**
+   - 브랜치 이름은 작업 내용을 명확히 나타내는 것을 권장합니다.
+     - 예: `feat/add-custom-radio-button`, `fix/text-field-padding`, `refactor/move-component-to-core`
 
 5. **병합 제안 규칙 (Merge Suggestion Rules) - 안전 우선**
    - **병합 자동 실행 금지**: 절대 자동으로 병합하지 않습니다. 대신 병합이 필요한 경우 사용자에게 제안만 합니다.
    - **병합 제안 조건**: 작업이 완료되고 다음 조건을 만족하는 경우 병합을 제안할 수 있습니다:
      * 작업이 완료되었고 테스트가 통과한 경우
      * 다른 브랜치와의 충돌이 없는 경우
-     * **(PR/코드 리뷰)** 기본적으로는 `pull-request-review.mdc`에 따라 **코드 리뷰 완료 후** 병합합니다. 예외적으로 코드 리뷰가 필요 없는 간단한 변경(설정 파일, 문서, 작은 버그 수정 등)은 팀 합의 하에 생략할 수 있습니다.
-   - **제안 형식**: 병합이 필요하다고 판단되면 다음과 같이 제안합니다:
-     ```
-     작업이 완료되었습니다. 메인 브랜치에 병합하시겠습니까?
-     다음 명령어를 실행하세요:
-     git checkout main
-     git merge {작업_브랜치}
-     git push origin main
-     ```
-   - **병합 제안하지 않는 경우**: 다음의 경우는 병합을 제안하지 않습니다:
-     * 큰 기능 추가나 리팩토링 (코드 리뷰 필요)
-     * 다른 팀원과 협의가 필요한 변경
-     * 사용자가 명시적으로 병합하지 말라고 한 경우
-     * Git 상태가 불확실한 경우 (충돌 가능성, uncommitted changes 등)
 
 6. **예외 상황**
    - 현재 브랜치의 주제와 직접 관련된 변경은 현재 브랜치에서 작업 가능
@@ -97,25 +58,12 @@ alwaysApply: true
 
 7. **⚠️ Critical: Main 브랜치 버전 제약 규칙 (Version Constraint Rule)**
    - **원칙**: 작업 브랜치의 의존성 버전(예: AGP, Kotlin 등)은 main 브랜치의 버전을 초과하지 않아야 합니다.
-   - **검증 절차**: Gradle 설정 파일(`gradle/libs.versions.toml` 등)을 수정하기 전에 반드시 main 브랜치의 해당 버전을 확인합니다.
-     * `git show main:gradle/libs.versions.toml | grep "^agp"` (AGP 버전 확인)
-     * `git show main:gradle/libs.versions.toml | grep "^kotlin"` (Kotlin 버전 확인)
-   - **제약 조건**:
-     * 작업 브랜치의 버전 ≤ main 브랜치의 버전
-     * 버전을 업그레이드해야 하는 경우, 먼저 main 브랜치를 업그레이드한 후 작업 브랜치에서 동일한 버전을 사용합니다.
    - **예외**: main 브랜치 업그레이드가 작업의 목적인 경우는 예외로 합니다 (예: `chore(gradle): upgrade AGP to X.Y.Z`).
    - **적용 대상**: 
      * Android Gradle Plugin (AGP)
      * Kotlin 버전
      * 기타 주요 빌드 도구 버전
 
-## 예시
-
-### ❌ 잘못된 예
-- `feat/afternote` 브랜치에서 README 수정 커밋
-- `feat/afternote` 브랜치에서 Gradle 설정 변경 커밋
-
-### ✅ 올바른 예
-- README 수정 → `docs/update-readme` 브랜치 생성
-- Gradle 설정 변경 → `chore/update-gradle-config` 브랜치 생성
-- 각각 메인에 병합 후 `feat/afternote`에 반영
+8. **브랜치 정리 규칙 (Branch Cleanup Rule) - Critical**
+   - `main`에 **성공적으로 병합된 브랜치**는 작업이 끝났다면 정리(삭제)합니다.(`main`/`master`/`develop` 및 현재 브랜치는 제외)
+   - 자세한 조건/명령어는 `.cursor/rules/workflow/git-policy.mdc`의 “Branch Cleanup Rule”을 따릅니다.

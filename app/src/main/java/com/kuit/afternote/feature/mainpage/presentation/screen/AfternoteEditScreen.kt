@@ -19,8 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContent
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.MemorialGuidelineEditContent
@@ -29,21 +30,19 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.S
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.content.SocialNetworkEditContentParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialog
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogCallbacks
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.AddMainPageEditReceiverDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodSection
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialog
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.CustomServiceDialogParams
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialog
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogCallbacks
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.AddRecipientDialogParams
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
-import com.kuit.afternote.ui.theme.Spacing
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
@@ -59,6 +58,8 @@ private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
  * - 계정 처리 방법 선택 (라디오 버튼)
  * - 처리 방법 리스트 (체크박스)
  * - 남기실 말씀 (멀티라인 텍스트 필드)
+ *
+ * @param onNavigateToAddSong Called when user taps "노래 추가하기" in the MemorialPlaylist card on this edit screen; should navigate to MemorialPlaylistRouteScreen (full playlist screen).
  */
 @Composable
 fun AfternoteEditScreen(
@@ -122,16 +123,16 @@ fun AfternoteEditScreen(
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
             state.activeDialog?.let { dialogType ->
                 when (dialogType) {
-                    DialogType.ADD_RECIPIENT -> {
-                        AddRecipientDialog(
-                            params = AddRecipientDialogParams(
-                                recipientNameState = state.recipientNameState,
+                    DialogType.ADD_MAINPAGE_EDIT_RECEIVER -> {
+                        AddMainPageEditReceiverDialog(
+                            params = AddMainPageEditReceiverDialogParams(
+                                mainPageEditReceiverNameState = state.mainPageEditReceiverNameState,
                                 phoneNumberState = state.phoneNumberState,
                                 relationshipSelectedValue = state.relationshipSelectedValue,
                                 relationshipOptions = state.relationshipOptions,
-                                callbacks = AddRecipientDialogCallbacks(
+                                callbacks = AddMainPageEditReceiverDialogCallbacks(
                                     onDismiss = state::dismissDialog,
-                                    onAddClick = state::onAddRecipient,
+                                    onAddClick = state::onAddMainPageEditReceiver,
                                     onRelationshipSelected = state::onRelationshipSelected,
                                     onImportContactsClick = {
                                         // 연락처 가져오기 기능은 추후 구현 예정
@@ -175,7 +176,7 @@ private fun EditContent(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 종류 선택 (Line 279 해결: State의 메서드 사용)
             SelectionDropdown(
@@ -192,7 +193,7 @@ private fun EditContent(
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
             if (state.selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) {
-                Spacer(modifier = Modifier.height(Spacing.m))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 SelectionDropdown(
                     label = "서비스명",
@@ -206,7 +207,7 @@ private fun EditContent(
                     state = state.serviceDropdownState
                 )
             }
-            Spacer(modifier = Modifier.height(Spacing.l))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // 종류에 따라 다른 콘텐츠 표시
             // 각 Content 컴포넌트 내부에서 카테고리별 하단 여백 처리
@@ -260,13 +261,13 @@ private fun CategoryContent(
                         selectedMethod = state.selectedInformationProcessingMethod,
                         onMethodSelected = state::onInformationProcessingMethodSelected
                     ),
-                    recipientSection = if (
+                    mainPageEditReceiverSection = if (
                         state.selectedInformationProcessingMethod ==
-                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT
+                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER
                     ) {
-                        RecipientSection(
-                            recipients = state.recipients,
-                            callbacks = state.galleryRecipientCallbacks
+                        MainPageEditReceiverSection(
+                            mainPageEditReceivers = state.mainPageEditReceivers,
+                            callbacks = state.galleryMainPageEditReceiverCallbacks
                         )
                     } else {
                         null

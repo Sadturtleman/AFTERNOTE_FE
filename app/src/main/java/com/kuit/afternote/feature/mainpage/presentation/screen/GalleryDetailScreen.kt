@@ -36,13 +36,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.DeleteConfirmDialogContent
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.EditDropdownMenu
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.InfoCard
-import com.kuit.afternote.feature.mainpage.presentation.component.detail.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
+import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialogContent
+import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
+import com.kuit.afternote.core.ui.component.detail.InfoCard
+import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.ui.screen.AfternoteDetailState
+import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
@@ -51,7 +53,6 @@ import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 갤러리 상세 화면의 데이터 상태
@@ -61,9 +62,9 @@ data class GalleryDetailState(
     val serviceName: String = "갤러리",
     val userName: String = "서영",
     val finalWriteDate: String = "2025.11.26.",
-    val recipients: List<Recipient> = listOf(
-        Recipient(id = "1", name = "김지은", label = "친구"),
-        Recipient(id = "2", name = "김지은", label = "친구")
+    val mainPageEditReceivers: List<MainPageEditReceiver> = listOf(
+        MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
+        MainPageEditReceiver(id = "2", name = "김지은", label = "친구")
     ),
     val processingMethods: List<String> = listOf(
         "'엽사' 폴더 박선호에게 전송",
@@ -235,12 +236,12 @@ private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp)
     ) {
-        Spacer(modifier = Modifier.height(Spacing.l))
+        Spacer(modifier = Modifier.height(24.dp))
         TitleSection(
             serviceName = detailState.serviceName,
             userName = detailState.userName
         )
-        Spacer(modifier = Modifier.height(Spacing.l))
+        Spacer(modifier = Modifier.height(24.dp))
         CardSection(detailState = detailState)
     }
 }
@@ -249,7 +250,7 @@ private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
 private fun CardSection(detailState: GalleryDetailState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         DateAndMethodCard(finalWriteDate = detailState.finalWriteDate)
-        RecipientsCard(recipients = detailState.recipients)
+        MainPageEditReceiversCard(mainPageEditReceivers = detailState.mainPageEditReceivers)
         ProcessingMethodsCard(processingMethods = detailState.processingMethods)
         MessageCard(message = detailState.message)
     }
@@ -314,8 +315,8 @@ private fun DateAndMethodCard(finalWriteDate: String) {
 }
 
 @Composable
-private fun RecipientsCard(recipients: List<Recipient>) {
-    if (recipients.isEmpty()) return
+private fun MainPageEditReceiversCard(mainPageEditReceivers: List<MainPageEditReceiver>) {
+    if (mainPageEditReceivers.isEmpty()) return
 
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
@@ -335,8 +336,8 @@ private fun RecipientsCard(recipients: List<Recipient>) {
                         color = Gray9
                     )
                 )
-                recipients.forEachIndexed { _, recipient ->
-                    RecipientDetailItem(recipient = recipient)
+                mainPageEditReceivers.forEachIndexed { _, receiver ->
+                    MainPageEditReceiverDetailItem(receiver = receiver)
                 }
             }
         }
@@ -413,9 +414,9 @@ private fun MessageCard(message: String) {
  * 갤러리 상세 화면에서 사용하는 수신자 정보 표시
  */
 @Composable
-private fun RecipientDetailItem(
+private fun MainPageEditReceiverDetailItem(
     modifier: Modifier = Modifier,
-    recipient: Recipient
+    receiver: MainPageEditReceiver
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -436,7 +437,7 @@ private fun RecipientDetailItem(
 
         Column {
             Text(
-                text = recipient.name,
+                text = receiver.name,
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,
@@ -446,7 +447,7 @@ private fun RecipientDetailItem(
                 )
             )
             Text(
-                text = recipient.label,
+                text = receiver.label,
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 18.sp,

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.AddCircleButton
+import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White

@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 
 @Composable
 fun LetterEmptyScreen(
@@ -48,7 +48,11 @@ fun LetterEmptyScreen(
                     .height(48.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.padding(start = 23.dp)) {
+                // LEFT
+                Box(
+                    modifier = Modifier.size(48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.vector),
                         contentDescription = "뒤로가기",
@@ -57,13 +61,18 @@ fun LetterEmptyScreen(
                             .clickable { onNavigateBack() }
                     )
                 }
-                Text(
-                    text = "타임레터",
-                    color = Color(0xFF212121),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 131.dp)
-                )
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "타임레터",
+                        color = Color(0xFF212121),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.size(48.dp))
             }
         },
         bottomBar = {

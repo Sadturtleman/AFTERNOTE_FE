@@ -73,7 +73,7 @@ fun TimeLetterWritingPopUp(modifier: Modifier = Modifier) {
                         .shadow(elevation = 5.dp, spotColor = Color(0x0D000000), ambientColor = Color(0x0D000000))
                         .width(136.dp)
                         .height(46.dp)
-                        .background(color = Color(0xFFE0E0E0), shape = RoundedCornerShape(size = 8.dp)),
+                        .background(color = Color(0xFFBDE0FF), shape = RoundedCornerShape(size = 8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

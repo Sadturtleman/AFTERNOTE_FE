@@ -278,6 +278,7 @@ private fun LoadingIndicator(isLoading: Boolean) {
 }
 
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 private fun LoginActionButton(
     uiState: DevModeUiState,
     onQuickLoginClick: () -> Unit,
@@ -492,6 +493,7 @@ private fun DevModeScreenLoggedOutPreview() {
     AfternoteTheme {
         DevModeContent(
             screens = listOf(
+                ScreenInfo("메인 화면", "main"),
                 ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
                 ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
                 ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
@@ -514,6 +516,7 @@ private fun DevModeScreenLoggedInPreview() {
     AfternoteTheme {
         DevModeContent(
             screens = listOf(
+                ScreenInfo("메인 화면", "main"),
                 ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
                 ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
                 ScreenInfo("애프터노트 상세 화면", "afternote_detail"),

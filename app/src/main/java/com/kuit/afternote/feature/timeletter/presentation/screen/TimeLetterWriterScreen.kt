@@ -21,7 +21,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.timeletter.presentation.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
+import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
+import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * 타임레터 작성 화면
@@ -50,7 +57,9 @@ import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWr
  * @param title 제목
  * @param content 내용
  * @param sendDate 선택된 발송 날짜
+ * @param sendTime 선택된 발송 시간 (HH:mm)
  * @param showDatePicker DatePicker 표시 여부
+ * @param showTimePicker TimePicker 표시 여부
  * @param draftCount 임시저장된 레터 개수
  * @param onTitleChange 제목 변경 콜백
  * @param onContentChange 내용 변경 콜백
@@ -63,15 +72,20 @@ import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWr
  * @param onTimeClick 시간 선택 클릭 콜백
  * @param onDatePickerDismiss DatePicker 닫기 콜백
  * @param onDateSelected 날짜 선택 완료 콜백
+ * @param onTimePickerDismiss TimePicker 닫기 콜백
+ * @param onTimeSelected 시간 선택 콜백 (24시간 형식 hour, minute)
  * @param modifier Modifier
  */
 @Composable
 fun TimeLetterWriterScreen(
+    modifier: Modifier = Modifier,
     recipientName: String,
     title: String,
     content: String,
     sendDate: String = "",
+    sendTime: String = "",
     showDatePicker: Boolean = false,
+    showTimePicker: Boolean = false,
     draftCount: Int = 0,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
@@ -84,7 +98,8 @@ fun TimeLetterWriterScreen(
     onTimeClick: () -> Unit,
     onDatePickerDismiss: () -> Unit = {},
     onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> },
-    modifier: Modifier = Modifier
+    onTimePickerDismiss: () -> Unit = {},
+    onTimeSelected: (hour: Int, minute: Int) -> Unit = { _, _ -> }
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -237,6 +252,16 @@ fun TimeLetterWriterScreen(
                         Box(
                             modifier = Modifier.fillMaxWidth()
                         ) {
+                            if (sendTime.isNotEmpty()) {
+                                Text(
+                                    text = sendTime,
+                                    color = Color(0xFF212121),
+                                    fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier.padding(top = 10.dp)
+                                )
+                            }
                             Image(
                                 painter = painterResource(R.drawable.ic_down_vector),
                                 contentDescription = "시간 선택",
@@ -334,6 +359,7 @@ fun TimeLetterWriterScreen(
 
         // DatePicker 오버레이
         if (showDatePicker) {
+            var selectedDate by remember { mutableStateOf(LocalDate.now()) }
             // 배경 딤 처리 + 클릭 시 닫기
             Box(
                 modifier = Modifier
@@ -349,32 +375,65 @@ fun TimeLetterWriterScreen(
             // DateWheelPicker 오버레이 (발송 날짜 아래 위치)
             Box(
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(top = 43.dp) // TopBar 높이
-                    .padding(top = 24.dp) // Spacer 높이
-                    .padding(top = 62.dp) // 발송 날짜 Row 높이
-                    .padding(start = 20.dp)
-                    .zIndex(2f)
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    ).clip(RoundedCornerShape(12.dp))
+                    .background(Color.White)
+                    .padding(vertical = 16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .shadow(
-                            elevation = 8.dp,
-                            shape = RoundedCornerShape(12.dp)
-                        ).clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) { /* 피커 내부 클릭 시 닫히지 않도록 */ }
-                        .padding(vertical = 16.dp)
-                ) {
-                    DateWheelPicker(
-                        onDateChanged = { year, month, day ->
-                            onDateSelected(year, month, day)
-                        }
-                    )
+                DateWheelPicker(
+                    modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
+                    currentDate = selectedDate,
+                    onDateChanged = { date ->
+                        selectedDate = date
+                        onDateSelected(date.year, date.monthValue, date.dayOfMonth)
+                    }
+                )
+            }
+        }
+
+        // TimePicker 오버레이 (TimeWheelPicker)
+        if (showTimePicker) {
+            val now = LocalTime.now()
+            val (initialHour, initialMinute) = if (sendTime.isNotBlank()) {
+                val parts = sendTime.split(":")
+                if (parts.size == 2) {
+                    val h = parts[0].toIntOrNull() ?: now.hour
+                    val m = parts[1].toIntOrNull() ?: now.minute
+                    h to m
+                } else {
+                    now.hour to now.minute
                 }
+            } else {
+                now.hour to now.minute
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onTimePickerDismiss() }
+                    .zIndex(1f)
+            )
+
+            Box(
+                modifier = Modifier
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    ).clip(RoundedCornerShape(12.dp))
+                    .background(Color.White)
+                    .padding(vertical = 16.dp)
+            ) {
+                TimeWheelPicker(
+                    initialHour = initialHour,
+                    initialMinute = initialMinute,
+                    onTimeChanged = { hour, minute -> onTimeSelected(hour, minute) }
+                )
             }
         }
     }
@@ -389,6 +448,8 @@ private fun TimeLetterWriterScreenPreview() {
         recipientName = "박채연",
         title = "",
         content = "",
+        sendDate = "",
+        sendTime = "",
         draftCount = 3,
         onTitleChange = {},
         onContentChange = {},
@@ -398,6 +459,8 @@ private fun TimeLetterWriterScreenPreview() {
         onSaveDraftClick = {},
         onDraftCountClick = {},
         onDateClick = {},
-        onTimeClick = {}
+        onTimeClick = {},
+        onTimePickerDismiss = {},
+        onTimeSelected = { _, _ -> }
     )
 }

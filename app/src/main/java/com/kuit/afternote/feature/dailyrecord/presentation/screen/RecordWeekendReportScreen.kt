@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -24,11 +25,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordMainTopbar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekTotal
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekendReview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordweekendMindKeyword
@@ -41,9 +42,10 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun RecordWeekendReportScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit
+    onBackClick: () -> Unit
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     val today = LocalDate.now()
@@ -97,12 +99,13 @@ fun RecordWeekendReportScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues)
+        ) {
             item {
-                RecordMainTopbar(
-                    text = "주간 리포트",
-                    showLeftArrow = true,
-                    onLeftClock = onLeftClick
+                TopBar(
+                    title = "주간 리포트",
+                    onBackClick = onBackClick,
                 )
             }
             item {

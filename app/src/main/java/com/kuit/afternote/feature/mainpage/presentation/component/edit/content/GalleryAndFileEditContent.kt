@@ -14,18 +14,19 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.LabelStyle
+import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.RequiredLabel
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver.MainPageEditReceiverList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientSection
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverSection
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.recipient.RecipientList
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Spacing
 
 /**
  * 갤러리 및 파일 선택 시 표시되는 콘텐츠
@@ -62,45 +63,61 @@ private fun GalleryAndFileEditContentContent(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         // 정보 처리 방법 섹션
-        RequiredLabel(text = "정보 처리 방법", offsetY = 4f)
-
-        Spacer(modifier = Modifier.height(Spacing.m))
-
-        ProcessingMethodRadioButton(
-            option = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
-            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_RECIPIENT) }
+        Label(
+            text = "정보 처리 방법",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 4.dp)
         )
 
-        Spacer(modifier = Modifier.height(Spacing.s))
+        Spacer(modifier = Modifier.height(16.dp))
 
         ProcessingMethodRadioButton(
-            option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
-            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT) }
+            option = InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER,
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER) }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ProcessingMethodRadioButton(
+            option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
+            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
+            onClick = {
+                params.infoMethodSection.onMethodSelected(
+                    InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER
+                )
+            }
         )
 
         // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
-        params.recipientSection?.let { recipientSection ->
-            Spacer(modifier = Modifier.height(Spacing.xl))
+        params.mainPageEditReceiverSection?.let { mainPageEditReceiverSection ->
+            Spacer(modifier = Modifier.height(32.dp))
 
             // 수신자 추가 섹션 제목
-            RequiredLabel(text = "수신자 추가", offsetY = 3f)
+            Label(
+                text = "수신자 추가",
+                isRequired = true,
+                style = LabelStyle(requiredDotOffsetY = 3.dp)
+            )
 
             Spacer(modifier = Modifier.height(9.dp))
 
-            RecipientList(
-                recipients = recipientSection.recipients,
-                events = recipientSection.callbacks
+            MainPageEditReceiverList(
+                mainPageEditReceivers = mainPageEditReceiverSection.mainPageEditReceivers,
+                events = mainPageEditReceiverSection.callbacks
             )
         }
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 처리 방법 리스트 섹션
-        RequiredLabel(text = "처리 방법 리스트", offsetY = 2f)
+        Label(
+            text = "처리 방법 리스트",
+            isRequired = true,
+            style = LabelStyle(requiredDotOffsetY = 2.dp)
+        )
 
-        Spacer(modifier = Modifier.height(Spacing.ml))
+        Spacer(modifier = Modifier.height(20.dp))
 
         ProcessingMethodList(
             params = ProcessingMethodListParams(
@@ -114,13 +131,13 @@ private fun GalleryAndFileEditContentContent(
             )
         )
 
-        Spacer(modifier = Modifier.height(Spacing.xl))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // 남기실 말씀
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = params.messageState,
-            isMultiline = true
+            multiline = Multiline
         )
 
         // 갤러리 및 파일 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
@@ -144,7 +161,7 @@ private fun GalleryAndFileEditContentPreview() {
                 params = GalleryAndFileEditContentParams(
                     messageState = rememberTextFieldState(),
                     infoMethodSection = InfoMethodSection(
-                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_RECIPIENT,
+                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER,
                         onMethodSelected = {}
                     )
                 )
@@ -155,7 +172,7 @@ private fun GalleryAndFileEditContentPreview() {
 
 @Preview(showBackground = true, name = "추가 수신자 선택됨")
 @Composable
-private fun GalleryAndFileEditContentWithRecipientsPreview() {
+private fun GalleryAndFileEditContentWithMainPageEditReceiversPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier
@@ -167,13 +184,13 @@ private fun GalleryAndFileEditContentWithRecipientsPreview() {
                 params = GalleryAndFileEditContentParams(
                     messageState = rememberTextFieldState(),
                     infoMethodSection = InfoMethodSection(
-                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_RECIPIENT,
+                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
                         onMethodSelected = {}
                     ),
-                    recipientSection = RecipientSection(
-                        recipients = listOf(
-                            Recipient(id = "1", name = "김지은", label = "친구"),
-                            Recipient(id = "2", name = "박선호", label = "가족")
+                    mainPageEditReceiverSection = MainPageEditReceiverSection(
+                        mainPageEditReceivers = listOf(
+                            MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
+                            MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
                         )
                     )
                 )

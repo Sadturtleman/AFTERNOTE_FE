@@ -17,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.DailyRecordViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit
+    onLeftClick: () -> Unit,
+    viewModel: DailyRecordViewModel
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -36,7 +38,9 @@ fun RecordDeepMindScreen(
                 RecordSubTopbar(
                     text = "깊은 생각 기록하기",
                     onLeftClock = onLeftClick,
-                    onRightClick = {}
+                    onRightClick = {
+                        viewModel.createPost(title, content)
+                    }
                 )
             }
 

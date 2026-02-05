@@ -4,7 +4,6 @@ data class RecordPost(
     val id: Long,
     val title: String,
     val content: String,
-    val imageUrl: String?,
     val createdAt: String,
     val updatedAt: String
 )

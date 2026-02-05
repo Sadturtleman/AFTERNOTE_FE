@@ -26,8 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ArrowIconSpec
-import com.kuit.afternote.core.ui.component.RightArrowIcon
+import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
+import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -120,6 +121,7 @@ private fun TabItem(
 
 @Preview(showBackground = true)
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 private fun AfternoteTabRowPreview() {
     AfternoteTheme {
         var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }

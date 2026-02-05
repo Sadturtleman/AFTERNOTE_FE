@@ -15,9 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.EmailInputContent
-import com.kuit.afternote.core.ui.component.SignUpContentButton
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.button.SignUpContentButton
+import com.kuit.afternote.core.ui.component.content.EmailInputContent
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.MasterKeyInputContent
 import com.kuit.afternote.feature.receiver.presentation.component.PdfInputContent
 import com.kuit.afternote.feature.receiver.presentation.component.ReceiveEndContent
@@ -31,9 +31,9 @@ fun VerifySelfScreen(
     var step by remember { mutableStateOf(VerifyStep.EMAIL_AUTH) }
     val email = rememberTextFieldState()
     val masterKey = rememberTextFieldState()
-    var deathCertificate = rememberTextFieldState()
-    var familyRelationCertificate = rememberTextFieldState()
-    var authCode = rememberTextFieldState()
+    val deathCertificate = rememberTextFieldState()
+    val familyRelationCertificate = rememberTextFieldState()
+    val authCode = rememberTextFieldState()
 
     Scaffold(
         topBar = {

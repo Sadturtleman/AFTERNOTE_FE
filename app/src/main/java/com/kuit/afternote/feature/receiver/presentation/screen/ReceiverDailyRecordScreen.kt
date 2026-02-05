@@ -34,27 +34,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.BottomNavItem
-import com.kuit.afternote.core.ui.component.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.ClickButton
-import com.kuit.afternote.core.ui.component.TopBar
+import com.kuit.afternote.core.ui.component.button.ClickButton
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.CalendarGrid
+import com.kuit.afternote.feature.receiver.presentation.component.ReceiverWheelDatePickerDialog
 import com.kuit.afternote.feature.receiver.presentation.component.RecordListItem
 import com.kuit.afternote.feature.receiver.presentation.component.TodayRecordCard
-import com.kuit.afternote.feature.receiver.presentation.component.WheelDatePickerDialog
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
+@Suppress("AssignedValueIsNeverRead")
 fun MindRecordScreen() {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableIntStateOf(10) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
 
     if (showDatePicker) {
-        WheelDatePickerDialog(
+        ReceiverWheelDatePickerDialog(
             onDismiss = { showDatePicker = false },
             onConfirm = { showDatePicker = false }
         )
@@ -127,7 +128,7 @@ fun MindRecordScreen() {
                             OutlinedButton(
                                 onClick = { showDatePicker = true },
                                 shape = RoundedCornerShape(20.dp),
-                                border = ButtonDefaults.outlinedButtonBorder.copy(
+                                border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                                     width = 1.dp,
                                     brush = SolidColor(B3)
                                 ),

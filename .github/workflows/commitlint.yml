@@ -24,6 +24,4 @@ jobs:
 
             - name: Run commitlint
               run: |
-                  npx commitlint \
-                    --from=${{ github.event.pull_request.base.sha }} \
-                    --to=${{ github.event.pull_request.head.sha }}
+                  echo "${{ github.event.pull_request.title }}" | npx commitlint

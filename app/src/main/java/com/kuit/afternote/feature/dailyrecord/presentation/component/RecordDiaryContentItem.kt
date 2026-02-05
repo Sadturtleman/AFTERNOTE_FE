@@ -155,7 +155,7 @@ fun RecordDiaryContentItem(
 
         BasicTextField(
             value = content,
-            onValueChange = { content = it },
+            onValueChange = { title = it },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()

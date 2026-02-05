@@ -11,16 +11,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.kuit.afternote.core.ui.component.BottomNavItem
+import com.kuit.afternote.core.ui.component.LastWishOption
+import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdownState
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.AlbumCover
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.memorial.LastWishOption
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.InformationProcessingMethod
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Recipient
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.RecipientCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 
 /**
@@ -43,6 +43,7 @@ class MemorialPlaylistStateHolder {
         onSongCountChanged?.invoke()
     }
 
+    @Suppress("UNUSED")
     fun removeSong(songId: String) {
         songs.removeAll { it.id == songId }
         onSongCountChanged?.invoke()
@@ -69,7 +70,7 @@ private const val CUSTOM_ADD_OPTION = "직접 추가하기"
  * 다이얼로그 타입
  */
 enum class DialogType {
-    ADD_RECIPIENT,
+    ADD_MAINPAGE_EDIT_RECEIVER,
     CUSTOM_SERVICE
 }
 
@@ -79,7 +80,7 @@ enum class DialogType {
  * Note: State Holder 패턴으로 인해 많은 함수가 필요합니다.
  * 현재 18개의 public 함수가 있으며, detekt threshold(20)를 초과하지 않지만
  * 향후 확장 시 Manager 클래스로 책임 분리를 고려해야 합니다.
- * (예: RecipientManager, CategoryManager, ProcessingMethodManager)
+ * (예: MainPageEditReceiverManager, CategoryManager, ProcessingMethodManager)
  *
  * TODO: 함수가 20개를 초과하면 Manager 클래스로 분리 고려
  */
@@ -89,7 +90,7 @@ class AfternoteEditState(
     val idState: TextFieldState,
     val passwordState: TextFieldState,
     val messageState: TextFieldState,
-    val recipientNameState: TextFieldState,
+    val mainPageEditReceiverNameState: TextFieldState,
     val phoneNumberState: TextFieldState,
     val customServiceNameState: TextFieldState
 ) {
@@ -106,15 +107,15 @@ class AfternoteEditState(
     // Processing Methods
     var selectedProcessingMethod by mutableStateOf(AccountProcessingMethod.MEMORIAL_ACCOUNT)
         private set
-    var selectedInformationProcessingMethod by mutableStateOf(InformationProcessingMethod.TRANSFER_TO_RECIPIENT)
+    var selectedInformationProcessingMethod by mutableStateOf(InformationProcessingMethod.TRANSFER_TO_MAINPAGE_EDIT_RECEIVER)
         private set
 
-    // Recipients
-    private val initialRecipients = listOf(
-        Recipient(id = "1", name = "김지은", label = "친구"),
-        Recipient(id = "2", name = "박선호", label = "가족")
+    // MainPageEditReceivers
+    private val initialMainPageEditReceivers = listOf(
+        MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
+        MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
     )
-    var recipients by mutableStateOf(initialRecipients)
+    var mainPageEditReceivers by mutableStateOf(initialMainPageEditReceivers)
         private set
 
     // Dialog States
@@ -177,6 +178,8 @@ class AfternoteEditState(
         SelectionDropdownState()
     )
         private set
+
+    @Suppress("UNUSED")
     var relationshipDropdownState by mutableStateOf(
         SelectionDropdownState()
     )
@@ -222,14 +225,14 @@ class AfternoteEditState(
     fun isCustomAddOption(service: String): Boolean = service == CUSTOM_ADD_OPTION
 
     // Callbacks (Composable 내부 람다 제거로 인지 복잡도 최소화)
-    val galleryRecipientCallbacks: RecipientCallbacks by lazy {
-        RecipientCallbacks(
-            onAddClick = ::showAddRecipientDialog,
+    val galleryMainPageEditReceiverCallbacks: MainPageEditReceiverCallbacks by lazy {
+        MainPageEditReceiverCallbacks(
+            onAddClick = ::showAddMainPageEditReceiverDialog,
             onItemEditClick = { _ ->
                 // TODO: 수신자 수정 로직
             },
-            onItemDeleteClick = ::onRecipientDelete,
-            onItemAdded = ::onRecipientItemAdded,
+            onItemDeleteClick = ::onMainPageEditReceiverDelete,
+            onItemAdded = ::onMainPageEditReceiverItemAdded,
             onTextFieldVisibilityChanged = { _ ->
                 // 텍스트 필드 표시 상태 변경 처리
             }
@@ -305,8 +308,8 @@ class AfternoteEditState(
         selectedLastWish = wish
     }
 
-    fun showAddRecipientDialog() {
-        activeDialog = DialogType.ADD_RECIPIENT
+    fun showAddMainPageEditReceiverDialog() {
+        activeDialog = DialogType.ADD_MAINPAGE_EDIT_RECEIVER
     }
 
     fun showCustomServiceDialog() {
@@ -315,7 +318,7 @@ class AfternoteEditState(
 
     fun dismissDialog() {
         activeDialog = null
-        recipientNameState.edit { replace(0, length, "") }
+        mainPageEditReceiverNameState.edit { replace(0, length, "") }
         phoneNumberState.edit { replace(0, length, "") }
         customServiceNameState.edit { replace(0, length, "") }
         relationshipSelectedValue = "친구"
@@ -330,16 +333,16 @@ class AfternoteEditState(
     }
 
     // Line 350 해결: Guard Clause로 중첩 줄이기
-    fun onAddRecipient() {
-        val name = recipientNameState.text.toString().trim()
+    fun onAddMainPageEditReceiver() {
+        val name = mainPageEditReceiverNameState.text.toString().trim()
         if (name.isEmpty()) return
 
-        val newRecipient = Recipient(
-            id = (recipients.size + 1).toString(),
+        val newMainPageEditReceiver = MainPageEditReceiver(
+            id = (mainPageEditReceivers.size + 1).toString(),
             name = name,
             label = relationshipSelectedValue
         )
-        recipients = recipients + newRecipient
+        mainPageEditReceivers = mainPageEditReceivers + newMainPageEditReceiver
         dismissDialog()
     }
 
@@ -347,17 +350,17 @@ class AfternoteEditState(
         relationshipSelectedValue = relationship
     }
 
-    fun onRecipientDelete(recipientId: String) {
-        recipients = recipients.filter { it.id != recipientId }
+    fun onMainPageEditReceiverDelete(mainPageEditReceiverId: String) {
+        mainPageEditReceivers = mainPageEditReceivers.filter { it.id != mainPageEditReceiverId }
     }
 
-    fun onRecipientItemAdded(text: String) {
-        val newRecipient = Recipient(
-            id = (recipients.size + 1).toString(),
+    fun onMainPageEditReceiverItemAdded(text: String) {
+        val newMainPageEditReceiver = MainPageEditReceiver(
+            id = (mainPageEditReceivers.size + 1).toString(),
             name = text,
             label = "친구"
         )
-        recipients = recipients + newRecipient
+        mainPageEditReceivers = mainPageEditReceivers + newMainPageEditReceiver
     }
 
     fun onGalleryProcessingMethodDelete(itemId: String) {
@@ -394,7 +397,7 @@ fun rememberAfternoteEditState(): AfternoteEditState {
     val idState = rememberTextFieldState()
     val passwordState = rememberTextFieldState()
     val messageState = rememberTextFieldState()
-    val recipientNameState = rememberTextFieldState()
+    val mainPageEditReceiverNameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
     val customServiceNameState = rememberTextFieldState()
 
@@ -403,7 +406,7 @@ fun rememberAfternoteEditState(): AfternoteEditState {
             idState = idState,
             passwordState = passwordState,
             messageState = messageState,
-            recipientNameState = recipientNameState,
+            mainPageEditReceiverNameState = mainPageEditReceiverNameState,
             phoneNumberState = phoneNumberState,
             customServiceNameState = customServiceNameState
         )
