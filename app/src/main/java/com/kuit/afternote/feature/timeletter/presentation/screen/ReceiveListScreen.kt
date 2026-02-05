@@ -67,7 +67,7 @@ fun ReceiveListScreen(
                     contentAlignment = Alignment.Center // 아이콘을 박스 중앙에 배치
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.vector),
+                        painter = painterResource(id = R.drawable.ic_vector),
                         contentDescription = "뒤로가기",
                         modifier = Modifier.size(width = 6.dp, height = 12.dp)
                     )

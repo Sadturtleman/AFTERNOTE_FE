@@ -1,6 +1,11 @@
 package com.kuit.afternote.feature.user.domain.repository
 
+import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
 import com.kuit.afternote.feature.user.domain.model.PushSettings
+import com.kuit.afternote.feature.user.domain.model.ReceiverAfterNoteSourceItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
+import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverTimeLetterItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 
 /**
@@ -24,4 +29,21 @@ interface UserRepository {
         mindRecord: Boolean?,
         afterNote: Boolean?
     ): Result<PushSettings>
+
+    suspend fun getReceivers(): Result<List<ReceiverListItem>>
+
+    suspend fun registerReceiver(
+        name: String,
+        relation: String,
+        phone: String?,
+        email: String?
+    ): Result<Long>
+
+    suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail>
+
+    suspend fun getReceiverDailyQuestions(receiverId: Long): Result<List<DailyQuestionAnswerItem>>
+
+    suspend fun getReceiverTimeLetters(receiverId: Long): Result<List<ReceiverTimeLetterItem>>
+
+    suspend fun getReceiverAfterNotes(receiverId: Long): Result<List<ReceiverAfterNoteSourceItem>>
 }

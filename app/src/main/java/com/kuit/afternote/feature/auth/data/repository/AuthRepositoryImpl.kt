@@ -11,6 +11,7 @@ import com.kuit.afternote.feature.auth.data.dto.PasswordChangeRequest
 import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
+import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
 import com.kuit.afternote.feature.auth.data.mapper.AuthMapper
 import com.kuit.afternote.feature.auth.domain.model.EmailVerifyResult
@@ -18,8 +19,6 @@ import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.ReissueResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import javax.inject.Inject
 
 /**
@@ -47,10 +46,7 @@ class AuthRepositoryImpl
                 Log.d(TAG, "verifyEmail: response=$response")
                 response.requireSuccess()
 
-                val isVerifiedFromResponse =
-                    (response.data?.get("isVerified") as? JsonPrimitive)?.booleanOrNull
-
-                EmailVerifyResult(isVerified = isVerifiedFromResponse ?: true)
+                AuthMapper.toEmailVerifyResult(response.data ?: VerifyEmailData(isVerified = null))
             }
 
         override suspend fun signUp(

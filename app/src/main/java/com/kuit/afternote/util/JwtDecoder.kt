@@ -4,6 +4,7 @@ import android.util.Base64
 import android.util.Log
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 
 /**
@@ -36,11 +37,11 @@ object JwtDecoder {
             val json = Json { ignoreUnknownKeys = true }
             val jsonObject = json.parseToJsonElement(jsonString).jsonObject
 
-            // 여러 가능한 필드명에서 userId 찾기
-            val userId = jsonObject["userId"]?.toString()?.toLongOrNull()
-                ?: jsonObject["sub"]?.toString()?.toLongOrNull()
-                ?: jsonObject["id"]?.toString()?.toLongOrNull()
-                ?: jsonObject["user_id"]?.toString()?.toLongOrNull()
+            // Try common claims; sub is often a string in JWT, so parse content as Long
+            val userId = parseLongFromPayload(jsonObject, "userId")
+                ?: parseLongFromPayload(jsonObject, "sub")
+                ?: parseLongFromPayload(jsonObject, "id")
+                ?: parseLongFromPayload(jsonObject, "user_id")
 
             if (userId == null) {
                 Log.w(TAG, "userId not found in JWT payload. Available keys: ${jsonObject.keys}")
@@ -51,6 +52,16 @@ object JwtDecoder {
             Log.e(TAG, "Failed to decode JWT token: ${e.message}", e)
             null
         }
+    }
+
+    /**
+     * Payload claim에서 Long을 추출합니다.
+     * JSON에서 number 또는 string("123") 모두 처리합니다.
+     */
+    private fun parseLongFromPayload(payload: JsonObject, key: String): Long? {
+        val element = payload[key] ?: return null
+        val primitive = element as? JsonPrimitive ?: return null
+        return primitive.content.toLongOrNull()
     }
 
     /**

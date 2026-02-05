@@ -146,7 +146,7 @@ fun TimeLetterWriterScreen(
                                 .clickable { keyboardController?.hide() }
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.vending),
+                                painter = painterResource(R.drawable.img_writing),
                                 contentDescription = "키보드 숨기기",
                                 modifier = Modifier.size(width = 20.dp, height = 22.dp)
                             )

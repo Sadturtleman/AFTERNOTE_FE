@@ -37,14 +37,14 @@
 ### 1-2. Auth API (8개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (Auth만)**  
-**대상 API** (참고: `docs/API_SPECIFICATION.md`):
+**대상 API** (참고: `docs/API specification from notion/엔드포인트` 및 동일 폴더 CSV):
 
 1. 이메일 인증번호 보내기 `POST /auth/email/send`
 2. 이메일 인증번호 확인 `POST /auth/email/verify`
 3. 회원 가입 `POST /auth/sign-up`
 4. 로그인 `POST /auth/login`
 5. 토큰 재발급 `POST /auth/reissue`
-6. 카카오 로그인 `POST /auth/kakao`
+6. 카카오 로그인 `POST /auth/social/login`
 7. 비밀번호 변경 `POST /auth/password/change`
 8. 로그아웃 `POST /auth/logout`
 
@@ -60,25 +60,31 @@
 
 ---
 
-### 1-3. User API (4개): UseCase → ViewModel + UIModel
+### 1-3. User API (10개): UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI (User)**  
-**대상 API** (스웨거 등록 완료):
+**대상 API** (참고: `docs/API specification from notion/엔드포인트` 및 동일 폴더 CSV, User 카테고리):
 
-1. 내 프로필 조회 `GET /users/me`
+1. 프로필 조회 `GET /users/me`
 2. 프로필 수정 `PATCH /users/me`
-3. 푸시 알림 설정 조회 `GET /users/push-settings`
-4. 푸시 알림 설정 수정 `PATCH /users/push-settings`
+3. 푸시 알림 상태 조회 `GET /users/push-settings`
+4. 푸시 알림 설정 변경 `PATCH /users/push-settings`
+5. 수신인 목록 조회 `GET /users/receivers`
+6. 수신자 등록 `POST /users/receivers`
+7. 수신인 상세 조회 `GET /users/receivers/{receiverId}`
+8. 수신인별 데일리 질문 답변 목록 조회 `GET /users/receivers/{receiverId}/daily-questions`
+9. 수신인별 타임레터 목록 조회 `GET /users/receivers/{receiverId}/time-letters`
+10. 수신인별 애프터노트 목록 조회 `GET /users/receivers/{receiverId}/after-notes`
 
 **할 일**:
 | 구성요소 | 설명 |
 |----------|------|
 | **Repository** | User `Repository` 인터페이스 정의 (Domain 계층) |
-| **UseCase** | User `Repository` 인터페이스 사용, 프로필·푸시 설정 비즈니스 로직 |
+| **UseCase** | User `Repository` 인터페이스 사용, 프로필·푸시·연결계정·수신인 비즈니스 로직 |
 | **ViewModel** | UseCase 호출, UI 상태·이벤트 관리 |
 | **UIModel** | 화면에 필요한 데이터만 가공, View/ViewModel에서 사용 |
 
-> User API도 스웨거 등록 완료로, **DTO→RepoImpl(1-1) + Repository 인터페이스 정의 + UseCase→ViewModel+UIModel** 까지 한 명이 담당.
+> User API 전체(10개) **DTO→RepoImpl(1-1) + Repository 인터페이스 정의 + UseCase→ViewModel+UIModel** 까지 정일혁이 담당.
 
 ---
 
@@ -89,12 +95,12 @@
 **담당 계층**: **Domain + UI**  
 **전제**: Time-Letters `Repository`(인터페이스)는 박경민이 정의, `RepositoryImpl`은 정일혁이 DTO→RepoImpl 작업에서 이미 구현.
 
-**대상 API**:
+**대상 API** (Notion 엔드포인트 명세 기준):
 1. 전체 조회 `GET /time-letters`
-2. 단일 조회·임시저장 불러오기 `GET /time-letters/{timeLetterId}`
+2. 단일 조회, 임시저장 불러오기 `GET /time-letters/{timeLetterId}`
 3. 등록 `POST /time-letters`
 4. 임시저장 전체 조회 `GET /time-letters/temporary`
-5. 단일·다건 삭제 `POST /time-letters/delete`
+5. 단일, 다건 (종류 무관) 삭제 `POST /time-letters/delete`
 6. 임시저장 전체 삭제 `DELETE /time-letters/temporary`
 7. 수정 `PATCH /time-letters/{timeLetterId}`
 
@@ -113,7 +119,7 @@
 **담당 계층**: **Domain + UI**  
 **전제**: Received `Repository`(인터페이스)는 박경민이 정의, `RepositoryImpl`은 정일혁이 DTO→RepoImpl 작업에서 이미 구현.
 
-**대상 API**:
+**대상 API** (Notion 엔드포인트 명세 기준):
 1. Mind-Record 조회 `GET /receiver/mind-records/{등록자Id}`
 2. Time-Letter 조회 `GET /receiver/time-letters/{등록자Id}`
 3. After-Note 조회 `GET /receiver/afternotes/{등록자Id}`
@@ -130,23 +136,19 @@
 
 ## 3. 안현지
 
-### 3-1. Mind-Record API (11개): Repository → UseCase → ViewModel + UIModel
+### 3-1. Mind-Record API (7개): Repository → UseCase → ViewModel + UIModel
 
 **담당 계층**: **Domain + UI**  
 **전제**: Mind-Record `Repository`(인터페이스)는 안현지가 정의, `RepositoryImpl`은 정일혁이 DTO→RepoImpl 작업에서 이미 구현.
 
-**대상 API**:
-1. 나의 모든 기록 조회 `GET /mind-records`
-2. 월별 캘린더 조회 `GET /mind-records/calendar`
-3. 데일리 질문 조회 `GET /mind-records/daily-question`
-4. 데일리 질문 작성 `POST /mind-records/daily-question`
-5. 데일리 질문 답변 수정 `PATCH /mind-records/daily-question`
-6. 데일리 질문 답변 삭제 `DELETE /mind-records/daily-question`
-7. 일기 조회 `GET /mind-records/diaries`
-8. 일기 작성 `POST /mind-records/diaries`
-9. 일기 수정 `PATCH /mind-records/diaries`
-10. 일기 삭제 `DELETE /mind-records/diaries`
-11. 주간리포트 조회 `GET /mind-records/weekly-report`
+**대상 API** (Notion 엔드포인트 명세 기준):
+1. 마음의기록 목록 조회 `GET /mind-records`
+2. 마음의기록 단건 수정화면 조회 `GET /mind-records/{recordId}`
+3. 마음의기록 작성 `POST /mind-records`
+4. 마음의기록 수정 `PATCH /mind-records/{recordId}`
+5. 마음의기록 삭제 `DELETE /mind-records/{recordId}`
+6. 주간 리포트 조회 `GET /mind-records/weekly`
+7. 데일리 질문 조회 `GET /daily-question`
 
 **할 일**:
 | 구성요소 | 설명 |
@@ -163,9 +165,9 @@
 **담당 계층**: **Domain + UI**  
 **전제**: Afternote `Repository`(인터페이스)는 안현지가 정의, `RepositoryImpl`은 정일혁이 DTO→RepoImpl 작업에서 이미 구현.
 
-**대상 API**:
+**대상 API** (Notion 엔드포인트 명세 기준):
 1. 모든 afternote 목록 `GET /afternotes?category=&page=&size=`
-2. afternote 상세 `GET /afternotes/{afternote_id}`
+2. afternote 상세 목록 `GET /afternotes/{afternote_id}`
 3. afternote 생성 `POST /afternotes`
 4. afternote 수정 `PATCH /afternotes/{afternote_id}`
 5. afternote 삭제 `DELETE /afternotes/{afternote_id}`
@@ -184,21 +186,15 @@
 
 | 구분 | Data (API·DataSource·RepoImpl·Entity·Mapper) | Domain (Repository·UseCase·Model) | UI (ViewModel·View·UIModel) |
 |------|-----------------------------------------------|-----------------------------------|------------------------------|
-| **정일혁** | 29개 API 전체 (RepositoryImpl 포함) | Auth 8개, User 4개 (Repository·UseCase·Model) | Auth 8개, User 4개 (ViewModel·UIModel) |
+| **정일혁** | 29개 API 전체 (RepositoryImpl 포함) | Auth 8개, User 10개 (Repository·UseCase·Model) | Auth 8개, User 10개 (ViewModel·UIModel) |
 | **박경민** | — | Time-Letters 7, Received 3 (Repository·UseCase·Model) | Time-Letters 7, Received 3 (ViewModel·UIModel) |
-| **안현지** | — | Mind-Record 11, Afternote 5 (Repository·UseCase·Model) | Mind-Record 11, Afternote 5 (ViewModel·UIModel) |
-
-- **미배분 구간**:
-  - ~~**User API 7개**~~ → ✅ **배분 완료** (정일혁, 스웨거 등록된 4개 기준)
-  - **No카테고리(1개)**: (내용 미확정)
-  
-  → 추후 팀 논의 후 배분 예정
+| **안현지** | — | Mind-Record 7, Afternote 5 (Repository·UseCase·Model) | Mind-Record 7, Afternote 5 (ViewModel·UIModel) |
 
 ---
 
 ## 5. 참고
 
-- **API 상세**: `docs/API_SPECIFICATION.md`
+- **API 상세**: `docs/API specification from notion/엔드포인트` 및 동일 폴더의 `엔드포인트 2d50982937878141a5cce5c9b5d1e61f_all.csv` (Notion 명세만 사용)
 - **아키텍처·의존성**: `.cursor/rules/tech-stack/architecture.mdc`
 - **백엔드 명세가 잘 되어, 여러 Repository 조합이 필요 없으면** UseCase를 건너뛰고 ViewModel+UIModel만 분배하는 경우도 팀 합의 하에 가능.
 
@@ -207,10 +203,9 @@
 ## 6. API 구현 기준 및 배포 관련
 
 ### API 구현 기준
-- **⚠️ Critical: Swagger-First Implementation**: API 구현은 반드시 스웨거(Swagger)에 문서화된 API만 진행해야 합니다. (상세 규칙: `.cursor/rules/workflow/api-implementation.mdc` 참조)
-- **스웨거(OpenAPI)가 가장 정확한 기준**: 스웨거가 준비되면 스웨거를 기준으로 구현합니다.
-- **명세서는 보조 자료**: `docs/API_SPECIFICATION.md`는 스웨거를 참고하여 작성한 문서로, 스웨거와 불일치 시 스웨거를 우선합니다.
-- **스웨거 테스트**: 스웨거 UI에서 직접 API 테스트가 가능하므로 구현 전 테스트 권장.
+- **참고 자료**: `docs/API specification from notion/엔드포인트` 및 Swagger(OpenAPI)를 참고하여 구현할 수 있습니다.
+- **불일치 시**: 명세서·Swagger와 요청이 다를 경우 팀 합의 또는 백엔드 담당자 확인을 권장합니다.
+- **테스트**: Swagger UI에서 API 테스트가 가능하므로 구현 전 테스트를 권장합니다.
 
 ### 프론트엔드 배포 URL 제공
 - **배포 시 백엔드에 프론트엔드 배포 URL 제공 필요**

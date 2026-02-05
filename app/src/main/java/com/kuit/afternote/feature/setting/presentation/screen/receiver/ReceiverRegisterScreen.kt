@@ -37,6 +37,7 @@ import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.rememberSelectionDropdownState
+import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.White
@@ -46,7 +47,8 @@ fun ReceiverRegisterScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
-    onAddProfileImageClick: () -> Unit = {}
+    onAddProfileImageClick: () -> Unit = {},
+    registerViewModel: RegisterReceiverViewModel? = null
 ) {
     val nameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
@@ -55,6 +57,19 @@ fun ReceiverRegisterScreen(
     val relationshipOptions = listOf("딸", "아들", "친구", "가족", "연인", "동료", "기타")
     val dropdownState = rememberSelectionDropdownState()
 
+    val onRegisterAction: () -> Unit = {
+        if (registerViewModel != null) {
+            registerViewModel.registerReceiver(
+                name = nameState.text.toString().trim(),
+                relation = relationshipSelectedValue,
+                phone = phoneNumberState.text.toString().trim().takeIf { it.isNotBlank() },
+                email = emailState.text.toString().trim().takeIf { it.isNotBlank() }
+            )
+        } else {
+            onRegisterClick()
+        }
+    }
+
     BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
@@ -62,7 +77,7 @@ fun ReceiverRegisterScreen(
             TopBar(
                 title = "수신자 등록",
                 onBackClick = onBackClick,
-                onActionClick = onRegisterClick,
+                onActionClick = onRegisterAction,
                 actionText = "등록"
             )
         }
@@ -176,7 +191,7 @@ private fun ProfileImageWithAddButton(
     ) {
         // Profile Image
         Image(
-            painter = painterResource(R.drawable.img_profile),
+            painter = painterResource(R.drawable.img_default_profile),
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .size(135.dp)

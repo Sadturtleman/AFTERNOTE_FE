@@ -1,22 +1,19 @@
 package com.kuit.afternote.feature.mainpage.presentation.component.edit.upload
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -36,8 +33,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun MemorialPhotoUpload(
     modifier: Modifier = Modifier,
     label: String = "영정사진 추가",
-    imageUrl: String? = null,
-    onAddPhotoClick: () -> Unit
+    displayImageUri: String? = null,
+    onAddPhotoClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -53,27 +50,15 @@ fun MemorialPhotoUpload(
                 color = Gray9
             )
         )
-
-        val imageModifier = Modifier
-            .size(144.dp)
-            .align(Alignment.CenterHorizontally)
-            .clickable(onClick = onAddPhotoClick)
-
-        // 큰 원형 배경
-        // 프로필 아이콘 (이미지가 없을 때만 표시)
-        if (imageUrl == null) {
-            Image(
-                painter = painterResource(R.drawable.img_deceased_profile),
-                contentDescription = "영정사진 기본 프로필",
-                modifier = imageModifier
-            )
-        } else {
-            // TODO: 실제 이미지 로드 (Coil 등 사용)
-            // 현재는 클릭 동작을 위해 placeholder 이미지를 그대로 사용합니다.
-            Image(
-                painter = painterResource(R.drawable.img_deceased_profile),
-                contentDescription = "영정사진 변경",
-                modifier = imageModifier
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ProfileImage(
+                fallbackImageRes = R.drawable.img_default_profile_deceased,
+                profileImageSize = 144.dp,
+                displayImageUri = displayImageUri,
+                onEditClick = onAddPhotoClick
             )
         }
     }
@@ -87,15 +72,10 @@ private fun MemorialPhotoUploadPreview() {
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // 이미지 없음
-            MemorialPhotoUpload(
-                onAddPhotoClick = {}
-            )
+            MemorialPhotoUpload()
 
             // 이미지 있음 (TODO: 실제 이미지 로드 구현 필요)
-            MemorialPhotoUpload(
-                imageUrl = "test",
-                onAddPhotoClick = {}
-            )
+            MemorialPhotoUpload()
         }
     }
 }

@@ -13,7 +13,7 @@
 2. **Branch (Recommended)**: Prefer using an appropriate branch (`feat/`, `fix/`, `docs/`, etc.)
 3. **Branch Cleanup**: After a successful merge to `main`, delete merged branches
    - **Local**: Delete branches that are merged into `main` (excluding `main`/`develop`/`master`)
-4. **Preview**: All public Composables must have `@Preview`
+4. **Preview**: All public Composables must have `@Preview`. Screens using `hiltViewModel()` must use a ViewModel contract + Fake in Preview (see compose.mdc) so Previews render without Hilt.
 7. **Modifier**: If a Composable has a modifier parameter, it should be placed first.
 8. **State**: State hoisting to caller, Stateless composable preferred
    - **Complete State Hoisting**: All screen states (tabs, navigation items, etc.) must move to ViewModel
@@ -21,7 +21,7 @@
 11. **ViewModel Injection**: `@HiltViewModel` uses `hiltViewModel()`, regular ViewModel uses `viewModel()`
 12. **StateFlow Collection**: Use `collectAsStateWithLifecycle()` (never use `collectAsState()`)
 13. **`.cursorrules` Management**: If this file exceeds 300 lines, consider splitting or keeping only core rules
-15. **HTTP Status Code Tests Required**: ViewModels using Swagger-documented APIs must include HTTP error tests
+15. **HTTP Status Code Tests Required**: ViewModels that call APIs must include HTTP error tests
     - 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error
     - Network Error (IOException)
     - See `.cursor/rules/quality/code-quality.mdc` for details
@@ -40,7 +40,7 @@
 - **Figma parity**: Hardcoded `dp` values are allowed in UI to quickly verify margins match Figma.
  Avoid creating “new” values via meaningless arithmetic (e.g. `16.dp - 8.dp`).
 - **Named Arguments Pattern**: Use explicit parameter names for readability and safety. Use `FontWeight.Medium` instead of `FontWeight(500)`. 
-- **Rem-based Design**: Large spacing (24dp+) uses `weight` and `Arrangement`, small spacing (≤8dp) uses `Spacer`, component sizes always fixed dp
+- **Rem-based Design**: REM 구현 시 **weight 우선** — 큰 간격(24dp+)은 `Spacer(Modifier.weight(ratio))` 또는 `Arrangement` 사용. 스크롤 내부일 때만 `BoxWithConstraints`. 작은 간격(≤8dp)은 `Spacer`, 컴포넌트 크기는 고정 dp
 - **Maximize Core Component Reuse**: Maximize reuse of common components in `core` module (`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, etc.)
 - **Component Overloading**: When overall structure is similar but details differ, use **overloading** instead of separate components
 - **Component Reuse**: If uncertain, use `private` function; if reuse confirmed, separate file
@@ -53,6 +53,7 @@
 - **Component Location Rules**: Common components must be in `core` module. Direct dependencies between Feature modules are prohibited, common components must be in `core`
 - **Code Structure Improvement Before @Suppress**: When detekt warning occurs, must try code structure improvement before using `@Suppress`. When parameters increase after State Hoisting pattern, group with Event Interface or State Class
 - **Required Verification on Structure Changes**: File moves, package changes, class refactoring must follow: pre/post build check, search all usages, batch import path changes
+- **Preview + Hilt ViewModel**: To avoid Preview render failure, use a ViewModel contract interface, real ViewModel implements it, screen takes contract with default `hiltViewModel<RealVM>()`, and Preview passes `remember { FakeXxxViewModel() }`. See `.cursor/rules/tech-stack/compose.mdc`.
 ---
 
 # Project Context
@@ -71,7 +72,7 @@ This project uses `.cursor/rules/*.mdc` file structure to separate rules:
 
 - **`.cursor/rules/workflow/git-policy.mdc`**: Git operations and branch management policy (always applied: `alwaysApply: true`)
 - **`.cursor/rules/workflow/branch-workflow.mdc`**: Branch work and workflow rules (always applied: `alwaysApply: true`)
-- **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules (Swagger-first)
+- **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules
 - **`.cursor/rules/workflow/pull-request-review.mdc`**: Pull Request and code review rules
 - **`.cursor/rules/workflow/pr-ci-checks.mdc`**: Required checks (commitlint, ktlint, build) before merge
 - **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture and layer separation rules

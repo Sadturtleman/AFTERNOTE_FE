@@ -140,7 +140,7 @@ class AfternoteEditState(
     // Memorial Guideline
     var selectedLastWish by mutableStateOf<String?>(null)
         private set
-    var memorialPhotoUrl by mutableStateOf<String?>(null)
+    var pickedMemorialPhotoUri by mutableStateOf<String?>(null)
         private set
     var funeralVideoUrl by mutableStateOf<String?>(null)
         private set
@@ -299,6 +299,13 @@ class AfternoteEditState(
 
     fun onLastWishSelected(wish: String?) {
         selectedLastWish = wish
+    }
+
+    /**
+     * 영정사진 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+     */
+    fun onMemorialPhotoSelected(uri: android.net.Uri?) {
+        pickedMemorialPhotoUri = uri?.toString()
     }
 
     fun showAddMainPageEditReceiverDialog() {

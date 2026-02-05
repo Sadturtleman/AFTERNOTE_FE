@@ -51,7 +51,7 @@ import com.kuit.afternote.ui.theme.White
 private const val RECEIVER_DETAIL_FIELD_PLACEHOLDER = "Text Field"
 
 /**
- * 프로필 수정 화면 콜백 그룹
+ * 수신자 목록 상세 화면 콜백 그룹
  */
 data class ReceiverDetailEditCallbacks(
     val onBackClick: () -> Unit = {},
@@ -187,7 +187,7 @@ private fun ReceiverDetailHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.img_profile),
+            painter = painterResource(R.drawable.img_default_profile),
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .size(134.dp)

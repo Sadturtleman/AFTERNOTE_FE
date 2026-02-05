@@ -1,9 +1,13 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
+import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
+import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -29,12 +33,16 @@ class SignUpViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var signUpUseCase: SignUpUseCase
+    private lateinit var loginUseCase: LoginUseCase
+    private lateinit var tokenManager: TokenManager
     private lateinit var viewModel: SignUpViewModel
 
     @Before
     fun setUp() {
         signUpUseCase = mockk()
-        viewModel = SignUpViewModel(signUpUseCase)
+        loginUseCase = mockk()
+        tokenManager = mockk(relaxed = true)
+        viewModel = SignUpViewModel(signUpUseCase, loginUseCase, tokenManager)
     }
 
     @Test
@@ -60,9 +68,13 @@ class SignUpViewModelTest {
     }
 
     @Test
-    fun signUp_whenSuccess_setsSignUpSuccess() =
+    fun signUp_whenSuccess_thenLoginSuccess_setsSignUpSuccess() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+            coEvery { loginUseCase(any(), any()) } returns Result.success(
+                LoginResult(accessToken = "access", refreshToken = "refresh")
+            )
+            coJustRun { tokenManager.saveTokens(any(), any(), any()) }
 
             viewModel.signUp("a@b.com", "pwd1!", "name", null)
             advanceUntilIdle()
@@ -76,6 +88,10 @@ class SignUpViewModelTest {
     fun signUp_withProfileUrl_callsUseCaseWithProfileUrl() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
+            coEvery { loginUseCase(any(), any()) } returns Result.success(
+                LoginResult(accessToken = "a", refreshToken = "r")
+            )
+            coJustRun { tokenManager.saveTokens(any(), any(), any()) }
 
             viewModel.signUp("b@c.com", "pwd2!", "nick", "https://img/p.jpg")
             advanceUntilIdle()
@@ -100,6 +116,10 @@ class SignUpViewModelTest {
     fun clearSignUpSuccess_resetsSignUpSuccess() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
+            coEvery { loginUseCase(any(), any()) } returns Result.success(
+                LoginResult(accessToken = "a", refreshToken = "r")
+            )
+            coJustRun { tokenManager.saveTokens(any(), any(), any()) }
             viewModel.signUp("a@b.com", "pwd", "n", null)
             advanceUntilIdle()
             assertTrue(viewModel.uiState.value.signUpSuccess)
