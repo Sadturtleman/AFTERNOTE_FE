@@ -31,7 +31,8 @@ interface UserRepository {
         afterNote: Boolean?
     ): Result<PushSettings>
 
-    suspend fun getReceivers(): Result<List<ReceiverListItem>>
+    /** GET /users/receivers — 수신인 목록 조회. 로그인한 사용자가 등록한 수신인 목록을 조회합니다. */
+    suspend fun getReceivers(userId: Long): Result<List<ReceiverListItem>>
 
     suspend fun registerReceiver(
         name: String,

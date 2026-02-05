@@ -85,13 +85,13 @@ class UserRepositoryImpl
                 UserMapper.toPushSettings(response.requireData())
             }
 
-        override suspend fun getReceivers(): Result<List<ReceiverListItem>> =
+        override suspend fun getReceivers(userId: Long): Result<List<ReceiverListItem>> =
             runCatching {
-                Log.d(TAG, "getReceivers")
-                val response = api.getReceivers()
+                Log.d(TAG, "getReceivers: userId=$userId")
+                val response = api.getReceivers(userId = userId)
                 Log.d(TAG, "getReceivers: response=$response")
-                val body = response.requireData()
-                body.receivers.map(UserMapper::toReceiverListItem)
+                val list = response.requireData() ?: emptyList()
+                list.map(UserMapper::toReceiverListItem)
             }
 
         override suspend fun registerReceiver(

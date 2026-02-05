@@ -18,7 +18,6 @@ import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLetterItemDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLettersResponseDto
-import com.kuit.afternote.feature.user.data.dto.ReceiversListResponseDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
@@ -143,11 +142,9 @@ class MockApiInterceptor(
 
             path == "/users/receivers" && method == "GET" -> createSuccessResponse(
                 request = request,
-                data = ReceiversListResponseDto(
-                    receivers = listOf(
-                        ReceiverItemDto(receiverId = 1L, name = "김지은", relation = "딸"),
-                        ReceiverItemDto(receiverId = 2L, name = "김혜성", relation = "아들")
-                    )
+                data = listOf(
+                    ReceiverItemDto(receiverId = 1L, name = "김지은", relation = "딸"),
+                    ReceiverItemDto(receiverId = 2L, name = "김혜성", relation = "아들")
                 ),
                 message = "수신인 목록 조회 성공"
             )

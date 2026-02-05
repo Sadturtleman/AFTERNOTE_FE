@@ -4,8 +4,8 @@ import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNotesResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLettersResponseDto
-import com.kuit.afternote.feature.user.data.dto.ReceiversListResponseDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
@@ -57,8 +57,17 @@ interface UserApiService {
         @Body body: UserUpdatePushSettingRequest
     ): ApiResponse<UserPushSettingResponse?>
 
+    /**
+     * 수신인 목록 조회.
+     * GET /users/receivers — 로그인한 사용자가 등록한 수신인 목록을 조회합니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @return data: array of { receiverId, name, relation }
+     */
     @GET("users/receivers")
-    suspend fun getReceivers(): ApiResponse<ReceiversListResponseDto?>
+    suspend fun getReceivers(
+        @Query("userId") userId: Long
+    ): ApiResponse<List<ReceiverItemDto>?>
 
     @POST("users/receivers")
     suspend fun registerReceiver(
