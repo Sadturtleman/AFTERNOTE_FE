@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.mainpage.presentation.dummy
+package com.kuit.afternote.core.dummy.afternote
 
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
@@ -7,7 +7,7 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Son
  * Dummy data for 애프터노트 수정 화면 (플레이리스트, 수신자 등).
  * Replace with repository/API load when backend is ready.
  */
-internal object AfternoteEditDummyData {
+object AfternoteEditDummies {
     /**
      * Default main page items (service name to date) for dev "main with items" screen.
      * Replace with API load when backend is ready.

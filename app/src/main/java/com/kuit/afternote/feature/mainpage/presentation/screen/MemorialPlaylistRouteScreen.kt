@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +33,8 @@ import com.kuit.afternote.core.ui.component.list.SongPlaylistScreen
 import com.kuit.afternote.core.ui.component.list.SongPlaylistScreenManagementContent
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
@@ -259,14 +261,19 @@ private fun MemorialPlaylistActionBar(
 @Composable
 private fun MemorialPlaylistRouteScreenPreview() {
     MainPageLightTheme {
-        val holder = MemorialPlaylistStateHolder().apply {
-            initializeSongs(AfternoteEditDummyData.defaultSongs().take(3))
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
+            val holder = MemorialPlaylistStateHolder().apply {
+                initializeSongs(provider.getSongs().take(3))
+            }
+            MemorialPlaylistRouteScreen(
+                playlistStateHolder = holder,
+                onBackClick = {},
+                onNavigateToAddSongScreen = {}
+            )
         }
-        MemorialPlaylistRouteScreen(
-            playlistStateHolder = holder,
-            onBackClick = {},
-            onNavigateToAddSongScreen = {}
-        )
     }
 }
 
@@ -274,14 +281,19 @@ private fun MemorialPlaylistRouteScreenPreview() {
 @Composable
 private fun MemorialPlaylistRouteScreenSelectionModePreview() {
     MainPageLightTheme {
-        val holder = MemorialPlaylistStateHolder().apply {
-            initializeSongs(AfternoteEditDummyData.defaultSongs().take(4))
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
+            val holder = MemorialPlaylistStateHolder().apply {
+                initializeSongs(provider.getSongs().take(4))
+            }
+            MemorialPlaylistRouteScreen(
+                playlistStateHolder = holder,
+                onBackClick = {},
+                onNavigateToAddSongScreen = {},
+                initialSelectedSongIds = setOf("1", "3")
+            )
         }
-        MemorialPlaylistRouteScreen(
-            playlistStateHolder = holder,
-            onBackClick = {},
-            onNavigateToAddSongScreen = {},
-            initialSelectedSongIds = setOf("1", "3")
-        )
     }
 }

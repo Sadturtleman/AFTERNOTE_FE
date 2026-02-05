@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,8 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
-import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray1
@@ -213,10 +215,15 @@ private fun ReceiverManagementItem(
 @Composable
 private fun ReceiverManagementScreenWithDataPreview() {
     AfternoteTheme {
-        ReceiverManagementScreen(
-            onBackClick = {},
-            receivers = ReceiverDummyData.receiverList
-        )
+        CompositionLocalProvider(
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+        ) {
+            val provider = DataProviderLocals.LocalReceiverDataProvider.current
+            ReceiverManagementScreen(
+                onBackClick = {},
+                receivers = provider.getReceiverList()
+            )
+        }
     }
 }
 

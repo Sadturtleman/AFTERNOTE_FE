@@ -38,8 +38,7 @@ import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNote
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
-import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
-import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
@@ -50,6 +49,8 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 @Composable
 @Suppress("AssignedValueIsNeverRead")
 fun NavGraph(navHostController: NavHostController) {
+    val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
+    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = listOf(
@@ -92,7 +93,8 @@ fun NavGraph(navHostController: NavHostController) {
             navController = navHostController,
             afternoteItems = afternoteItems,
             onItemsUpdated = { afternoteItems = it },
-            playlistStateHolder = playlistStateHolder
+            playlistStateHolder = playlistStateHolder,
+            afternoteProvider = afternoteProvider
         )
 
         timeLetterNavGraph(
@@ -150,7 +152,7 @@ fun NavGraph(navHostController: NavHostController) {
                     onNavigateToDetail = { navHostController.navigate(MainPageRoute.DetailRoute) },
                     onNavigateToGalleryDetail = { navHostController.navigate(MainPageRoute.GalleryDetailRoute) },
                     onNavigateToAdd = { navHostController.navigate(MainPageRoute.EditRoute) },
-                    initialItems = AfternoteItemMapper.toAfternoteItems(AfternoteEditDummyData.defaultMainPageItemsForDev())
+                    initialItems = AfternoteItemMapper.toAfternoteItems(afternoteProvider.getMainPageItemsForDev())
                 )
             }
         }
@@ -213,7 +215,8 @@ fun NavGraph(navHostController: NavHostController) {
         // 수신자 애프터노트 메인 (개발자 모드용)
         composable("receiver_afternote_main") {
             ReceiverAfterNoteMainScreen(
-                title = ReceiverDummyData.defaultReceiverTitleForDev(),
+                title = receiverProvider.getDefaultReceiverTitleForDev(),
+                albumCovers = afternoteProvider.getAlbumCovers(),
                 onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") },
                 onBackClick = { navHostController.popBackStack() }
             )
@@ -222,8 +225,8 @@ fun NavGraph(navHostController: NavHostController) {
         // 수신자 애프터노트 전체 목록 (애프터노트 전체 확인하기 진입)
         composable("receiver_afternote_list") {
             BackHandler { navHostController.popBackStack() }
-            val afternoteItems = remember {
-                ReceiverDummyData.defaultAfternoteListSeedsForReceiverList().map { seed ->
+            val afternoteItems = remember(receiverProvider) {
+                receiverProvider.getAfternoteListSeedsForReceiverList().map { seed ->
                     AfternoteListDisplayItem(
                         id = seed.id,
                         serviceName = seed.serviceNameLiteral ?: "",

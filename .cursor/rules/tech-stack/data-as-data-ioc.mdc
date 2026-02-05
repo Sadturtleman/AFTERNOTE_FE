@@ -1,0 +1,91 @@
+---
+description: Data-as-data and IoC — data source (dummy vs real) must be decided at a higher layer (DI), not by ViewModels/screens
+globs: **/domain/**/*.kt, **/data/**/*.kt, **/presentation/**/*.kt, **/di/**/*.kt
+alwaysApply: false
+---
+
+# Data as Data / Inversion of Control (IoC) - Critical
+
+## Principle: Decision at a Higher Layer
+
+**Whether data is dummy or real must not be decided or visible in ViewModels or screens.**  
+The **data source** (dummy vs real) must be decided at a **higher layer** (DI / build variant). ViewModels and screens depend only on **interfaces** (e.g. Repository) and **domain types** (e.g. `Song`, `User`); they receive "just data" and never import or call dummy/real types directly.
+
+- **Bad:** ViewModel or Screen imports and calls `AfternoteEditDummies.defaultSongs()` or `ReceiverDummies.receiverList`. The consumer decides or sees the data source.
+- **Good:** ViewModel depends on `SongRepository` and calls `repo.getSongs()`. It receives `List<Song>`. The choice of dummy vs real is made in Hilt (which implementation is bound).
+
+Naming (dummy, stub, fake, etc.) is not what matters. Keep existing names (e.g. *Dummies). The requirement is **where the decision lives**: not in ViewModels or screens.
+
+## Where the Decision Lives
+
+The "dummy vs real" decision belongs **only** in:
+
+1. **Hilt modules** (main vs. debug source set): bind Real implementation in release, Fake (or dummy-backed) implementation in debug.
+2. **Compose Previews:** Previews do not use Hilt. The **Preview composable only** may pass canned data (e.g. from *Dummies) or a Fake ViewModel. Production Screen/ViewModel must not import or call *Dummies.
+
+## Concrete Pattern (Step-by-Step)
+
+### Step A: Contract (Domain Layer)
+
+- Define an **interface** in domain (e.g. `SongRepository`, `ReceiverListRepository`).
+- No Retrofit, no *Dummies, no Fake types. Only domain models.
+
+```kotlin
+// :domain or feature/xxx/domain/repository
+interface SongRepository {
+    suspend fun getSongs(): List<Song>
+}
+```
+
+### Step B: Implementations
+
+- **Real implementation** (data layer): implements the interface using API/DB. No *Dummies imports.
+- **Fake implementation** (debug or test): implements the same interface; **this is the only place** that imports and uses the canned data (e.g. *Dummies).
+
+```kotlin
+// data layer - Real
+class RealSongRepository @Inject constructor(private val api: SongApiService) : SongRepository {
+    override suspend fun getSongs() = api.fetchSongs().toDomain()
+}
+
+// debug or test - Fake (only place that imports *Dummies or canned data)
+class FakeSongRepository @Inject constructor() : SongRepository {
+    override suspend fun getSongs() = AfternoteEditDummies.defaultSongs()
+}
+```
+
+### Step C: DI Binding (App Module)
+
+- **Main/release:** Hilt module binds `RealSongRepository` to `SongRepository`.
+- **Debug:** Hilt module in `app/src/debug` binds `FakeSongRepository` to `SongRepository` (or a debug proxy that switches at runtime).
+
+### Step D: Consumer (Presentation)
+
+- ViewModel (and UseCases) depend only on the **interface** and **domain types**.
+- No import of *Dummies (or any canned-data type) in ViewModels or in production Screen composables. The implementation (Fake) that uses *Dummies is the only place that imports them.
+
+```kotlin
+@HiltViewModel
+class SongViewModel @Inject constructor(
+    private val repo: SongRepository  // Blind to real vs fake
+) : ViewModel() { ... }
+```
+
+### Step E: Previews
+
+- **Route (connected):** Gets data from ViewModel (which gets it from Repository; Hilt decides which impl).
+- **Screen (stateless):** Receives data as parameters (e.g. `songs: List<Song>`).
+- **Preview:** Calls the Screen with explicit state. Using canned data (e.g. *Dummies) **in the Preview composable only** is acceptable because Previews are a dev tool and do not go through Hilt.
+
+## Canned Data and Implementations
+
+- Keep existing naming (e.g. *Dummies, core.dummy). Do not rename for this rule.
+- The **Fake** (or dummy-backed) implementation of the repository interface is the only place that imports and uses *Dummies. ViewModels and production screens never import *Dummies.
+
+## Migration Direction
+
+When adding or refactoring features that need canned data:
+
+1. Define a Repository (or DataSource) interface in domain. ViewModels depend on the interface.
+2. Implement Real (data layer) and Fake (debug/test; Fake is the only place that uses *Dummies). Bind via Hilt (main vs debug).
+3. Remove direct references to *Dummies from ViewModels and production screens. Keep *Dummies references only in Fake implementations and in Preview composables.

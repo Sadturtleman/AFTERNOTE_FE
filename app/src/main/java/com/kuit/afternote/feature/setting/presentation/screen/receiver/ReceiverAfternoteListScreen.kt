@@ -28,7 +28,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.AfternoteListItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.setting.presentation.dummy.ReceiverDummyData
+import com.kuit.afternote.core.dummy.receiver.ReceiverDummies
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black
@@ -112,7 +112,7 @@ private fun ReceiverAfternoteIntro(
 @Composable
 private fun ReceiverAfternoteListScreenPreview() {
     AfternoteTheme {
-        val items = ReceiverDummyData.defaultAfternoteListSeedsForReceiverDetail().map { seed ->
+        val items = ReceiverDummies.defaultAfternoteListSeedsForReceiverDetail().map { seed ->
             AfternoteListDisplayItem(
                 id = seed.id,
                 serviceName = seed.serviceNameResId?.let { stringResource(it) } ?: (seed.serviceNameLiteral ?: ""),

@@ -7,7 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
-import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
+import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.mainpage.presentation.screen.AfternoteEditScreen
@@ -60,7 +60,8 @@ fun NavGraphBuilder.mainPageNavGraph(
     navController: NavController,
     afternoteItems: List<Pair<String, String>>,
     onItemsUpdated: (List<Pair<String, String>>) -> Unit,
-    playlistStateHolder: MemorialPlaylistStateHolder
+    playlistStateHolder: MemorialPlaylistStateHolder,
+    afternoteProvider: AfternoteEditDataProvider
 ) {
     mainPageComposable<MainPageRoute.MainRoute> {
         AfternoteMainRoute(
@@ -80,7 +81,9 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.GalleryDetailRoute> {
         GalleryDetailScreen(
-            detailState = GalleryDetailState(),
+            detailState = GalleryDetailState(
+                mainPageEditReceivers = afternoteProvider.getMainPageEditReceivers()
+            ),
             callbacks = GalleryDetailCallbacks(
                 onBackClick = { navController.popBackStack() },
                 onEditClick = { navController.navigate(MainPageRoute.EditRoute) }
@@ -89,9 +92,9 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.EditRoute> {
-        LaunchedEffect(playlistStateHolder) {
+        LaunchedEffect(playlistStateHolder, afternoteProvider) {
             if (playlistStateHolder.songs.isEmpty()) {
-                playlistStateHolder.initializeSongs(AfternoteEditDummyData.defaultSongs())
+                playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
             }
         }
 
