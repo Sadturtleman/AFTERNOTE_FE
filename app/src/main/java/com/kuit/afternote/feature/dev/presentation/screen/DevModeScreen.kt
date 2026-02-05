@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,11 +48,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.BuildConfig
+import com.kuit.afternote.R
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeUiState
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeViewModel
@@ -60,6 +64,18 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 data class ScreenInfo(
     val name: String,
     val route: String
+)
+
+/**
+ * Callbacks for [DevModeContent] (login, logout, navigation, etc.).
+ */
+data class DevModeContentCallbacks(
+    val onScreenClick: (String) -> Unit,
+    val onUserModeClick: () -> Unit,
+    val onQuickLoginClick: () -> Unit,
+    val onLogoutClick: () -> Unit,
+    val onCreateQuickTestAccountClick: () -> Unit,
+    val onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit
 )
 
 @Composable
@@ -83,20 +99,22 @@ fun DevModeScreen(
         DevModeContent(
             screens = screens,
             uiState = uiState,
-            onScreenClick = onScreenClick,
-            onUserModeClick = onUserModeClick,
-            onQuickLoginClick = {
-                val email = BuildConfig.TEST_EMAIL
-                val password = BuildConfig.TEST_PASSWORD
-                if (email.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.quickLogin(email, password)
+            callbacks = DevModeContentCallbacks(
+                onScreenClick = onScreenClick,
+                onUserModeClick = onUserModeClick,
+                onQuickLoginClick = {
+                    val email = BuildConfig.TEST_EMAIL
+                    val password = BuildConfig.TEST_PASSWORD
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        viewModel.quickLogin(email, password)
+                    }
+                },
+                onLogoutClick = { viewModel.logout() },
+                onCreateQuickTestAccountClick = { viewModel.createQuickTestAccount() },
+                onPasswordCycleClick = { currentPassword, newPassword ->
+                    viewModel.cyclePassword(newPassword, currentPassword)
                 }
-            },
-            onLogoutClick = { viewModel.logout() },
-            onCreateQuickTestAccountClick = { viewModel.createQuickTestAccount() },
-            onPasswordCycleClick = { currentPassword, newPassword ->
-                viewModel.cyclePassword(newPassword, currentPassword)
-            }
+            )
         )
 
         SnackbarHost(
@@ -110,12 +128,7 @@ fun DevModeScreen(
 private fun DevModeContent(
     screens: List<ScreenInfo>,
     uiState: DevModeUiState,
-    onScreenClick: (String) -> Unit,
-    onUserModeClick: () -> Unit,
-    onQuickLoginClick: () -> Unit,
-    onLogoutClick: () -> Unit,
-    onCreateQuickTestAccountClick: () -> Unit,
-    onPasswordCycleClick: (currentPassword: String?, newPassword: String) -> Unit
+    callbacks: DevModeContentCallbacks
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
@@ -139,17 +152,17 @@ private fun DevModeContent(
         item(span = { GridItemSpan(maxLineSpan) }) {
             LoginStatusCard(
                 uiState = uiState,
-                onQuickLoginClick = onQuickLoginClick,
-                onLogoutClick = onLogoutClick,
-                onCreateQuickTestAccountClick = onCreateQuickTestAccountClick,
-                onPasswordCycleClick = onPasswordCycleClick
+                onQuickLoginClick = callbacks.onQuickLoginClick,
+                onLogoutClick = callbacks.onLogoutClick,
+                onCreateQuickTestAccountClick = callbacks.onCreateQuickTestAccountClick,
+                onPasswordCycleClick = callbacks.onPasswordCycleClick
             )
         }
 
         // 사용자 모드로 이동 버튼 (전체 너비)
         item(span = { GridItemSpan(maxLineSpan) }) {
             Button(
-                onClick = onUserModeClick,
+                onClick = callbacks.onUserModeClick,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -159,10 +172,15 @@ private fun DevModeContent(
             }
         }
 
+        // 데이터 소스: 목(mock) / 실제 전환 (전체 너비)
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            DataProviderSwitchCard()
+        }
+
         // 화면 버튼들 (2열 그리드)
         items(items = screens) { screen ->
             Button(
-                onClick = { onScreenClick(screen.route) },
+                onClick = { callbacks.onScreenClick(screen.route) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -176,6 +194,37 @@ private fun DevModeContent(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun DataProviderSwitchCard(modifier: Modifier = Modifier) {
+    val switch = DataProviderLocals.LocalDataProviderSwitch.current ?: return
+    val useFake by switch.useFakeState.collectAsStateWithLifecycle(
+        initialValue = switch.getInitialUseFake()
+    )
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        shape = RoundedCornerShape(size = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.dev_use_mock_data),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Switch(
+                checked = useFake,
+                onCheckedChange = { switch.setUseFake(it) }
+            )
         }
     }
 }
@@ -500,12 +549,14 @@ private fun DevModeScreenLoggedOutPreview() {
                 ScreenInfo("설정 화면", "setting_main")
             ),
             uiState = DevModeUiState(isLoggedIn = false),
-            onScreenClick = {},
-            onUserModeClick = {},
-            onQuickLoginClick = {},
-            onLogoutClick = {},
-            onCreateQuickTestAccountClick = {},
-            onPasswordCycleClick = { _, _ -> }
+            callbacks = DevModeContentCallbacks(
+                onScreenClick = {},
+                onUserModeClick = {},
+                onQuickLoginClick = {},
+                onLogoutClick = {},
+                onCreateQuickTestAccountClick = {},
+                onPasswordCycleClick = { _, _ -> }
+            )
         )
     }
 }
@@ -526,12 +577,14 @@ private fun DevModeScreenLoggedInPreview() {
                 isLoggedIn = true,
                 userEmail = "test@example.com"
             ),
-            onScreenClick = {},
-            onUserModeClick = {},
-            onQuickLoginClick = {},
-            onLogoutClick = {},
-            onCreateQuickTestAccountClick = {},
-            onPasswordCycleClick = { _, _ -> }
+            callbacks = DevModeContentCallbacks(
+                onScreenClick = {},
+                onUserModeClick = {},
+                onQuickLoginClick = {},
+                onLogoutClick = {},
+                onCreateQuickTestAccountClick = {},
+                onPasswordCycleClick = { _, _ -> }
+            )
         )
     }
 }

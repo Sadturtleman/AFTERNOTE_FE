@@ -23,6 +23,9 @@
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
 
+    <!-- Dev mode: data source toggle -->
+    <string name="dev_use_mock_data">목(mock) 데이터 사용</string>
+
     <!-- Onboarding / Login -->
     <string name="login_kakao_button">카카오로 로그인</string>
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
