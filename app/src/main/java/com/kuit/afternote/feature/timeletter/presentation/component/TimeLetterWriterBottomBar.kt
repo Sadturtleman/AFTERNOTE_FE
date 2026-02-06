@@ -3,10 +3,12 @@ package com.kuit.afternote.feature.timeletter.presentation.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,51 +47,47 @@ fun TimeLetterWriterBottomBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(88.dp),
+            .height(88.dp)
+            .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painterResource(R.drawable.ic_link),
             contentDescription = "링크",
             modifier = Modifier
-                .padding(start = 24.dp)
                 .size(24.dp)
                 .clickable { onLinkClick() }
         )
+        Spacer(modifier = Modifier.width(16.dp))
         Image(
             painterResource(R.drawable.ic_additional),
             contentDescription = "더보기",
             modifier = Modifier
-                .padding(start = 16.33.dp)
                 .size(24.dp)
                 .clickable { onMoreClick() }
         )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "임시저장",
             modifier = Modifier
-                .padding(start = 176.97.dp)
                 .clickable { onSaveDraftClick() },
             fontSize = 16.sp,
             fontWeight = FontWeight.W500,
             fontFamily = FontFamily(Font(R.font.sansneoregular)),
-            lineHeight = 22.sp,
             color = Color(0xFF9E9E9E)
         )
         Image(
             painterResource(R.drawable.ic_radio_bar),
             contentDescription = "라디오 바",
-            modifier = Modifier
-                .padding(start = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
         Text(
             text = draftCount.toString(),
             modifier = Modifier
-                .padding(start = 16.dp)
                 .clickable { onDraftCountClick() },
             fontSize = 16.sp,
             fontWeight = FontWeight.W500,
             fontFamily = FontFamily(Font(R.font.sansneoregular)),
-            lineHeight = 22.sp,
             color = Color(0xFF9E9E9E)
         )
     }

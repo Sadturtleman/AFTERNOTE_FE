@@ -8,10 +8,12 @@ import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseC
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWriterUiState
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +31,8 @@ class TimeLetterWriterViewModel
     constructor(
         private val createTimeLetterUseCase: CreateTimeLetterUseCase,
         private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
-        private val getReceiversUseCase: GetReceiversUseCase
+        private val getReceiversUseCase: GetReceiversUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(TimeLetterWriterUiState())
         val uiState: StateFlow<TimeLetterWriterUiState> = _uiState.asStateFlow()
@@ -44,7 +47,12 @@ class TimeLetterWriterViewModel
          */
         fun loadReceivers() {
             viewModelScope.launch {
-                getReceiversUseCase()
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update { it.copy(receivers = emptyList()) }
+                    return@launch
+                }
+                getReceiversUseCase(userId = userId)
                     .onSuccess { list ->
                         _uiState.update { it.copy(receivers = list.toTimeLetterReceivers()) }
                     }
@@ -227,7 +235,12 @@ class TimeLetterWriterViewModel
                     mediaList = null
                 )
                 _uiState.update { it.copy(isLoading = false) }
-                result.onSuccess { _ -> onSuccess() }
+                result.onSuccess { _ ->
+                    _uiState.update { it.copy(showRegisteredPopUp = true) }
+                    delay(2000L)
+                    onSuccess()
+                    _uiState.update { it.copy(showRegisteredPopUp = false) }
+                }
                 result.onFailure {
                     // TODO: 에러 메시지 UiState에 반영
                 }
@@ -256,6 +269,9 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess {
                     refreshDraftCount()
+                    _uiState.update { it.copy(showDraftSavePopUp = true) }
+                    delay(2000L)
+                    _uiState.update { it.copy(showDraftSavePopUp = false) }
                     onSuccess()
                 }
                 result.onFailure {

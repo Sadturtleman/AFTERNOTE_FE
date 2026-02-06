@@ -49,7 +49,7 @@ fun TimeLetterListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .padding( vertical = 12.dp)
     ) {
         // 상단: 수신인 & 발송 예정일
         Row(

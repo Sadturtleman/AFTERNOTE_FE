@@ -84,7 +84,9 @@ fun NavGraphBuilder.timeLetterNavGraph(
             },
             showWritingPlusMenu = uiState.showWritingPlusMenu,
             onMoreClick = viewModel::showPlusMenu,
-            onDismissPlusMenu = viewModel::hidePlusMenu
+            onDismissPlusMenu = viewModel::hidePlusMenu,
+            showRegisteredPopUp = uiState.showRegisteredPopUp,
+            showDraftSavePopUp = uiState.showDraftSavePopUp
         )
     }
 

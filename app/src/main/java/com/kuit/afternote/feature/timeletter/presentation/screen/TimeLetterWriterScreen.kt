@@ -57,6 +57,8 @@ import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroup
 import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
+import com.kuit.afternote.feature.timeletter.presentation.component.DraftSavePopUp
+import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRegisteredPopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
 import java.time.LocalDate
@@ -95,6 +97,8 @@ private val RecipientDropdownMaxHeight = 300.dp
  * @param showRecipientDropdown 수신자 선택 드롭다운 표시 여부
  * @param onRecipientDropdownDismiss 수신자 드롭다운 닫기 콜백
  * @param onReceiverSelected 수신자 선택 콜백
+ * @param showRegisteredPopUp 타임레터 등록 완료 팝업 표시 여부
+ * @param showDraftSavePopUp 임시저장 완료 팝업 표시 여부
  * @param modifier Modifier
  */
 @Composable
@@ -127,7 +131,9 @@ fun TimeLetterWriterScreen(
     receivers: List<TimeLetterReceiver> = emptyList(),
     showRecipientDropdown: Boolean = false,
     onRecipientDropdownDismiss: () -> Unit = {},
-    onReceiverSelected: (TimeLetterReceiver) -> Unit = {}
+    onReceiverSelected: (TimeLetterReceiver) -> Unit = {},
+    showRegisteredPopUp: Boolean = false,
+    showDraftSavePopUp: Boolean = false
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
@@ -182,6 +188,25 @@ fun TimeLetterWriterScreen(
                         }
                     }
                 }
+            }
+        }
+
+        if (showRegisteredPopUp) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { },
+                properties = PopupProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                TimeLetterRegisteredPopUp()
+            }
+        }
+        if (showDraftSavePopUp) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { },
+                properties = PopupProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                DraftSavePopUp()
             }
         }
         Scaffold(
@@ -282,8 +307,7 @@ fun TimeLetterWriterScreen(
                             color = Color(0xFF000000),
                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            lineHeight = 18.sp
+                            fontWeight = FontWeight.Normal
                         )
                         Box(
                             modifier = Modifier.fillMaxWidth()
@@ -372,8 +396,8 @@ fun TimeLetterWriterScreen(
                         textStyle = TextStyle(
                             color = Color(0xFF000000),
                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight(400)
                         ),
                         cursorBrush = SolidColor(Color(0xFF000000)),
                         singleLine = true,
@@ -385,7 +409,6 @@ fun TimeLetterWriterScreen(
                                         // BodyLarge-R
                                         style = TextStyle(
                                             fontSize = 18.sp,
-                                            lineHeight = 24.sp,
                                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
                                             fontWeight = FontWeight(400),
                                             color = Color(0xFF212121),

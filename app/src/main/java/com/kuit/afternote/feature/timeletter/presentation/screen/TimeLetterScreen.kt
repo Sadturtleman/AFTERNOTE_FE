@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -116,11 +117,9 @@ fun TimeLetterScreen(
                 is TimeLetterUiState.Success -> {
                     val letters = (uiState as TimeLetterUiState.Success).letters
 
-                    // 필터 + 토글 Row
+                    // 필터 + 토글 Row (좌우 패딩은 ScaffoldContentWithOptionalFab contentPadding에서 적용됨)
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -309,9 +308,7 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                     val letters = uiState.letters
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(

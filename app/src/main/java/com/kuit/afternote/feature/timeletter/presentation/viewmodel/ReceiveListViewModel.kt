@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.ReceiveListUiState
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class ReceiveListViewModel
     @Inject
     constructor(
-        private val getReceiversUseCase: GetReceiversUseCase
+        private val getReceiversUseCase: GetReceiversUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiveListUiState())
         val uiState: StateFlow<ReceiveListUiState> = _uiState.asStateFlow()
@@ -31,8 +33,13 @@ class ReceiveListViewModel
          */
         fun loadReceivers() {
             viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update { it.copy(receivers = emptyList(), isLoading = false) }
+                    return@launch
+                }
                 _uiState.update { it.copy(isLoading = true) }
-                getReceiversUseCase()
+                getReceiversUseCase(userId = userId)
                     .onSuccess { list ->
                         _uiState.update {
                             it.copy(
