@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDetailUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,8 @@ class ReceiverDetailViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
-        private val getReceiverDetailUseCase: GetReceiverDetailUseCase
+        private val getReceiverDetailUseCase: GetReceiverDetailUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReceiverDetailUiState())
         val uiState: StateFlow<ReceiverDetailUiState> = _uiState.asStateFlow()
@@ -44,8 +46,18 @@ class ReceiverDetailViewModel
 
         fun loadReceiverDetail(receiverId: Long) {
             viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "사용자 정보를 가져올 수 없습니다. 다시 로그인해주세요."
+                        )
+                    }
+                    return@launch
+                }
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-                getReceiverDetailUseCase(receiverId = receiverId)
+                getReceiverDetailUseCase(userId = userId, receiverId = receiverId)
                     .onSuccess { detail ->
                         _uiState.update {
                             it.copy(

@@ -61,11 +61,12 @@ data class DailyQuestionAnswerItemUi(
     val dailyQuestionAnswerId: Long,
     val question: String,
     val answer: String,
-    val createdAt: String
+    val recordDate: String
 )
 
 data class ReceiverDailyQuestionsUiState(
     val items: List<DailyQuestionAnswerItemUi> = emptyList(),
+    val hasNext: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

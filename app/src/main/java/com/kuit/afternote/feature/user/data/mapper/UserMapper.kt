@@ -8,6 +8,7 @@ import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLetterItemDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
 import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverAfterNoteSourceItem
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
@@ -58,8 +59,14 @@ object UserMapper {
             dailyQuestionAnswerId = dto.dailyQuestionAnswerId,
             question = dto.question,
             answer = dto.answer,
-            createdAt = dto.createdAt
+            recordDate = dto.recordDate
         )
+
+    fun toReceiverDailyQuestionsResult(
+        items: List<DailyQuestionAnswerItem>,
+        hasNext: Boolean
+    ): ReceiverDailyQuestionsResult =
+        ReceiverDailyQuestionsResult(items = items, hasNext = hasNext)
 
     fun toReceiverTimeLetterItem(dto: ReceiverTimeLetterItemDto): ReceiverTimeLetterItem =
         ReceiverTimeLetterItem(

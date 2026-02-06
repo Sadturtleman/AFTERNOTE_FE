@@ -40,7 +40,13 @@ data class DailyQuestionAnswerItem(
     val dailyQuestionAnswerId: Long,
     val question: String,
     val answer: String,
-    val createdAt: String
+    val recordDate: String
+)
+
+/** Paginated result for GET /users/receivers/{receiverId}/daily-questions. */
+data class ReceiverDailyQuestionsResult(
+    val items: List<DailyQuestionAnswerItem>,
+    val hasNext: Boolean
 )
 
 data class ReceiverTimeLetterItem(

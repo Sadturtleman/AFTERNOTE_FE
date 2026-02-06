@@ -80,7 +80,7 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 |------------|------|------|----------|
 | **Unit Tests (MockK)** | ViewModel/UseCase 로직 검증 | MockK | 모든 PR, CI/CD |
 | **Integration Tests** | 실제 API 응답 검증 | Retrofit + Real Server | 주기적 (야간/릴리스 전) |
-| **UI Tests** | UI 흐름 검증 | Espresso/Compose + MockApiInterceptor | 릴리스 전 |
+| **UI Tests** | UI 흐름 검증 | Espresso/Compose | 릴리스 전 |
 
 #### 테스트 유형별 규칙
 
@@ -98,17 +98,7 @@ You are a Senior Android Developer with strict adherence to Kotlin coding standa
 
 3. **Mock API Tests - 삭제 또는 UI 테스트로 전환**
    - ❌ **금지**: "Input → API → Output" 형태의 Mock API 테스트는 Unit Tests와 중복이므로 작성하지 않습니다.
-   - ✅ **허용**: `MockApiInterceptor`는 **UI 테스트** 또는 **개발 모드**에서만 사용합니다.
-   - 예: "LoginScreen에서 401 반환 시 에러 다이얼로그 표시" 같은 **UI 흐름 테스트**에 활용.
-
-#### MockApiInterceptor 사용 가이드
-
-`MockApiInterceptor`는 다음 용도로만 사용합니다:
-- **개발/데모 모드**: 백엔드가 준비되지 않았을 때 앱 테스트
-- **UI 테스트 (Espresso/Compose)**: 네트워크 없이 UI 흐름 검증
-- **복잡한 Interceptor 로직 테스트**: 토큰 자동 갱신 등 OkHttp Interceptor 로직
-
-**주의**: MockApiInterceptor를 사용한 "Input → Output" 단위 테스트는 작성하지 않습니다. MockK로 충분합니다.
+   - UI 테스트는 Espresso/Compose로 UI 흐름만 검증합니다 (예: "LoginScreen에서 401 반환 시 에러 다이얼로그 표시").
 
 ### Unit Test
 - `Domain Layer`(`UseCase`)와 `ViewModel`은 100%에 가까운 테스트 커버리지를 지향합니다.

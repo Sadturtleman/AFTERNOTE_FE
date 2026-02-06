@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.user.presentation.viewmodel
 
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -29,12 +30,15 @@ class ReceiverListViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var getReceiversUseCase: GetReceiversUseCase
+    private lateinit var getUserIdUseCase: GetUserIdUseCase
     private lateinit var viewModel: ReceiverListViewModel
 
     @Before
     fun setUp() {
         getReceiversUseCase = mockk()
-        viewModel = ReceiverListViewModel(getReceiversUseCase)
+        getUserIdUseCase = mockk()
+        coEvery { getUserIdUseCase() } returns 15L
+        viewModel = ReceiverListViewModel(getReceiversUseCase, getUserIdUseCase)
     }
 
     @Test
@@ -44,7 +48,7 @@ class ReceiverListViewModelTest {
                 ReceiverListItem(receiverId = 1L, name = "김지은", relation = "딸"),
                 ReceiverListItem(receiverId = 2L, name = "김혜성", relation = "아들")
             )
-            coEvery { getReceiversUseCase() } returns Result.success(list)
+            coEvery { getReceiversUseCase(any()) } returns Result.success(list)
 
             viewModel.loadReceivers()
             advanceUntilIdle()
@@ -62,7 +66,7 @@ class ReceiverListViewModelTest {
             val errorBody = """{"status":400,"code":400,"message":"Bad request"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(400, errorBody))
-            coEvery { getReceiversUseCase() } returns Result.failure(httpException)
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(httpException)
 
             viewModel.loadReceivers()
             advanceUntilIdle()
@@ -78,7 +82,7 @@ class ReceiverListViewModelTest {
             val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(401, errorBody))
-            coEvery { getReceiversUseCase() } returns Result.failure(httpException)
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(httpException)
 
             viewModel.loadReceivers()
             advanceUntilIdle()
@@ -93,7 +97,7 @@ class ReceiverListViewModelTest {
             val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(404, errorBody))
-            coEvery { getReceiversUseCase() } returns Result.failure(httpException)
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(httpException)
 
             viewModel.loadReceivers()
             advanceUntilIdle()
@@ -108,7 +112,7 @@ class ReceiverListViewModelTest {
             val errorBody = """{"status":500,"code":500,"message":"Server error"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(500, errorBody))
-            coEvery { getReceiversUseCase() } returns Result.failure(httpException)
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(httpException)
 
             viewModel.loadReceivers()
             advanceUntilIdle()
@@ -120,7 +124,7 @@ class ReceiverListViewModelTest {
     @Test
     fun loadReceivers_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { getReceiversUseCase() } returns Result.failure(
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(
                 java.io.IOException("Network unavailable")
             )
 
@@ -134,7 +138,7 @@ class ReceiverListViewModelTest {
     @Test
     fun clearError_clearsErrorMessage() =
         runTest {
-            coEvery { getReceiversUseCase() } returns Result.failure(
+            coEvery { getReceiversUseCase(any()) } returns Result.failure(
                 java.io.IOException("Network error")
             )
             viewModel.loadReceivers()
