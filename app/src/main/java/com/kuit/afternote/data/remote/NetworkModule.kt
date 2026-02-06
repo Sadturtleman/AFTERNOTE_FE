@@ -37,10 +37,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        json: Json,
-        authInterceptor: AuthInterceptor
-    ): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val builder = OkHttpClient
             .Builder()
             .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
@@ -49,11 +46,6 @@ object NetworkModule {
             .addInterceptor(
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
             )
-
-//        // Mock API 모드일 때 Mock Interceptor 추가
-//        if (BuildConfig.USE_MOCK_API) {
-//            builder.addInterceptor(MockApiInterceptor(json))
-//        }
 
         return builder.build()
     }

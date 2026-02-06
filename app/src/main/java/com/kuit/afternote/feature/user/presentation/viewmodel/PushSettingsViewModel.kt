@@ -24,15 +24,15 @@ class PushSettingsViewModel
         private val getMyPushSettingsUseCase: GetMyPushSettingsUseCase,
         private val updateMyPushSettingsUseCase: UpdateMyPushSettingsUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
-    ) : ViewModel() {
+    ) : ViewModel(), PushSettingsViewModelContract {
         private val _uiState = MutableStateFlow(PushSettingsUiState())
-        val uiState: StateFlow<PushSettingsUiState> = _uiState.asStateFlow()
+        override val uiState: StateFlow<PushSettingsUiState> = _uiState.asStateFlow()
 
         /**
          * 푸시 알림 설정 조회.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun loadPushSettings() {
+        override fun loadPushSettings() {
             viewModelScope.launch {
                 val userId = getUserIdUseCase()
                 if (userId == null) {
@@ -72,7 +72,7 @@ class PushSettingsViewModel
          * 푸시 알림 설정 수정.
          * JWT 토큰에서 userId를 자동으로 추출합니다.
          */
-        fun updatePushSettings(
+        override fun updatePushSettings(
             timeLetter: Boolean?,
             mindRecord: Boolean?,
             afterNote: Boolean?
@@ -122,14 +122,14 @@ class PushSettingsViewModel
         /**
          * updateSuccess 소비 후 호출 (네비게이션 후).
          */
-        fun clearUpdateSuccess() {
+        override fun clearUpdateSuccess() {
             _uiState.update { it.copy(updateSuccess = false) }
         }
 
         /**
          * 에러 메시지 초기화.
          */
-        fun clearError() {
+        override fun clearError() {
             _uiState.update { it.copy(errorMessage = null) }
         }
     }

@@ -57,9 +57,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
-        buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
-
         // Test credentials from local.properties (not committed to git)
         val testEmail = properties["TEST_EMAIL"] as? String ?: ""
         val testPassword = properties["TEST_PASSWORD"] as? String ?: ""

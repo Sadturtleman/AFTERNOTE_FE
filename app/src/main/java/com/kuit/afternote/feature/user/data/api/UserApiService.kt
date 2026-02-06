@@ -4,8 +4,8 @@ import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNotesResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLettersResponseDto
-import com.kuit.afternote.feature.user.data.dto.ReceiversListResponseDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
@@ -39,6 +39,13 @@ interface UserApiService {
         @Body body: UserUpdateProfileRequest
     ): ApiResponse<UserResponse?>
 
+    /**
+     * 푸시 알림 설정 조회.
+     * GET /users/push-settings — 로그인한 사용자의 푸시 알림 수신 설정을 불러옵니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @return data: timeLetter, mindRecord, afterNote
+     */
     @GET("users/push-settings")
     suspend fun getMyPushSettings(
         @Query("userId") userId: Long
@@ -50,22 +57,51 @@ interface UserApiService {
         @Body body: UserUpdatePushSettingRequest
     ): ApiResponse<UserPushSettingResponse?>
 
+    /**
+     * 수신인 목록 조회.
+     * GET /users/receivers — 로그인한 사용자가 등록한 수신인 목록을 조회합니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @return data: array of { receiverId, name, relation }
+     */
     @GET("users/receivers")
-    suspend fun getReceivers(): ApiResponse<ReceiversListResponseDto?>
+    suspend fun getReceivers(
+        @Query("userId") userId: Long
+    ): ApiResponse<List<ReceiverItemDto>?>
 
     @POST("users/receivers")
     suspend fun registerReceiver(
         @Body body: RegisterReceiverRequestDto
     ): ApiResponse<RegisterReceiverResponseDto?>
 
+    /**
+     * 수신인 상세 조회.
+     * GET /users/receivers/{receiverId} — 특정 수신인의 상세 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @param receiverId 수신인 식별자 (path, required)
+     * @return data: receiverId, name, relation, phone, email, dailyQuestionCount, timeLetterCount, afterNoteCount
+     */
     @GET("users/receivers/{receiverId}")
     suspend fun getReceiverDetail(
+        @Query("userId") userId: Long,
         @Path("receiverId") receiverId: Long
     ): ApiResponse<ReceiverDetailResponseDto?>
 
+    /**
+     * 수신인별 데일리 질문 답변 목록 조회 (페이지네이션).
+     * GET /users/receivers/{receiverId}/daily-questions
+     *
+     * @param receiverId 수신인 식별자 (path, required)
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지 당 조회 개수
+     * @return data: items, hasNext
+     */
     @GET("users/receivers/{receiverId}/daily-questions")
     suspend fun getReceiverDailyQuestions(
-        @Path("receiverId") receiverId: Long
+        @Path("receiverId") receiverId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
     ): ApiResponse<ReceiverDailyQuestionsResponseDto?>
 
     @GET("users/receivers/{receiverId}/time-letters")

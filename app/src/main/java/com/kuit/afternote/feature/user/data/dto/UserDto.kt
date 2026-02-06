@@ -22,6 +22,7 @@ data class UserUpdateProfileRequest(
     @SerialName("profileImageUrl") val profileImageUrl: String? = null
 )
 
+/** GET /users/push-settings 응답 data. 푸시 알림 수신 설정 (timeLetter, mindRecord, afterNote). */
 @Serializable
 data class UserPushSettingResponse(
     @SerialName("timeLetter") val timeLetter: Boolean,
@@ -43,11 +44,6 @@ data class ReceiverItemDto(
     @SerialName("receiverId") val receiverId: Long,
     @SerialName("name") val name: String,
     @SerialName("relation") val relation: String
-)
-
-@Serializable
-data class ReceiversListResponseDto(
-    @SerialName("receivers") val receivers: List<ReceiverItemDto>
 )
 
 @Serializable
@@ -82,12 +78,13 @@ data class DailyQuestionAnswerItemDto(
     @SerialName("dailyQuestionAnswerId") val dailyQuestionAnswerId: Long,
     @SerialName("question") val question: String,
     @SerialName("answer") val answer: String,
-    @SerialName("createdAt") val createdAt: String
+    @SerialName("recordDate") val recordDate: String
 )
 
 @Serializable
 data class ReceiverDailyQuestionsResponseDto(
-    @SerialName("items") val items: List<DailyQuestionAnswerItemDto>
+    @SerialName("items") val items: List<DailyQuestionAnswerItemDto>,
+    @SerialName("hasNext") val hasNext: Boolean
 )
 
 // --- GET /users/receivers/{receiverId}/time-letters ---

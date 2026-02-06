@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.user.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDailyQuestionsUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
@@ -36,22 +37,31 @@ class ReceiverDailyQuestionsViewModelTest {
         getReceiverDailyQuestionsUseCase = mockk()
     }
 
-    private fun savedStateHandleWithReceiverId(receiverId: String): SavedStateHandle =
-        SavedStateHandle(mapOf("receiverId" to receiverId, "receiverName" to ""))
+    private fun savedStateHandle(receiverId: String = "", receiverName: String = ""): SavedStateHandle =
+        SavedStateHandle(mapOf("receiverId" to receiverId, "receiverName" to receiverName))
 
     @Test
     fun loadDailyQuestions_whenSuccess_setsItems() =
         runTest {
-            val list = listOf(
-                DailyQuestionAnswerItem(
-                    dailyQuestionAnswerId = 130L,
-                    question = "오늘 하루, 누구에게 가장 고마웠나요?",
-                    answer = "아무 말 없이...",
-                    createdAt = "2025-10-09"
-                )
+            val result = ReceiverDailyQuestionsResult(
+                items = listOf(
+                    DailyQuestionAnswerItem(
+                        dailyQuestionAnswerId = 130L,
+                        question = "오늘 하루, 누구에게 가장 고마웠나요?",
+                        answer = "아무 말 없이...",
+                        recordDate = "2025-10-09"
+                    )
+                ),
+                hasNext = false
             )
-            coEvery { getReceiverDailyQuestionsUseCase(receiverId = 1L) } returns Result.success(list)
-            val savedStateHandle = savedStateHandleWithReceiverId("")
+            coEvery {
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = 1L,
+                    page = any(),
+                    size = any()
+                )
+            } returns Result.success(result)
+            val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDailyQuestionsViewModel(
                 savedStateHandle,
                 getReceiverDailyQuestionsUseCase
@@ -61,6 +71,7 @@ class ReceiverDailyQuestionsViewModelTest {
 
             assertEquals(1, viewModel.uiState.value.items.size)
             assertEquals(130L, viewModel.uiState.value.items[0].dailyQuestionAnswerId)
+            assertEquals("2025-10-09", viewModel.uiState.value.items[0].recordDate)
             assertFalse(viewModel.uiState.value.isLoading)
         }
 
@@ -70,8 +81,14 @@ class ReceiverDailyQuestionsViewModelTest {
             val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(401, errorBody))
-            coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-            val savedStateHandle = savedStateHandleWithReceiverId("")
+            coEvery {
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = any(),
+                    page = any(),
+                    size = any()
+                )
+            } returns Result.failure(httpException)
+            val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDailyQuestionsViewModel(
                 savedStateHandle,
                 getReceiverDailyQuestionsUseCase
@@ -89,8 +106,14 @@ class ReceiverDailyQuestionsViewModelTest {
             val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(404, errorBody))
-            coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-            val savedStateHandle = savedStateHandleWithReceiverId("")
+            coEvery {
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = any(),
+                    page = any(),
+                    size = any()
+                )
+            } returns Result.failure(httpException)
+            val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDailyQuestionsViewModel(
                 savedStateHandle,
                 getReceiverDailyQuestionsUseCase
@@ -108,8 +131,14 @@ class ReceiverDailyQuestionsViewModelTest {
             val errorBody = """{"status":500,"code":500,"message":"Server error"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(500, errorBody))
-            coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(httpException)
-            val savedStateHandle = savedStateHandleWithReceiverId("")
+            coEvery {
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = any(),
+                    page = any(),
+                    size = any()
+                )
+            } returns Result.failure(httpException)
+            val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDailyQuestionsViewModel(
                 savedStateHandle,
                 getReceiverDailyQuestionsUseCase
@@ -124,10 +153,16 @@ class ReceiverDailyQuestionsViewModelTest {
     @Test
     fun loadDailyQuestions_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { getReceiverDailyQuestionsUseCase(receiverId = any()) } returns Result.failure(
+            coEvery {
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = any(),
+                    page = any(),
+                    size = any()
+                )
+            } returns Result.failure(
                 java.io.IOException("Network unavailable")
             )
-            val savedStateHandle = savedStateHandleWithReceiverId("")
+            val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDailyQuestionsViewModel(
                 savedStateHandle,
                 getReceiverDailyQuestionsUseCase
