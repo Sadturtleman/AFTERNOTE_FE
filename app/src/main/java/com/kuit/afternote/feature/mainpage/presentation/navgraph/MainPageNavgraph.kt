@@ -1,11 +1,22 @@
 package com.kuit.afternote.feature.mainpage.presentation.navgraph
 
+import android.util.Log
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.mainpage.presentation.screen.AddSongCallbacks
@@ -23,6 +34,8 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private const val TAG_FINGERPRINT = "FingerprintLogin"
 
 /**
  * mainpage feature 전용 라이트 모드 테마 래퍼
@@ -132,8 +145,76 @@ fun NavGraphBuilder.mainPageNavGraph(
     }
 
     mainPageComposable<MainPageRoute.FingerprintLoginRoute> {
+        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: composable entered")
+        val context = LocalContext.current
+        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: context=${context::class.java.name}")
+        val activity = context as? FragmentActivity
+        Log.d(
+            TAG_FINGERPRINT,
+            "FingerprintLoginRoute: activity=${activity?.javaClass?.name ?: "null"}"
+        )
+        val promptTitle = stringResource(R.string.biometric_prompt_title)
+        val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
+        val notAvailableMessage = stringResource(R.string.biometric_not_available)
+        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: stringResource done")
+        val biometricPrompt =
+            remember(activity) {
+                try {
+                    Log.d(
+                        TAG_FINGERPRINT,
+                        "FingerprintLoginRoute: building BiometricPrompt, activity=$activity"
+                    )
+                    activity?.let { fragActivity ->
+                        val executor = ContextCompat.getMainExecutor(fragActivity)
+                        BiometricPrompt(
+                            fragActivity,
+                            executor,
+                            object : BiometricPrompt.AuthenticationCallback() {
+                                override fun onAuthenticationSucceeded(
+                                    result: BiometricPrompt.AuthenticationResult
+                                ) {
+                                    Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: auth succeeded, popping")
+                                    navController.popBackStack()
+                                }
+                            }
+                        ).also {
+                            Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: BiometricPrompt created")
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Log.e(TAG_FINGERPRINT, "FingerprintLoginRoute: BiometricPrompt failed", e)
+                    null
+                }
+            }
+        val promptInfo =
+            remember(promptTitle, promptSubtitle) {
+                try {
+                    Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: building PromptInfo")
+                    BiometricPrompt.PromptInfo.Builder()
+                        .setTitle(promptTitle)
+                        .setSubtitle(promptSubtitle)
+                        .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                        .build()
+                        .also { Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: PromptInfo created") }
+                } catch (e: Throwable) {
+                    Log.e(TAG_FINGERPRINT, "FingerprintLoginRoute: PromptInfo failed", e)
+                    throw e
+                }
+            }
+        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: showing FingerprintLoginScreen")
         FingerprintLoginScreen(
-            onFingerprintAuthClick = { TODO("지문 인증 처리") }
+            onFingerprintAuthClick = {
+                if (activity == null) return@FingerprintLoginScreen
+                val biometricManager = BiometricManager.from(context)
+                when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
+                    BiometricManager.BIOMETRIC_SUCCESS ->
+                        biometricPrompt?.authenticate(promptInfo)
+                    else ->
+                        android.widget.Toast
+                            .makeText(context, notAvailableMessage, android.widget.Toast.LENGTH_SHORT)
+                            .show()
+                }
+            }
         )
     }
 
