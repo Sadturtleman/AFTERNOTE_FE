@@ -74,14 +74,34 @@ interface UserApiService {
         @Body body: RegisterReceiverRequestDto
     ): ApiResponse<RegisterReceiverResponseDto?>
 
+    /**
+     * 수신인 상세 조회.
+     * GET /users/receivers/{receiverId} — 특정 수신인의 상세 정보를 조회합니다.
+     *
+     * @param userId 사용자 ID (query, required)
+     * @param receiverId 수신인 식별자 (path, required)
+     * @return data: receiverId, name, relation, phone, email, dailyQuestionCount, timeLetterCount, afterNoteCount
+     */
     @GET("users/receivers/{receiverId}")
     suspend fun getReceiverDetail(
+        @Query("userId") userId: Long,
         @Path("receiverId") receiverId: Long
     ): ApiResponse<ReceiverDetailResponseDto?>
 
+    /**
+     * 수신인별 데일리 질문 답변 목록 조회 (페이지네이션).
+     * GET /users/receivers/{receiverId}/daily-questions
+     *
+     * @param receiverId 수신인 식별자 (path, required)
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지 당 조회 개수
+     * @return data: items, hasNext
+     */
     @GET("users/receivers/{receiverId}/daily-questions")
     suspend fun getReceiverDailyQuestions(
-        @Path("receiverId") receiverId: Long
+        @Path("receiverId") receiverId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
     ): ApiResponse<ReceiverDailyQuestionsResponseDto?>
 
     @GET("users/receivers/{receiverId}/time-letters")

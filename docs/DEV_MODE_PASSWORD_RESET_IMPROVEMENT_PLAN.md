@@ -5,9 +5,8 @@
 Perplexity 피드백에 따라 다음 개선이 필요합니다:
 
 1. **Source Set 분리**: `src/debug`와 `src/release`로 분리하여 릴리즈 빌드에 개발 코드가 포함되지 않도록
-2. **Mock Only 전략**: 백엔드 API 대신 MockApiInterceptor로만 처리
-3. **DI 모듈 분리**: Hilt 모듈을 debug/release로 분리
-4. **아키텍처 분리**: 개발 전용 기능을 명확히 분리
+2. **DI 모듈 분리**: Hilt 모듈을 debug/release로 분리
+3. **아키텍처 분리**: 개발 전용 기능을 명확히 분리
 
 ## 구현 계획
 
@@ -43,14 +42,11 @@ app/src/
 - `AuthApiService`에서 `devPasswordReset` 메서드를 debug source set으로 이동
 - 또는 debug 전용 인터페이스로 분리
 
-#### D. MockApiInterceptor
-- `/auth/password/reset-dev` 핸들러를 debug source set으로 이동
-
-#### E. ViewModel 및 UI
+#### D. ViewModel 및 UI
 - `DevModeViewModel.resetPassword()`는 이미 dev feature이므로 유지
 - `DevModeScreen`의 password reset 버튼도 유지 (이미 dev mode 전용)
 
-#### F. Hilt 모듈 분리
+#### E. Hilt 모듈 분리
 - `src/debug/di/DevModule.kt`: DevPasswordResetUseCase 주입
 - `src/release/di/ReleaseModule.kt`: No-op 또는 빈 모듈
 
@@ -61,9 +57,8 @@ app/src/
 3. ✅ UseCase 이동
 4. ✅ API Service 분리
 5. ✅ Repository 구현 분리
-6. ✅ MockApiInterceptor 분리
-7. ✅ Hilt 모듈 분리
-8. ✅ 빌드 확인
+6. ✅ Hilt 모듈 분리
+7. ✅ 빌드 확인
 
 ### 4. 보안 강화
 

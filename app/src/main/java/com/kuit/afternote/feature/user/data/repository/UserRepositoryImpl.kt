@@ -8,8 +8,8 @@ import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
 import com.kuit.afternote.feature.user.data.dto.UserUpdatePushSettingRequest
 import com.kuit.afternote.feature.user.data.mapper.UserMapper
-import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
 import com.kuit.afternote.feature.user.domain.model.PushSettings
+import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverAfterNoteSourceItem
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
@@ -90,7 +90,7 @@ class UserRepositoryImpl
                 Log.d(TAG, "getReceivers: userId=$userId")
                 val response = api.getReceivers(userId = userId)
                 Log.d(TAG, "getReceivers: response=$response")
-                val list = response.requireData() ?: emptyList()
+                val list = response.requireData()
                 list.map(UserMapper::toReceiverListItem)
             }
 
@@ -126,21 +126,30 @@ class UserRepositoryImpl
                 data.receiverId
             }
 
-        override suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail> =
+        override suspend fun getReceiverDetail(userId: Long, receiverId: Long): Result<ReceiverDetail> =
             runCatching {
-                Log.d(TAG, "getReceiverDetail: receiverId=$receiverId")
-                val response = api.getReceiverDetail(receiverId = receiverId)
+                Log.d(TAG, "getReceiverDetail: userId=$userId, receiverId=$receiverId")
+                val response = api.getReceiverDetail(userId = userId, receiverId = receiverId)
                 Log.d(TAG, "getReceiverDetail: response=$response")
                 UserMapper.toReceiverDetail(response.requireData())
             }
 
-        override suspend fun getReceiverDailyQuestions(receiverId: Long): Result<List<DailyQuestionAnswerItem>> =
+        override suspend fun getReceiverDailyQuestions(
+            receiverId: Long,
+            page: Int,
+            size: Int
+        ): Result<ReceiverDailyQuestionsResult> =
             runCatching {
-                Log.d(TAG, "getReceiverDailyQuestions: receiverId=$receiverId")
-                val response = api.getReceiverDailyQuestions(receiverId = receiverId)
+                Log.d(TAG, "getReceiverDailyQuestions: receiverId=$receiverId, page=$page, size=$size")
+                val response = api.getReceiverDailyQuestions(
+                    receiverId = receiverId,
+                    page = page,
+                    size = size
+                )
                 Log.d(TAG, "getReceiverDailyQuestions: response=$response")
                 val body = response.requireData()
-                body.items.map(UserMapper::toDailyQuestionAnswerItem)
+                val items = body.items.map(UserMapper::toDailyQuestionAnswerItem)
+                UserMapper.toReceiverDailyQuestionsResult(items = items, hasNext = body.hasNext)
             }
 
         override suspend fun getReceiverTimeLetters(receiverId: Long): Result<List<ReceiverTimeLetterItem>> =

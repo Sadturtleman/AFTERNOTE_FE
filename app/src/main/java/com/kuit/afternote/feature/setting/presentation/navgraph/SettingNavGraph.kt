@@ -230,7 +230,7 @@ private fun DailyAnswerRouteContent(
         DailyAnswerItemUiModel(
             question = item.question,
             answer = item.answer,
-            dateText = item.createdAt
+            dateText = item.recordDate
         )
     }
     val receiverName = route.receiverName.ifBlank { "수신인" }

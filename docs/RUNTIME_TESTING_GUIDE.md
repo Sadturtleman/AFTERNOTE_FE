@@ -6,75 +6,30 @@
 
 ## 📋 목차
 
-1. [Mock API 모드로 테스트](#1-mock-api-모드로-테스트)
-2. [실제 서버로 테스트](#2-실제-서버로-테스트)
-3. [Logcat으로 API 호출 확인](#3-logcat으로-api-호출-확인)
-4. [DevMode로 빠른 테스트](#4-devmode로-빠른-테스트)
-5. [UI 화면에서 테스트](#5-ui-화면에서-테스트)
+1. [실제 서버로 테스트](#1-실제-서버로-테스트)
+2. [Logcat으로 API 호출 확인](#2-logcat으로-api-호출-확인)
+3. [DevMode로 빠른 테스트](#3-devmode로-빠른-테스트)
+4. [UI 화면에서 테스트](#4-ui-화면에서-테스트)
 
 ---
 
-## 1. Mock API 모드로 테스트
+## 1. 실제 서버로 테스트
 
 ### 설정 방법
 
-1. **`gradle.properties` 파일 수정**:
-   ```properties
-   USE_MOCK_API=true
-   ```
-
-2. **Clean Build 및 앱 재설치**:
-   ```bash
-   ./gradlew clean
-   ./gradlew :app:assembleDebug
-   # 또는 Android Studio에서 Clean Build 후 재설치
-   ```
-
-3. **Mock 응답 확인**:
-   - `MockApiInterceptor`가 모든 API 요청을 가로채서 Mock 응답을 반환합니다
-   - 실제 서버 통신 없이 테스트 가능합니다
-
-### Mock 응답이 포함된 API
-
-**User API:**
-- ✅ `GET /users/me` - 프로필 조회
-- ✅ `PATCH /users/me` - 프로필 수정
-- ✅ `GET /users/push-settings` - 푸시 알림 설정 조회
-- ✅ `PATCH /users/push-settings` - 푸시 알림 설정 수정
-
-**TimeLetter API:**
-- ✅ `GET /time-letters` - 타임레터 전체 조회
-- ✅ `POST /time-letters` - 타임레터 등록
-- ✅ `GET /time-letters/{timeLetterId}` - 타임레터 단일 조회
-- ✅ `PATCH /time-letters/{timeLetterId}` - 타임레터 수정
-- ✅ `POST /time-letters/delete` - 타임레터 삭제
-- ✅ `GET /time-letters/temporary` - 임시저장 전체 조회
-- ✅ `DELETE /time-letters/temporary` - 임시저장 전체 삭제
-
----
-
-## 2. 실제 서버로 테스트
-
-### 설정 방법
-
-1. **`gradle.properties` 파일 수정**:
-   ```properties
-   USE_MOCK_API=false
-   ```
-
-2. **Clean Build 및 앱 재설치**:
+1. **Clean Build 및 앱 재설치**:
    ```bash
    ./gradlew clean
    ./gradlew :app:assembleDebug
    ```
 
-3. **백엔드 서버 확인**:
+2. **백엔드 서버 확인**:
    - 서버가 `https://afternote.kro.kr/`에서 실행 중이어야 합니다
    - 테스트 계정이 필요합니다 (예: `dnfjddk2@gmail.com` / `Ab@12345`)
 
 ---
 
-## 3. Logcat으로 API 호출 확인
+## 2. Logcat으로 API 호출 확인
 
 ### Logcat 필터 설정
 
@@ -114,7 +69,7 @@ D/OkHttp: {"status":200,"code":200,"message":"프로필 조회 성공","data":{.
 
 ---
 
-## 4. DevMode로 빠른 테스트
+## 3. DevMode로 빠른 테스트
 
 ### DevMode 화면 접근
 
@@ -131,7 +86,7 @@ D/OkHttp: {"status":200,"code":200,"message":"프로필 조회 성공","data":{.
 
 ---
 
-## 5. UI 화면에서 테스트
+## 4. UI 화면에서 테스트
 
 ### User API 테스트
 
@@ -215,34 +170,16 @@ D/OkHttp: {"status":200,"code":200,"message":"프로필 조회 성공","data":{.
 ### TimeLetter API 검증
 
 - [ ] Mock 모드에서 타임레터 목록 조회 성공
-- [ ] Mock 모드에서 타임레터 생성 성공
-- [ ] Mock 모드에서 타임레터 단일 조회 성공
-- [ ] Mock 모드에서 타임레터 수정 성공
-- [ ] Mock 모드에서 타임레터 삭제 성공
-- [ ] Mock 모드에서 임시저장 목록 조회 성공
-- [ ] Mock 모드에서 임시저장 전체 삭제 성공
-- [ ] 실제 서버 모드에서 모든 API 동작 확인
+- [ ] 타임레터 생성 성공
+- [ ] 타임레터 단일 조회 성공
+- [ ] 타임레터 수정 성공
+- [ ] 타임레터 삭제 성공
+- [ ] 임시저장 목록 조회 성공
+- [ ] 임시저장 전체 삭제 성공
 
 ---
 
 ## 🔧 문제 해결
-
-### Mock 응답이 반환되지 않는 경우
-
-1. **`gradle.properties` 확인**:
-   ```bash
-   cat gradle.properties | grep USE_MOCK_API
-   # USE_MOCK_API=true 여야 함
-   ```
-
-2. **Clean Build 실행**:
-   ```bash
-   ./gradlew clean
-   ./gradlew :app:assembleDebug
-   ```
-
-3. **앱 재설치**:
-   - 기존 앱 삭제 후 재설치
 
 ### 실제 서버 연결 실패
 
@@ -266,6 +203,5 @@ D/OkHttp: {"status":200,"code":200,"message":"프로필 조회 성공","data":{.
 
 ## 📝 참고
 
-- **Mock API Interceptor**: `app/src/main/java/com/kuit/afternote/data/remote/MockApiInterceptor.kt`
 - **Network Module**: `app/src/main/java/com/kuit/afternote/data/remote/NetworkModule.kt`
 - **DevMode Screen**: `app/src/main/java/com/kuit/afternote/feature/dev/presentation/screen/DevModeScreen.kt`

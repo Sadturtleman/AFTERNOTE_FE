@@ -12,20 +12,7 @@
 
 ---
 
-## 1. MockApiInterceptor 필요 여부
-
-### MockApiInterceptor가 필요한 경우
-- ✅ 백엔드 서버가 준비되지 않았을 때
-- ✅ 네트워크 없이 빠르게 테스트하고 싶을 때
-- ✅ 에러 시나리오 테스트 (401, 404 등)
-
-### MockApiInterceptor가 필요 없는 경우
-- ✅ 백엔드 서버가 준비되어 있고 실제 API로 테스트하고 싶을 때
-- ✅ **권장**: 실제 서버로 테스트하려면 `gradle.properties`에서 `USE_MOCK_API=false`로 설정
-
----
-
-## 2. ProfileEditScreen 연결하기
+## 1. ProfileEditScreen 연결하기
 
 ### 현재 문제
 - `ProfileEditScreen`이 `ProfileViewModel`을 사용하지 않음
@@ -105,7 +92,7 @@ import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 
 ---
 
-## 3. PushToastSettingScreen 연결하기
+## 2. PushToastSettingScreen 연결하기
 
 ### 현재 문제
 - `PushToastSettingScreen`이 `PushSettingsViewModel`을 사용하지 않음
@@ -206,23 +193,9 @@ import com.kuit.afternote.feature.user.presentation.viewmodel.PushSettingsViewMo
 
 ---
 
-## 4. 테스트 방법
+## 3. 테스트 방법
 
-### Step 1: Mock API 모드로 테스트 (선택)
-
-```bash
-# gradle.properties
-USE_MOCK_API=true
-```
-
-### Step 2: 실제 서버로 테스트 (권장)
-
-```bash
-# gradle.properties
-USE_MOCK_API=false
-```
-
-### Step 3: 앱 실행 및 테스트
+### Step 1: 앱 실행 및 테스트
 
 1. **앱 실행**
    ```bash
@@ -247,7 +220,7 @@ USE_MOCK_API=false
 
 ---
 
-## 5. 확인 사항
+## 4. 확인 사항
 
 ### ✅ 성공 시나리오
 - [ ] 프로필 수정 화면에서 프로필 정보가 표시됨
@@ -262,7 +235,7 @@ USE_MOCK_API=false
 
 ---
 
-## 6. ✅ 해결된 사항
+## 5. ✅ 해결된 사항
 
 ### userId 자동 추출
 
@@ -281,7 +254,7 @@ USE_MOCK_API=false
 
 ---
 
-## 7. TimeLetter API 테스트
+## 6. TimeLetter API 테스트
 
 **참고**: TimeLetter API의 Domain/UI 레이어는 박경민님의 담당입니다. Data 레이어만 구현되어 있으므로, UI 테스트는 Domain/UI 레이어 구현 후 가능합니다.
 
@@ -289,7 +262,6 @@ USE_MOCK_API=false
 
 ## 요약
 
-1. **MockApiInterceptor**: 백엔드가 준비되어 있으면 `USE_MOCK_API=false`로 설정하여 실제 서버로 테스트
-2. **화면 연결**: `ProfileEditScreen`과 `PushToastSettingScreen`을 각각의 ViewModel에 연결
-3. **userId 자동 추출**: ✅ JWT 토큰에서 자동으로 `userId`를 추출하므로 하드코딩 불필요
-4. **시각적 확인**: 앱 실행 후 설정 화면에서 프로필 수정 및 푸시 알림 설정 기능 테스트
+1. **화면 연결**: `ProfileEditScreen`과 `PushToastSettingScreen`을 각각의 ViewModel에 연결
+2. **userId 자동 추출**: ✅ JWT 토큰에서 자동으로 `userId`를 추출하므로 하드코딩 불필요
+3. **시각적 확인**: 앱 실행 후 설정 화면에서 프로필 수정 및 푸시 알림 설정 기능 테스트 (실제 서버 사용)

@@ -36,21 +36,26 @@ class ReceiverDailyQuestionsViewModel
             if (receiverId != null) loadDailyQuestions(receiverId)
         }
 
-        fun loadDailyQuestions(receiverId: Long) {
+        fun loadDailyQuestions(receiverId: Long, page: Int = 0, size: Int = 20) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-                getReceiverDailyQuestionsUseCase(receiverId = receiverId)
-                    .onSuccess { list ->
+                getReceiverDailyQuestionsUseCase(
+                    receiverId = receiverId,
+                    page = page,
+                    size = size
+                )
+                    .onSuccess { result ->
                         _uiState.update {
                             it.copy(
-                                items = list.map { item ->
+                                items = result.items.map { item ->
                                     DailyQuestionAnswerItemUi(
                                         dailyQuestionAnswerId = item.dailyQuestionAnswerId,
                                         question = item.question,
                                         answer = item.answer,
-                                        createdAt = item.createdAt
+                                        recordDate = item.recordDate
                                     )
                                 },
+                                hasNext = result.hasNext,
                                 isLoading = false,
                                 errorMessage = null
                             )

@@ -47,11 +47,6 @@ data class ReceiverItemDto(
 )
 
 @Serializable
-data class ReceiversListResponseDto(
-    @SerialName("receivers") val receivers: List<ReceiverItemDto>
-)
-
-@Serializable
 data class RegisterReceiverRequestDto(
     @SerialName("name") val name: String,
     @SerialName("phone") val phone: String? = null,
@@ -83,12 +78,13 @@ data class DailyQuestionAnswerItemDto(
     @SerialName("dailyQuestionAnswerId") val dailyQuestionAnswerId: Long,
     @SerialName("question") val question: String,
     @SerialName("answer") val answer: String,
-    @SerialName("createdAt") val createdAt: String
+    @SerialName("recordDate") val recordDate: String
 )
 
 @Serializable
 data class ReceiverDailyQuestionsResponseDto(
-    @SerialName("items") val items: List<DailyQuestionAnswerItemDto>
+    @SerialName("items") val items: List<DailyQuestionAnswerItemDto>,
+    @SerialName("hasNext") val hasNext: Boolean
 )
 
 // --- GET /users/receivers/{receiverId}/time-letters ---

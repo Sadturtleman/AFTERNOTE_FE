@@ -185,13 +185,9 @@ class AuthInterceptor
                 Log.d(TAG, "TokenRefresh API: ${response.code} ${response.message}")
 
                 if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    if (responseBody != null) {
-                        val apiResponse = json.decodeFromString<ReissueApiResponse>(responseBody)
-                        apiResponse.data
-                    } else {
-                        null
-                    }
+                    val responseBody = response.body.string()
+                    val apiResponse = json.decodeFromString<ReissueApiResponse>(responseBody)
+                    apiResponse.data
                 } else {
                     Log.e(TAG, "TokenRefresh API failed: ${response.code}")
                     null
