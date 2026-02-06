@@ -28,6 +28,7 @@
 16. **Required checks**: Code must pass commitlint, ktlint, and build checks before merge (see `.cursor/rules/workflow/pr-ci-checks.mdc`)
 
 ## MUST NOT DO
+2. **Hand off instead of doing**: When the user asks you to do something (create PR, run command, apply change), do not respond with only instructions or content for the user to do it. Perform the action yourself when possible (e.g. run `gh pr create`, run gradle, edit files). Fall back to instructions only when execution is not possible (e.g. tool not available, auth failed).
 3. `android.R` import
 4. Wildcard imports (`import foo.*`)
 5. Android/Data dependencies in Domain Layer
@@ -74,6 +75,7 @@ This project uses `.cursor/rules/*.mdc` file structure to separate rules:
 - **`.cursor/rules/workflow/branch-workflow.mdc`**: Branch work and workflow rules (always applied: `alwaysApply: true`)
 - **`.cursor/rules/workflow/api-implementation.mdc`**: API implementation rules
 - **`.cursor/rules/workflow/pull-request-review.mdc`**: Pull Request and code review rules
+- **`.cursor/rules/workflow/execute-dont-instruct.mdc`**: Execute requested actions instead of only giving instructions
 - **`.cursor/rules/workflow/pr-ci-checks.mdc`**: Required checks (commitlint, ktlint, build) before merge
 - **`.cursor/rules/tech-stack/architecture.mdc`**: Clean Architecture and layer separation rules
 - **`.cursor/rules/tech-stack/compose.mdc`**: Jetpack Compose coding rules and patterns

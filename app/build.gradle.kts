@@ -158,6 +158,7 @@ dependencies {
     implementation(libs.kakao.sdk.user)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.biometric)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)
