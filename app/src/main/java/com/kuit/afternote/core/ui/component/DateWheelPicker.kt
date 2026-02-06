@@ -179,6 +179,12 @@ private fun DateWheelPickerContent(
             contentDescription = model.dateDescription
         }
     ) {
+        // 테두리는 뒤에 그려서 휠 터치가 가려지지 않도록 함
+        SelectionBorder(
+            modifier = Modifier.align(Alignment.Center),
+            selectionBorderColor = colors.selectionBorderColor
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -190,6 +196,8 @@ private fun DateWheelPickerContent(
                 count = model.years.size,
                 state = yearState,
                 modifier = Modifier.weight(4f),
+                itemHeight = SelectionBorderHeight,
+                unfocusedCount = 1,
                 focus = {}
             ) { index ->
                 PickerText(
@@ -209,6 +217,8 @@ private fun DateWheelPickerContent(
                 count = model.months.size,
                 state = monthState,
                 modifier = Modifier.weight(3f),
+                itemHeight = SelectionBorderHeight,
+                unfocusedCount = 1,
                 focus = {}
             ) { index ->
                 PickerText(
@@ -236,11 +246,6 @@ private fun DateWheelPickerContent(
                 colors = colors
             )
         }
-
-        SelectionBorder(
-            modifier = Modifier.align(Alignment.Center),
-            selectionBorderColor = colors.selectionBorderColor
-        )
     }
 }
 
@@ -292,6 +297,8 @@ private fun DayWheel(
             count = model.days.size,
             state = dayState,
             modifier = modifier,
+            itemHeight = SelectionBorderHeight,
+            unfocusedCount = 1,
             focus = {}
         ) { index ->
             PickerText(

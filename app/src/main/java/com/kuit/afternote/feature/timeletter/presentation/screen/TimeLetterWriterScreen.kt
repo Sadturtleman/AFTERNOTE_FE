@@ -453,9 +453,10 @@ fun TimeLetterWriterScreen(
                     .zIndex(1f)
             )
 
-            // DateWheelPicker 오버레이 (발송 날짜 아래 위치)
+            // DateWheelPicker 오버레이 (발송 날짜 아래 위치) - zIndex로 딤 위에 그려 휠 터치 전달
             Box(
                 modifier = Modifier
+                    .zIndex(2f)
                     .shadow(
                         elevation = 8.dp,
                         shape = RoundedCornerShape(12.dp)
@@ -501,8 +502,10 @@ fun TimeLetterWriterScreen(
                     .zIndex(1f)
             )
 
+            // TimeWheelPicker 카드 - zIndex로 딤 위에 그려 휠 터치 전달
             Box(
                 modifier = Modifier
+                    .zIndex(2f)
                     .shadow(
                         elevation = 8.dp,
                         shape = RoundedCornerShape(12.dp)
