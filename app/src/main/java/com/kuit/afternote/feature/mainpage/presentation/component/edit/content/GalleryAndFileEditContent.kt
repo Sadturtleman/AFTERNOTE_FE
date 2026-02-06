@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -25,7 +26,8 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Mai
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
-import com.kuit.afternote.feature.mainpage.presentation.dummy.AfternoteEditDummyData
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
@@ -174,24 +176,29 @@ private fun GalleryAndFileEditContentPreview() {
 @Composable
 private fun GalleryAndFileEditContentWithMainPageEditReceiversPreview() {
     AfternoteTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
         ) {
-            GalleryAndFileEditContent(
-                bottomPadding = PaddingValues(bottom = 88.dp),
-                params = GalleryAndFileEditContentParams(
-                    messageState = rememberTextFieldState(),
-                    infoMethodSection = InfoMethodSection(
-                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
-                        onMethodSelected = {}
-                    ),
-                    mainPageEditReceiverSection = MainPageEditReceiverSection(
-                        mainPageEditReceivers = AfternoteEditDummyData.defaultMainPageEditReceivers()
+            val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                GalleryAndFileEditContent(
+                    bottomPadding = PaddingValues(bottom = 88.dp),
+                    params = GalleryAndFileEditContentParams(
+                        messageState = rememberTextFieldState(),
+                        infoMethodSection = InfoMethodSection(
+                            selectedMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_MAINPAGE_EDIT_RECEIVER,
+                            onMethodSelected = {}
+                        ),
+                        mainPageEditReceiverSection = MainPageEditReceiverSection(
+                            mainPageEditReceivers = provider.getMainPageEditReceivers()
+                        )
                     )
                 )
-            )
+            }
         }
     }
 }
