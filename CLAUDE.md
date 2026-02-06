@@ -26,6 +26,7 @@ Please refer to the following specific rule files:
 - @.cursor/rules/workflow/claude-md-sync.mdc - *Keep CLAUDE.md in sync when Cursor rules change*
 - @.cursor/rules/workflow/created-modified-checks.mdc - *Commitlint, ktlint, app distribution checks*
 - @.cursor/rules/workflow/debugging-investigation.mdc - *Debugging and investigation — log first*
+- @.cursor/rules/workflow/execute-dont-instruct.mdc - *Execute requested actions instead of only giving instructions*
 - @.cursor/rules/workflow/git-policy.mdc - *Git 작업 및 브랜치 관리 정책*
 - @.cursor/rules/workflow/pr-ci-checks.mdc - *PR/CI required checks — commitlint, ktlint, build*
 - @.cursor/rules/workflow/pull-request-review.mdc - *Pull Request 작성 및 코드 리뷰 규칙*

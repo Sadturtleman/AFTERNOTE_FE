@@ -64,11 +64,13 @@ fun NavGraphBuilder.mainPageNavGraph(
     afternoteProvider: AfternoteEditDataProvider
 ) {
     mainPageComposable<MainPageRoute.MainRoute> {
+        val mainListItems =
+            afternoteItems.ifEmpty { afternoteProvider.getMainPageItemsForDev() }
         AfternoteMainRoute(
             onNavigateToDetail = { navController.navigate(MainPageRoute.DetailRoute) },
             onNavigateToGalleryDetail = { navController.navigate(MainPageRoute.GalleryDetailRoute) },
             onNavigateToAdd = { navController.navigate(MainPageRoute.EditRoute) },
-            initialItems = AfternoteItemMapper.toAfternoteItems(afternoteItems)
+            initialItems = AfternoteItemMapper.toAfternoteItems(mainListItems)
         )
     }
 
@@ -137,7 +139,7 @@ fun NavGraphBuilder.mainPageNavGraph(
 
     mainPageComposable<MainPageRoute.AddSongRoute> {
         AddSongScreen(
-            songs = emptyList(), // TODO: 추후 실제 검색 결과로 교체
+            songs = afternoteProvider.getAddSongSearchResults(),
             callbacks = AddSongCallbacks(
                 onBackClick = { navController.popBackStack() },
                 onSongsAdded = { added ->

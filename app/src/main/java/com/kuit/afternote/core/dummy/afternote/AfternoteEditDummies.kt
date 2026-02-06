@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.dummy.afternote
 
+import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
 
@@ -9,22 +10,28 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Son
  */
 object AfternoteEditDummies {
     /**
-     * Default main page items (service name to date) for dev "main with items" screen.
-     * Replace with API load when backend is ready.
-     */
-    fun defaultMainPageItemsForDev(): List<Pair<String, String>> =
-        listOf(
-            "갤러리" to "2025.01.28",
-            "추모 가이드라인" to "2025.01.28"
-        )
-
-    /**
      * Default main page edit receivers for edit screen. Replace with API load when backend is ready.
      */
     fun defaultMainPageEditReceivers(): List<MainPageEditReceiver> =
         listOf(
             MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
             MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
+        )
+
+    /**
+     * Default search-result songs for Add Song screen. Replace with real search API when ready.
+     */
+    fun defaultAddSongSearchResults(): List<PlaylistSongDisplay> =
+        listOf(
+            PlaylistSongDisplay(id = "1", title = "보고싶다", artist = "김범수"),
+            PlaylistSongDisplay(id = "2", title = "사랑했나봐", artist = "윤도현"),
+            PlaylistSongDisplay(id = "3", title = "나의 옛날이야기", artist = "김광석"),
+            PlaylistSongDisplay(id = "4", title = "그대와 영원히", artist = "이문세"),
+            PlaylistSongDisplay(id = "5", title = "흩어진 꿈", artist = "넬"),
+            PlaylistSongDisplay(id = "6", title = "안녕", artist = "폴킴"),
+            PlaylistSongDisplay(id = "7", title = "첫눈처럼 너에게 가겠다", artist = "에일리"),
+            PlaylistSongDisplay(id = "8", title = "너를 만나", artist = "폴킴"),
+            PlaylistSongDisplay(id = "9", title = "겨울비", artist = "박효신")
         )
 
     /**

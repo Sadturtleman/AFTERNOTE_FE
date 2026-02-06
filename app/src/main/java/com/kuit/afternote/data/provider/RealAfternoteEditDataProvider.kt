@@ -1,6 +1,7 @@
 package com.kuit.afternote.data.provider
 
 import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
 import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
@@ -14,4 +15,5 @@ class RealAfternoteEditDataProvider @Inject constructor() : AfternoteEditDataPro
     override fun getMainPageEditReceivers(): List<MainPageEditReceiver> = emptyList()
     override fun getMainPageItemsForDev(): List<Pair<String, String>> = emptyList()
     override fun getAlbumCovers(): List<AlbumCover> = emptyList()
+    override fun getAddSongSearchResults(): List<PlaylistSongDisplay> = emptyList()
 }
