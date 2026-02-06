@@ -211,7 +211,7 @@ import retrofit2.Response
 
 1. **변경 전 빌드 확인**: 구조 변경 전에 현재 상태가 빌드되는지 확인 (`./gradlew :app:compileDebugKotlin`)
 2. **사용처 전체 검색**: 이동/변경할 파일이 사용되는 모든 위치를 `grep`으로 검색하여 리스트업
-   - 예: `grep -r "ClassName" app/src/main/java/com/kuit/afternote/feature/mainpage`
+   - 예: `grep -r "ClassName" app/src/main/java/com/kuit/afternote/feature/afternote`
 3. **Import 경로 일괄 변경**: 모든 사용처의 import 경로를 한 번에 변경 (단계적으로 하지 말고 전체를 먼저 파악)
 4. **변수/함수명 변경 시**: 변수명이나 함수명을 변경할 때는 `grep`으로 모든 사용처 확인 후 일괄 변경
 5. **변경 후 즉시 빌드 검증**: 파일 이동/변경 후 반드시 빌드하여 컴파일 오류 확인

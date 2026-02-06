@@ -7,7 +7,7 @@ import androidx.compose.runtime.Immutable
  *
  * Feature별 Song/Entity는 각자 [PlaylistSongDisplay]로 매핑하여 사용.
  *
- * @param id 클릭·선택 시 구분용 (mainpage: String, receiver: Int.toString() 등)
+ * @param id 클릭·선택 시 구분용 (afternote: String, receiver: Int.toString() 등)
  * @param title 노래 제목
  * @param artist 가수명
  */

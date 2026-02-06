@@ -1,8 +1,8 @@
 package com.kuit.afternote.core.dummy.afternote
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
 
 /**
  * Dummy data for 애프터노트 수정 화면 (플레이리스트, 수신자 등).
@@ -10,12 +10,12 @@ import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.Son
  */
 object AfternoteEditDummies {
     /**
-     * Default main page edit receivers for edit screen. Replace with API load when backend is ready.
+     * Default afternote edit receivers for edit screen. Replace with API load when backend is ready.
      */
-    fun defaultMainPageEditReceivers(): List<MainPageEditReceiver> =
+    fun defaultAfternoteEditReceivers(): List<AfternoteEditReceiver> =
         listOf(
-            MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-            MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
+            AfternoteEditReceiver(id = "1", name = "김지은", label = "친구"),
+            AfternoteEditReceiver(id = "2", name = "박선호", label = "가족")
         )
 
     /**

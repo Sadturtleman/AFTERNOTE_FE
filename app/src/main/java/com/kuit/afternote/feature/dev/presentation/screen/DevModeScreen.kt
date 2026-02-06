@@ -42,13 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -59,7 +58,6 @@ import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeUiState
 import com.kuit.afternote.feature.dev.presentation.viewmodel.DevModeViewModel
-import com.kuit.afternote.ui.theme.AfternoteTheme
 
 data class ScreenInfo(
     val name: String,
@@ -532,90 +530,6 @@ private fun TestAccountInfo(isLoggedIn: Boolean) {
             text = "local.properties에 TEST_EMAIL, TEST_PASSWORD 설정 후 앱 재빌드 필요",
             fontSize = 10.sp,
             color = Color.Gray
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun DevModeScreenLoggedOutPreview() {
-    AfternoteTheme {
-        DevModeContent(
-            screens = listOf(
-                ScreenInfo("메인 화면", "main"),
-                ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
-                ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
-                ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
-                ScreenInfo("설정 화면", "setting_main")
-            ),
-            uiState = DevModeUiState(isLoggedIn = false),
-            callbacks = DevModeContentCallbacks(
-                onScreenClick = {},
-                onUserModeClick = {},
-                onQuickLoginClick = {},
-                onLogoutClick = {},
-                onCreateQuickTestAccountClick = {},
-                onPasswordCycleClick = { _, _ -> }
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun DevModeScreenLoggedInPreview() {
-    AfternoteTheme {
-        DevModeContent(
-            screens = listOf(
-                ScreenInfo("메인 화면", "main"),
-                ScreenInfo("메인 화면 (빈 상태)", "main_empty"),
-                ScreenInfo("메인 화면 (목록 있음)", "main_with_items"),
-                ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
-                ScreenInfo("설정 화면", "setting_main")
-            ),
-            uiState = DevModeUiState(
-                isLoggedIn = true,
-                userEmail = "test@example.com"
-            ),
-            callbacks = DevModeContentCallbacks(
-                onScreenClick = {},
-                onUserModeClick = {},
-                onQuickLoginClick = {},
-                onLogoutClick = {},
-                onCreateQuickTestAccountClick = {},
-                onPasswordCycleClick = { _, _ -> }
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LoginStatusCardLoggedOutPreview() {
-    AfternoteTheme {
-        LoginStatusCard(
-            uiState = DevModeUiState(isLoggedIn = false),
-            onQuickLoginClick = {},
-            onLogoutClick = {},
-            onCreateQuickTestAccountClick = {},
-            onPasswordCycleClick = { _, _ -> }
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LoginStatusCardLoggedInPreview() {
-    AfternoteTheme {
-        LoginStatusCard(
-            uiState = DevModeUiState(
-                isLoggedIn = true,
-                userEmail = "test@example.com"
-            ),
-            onQuickLoginClick = {},
-            onLogoutClick = {},
-            onCreateQuickTestAccountClick = {},
-            onPasswordCycleClick = { _, _ -> }
         )
     }
 }

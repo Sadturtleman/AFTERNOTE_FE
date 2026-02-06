@@ -12,7 +12,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
@@ -189,13 +189,13 @@ private fun ReceiverListRouteContent(navController: NavController) {
     val listViewModel: ReceiverListViewModel = hiltViewModel()
     val listState by listViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { listViewModel.loadReceivers() }
-    val receiversAsMainPage = listState.receivers.map { r ->
-        MainPageEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
+    val receiversAsAfternote = listState.receivers.map { r ->
+        AfternoteEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
     }
     ReceiverManagementScreen(
         onBackClick = { navController.popBackStack() },
         onRegisterClick = { navController.navigate(SettingRoute.ReceiverRegisterRoute) },
-        receivers = receiversAsMainPage,
+        receivers = receiversAsAfternote,
         onReceiverClick = { receiver ->
             navController.navigate(SettingRoute.ReceiverDetailRoute(receiverId = receiver.id))
         }

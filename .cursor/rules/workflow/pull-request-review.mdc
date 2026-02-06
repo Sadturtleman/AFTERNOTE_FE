@@ -17,7 +17,7 @@ alwaysApply: true
 - **Types**: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`, `build`, `ci`, `perf`
 
 #### 예시
-- `feat(mainpage): 애프터노트 작성 화면 플레이리스트 곡 수 동기화`
+- `feat(afternote): 애프터노트 작성 화면 플레이리스트 곡 수 동기화`
 - `fix(edit): 노래 추가 화면 뒤로가기 시 잘못된 카테고리 복원 문제`
 - `refactor(nav): MemorialPlaylist 공유 상태 holder 도입`
 

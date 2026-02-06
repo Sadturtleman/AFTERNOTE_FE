@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -49,8 +49,8 @@ fun ReceiverManagementScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
-    receivers: List<MainPageEditReceiver> = emptyList(),
-    onReceiverClick: (MainPageEditReceiver) -> Unit = {}
+    receivers: List<AfternoteEditReceiver> = emptyList(),
+    onReceiverClick: (AfternoteEditReceiver) -> Unit = {}
 ) {
     val groupedReceivers = remember(receivers) {
         KoreanConsonantUtil.groupByInitialConsonant(receivers) { it.name }
@@ -129,8 +129,8 @@ fun ReceiverManagementScreen(
 private fun ConsonantSection(
     modifier: Modifier = Modifier,
     consonant: Char,
-    receivers: List<MainPageEditReceiver>,
-    onReceiverClick: (MainPageEditReceiver) -> Unit
+    receivers: List<AfternoteEditReceiver>,
+    onReceiverClick: (AfternoteEditReceiver) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -171,8 +171,8 @@ private fun ConsonantSection(
 
 @Composable
 private fun ReceiverManagementItem(
-    receiver: MainPageEditReceiver,
-    onReceiverClick: (MainPageEditReceiver) -> Unit
+    receiver: AfternoteEditReceiver,
+    onReceiverClick: (AfternoteEditReceiver) -> Unit
 ) {
     Row(
         modifier = Modifier
