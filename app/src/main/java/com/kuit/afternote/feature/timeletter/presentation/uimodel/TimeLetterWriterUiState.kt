@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.timeletter.presentation.uimodel
 
+import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
+
 /**
  * 타임레터 작성 화면의 UI 상태
  *
@@ -14,6 +16,8 @@ package com.kuit.afternote.feature.timeletter.presentation.uimodel
  * @property showTimePicker TimePicker 표시 여부
  * @property draftCount 임시저장된 레터 개수
  * @property showWritingPlusMenu 더보기(작성 플러스) 메뉴 표시 여부
+ * @property showRecipientDropdown 수신자 선택 드롭다운 표시 여부
+ * @property receivers 수신자 목록 (GET /users/receivers와 동일 소스)
  */
 data class TimeLetterWriterUiState(
     val recipientName: String = "",
@@ -26,5 +30,7 @@ data class TimeLetterWriterUiState(
     val showDatePicker: Boolean = false,
     val showTimePicker: Boolean = false,
     val draftCount: Int = 0,
-    val showWritingPlusMenu: Boolean = false
+    val showWritingPlusMenu: Boolean = false,
+    val showRecipientDropdown: Boolean = false,
+    val receivers: List<TimeLetterReceiver> = emptyList()
 )

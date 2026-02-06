@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.HorizontalDivider
@@ -47,13 +50,19 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
+import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
 import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
+import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
+import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
 import java.time.LocalDate
 import java.time.LocalTime
+
+private val RecipientDropdownMaxHeight = 300.dp
 
 /**
  * 타임레터 작성 화면
@@ -82,6 +91,10 @@ import java.time.LocalTime
  * @param showWritingPlusMenu 더보기(작성 플러스) 메뉴 표시 여부
  * @param onMoreClick 더보기 아이콘 클릭 콜백
  * @param onDismissPlusMenu 더보기 메뉴 닫기 콜백
+ * @param receivers 수신자 목록 (드롭다운에 표시)
+ * @param showRecipientDropdown 수신자 선택 드롭다운 표시 여부
+ * @param onRecipientDropdownDismiss 수신자 드롭다운 닫기 콜백
+ * @param onReceiverSelected 수신자 선택 콜백
  * @param modifier Modifier
  */
 @Composable
@@ -110,7 +123,11 @@ fun TimeLetterWriterScreen(
     onTimeSelected: (hour: Int, minute: Int) -> Unit = { _, _ -> },
     showWritingPlusMenu: Boolean = false,
     onMoreClick: () -> Unit = {},
-    onDismissPlusMenu: () -> Unit = {}
+    onDismissPlusMenu: () -> Unit = {},
+    receivers: List<TimeLetterReceiver> = emptyList(),
+    showRecipientDropdown: Boolean = false,
+    onRecipientDropdownDismiss: () -> Unit = {},
+    onReceiverSelected: (TimeLetterReceiver) -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
@@ -127,6 +144,44 @@ fun TimeLetterWriterScreen(
                 properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
             ) {
                 WritingPlusMenu()
+            }
+        }
+
+        if (showRecipientDropdown) {
+            val groupedReceivers = groupByChosung(receivers) { it.receiver_name }
+            val topBarHeightPx = with(density) { 44.dp.roundToPx() }
+            val dropdownOffsetY = WindowInsets.statusBars.getTop(density) + topBarHeightPx
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(0, dropdownOffsetY),
+                onDismissRequest = onRecipientDropdownDismiss,
+                properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(RecipientDropdownMaxHeight)
+                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
+                        .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
+                        .background(Color.White)
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        chosungGroupedItems(groupedReceivers) { receiver ->
+                            Box(
+                                modifier = Modifier.clickable {
+                                    onReceiverSelected(receiver)
+                                    onRecipientDropdownDismiss()
+                                }
+                            ) {
+                                ReceiverInfoItem(receiver = receiver)
+                            }
+                        }
+                    }
+                }
             }
         }
         Scaffold(
@@ -160,15 +215,15 @@ fun TimeLetterWriterScreen(
                         ) {
                             Text(
                                 text = "${recipientName}님께",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = FontFamily(Font(R.font.sansneoregular)),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight(700),
+                                fontFamily = FontFamily(Font(R.font.sansneobold)),
                                 color = Color(0xFF212121)
                             )
                             Image(
                                 painter = painterResource(R.drawable.ic_down),
                                 contentDescription = "수신자 선택",
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier = Modifier.padding(start = 14.dp)
                             )
                         }
 
