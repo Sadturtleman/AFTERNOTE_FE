@@ -43,6 +43,7 @@ Please refer to the following specific rule files:
 ### Quality
 
 - @.cursor/rules/quality/code-quality.mdc - *코드 품질, 포맷팅, 테스트 규칙*
+- @.cursor/rules/quality/k2-compose-assigned-value-suppress.mdc - *K2 false positive "Assigned value is never read" in Compose — suppress and document*
 
 ---
 

@@ -25,16 +25,21 @@ class ProcessingMethodListState(
 
     val expandedStates = mutableStateMapOf<String, Boolean>()
 
+    /** Stored from constructor for use when [initializeExpandedStates] is called with null. */
+    private val defaultExpandedItemId: String? = initialExpandedItemId
+
     /**
      * 초기화: 아이템들의 expanded 상태 설정
+     * @param initialExpandedItemId 아이템 id; null이면 생성자에서 받은 [defaultExpandedItemId] 사용
      */
     fun initializeExpandedStates(
         items: List<ProcessingMethodItem>,
         initialExpandedItemId: String?
     ) {
+        val expandedId = initialExpandedItemId ?: defaultExpandedItemId
         items.forEach { item ->
             if (!expandedStates.containsKey(item.id)) {
-                expandedStates[item.id] = initialExpandedItemId == item.id
+                expandedStates[item.id] = expandedId == item.id
             }
         }
     }

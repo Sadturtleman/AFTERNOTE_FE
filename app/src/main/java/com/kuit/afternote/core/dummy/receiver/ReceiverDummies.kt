@@ -140,35 +140,37 @@ object ReceiverDummies {
                 id = "instagram",
                 serviceNameResId = R.string.receiver_afternote_item_instagram,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.img_insta_pattern
             ),
             AfternoteListItemSeed(
                 id = "gallery",
                 serviceNameResId = R.string.receiver_afternote_item_gallery,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.ic_gallery
             ),
             AfternoteListItemSeed(
                 id = "memorial_guideline",
                 serviceNameResId = R.string.receiver_afternote_item_memorial_guideline,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.ic_memorial_guideline
             ),
             AfternoteListItemSeed(
                 id = "naver_mail",
                 serviceNameResId = R.string.receiver_afternote_item_naver_mail,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.img_naver_mail
             )
         )
 
     /**
      * Dummy time letter items for a receiver. Replace with API load by receiverId when backend is ready.
+     * Currently used only for development and previews.
      */
+    @Suppress("unused")
     fun defaultTimeLetterItems(receiverId: String): List<TimeLetterItem> {
         val detail = detailOf(receiverId)
         return List(detail.timeLetterCount.coerceAtLeast(1)) { index ->
@@ -190,7 +192,9 @@ object ReceiverDummies {
 
     /**
      * Dummy daily answer items for a receiver. Replace with API load by receiverId when backend is ready.
+     * Currently used only for development and previews.
      */
+    @Suppress("unused")
     fun dailyAnswerItems(
         receiverId: String,
         question: String,

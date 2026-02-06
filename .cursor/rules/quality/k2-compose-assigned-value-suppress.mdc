@@ -1,0 +1,47 @@
+---
+description: How to handle K2 false positive "Assigned value is never read" in Compose
+globs: "**/*.kt"
+alwaysApply: false
+---
+
+# K2 False Positive: Assigned Value Is Never Read (Compose)
+
+## When This Appears
+
+The IDE (Kotlin K2, Android Studio 2025+) may report **"Assigned value is never read"** when:
+
+1. You **assign** to a state variable inside a lambda (e.g. `showDialog = false` in `onDismiss`, or `selectedDate = date` in `onDateChanged`).
+2. The **read** of that state happens during **recomposition** (e.g. `if (showDialog) { ... }` or `initialDate = selectedDate ?: ...`).
+
+The analyzer does not track usage across the Composable boundary, so it wrongly treats the assignment as unused. This is a **known false positive** (KT-78881, KTIJ-34162).
+
+## What To Do
+
+- **Do not** "fix" it by refactoring the logic (e.g. wrapping in `run { }`) when the code is correct.
+- **Suppress and document:**
+  - Prefer **file-level**: at the top of the file (above `package`), add a short comment and the suppression:
+    ```kotlin
+    // K2 false positive: state assigned in dialog/callback lambdas is read at recomposition (KT-78881).
+    @file:Suppress("AssignedValueIsNeverRead")
+    package ...
+    ```
+  - Or **statement-level** on the assignment line if only one or two lines are affected:
+    ```kotlin
+    onDismiss = {
+        @Suppress("AssignedValueIsNeverRead")
+        showDatePickerDialog = false
+    }
+    ```
+- Always add a brief comment (or reference KT-78881) so future readers know this is a tooling bug, not dead code.
+
+## When The Warning Is Real
+
+If you introduced a **local copy** of state (shadowing), the warning is correct. Example of wrong pattern:
+
+```kotlin
+// ❌ Wrong: local 'show' is updated, not the Compose state
+var show = showDatePickerDialog
+DatePickerDialog(onDismissRequest = { show = false })
+```
+
+Ensure you are assigning to the **actual state property** used in the Composable (e.g. the one from `var x by remember { mutableStateOf(...) }`), not a local variable.

@@ -1,3 +1,5 @@
+// K2 false positive: state assigned in DatePickerDialog lambdas is read at recomposition (KT-78881).
+@file:Suppress("AssignedValueIsNeverRead")
 package com.kuit.afternote.feature.setting.presentation.screen.postdelivery
 
 import androidx.activity.compose.BackHandler
