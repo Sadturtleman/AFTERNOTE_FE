@@ -32,10 +32,6 @@ class DraftLetterViewModel
         private val _uiState = MutableStateFlow(DraftLetterUiState())
         val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
 
-        init {
-            loadTemporaryLetters()
-        }
-
         /**
          * 임시저장 목록 로드 (GET /time-letters/temporary)
          */

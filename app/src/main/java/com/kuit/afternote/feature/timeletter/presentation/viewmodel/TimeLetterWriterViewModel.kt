@@ -3,13 +3,17 @@ package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterStatus
+import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWriterUiState
+import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,19 +23,43 @@ import javax.inject.Inject
  *
  * 편지 작성에 필요한 상태를 관리하고, 임시저장(DRAFT)/정식등록(SCHEDULED)을
  * CreateTimeLetterUseCase로 처리합니다.
+ * 수신자 목록은 설정 화면과 동일한 GET /users/receivers를 사용합니다.
  */
 @HiltViewModel
 class TimeLetterWriterViewModel
     @Inject
     constructor(
         private val createTimeLetterUseCase: CreateTimeLetterUseCase,
-        private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase
+        private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
+        private val getReceiversUseCase: GetReceiversUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(TimeLetterWriterUiState())
         val uiState: StateFlow<TimeLetterWriterUiState> = _uiState.asStateFlow()
 
         init {
             loadDraftCount()
+            loadReceivers()
+        }
+
+        /**
+         * 수신자 목록 로드 (GET /users/receivers, 설정 수신자 목록과 동일 소스)
+         */
+        fun loadReceivers() {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase()
+                if (userId == null) {
+                    _uiState.update { it.copy(receivers = emptyList()) }
+                    return@launch
+                }
+                getReceiversUseCase(userId = userId)
+                    .onSuccess { list ->
+                        _uiState.update { it.copy(receivers = list.toTimeLetterReceivers()) }
+                    }
+                    .onFailure {
+                        _uiState.update { it.copy(receivers = emptyList()) }
+                    }
+            }
         }
 
         /**
@@ -93,6 +121,35 @@ class TimeLetterWriterViewModel
         fun updateSendDate(date: String) {
             _uiState.update { it.copy(sendDate = date) }
             validateSaveEnabled()
+        }
+
+        /**
+         * 더보기(작성 플러스) 메뉴 표시
+         */
+        fun showPlusMenu() {
+            _uiState.update { it.copy(showWritingPlusMenu = true) }
+        }
+
+        /**
+         * 더보기(작성 플러스) 메뉴 숨김
+         */
+        fun hidePlusMenu() {
+            _uiState.update { it.copy(showWritingPlusMenu = false) }
+        }
+
+        /**
+         * 수신자 선택 드롭다운 표시 (열 때마다 목록 갱신)
+         */
+        fun showRecipientDropdown() {
+            loadReceivers()
+            _uiState.update { it.copy(showRecipientDropdown = true) }
+        }
+
+        /**
+         * 수신자 선택 드롭다운 숨김
+         */
+        fun hideRecipientDropdown() {
+            _uiState.update { it.copy(showRecipientDropdown = false) }
         }
 
         /**
@@ -178,7 +235,12 @@ class TimeLetterWriterViewModel
                     mediaList = null
                 )
                 _uiState.update { it.copy(isLoading = false) }
-                result.onSuccess { _ -> onSuccess() }
+                result.onSuccess { _ ->
+                    _uiState.update { it.copy(showRegisteredPopUp = true) }
+                    delay(2000L)
+                    onSuccess()
+                    _uiState.update { it.copy(showRegisteredPopUp = false) }
+                }
                 result.onFailure {
                     // TODO: 에러 메시지 UiState에 반영
                 }
@@ -207,6 +269,9 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess {
                     refreshDraftCount()
+                    _uiState.update { it.copy(showDraftSavePopUp = true) }
+                    delay(2000L)
+                    _uiState.update { it.copy(showDraftSavePopUp = false) }
                     onSuccess()
                 }
                 result.onFailure {

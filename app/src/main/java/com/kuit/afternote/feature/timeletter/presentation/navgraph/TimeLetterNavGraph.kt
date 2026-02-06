@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.timeletter.presentation.navgraph
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,6 +13,7 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScre
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
+import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
 /**
@@ -48,8 +50,13 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
             onNavigateBack = { navController.popBackStack() },
-            onRecipientClick = {
-                // TODO: 수신자 선택 화면으로 이동
+            onRecipientClick = { viewModel.showRecipientDropdown() },
+            receivers = uiState.receivers,
+            showRecipientDropdown = uiState.showRecipientDropdown,
+            onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
+            onReceiverSelected = { receiver ->
+                viewModel.updateRecipientName(receiver.receiver_name)
+                viewModel.hideRecipientDropdown()
             },
             onRegisterClick = {
                 viewModel.saveTimeLetter {
@@ -74,7 +81,12 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTimePickerDismiss = viewModel::hideTimePicker,
             onTimeSelected = { hour, minute ->
                 viewModel.updateSendTime("%02d:%02d".format(hour, minute))
-            }
+            },
+            showWritingPlusMenu = uiState.showWritingPlusMenu,
+            onMoreClick = viewModel::showPlusMenu,
+            onDismissPlusMenu = viewModel::hidePlusMenu,
+            showRegisteredPopUp = uiState.showRegisteredPopUp,
+            showDraftSavePopUp = uiState.showDraftSavePopUp
         )
     }
 
@@ -85,8 +97,11 @@ fun NavGraphBuilder.timeLetterNavGraph(
     }
 
     composable<TimeLetterRoute.ReceiveListRoute> {
+        val receiveListViewModel: ReceiveListViewModel = hiltViewModel()
+        val receiveListState by receiveListViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) { receiveListViewModel.loadReceivers() }
         ReceiveListScreen(
-            receivers = emptyList(), // TODO: ViewModel에서 데이터 가져오기
+            receivers = receiveListState.receivers,
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected
         )

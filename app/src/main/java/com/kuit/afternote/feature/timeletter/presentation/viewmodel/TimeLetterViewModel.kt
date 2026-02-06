@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetter
+import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class TimeLetterViewModel
     @Inject
     constructor(
-        private val getTimeLettersUseCase: GetTimeLettersUseCase
+        private val getTimeLettersUseCase: GetTimeLettersUseCase,
+        private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase
     ) : ViewModel() {
         private val _viewMode = MutableStateFlow(ViewMode.LIST)
         val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
@@ -71,6 +73,19 @@ class TimeLetterViewModel
          */
         fun refreshLetters() {
             loadLetters()
+        }
+
+        /**
+         * 타임레터 삭제 (deleteTimeLetters API 호출)
+         *
+         * @param id 삭제할 타임레터 ID
+         */
+        fun deleteTimeLetter(id: String) {
+            val longId = id.toLongOrNull() ?: return
+            viewModelScope.launch {
+                deleteTimeLettersUseCase(listOf(longId))
+                    .onSuccess { refreshLetters() }
+            }
         }
 
         /**
