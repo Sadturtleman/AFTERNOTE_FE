@@ -104,67 +104,70 @@ private fun SelectableRadioCardPreview() {
             // 선택됨 - 단순 텍스트
             SelectableRadioCard(
                 selected = true,
-                onClick = {}
-            ) {
-                androidx.compose.material3.Text(
-                    text = "선택된 옵션",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
+                onClick = {},
+                content = {
+                    androidx.compose.material3.Text(
+                        text = "선택된 옵션",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
                     )
-                )
-            }
+                }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // 선택 안 됨 - 단순 텍스트
             SelectableRadioCard(
                 selected = false,
-                onClick = {}
-            ) {
-                androidx.compose.material3.Text(
-                    text = "선택 안 된 옵션",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
+                onClick = {},
+                content = {
+                    androidx.compose.material3.Text(
+                        text = "선택 안 된 옵션",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
                     )
-                )
-            }
+                }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // 선택됨 - 제목 + 설명
             SelectableRadioCard(
                 selected = true,
-                onClick = {}
-            ) {
-                androidx.compose.material3.Text(
-                    text = "제목 텍스트",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
+                onClick = {},
+                content = {
+                    androidx.compose.material3.Text(
+                        text = "제목 텍스트",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
                     )
-                )
-                androidx.compose.material3.Text(
-                    text = "설명 텍스트",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray9
+                    androidx.compose.material3.Text(
+                        text = "설명 텍스트",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray9
+                        )
                     )
-                )
-            }
+                }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -172,19 +175,20 @@ private fun SelectableRadioCardPreview() {
             SelectableRadioCard(
                 selected = false,
                 onClick = {},
-                borderWhenUnselected = true
-            ) {
-                androidx.compose.material3.Text(
-                    text = "보더가 있는 선택 안 된 옵션",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
+                borderWhenUnselected = true,
+                content = {
+                    androidx.compose.material3.Text(
+                        text = "보더가 있는 선택 안 된 옵션",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
                     )
-                )
-            }
+                }
+            )
         }
     }
 }
