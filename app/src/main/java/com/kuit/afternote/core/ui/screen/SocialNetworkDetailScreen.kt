@@ -40,9 +40,11 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
- * Display data for [AfternoteDetailScreen].
+ * Display data for [SocialNetworkDetailScreen].
+ *
+ * Used for 소셜 네트워크 (and OTHER) category afternote detail.
  */
-data class AfternoteDetailContent(
+data class SocialNetworkDetailContent(
     val serviceName: String = "인스타그램",
     val userName: String = "서영",
     val accountId: String = "",
@@ -54,7 +56,7 @@ data class AfternoteDetailContent(
 )
 
 /**
- * 애프터노트 상세 화면
+ * 소셜 네트워크 애프터노트 상세 화면.
  *
  * 피그마 디자인 기반:
  * - 헤더 (뒤로가기, 타이틀, 편집 버튼)
@@ -70,9 +72,9 @@ data class AfternoteDetailContent(
  * @param isEditable true이면 편집/삭제 기능 표시 (작성자 모드), false이면 읽기 전용 (수신자 모드)
  */
 @Composable
-fun AfternoteDetailScreen(
+fun SocialNetworkDetailScreen(
     modifier: Modifier = Modifier,
-    content: AfternoteDetailContent = AfternoteDetailContent(),
+    content: SocialNetworkDetailContent = SocialNetworkDetailContent(),
     isEditable: Boolean = true,
     onBackClick: () -> Unit,
     onEditClick: () -> Unit = {},
@@ -118,7 +120,7 @@ fun AfternoteDetailScreen(
                 .padding(paddingValues)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                AfternoteDetailScrollContent(content = content)
+                SocialNetworkDetailScrollContent(content = content)
             }
             if (isEditable) {
                 Box(
@@ -139,7 +141,7 @@ fun AfternoteDetailScreen(
 }
 
 @Composable
-private fun AfternoteDetailScrollContent(content: AfternoteDetailContent) {
+private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -305,10 +307,10 @@ private fun AccountProcessingMethodText(accountProcessingMethod: String) {
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
 )
 @Composable
-private fun AfternoteDetailScreenPreview() {
+private fun SocialNetworkDetailScreenPreview() {
     AfternoteTheme {
-        AfternoteDetailScreen(
-            content = AfternoteDetailContent(
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(
                 accountId = "qwerty123",
                 password = "qwerty123",
                 accountProcessingMethod = "MEMORIAL_ACCOUNT",
@@ -324,18 +326,18 @@ private fun AfternoteDetailScreenPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "AfternoteDetailScreen with Delete Dialog"
+    name = "SocialNetworkDetailScreen with Delete Dialog"
 )
 @Composable
-private fun AfternoteDetailScreenWithDeleteDialogPreview() {
+private fun SocialNetworkDetailScreenWithDeleteDialogPreview() {
     AfternoteTheme {
         val stateWithDialog = remember {
             AfternoteDetailState().apply {
                 showDeleteDialog()
             }
         }
-        AfternoteDetailScreen(
-            content = AfternoteDetailContent(),
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(),
             onBackClick = {},
             onEditClick = {},
             state = stateWithDialog
@@ -346,18 +348,18 @@ private fun AfternoteDetailScreenWithDeleteDialogPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "AfternoteDetailScreen with Edit Dropdown Menu"
+    name = "SocialNetworkDetailScreen with Edit Dropdown Menu"
 )
 @Composable
-private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
+private fun SocialNetworkDetailScreenWithEditDropdownMenuPreview() {
     AfternoteTheme {
         val stateWithDropdown = remember {
             AfternoteDetailState().apply {
                 toggleDropdownMenu()
             }
         }
-        AfternoteDetailScreen(
-            content = AfternoteDetailContent(),
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(),
             onBackClick = {},
             onEditClick = {},
             state = stateWithDropdown
@@ -368,13 +370,13 @@ private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "AfternoteDetailScreen - Receiver Mode (Read Only)"
+    name = "SocialNetworkDetailScreen - Receiver Mode (Read Only)"
 )
 @Composable
-private fun AfternoteDetailScreenReceiverModePreview() {
+private fun SocialNetworkDetailScreenReceiverModePreview() {
     AfternoteTheme {
-        AfternoteDetailScreen(
-            content = AfternoteDetailContent(),
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(),
             isEditable = false,
             onBackClick = {},
             state = rememberAfternoteDetailState(

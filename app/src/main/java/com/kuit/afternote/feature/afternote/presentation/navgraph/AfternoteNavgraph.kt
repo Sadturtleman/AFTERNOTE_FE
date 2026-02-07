@@ -5,10 +5,17 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
@@ -19,8 +26,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.screen.AfternoteDetailContent
-import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
+import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
@@ -28,6 +36,7 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScr
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
 import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
@@ -107,6 +116,28 @@ private fun AfternoteListRouteContent(
     )
 }
 
+/** Detail categories that have a designed screen: 갤러리 및 파일 (own route), 소셜 네트워크 (this route). */
+private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
+
+@Composable
+private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopBar(title = "", onBackClick = onBackClick)
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(Modifier.padding(paddingValues)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = stringResource(R.string.design_pending))
+        }
+    }
+}
+
 @Composable
 private fun AfternoteDetailRouteContent(
     backStackEntry: NavBackStackEntry,
@@ -116,24 +147,26 @@ private fun AfternoteDetailRouteContent(
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
     val item = listItems.find { it.id == route.itemId }
-    AfternoteDetailScreen(
-        content = AfternoteDetailContent(
-            serviceName = item?.serviceName ?: "",
-            userName = userName,
-            accountId = item?.accountId ?: "",
-            password = item?.password ?: "",
-            accountProcessingMethod = item?.accountProcessingMethod ?: "",
-            processingMethods = item?.processingMethods?.map { it.text } ?: emptyList(),
-            message = item?.message ?: "",
-            finalWriteDate = item?.date ?: "2025.11.26."
-        ),
-        onBackClick = { navController.popBackStack() },
-        onEditClick = {
-            if (item != null) {
-                navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
-            }
-        }
-    )
+    val showDesignPending = item == null || item.type !in DESIGNED_DETAIL_TYPES
+
+    if (showDesignPending) {
+        DesignPendingDetailContent(onBackClick = { navController.popBackStack() })
+    } else {
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(
+                serviceName = item.serviceName,
+                userName = userName,
+                accountId = item.accountId,
+                password = item.password,
+                accountProcessingMethod = item.accountProcessingMethod,
+                processingMethods = item.processingMethods.map { it.text },
+                message = item.message,
+                finalWriteDate = item.date
+            ),
+            onBackClick = { navController.popBackStack() },
+            onEditClick = { navController.navigate(AfternoteRoute.EditRoute(itemId = item.id)) }
+        )
+    }
 }
 
 @Composable

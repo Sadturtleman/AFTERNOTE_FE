@@ -25,9 +25,9 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.screen.AfternoteDetailContent
-import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
@@ -228,8 +228,8 @@ private fun ReceiverAfternoteDetailContent(
     val serviceName = seed?.serviceNameLiteral ?: ""
     val userName = receiverProvider.getDefaultReceiverTitleForDev()
     AfternoteTheme(darkTheme = false) {
-        AfternoteDetailScreen(
-            content = AfternoteDetailContent(
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(
                 serviceName = serviceName,
                 userName = userName
             ),

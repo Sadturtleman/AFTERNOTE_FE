@@ -84,7 +84,7 @@ object AfternoteItemMapper {
     /**
      * Dev 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
      *
-     * AfternoteDetailScreen: id="qwerty123", pw="qwerty123", method=추모 계정,
+     * SocialNetworkDetailScreen: id="qwerty123", pw="qwerty123", method=추모 계정,
      *   processing=["게시물 내리기","추모 게시물 올리기","추모 계정으로 전환하기"],
      *   message="이 계정에는 우리 가족 여행 사진이 많아.…"
      *
