@@ -25,12 +25,15 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
@@ -225,9 +228,11 @@ private fun ReceiverAfternoteDetailContent(
     val serviceName = seed?.serviceNameLiteral ?: ""
     val userName = receiverProvider.getDefaultReceiverTitleForDev()
     AfternoteTheme(darkTheme = false) {
-        AfternoteDetailScreen(
-            serviceName = serviceName,
-            userName = userName,
+        SocialNetworkDetailScreen(
+            content = SocialNetworkDetailContent(
+                serviceName = serviceName,
+                userName = userName
+            ),
             isEditable = false,
             onBackClick = { navHostController.popBackStack() },
             state = rememberAfternoteDetailState(
@@ -243,6 +248,7 @@ fun NavGraph(navHostController: NavHostController) {
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
+    val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = devModeScreensList
 
@@ -265,7 +271,11 @@ fun NavGraph(navHostController: NavHostController) {
             onItemsUpdated = { afternoteItems = it },
             playlistStateHolder = playlistStateHolder,
             afternoteProvider = afternoteProvider,
-            userName = receiverProvider.getDefaultReceiverTitleForDev()
+            userName = receiverProvider.getDefaultReceiverTitleForDev(),
+            editStateHandling = AfternoteEditStateHandling(
+                holder = afternoteEditStateHolder,
+                onClear = { afternoteEditStateHolder.value = null }
+            )
         )
         timeLetterNavGraph(navController = navHostController)
         settingNavGraph(navController = navHostController)

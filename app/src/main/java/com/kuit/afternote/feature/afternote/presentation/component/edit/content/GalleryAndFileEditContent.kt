@@ -25,7 +25,8 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.In
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodListParams
-import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
+import com.kuit.afternote.core.ui.component.SelectableRadioCard
+import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -73,20 +74,32 @@ private fun GalleryAndFileEditContentBody(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ProcessingMethodRadioButton(
-            option = InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
+        SelectableRadioCard(
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
-            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER) }
+            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER) },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                OptionRadioCardContent(
+                    option = InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
+                    selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        ProcessingMethodRadioButton(
-            option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
+        SelectableRadioCard(
             selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
             onClick = {
                 params.infoMethodSection.onMethodSelected(
                     InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                OptionRadioCardContent(
+                    option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
+                    selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER
                 )
             }
         )

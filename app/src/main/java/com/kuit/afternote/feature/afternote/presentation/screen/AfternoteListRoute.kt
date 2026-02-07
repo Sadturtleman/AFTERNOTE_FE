@@ -10,6 +10,7 @@ import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
 
 /**
@@ -54,7 +55,8 @@ fun AfternoteListRoute(
             onTabSelected = { viewModel.onEvent(AfternoteListEvent.SelectTab(it)) },
             onItemClick = { itemId ->
                 val item = uiState.items.find { it.id == itemId } ?: return@AfternoteListScreenListParams
-                if (item.serviceName == "갤러리") {
+                // Design has two detail screens only: Social Network, Gallery and Files. Others use Social-style detail.
+                if (item.type == ServiceType.GALLERY_AND_FILES) {
                     onNavigateToGalleryDetail(itemId)
                 } else {
                     onNavigateToDetail(itemId)

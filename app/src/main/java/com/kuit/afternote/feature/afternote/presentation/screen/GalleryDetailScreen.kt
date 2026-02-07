@@ -63,10 +63,8 @@ data class GalleryDetailState(
     val userName: String = "서영",
     val finalWriteDate: String = "2025.11.26.",
     val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList(),
-    val processingMethods: List<String> = listOf(
-        "'엽사' 폴더 박선호에게 전송",
-        "'흑역사' 폴더 삭제"
-    ),
+    val informationProcessingMethod: String = "",
+    val processingMethods: List<String> = emptyList(),
     val message: String = ""
 )
 
@@ -246,7 +244,10 @@ private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
 @Composable
 private fun CardSection(detailState: GalleryDetailState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        DateAndMethodCard(finalWriteDate = detailState.finalWriteDate)
+        DateAndMethodCard(
+            finalWriteDate = detailState.finalWriteDate,
+            informationProcessingMethod = detailState.informationProcessingMethod
+        )
         AfternoteEditReceiversCard(afternoteEditReceivers = detailState.afternoteEditReceivers)
         ProcessingMethodsCard(processingMethods = detailState.processingMethods)
         MessageCard(message = detailState.message)
@@ -276,7 +277,10 @@ private fun TitleSection(
 }
 
 @Composable
-private fun DateAndMethodCard(finalWriteDate: String) {
+private fun DateAndMethodCard(
+    finalWriteDate: String,
+    informationProcessingMethod: String
+) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
         content = {
@@ -291,23 +295,42 @@ private fun DateAndMethodCard(finalWriteDate: String) {
                         color = Gray6
                     )
                 )
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = B1)) {
-                            append("추가 수신자")
-                        }
-                        append("에게 정보 전달")
-                    },
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                InformationProcessingMethodText(
+                    informationProcessingMethod = informationProcessingMethod
                 )
             }
         }
+    )
+}
+
+/**
+ * 정보 처리 방법 표시 텍스트
+ * informationProcessingMethod enum name → 사용자에게 보여줄 텍스트로 변환
+ */
+@Composable
+private fun InformationProcessingMethodText(informationProcessingMethod: String) {
+    val annotatedText = when (informationProcessingMethod) {
+        "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
+            withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+            append("에게 정보 전달")
+        }
+        "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
+            withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+            append("에게 정보 전달")
+        }
+        else -> buildAnnotatedString {
+            append(informationProcessingMethod)
+        }
+    }
+    Text(
+        text = annotatedText,
+        style = TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 22.sp,
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Medium,
+            color = Gray9
+        )
     )
 }
 
@@ -465,7 +488,10 @@ private fun AfternoteEditReceiverDetailItem(
 private fun GalleryDetailScreenPreview() {
     AfternoteLightTheme {
         GalleryDetailScreen(
-            detailState = GalleryDetailState(),
+            detailState = GalleryDetailState(
+                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
+            ),
             callbacks = GalleryDetailCallbacks(
                 onBackClick = {},
                 onEditClick = {}
@@ -486,7 +512,10 @@ private fun GalleryDetailScreenWithDialogPreview() {
         uiState.showDeleteDialog()
 
         GalleryDetailScreen(
-            detailState = GalleryDetailState(),
+            detailState = GalleryDetailState(
+                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
+            ),
             callbacks = GalleryDetailCallbacks(
                 onBackClick = {},
                 onEditClick = {}

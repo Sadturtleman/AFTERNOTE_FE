@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
@@ -64,6 +66,7 @@ class MemorialPlaylistStateHolder {
     }
 }
 
+private const val TAG = "AfternoteEditState"
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CUSTOM_ADD_OPTION = "직접 추가하기"
 
@@ -121,6 +124,10 @@ class AfternoteEditState(
     var relationshipSelectedValue by mutableStateOf("친구")
         private set
     var activeDialog by mutableStateOf<DialogType?>(null)
+        private set
+
+    // Which item we last loaded (so we don't overwrite when returning from sub-route)
+    var loadedItemId: String? by mutableStateOf(null)
         private set
 
     // Processing Method Lists (empty until loaded; use dummies only in Previews)
@@ -287,8 +294,15 @@ class AfternoteEditState(
     /**
      * 영정사진 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
      */
-    fun onMemorialPhotoSelected(uri: android.net.Uri?) {
+    fun onMemorialPhotoSelected(uri: Uri?) {
         pickedMemorialPhotoUri = uri?.toString()
+    }
+
+    /**
+     * 추모 영상 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+     */
+    fun onFuneralVideoSelected(uri: Uri?) {
+        funeralVideoUrl = uri?.toString()
     }
 
     fun showAddAfternoteEditReceiverDialog() {
@@ -376,39 +390,58 @@ class AfternoteEditState(
 
     /**
      * Pre-fill state from an existing afternote item (when editing).
-     * Sets category, service, and processing method lists from the item.
+     * Sets category, service, text fields, and processing method lists.
+     * `params.itemId` is stored so we do not overwrite the form when returning from a sub-route.
      */
-    fun loadFromExisting(
-        serviceName: String,
-        processingMethodsList: List<ProcessingMethodItem>,
-        galleryProcessingMethodsList: List<ProcessingMethodItem>
-    ) {
-        selectedService = serviceName
-        selectedCategory = categoryFromServiceName(serviceName)
-        processingMethods = processingMethodsList
-        galleryProcessingMethods = galleryProcessingMethodsList
-    }
+    fun loadFromExisting(params: LoadFromExistingParams) {
+        Log.d(
+            TAG,
+            "loadFromExisting: itemId=${params.itemId}, serviceName=${params.serviceName}, " +
+                "category=${AfternoteItemMapper.categoryStringForEditScreen(params.serviceName)}, " +
+                "accountId=${params.accountId}, message=${params.message.take(20)}, " +
+                "accountPM=${params.accountProcessingMethodName}, infoPM=${params.informationProcessingMethodName}, " +
+                "processingMethods=${params.processingMethodsList.size}, " +
+                "galleryProcessingMethods=${params.galleryProcessingMethodsList.size}"
+        )
+        loadedItemId = params.itemId
+        selectedService = params.serviceName
+        selectedCategory = AfternoteItemMapper.categoryStringForEditScreen(params.serviceName)
 
-    private fun categoryFromServiceName(serviceName: String): String =
-        when (serviceName) {
-            "갤러리", "파일" -> CATEGORY_GALLERY_AND_FILE
-            "인스타그램",
-            "페이스북",
-            "X",
-            "스레드",
-            "틱톡",
-            "유튜브",
-            "카카오톡",
-            "카카오스토리",
-            "네이버 블로그",
-            "네이버 카페",
-            "네이버 밴드",
-            "디스코드" -> "소셜네트워크"
+        idState.edit { replace(0, length, params.accountId) }
+        passwordState.edit { replace(0, length, params.password) }
+        messageState.edit { replace(0, length, params.message) }
 
-            "추모 가이드라인" -> "추모 가이드라인"
-            else -> "소셜네트워크"
+        if (params.accountProcessingMethodName.isNotEmpty()) {
+            selectedProcessingMethod = runCatching {
+                AccountProcessingMethod.valueOf(params.accountProcessingMethodName)
+            }.getOrDefault(AccountProcessingMethod.MEMORIAL_ACCOUNT)
         }
+
+        if (params.informationProcessingMethodName.isNotEmpty()) {
+            selectedInformationProcessingMethod = runCatching {
+                InformationProcessingMethod.valueOf(params.informationProcessingMethodName)
+            }.getOrDefault(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER)
+        }
+
+        processingMethods = params.processingMethodsList
+        galleryProcessingMethods = params.galleryProcessingMethodsList
+    }
 }
+
+/**
+ * Parameters for pre-filling edit state from an existing afternote item.
+ */
+data class LoadFromExistingParams(
+    val itemId: String,
+    val serviceName: String,
+    val accountId: String,
+    val password: String,
+    val message: String,
+    val accountProcessingMethodName: String,
+    val informationProcessingMethodName: String,
+    val processingMethodsList: List<ProcessingMethodItem>,
+    val galleryProcessingMethodsList: List<ProcessingMethodItem>
+)
 
 @Composable
 fun rememberAfternoteEditState(): AfternoteEditState {

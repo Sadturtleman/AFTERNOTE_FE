@@ -17,11 +17,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.Label
 import com.kuit.afternote.core.ui.component.LabelStyle
+import com.kuit.afternote.core.ui.component.SelectableRadioCard
 import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountSection
-import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.AccountProcessingRadioButton
+import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodListParams
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -96,26 +97,44 @@ private fun SocialNetworkEditContentContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        AccountProcessingRadioButton(
-            method = AccountProcessingMethod.MEMORIAL_ACCOUNT,
+        SelectableRadioCard(
             selected = params.accountSection.selectedMethod == AccountProcessingMethod.MEMORIAL_ACCOUNT,
-            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) }
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.MEMORIAL_ACCOUNT) },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                OptionRadioCardContent(
+                    option = AccountProcessingMethod.MEMORIAL_ACCOUNT,
+                    selected = params.accountSection.selectedMethod == AccountProcessingMethod.MEMORIAL_ACCOUNT
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AccountProcessingRadioButton(
-            method = AccountProcessingMethod.PERMANENT_DELETE,
+        SelectableRadioCard(
             selected = params.accountSection.selectedMethod == AccountProcessingMethod.PERMANENT_DELETE,
-            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) }
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.PERMANENT_DELETE) },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                OptionRadioCardContent(
+                    option = AccountProcessingMethod.PERMANENT_DELETE,
+                    selected = params.accountSection.selectedMethod == AccountProcessingMethod.PERMANENT_DELETE
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AccountProcessingRadioButton(
-            method = AccountProcessingMethod.TRANSFER_TO_RECEIVER,
+        SelectableRadioCard(
             selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECEIVER,
-            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECEIVER) }
+            onClick = { params.accountSection.onMethodSelected(AccountProcessingMethod.TRANSFER_TO_RECEIVER) },
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                OptionRadioCardContent(
+                    option = AccountProcessingMethod.TRANSFER_TO_RECEIVER,
+                    selected = params.accountSection.selectedMethod == AccountProcessingMethod.TRANSFER_TO_RECEIVER
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
