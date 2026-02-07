@@ -26,6 +26,16 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
+ * Callbacks for processing method checkbox dropdown (more, dismiss, edit, delete).
+ */
+data class ProcessingMethodCheckboxCallbacks(
+    val onMoreClick: () -> Unit = {},
+    val onDismissDropdown: () -> Unit = {},
+    val onEditClick: () -> Unit = {},
+    val onDeleteClick: () -> Unit = {}
+)
+
+/**
  * 처리 방법 체크박스 컴포넌트
  *
  * 피그마 디자인 기반:
@@ -39,10 +49,7 @@ fun ProcessingMethodCheckbox(
     item: ProcessingMethodItem,
     expanded: Boolean = false,
     onClick: (() -> Unit)? = null,
-    onMoreClick: () -> Unit = {},
-    onDismissDropdown: () -> Unit = {},
-    onEditClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    callbacks: ProcessingMethodCheckboxCallbacks = ProcessingMethodCheckboxCallbacks()
 ) {
     Row(
         modifier = modifier
@@ -73,13 +80,13 @@ fun ProcessingMethodCheckbox(
                 painter = painterResource(R.drawable.ic_more_horizontal_1),
                 contentDescription = "더보기",
                 modifier = Modifier
-                    .clickable(onClick = onMoreClick)
+                    .clickable(onClick = callbacks.onMoreClick)
             )
             EditDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = onDismissDropdown,
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick
+                onDismissRequest = callbacks.onDismissDropdown,
+                onEditClick = callbacks.onEditClick,
+                onDeleteClick = callbacks.onDeleteClick
             )
         }
     }

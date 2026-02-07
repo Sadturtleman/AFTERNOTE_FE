@@ -35,6 +35,7 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.content.
 import com.kuit.afternote.feature.afternote.presentation.component.edit.content.SocialNetworkEditContentParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialog
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogParams
@@ -235,7 +236,7 @@ private fun EditContent(
 
             // 종류 선택 (Line 279 해결: State의 메서드 사용)
             SelectionDropdown(
-                label = "종류",
+                labelParams = SelectionDropdownLabelParams(label = "종류"),
                 selectedValue = state.selectedCategory,
                 options = state.categories,
                 onValueSelected = state::onCategorySelected,
@@ -251,7 +252,7 @@ private fun EditContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SelectionDropdown(
-                    label = "서비스명",
+                    labelParams = SelectionDropdownLabelParams(label = "서비스명"),
                     selectedValue = state.selectedService,
                     options = state.currentServiceOptions,
                     onValueSelected = state::onServiceSelected,

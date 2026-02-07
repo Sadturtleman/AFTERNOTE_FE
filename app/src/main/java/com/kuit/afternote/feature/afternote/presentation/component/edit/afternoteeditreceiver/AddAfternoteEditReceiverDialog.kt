@@ -31,6 +31,7 @@ import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.rememberSelectionDropdownState
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -53,7 +54,7 @@ private fun RelationshipDropdown(
     val dropdownState = rememberSelectionDropdownState()
 
     SelectionDropdown(
-        label = "수신자와의 관계",
+        labelParams = SelectionDropdownLabelParams(label = "수신자와의 관계"),
         selectedValue = selectedValue,
         options = options,
         onValueSelected = onValueSelected,

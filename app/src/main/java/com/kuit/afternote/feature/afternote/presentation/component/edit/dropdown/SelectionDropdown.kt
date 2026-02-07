@@ -46,6 +46,20 @@ private const val CATEGORY_BUSINESS = "비즈니스"
 private const val CATEGORY_GALLERY_AND_FILE_PREVIEW = "갤러리 및 파일"
 
 /**
+ * Label configuration for [SelectionDropdown].
+ */
+data class SelectionDropdownLabelParams(
+    val label: String,
+    val isRequired: Boolean = false,
+    val labelStyle: LabelStyle = LabelStyle(
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.Normal,
+        requiredDotOffsetY = 2.dp
+    )
+)
+
+/**
  * 드롭다운 메뉴 스타일 설정
  *
  * @param menuOffset 드롭다운 메뉴가 필드 아래 나타나는 간격 (기본: 4.dp)
@@ -71,9 +85,7 @@ data class DropdownMenuStyle(
  * - 드롭다운 메뉴 offset: 기본 4.dp
  *
  * @param modifier Modifier for the component
- * @param label Label text
- * @param isRequired Whether to show the required indicator (blue dot)
- * @param labelStyle Style configuration for the label
+ * @param labelParams Label text, required indicator, and style
  * @param selectedValue Currently selected value
  * @param options List of selectable options
  * @param onValueSelected Callback when an option is selected
@@ -83,14 +95,7 @@ data class DropdownMenuStyle(
 @Composable
 fun SelectionDropdown(
     modifier: Modifier = Modifier,
-    label: String,
-    isRequired: Boolean = false,
-    labelStyle: LabelStyle = LabelStyle(
-        fontSize = 12.sp,
-        lineHeight = 18.sp,
-        fontWeight = FontWeight.Normal,
-        requiredDotOffsetY = 2.dp
-    ),
+    labelParams: SelectionDropdownLabelParams,
     selectedValue: String,
     options: List<String>,
     onValueSelected: (String) -> Unit,
@@ -107,9 +112,9 @@ fun SelectionDropdown(
     ) {
         // 라벨
         Label(
-            text = label,
-            isRequired = isRequired,
-            style = labelStyle
+            text = labelParams.label,
+            isRequired = labelParams.isRequired,
+            style = labelParams.labelStyle
         )
 
         // 드롭다운 필드
@@ -196,7 +201,7 @@ fun SelectionDropdown(
 private fun SelectionDropdownPreview() {
     AfternoteTheme {
         SelectionDropdown(
-            label = "종류",
+            labelParams = SelectionDropdownLabelParams(label = "종류"),
             selectedValue = CATEGORY_SOCIAL_NETWORK,
             options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
             onValueSelected = {}
@@ -209,12 +214,14 @@ private fun SelectionDropdownPreview() {
 private fun SelectionDropdownRequiredLabelPreview() {
     AfternoteTheme {
         SelectionDropdown(
-            label = "관계",
-            isRequired = true,
-            labelStyle = LabelStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontWeight = FontWeight.Medium
+            labelParams = SelectionDropdownLabelParams(
+                label = "관계",
+                isRequired = true,
+                labelStyle = LabelStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontWeight = FontWeight.Medium
+                )
             ),
             selectedValue = "딸",
             options = listOf("딸", "아들", "친구", "가족"),

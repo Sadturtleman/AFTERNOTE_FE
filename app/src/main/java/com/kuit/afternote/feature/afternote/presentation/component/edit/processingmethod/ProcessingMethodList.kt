@@ -54,15 +54,17 @@ fun ProcessingMethodList(
                 onClick = {
                     focusManager.clearFocus()
                 },
-                onMoreClick = {
-                    focusManager.clearFocus()
-                    state.toggleItemExpanded(item.id)
-                },
-                onDismissDropdown = {
-                    state.expandedStates[item.id] = false
-                },
-                onEditClick = { params.onItemEditClick(item.id) },
-                onDeleteClick = { params.onItemDeleteClick(item.id) }
+                callbacks = ProcessingMethodCheckboxCallbacks(
+                    onMoreClick = {
+                        focusManager.clearFocus()
+                        state.toggleItemExpanded(item.id)
+                    },
+                    onDismissDropdown = {
+                        state.expandedStates[item.id] = false
+                    },
+                    onEditClick = { params.onItemEditClick(item.id) },
+                    onDeleteClick = { params.onItemDeleteClick(item.id) }
+                )
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
