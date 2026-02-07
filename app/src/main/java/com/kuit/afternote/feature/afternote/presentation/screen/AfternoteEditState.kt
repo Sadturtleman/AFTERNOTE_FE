@@ -13,13 +13,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.LastWishOption
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownState
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountProcessingMethod
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
@@ -223,9 +223,6 @@ class AfternoteEditState(
 
     val galleryProcessingCallbacks: ProcessingMethodCallbacks by lazy {
         ProcessingMethodCallbacks(
-            onAddClick = {
-                // TODO: 처리 방법 추가 로직
-            },
             onItemMoreClick = {
                 // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
             },
@@ -242,9 +239,6 @@ class AfternoteEditState(
 
     val socialProcessingCallbacks: ProcessingMethodCallbacks by lazy {
         ProcessingMethodCallbacks(
-            onAddClick = {
-                // TODO: 처리 방법 추가 로직
-            },
             onItemMoreClick = {
                 // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
             },
@@ -379,6 +373,41 @@ class AfternoteEditState(
     fun onBottomNavItemSelected(item: BottomNavItem) {
         selectedBottomNavItem = item
     }
+
+    /**
+     * Pre-fill state from an existing afternote item (when editing).
+     * Sets category, service, and processing method lists from the item.
+     */
+    fun loadFromExisting(
+        serviceName: String,
+        processingMethodsList: List<ProcessingMethodItem>,
+        galleryProcessingMethodsList: List<ProcessingMethodItem>
+    ) {
+        selectedService = serviceName
+        selectedCategory = categoryFromServiceName(serviceName)
+        processingMethods = processingMethodsList
+        galleryProcessingMethods = galleryProcessingMethodsList
+    }
+
+    private fun categoryFromServiceName(serviceName: String): String =
+        when (serviceName) {
+            "갤러리", "파일" -> CATEGORY_GALLERY_AND_FILE
+            "인스타그램",
+            "페이스북",
+            "X",
+            "스레드",
+            "틱톡",
+            "유튜브",
+            "카카오톡",
+            "카카오스토리",
+            "네이버 블로그",
+            "네이버 카페",
+            "네이버 밴드",
+            "디스코드" -> "소셜네트워크"
+
+            "추모 가이드라인" -> "추모 가이드라인"
+            else -> "소셜네트워크"
+        }
 }
 
 @Composable

@@ -73,9 +73,6 @@ private fun MemorialPhotoUploadPreview() {
         ) {
             // 이미지 없음
             MemorialPhotoUpload()
-
-            // 이미지 있음 (TODO: 실제 이미지 로드 구현 필요)
-            MemorialPhotoUpload()
         }
     }
 }

@@ -7,7 +7,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Pr
  */
 data class ProcessingMethodListParams(
     val items: List<ProcessingMethodItem>,
-    val onAddClick: () -> Unit = {},
     val onItemMoreClick: (String) -> Unit = {},
     val onItemEditClick: (String) -> Unit = {},
     val onItemDeleteClick: (String) -> Unit = {},

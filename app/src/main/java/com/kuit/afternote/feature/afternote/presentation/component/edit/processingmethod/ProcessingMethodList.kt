@@ -81,13 +81,10 @@ fun ProcessingMethodList(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 추가 버튼
+        // 추가 버튼 (텍스트 필드 표시만 토글; 부모 알림 없음)
         AddCircleButton(
             contentDescription = "추가",
-            onClick = {
-                state.toggleTextField()
-                params.onAddClick()
-            }
+            onClick = { state.toggleTextField() }
         )
     }
 }
@@ -102,7 +99,6 @@ private fun ProcessingMethodListPreview() {
                     ProcessingMethodItem("1", "게시물 내리기"),
                     ProcessingMethodItem("2", "댓글 비활성화")
                 ),
-                onAddClick = {},
                 onItemMoreClick = {},
                 onItemEditClick = {},
                 onItemDeleteClick = {},
@@ -125,7 +121,6 @@ private fun ProcessingMethodListWithDropdownPreview() {
                     ProcessingMethodItem("2", "댓글 비활성화"),
                     ProcessingMethodItem("3", "추모 계정으로 전환하기")
                 ),
-                onAddClick = {},
                 onItemMoreClick = {},
                 onItemEditClick = {},
                 onItemDeleteClick = {},

@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,12 +42,19 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Ac
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InfoMethodSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialog
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialogParams
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
@@ -69,12 +77,29 @@ private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onRegisterClick: (String) -> Unit = {},
+    onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
     onNavigateToAddSong: () -> Unit = {},
     state: AfternoteEditState = rememberAfternoteEditState(),
-    playlistStateHolder: MemorialPlaylistStateHolder? = null
+    playlistStateHolder: MemorialPlaylistStateHolder? = null,
+    initialItem: com.kuit.afternote.feature.afternote.domain.model.AfternoteItem? = null
 ) {
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(initialItem) {
+        initialItem?.let { item ->
+            val processingMethodsList = item.processingMethods.map {
+                ProcessingMethodItem(it.id, it.text)
+            }
+            val galleryProcessingMethodsList = item.galleryProcessingMethods.map {
+                ProcessingMethodItem(it.id, it.text)
+            }
+            state.loadFromExisting(
+                serviceName = item.serviceName,
+                processingMethodsList = processingMethodsList,
+                galleryProcessingMethodsList = galleryProcessingMethodsList
+            )
+        }
+    }
 
     // 플레이리스트 상태 홀더가 전달되면 설정
     LaunchedEffect(playlistStateHolder) {
@@ -106,7 +131,22 @@ fun AfternoteEditScreen(
                 title = "애프터노트 작성하기",
                 onBackClick = onBackClick,
                 onActionClick = {
-                    onRegisterClick(state.selectedService)
+                    val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+                    val date = dateFormat.format(Date())
+                    val processingMethods = state.processingMethods.map {
+                        AfternoteProcessingMethod(it.id, it.text)
+                    }
+                    val galleryProcessingMethods = state.galleryProcessingMethods.map {
+                        AfternoteProcessingMethod(it.id, it.text)
+                    }
+                    onRegisterClick(
+                        RegisterAfternotePayload(
+                            serviceName = state.selectedService,
+                            date = date,
+                            processingMethods = processingMethods,
+                            galleryProcessingMethods = galleryProcessingMethods
+                        )
+                    )
                 }
             )
         },
@@ -323,9 +363,13 @@ private fun CategoryContent(
 @Composable
 private fun AfternoteEditScreenPreview() {
     AfternoteLightTheme {
-        AfternoteEditScreen(
-            onBackClick = {}
-        )
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            AfternoteEditScreen(
+                onBackClick = {}
+            )
+        }
     }
 }
 
@@ -337,13 +381,17 @@ private fun AfternoteEditScreenPreview() {
 @Composable
 private fun AfternoteEditScreenGalleryAndFilePreview() {
     AfternoteLightTheme {
-        val state = rememberAfternoteEditState().apply {
-            onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            val state = rememberAfternoteEditState().apply {
+                onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+            }
+            AfternoteEditScreen(
+                onBackClick = {},
+                state = state
+            )
         }
-        AfternoteEditScreen(
-            onBackClick = {},
-            state = state
-        )
     }
 }
 
@@ -355,12 +403,16 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 @Composable
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
     AfternoteLightTheme {
-        val state = rememberAfternoteEditState().apply {
-            onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
+        CompositionLocalProvider(
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+        ) {
+            val state = rememberAfternoteEditState().apply {
+                onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
+            }
+            AfternoteEditScreen(
+                onBackClick = {},
+                state = state
+            )
         }
-        AfternoteEditScreen(
-            onBackClick = {},
-            state = state
-        )
     }
 }

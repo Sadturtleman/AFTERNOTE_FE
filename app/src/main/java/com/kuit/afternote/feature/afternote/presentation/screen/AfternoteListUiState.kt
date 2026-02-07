@@ -17,5 +17,6 @@ data class AfternoteListUiState(
     val selectedTab: AfternoteTab = AfternoteTab.ALL,
     val selectedBottomNavItem: BottomNavItem = BottomNavItem.HOME,
     val items: List<AfternoteItem> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val loadError: String? = null
 )

@@ -13,22 +13,21 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 /**
- * 애프터노트 목록 화면 ViewModel
- * 비즈니스 로직(필터링, 상태 관리)을 담당
+ * 애프터노트 목록 화면 ViewModel.
+ * List is supplied by the caller (e.g. NavGraph) via [setItems]; no API call in this layer.
  */
 @HiltViewModel
 class AfternoteListViewModel
     @Inject
     constructor() : ViewModel() {
+
         private val _uiState = MutableStateFlow(AfternoteListUiState())
         val uiState: StateFlow<AfternoteListUiState> = _uiState.asStateFlow()
 
-        // 원본 데이터 캐싱 (실제로는 Repository나 UseCase에서 가져올 데이터)
         private var allItems: List<AfternoteItem> = emptyList()
 
         /**
-         * 초기 데이터 설정
-         * NavGraph에서 호출하여 데이터를 주입
+         * 초기 데이터 설정 (NavGraph에서 더미/캐시로 주입)
          */
         fun setItems(items: List<AfternoteItem>) {
             allItems = items

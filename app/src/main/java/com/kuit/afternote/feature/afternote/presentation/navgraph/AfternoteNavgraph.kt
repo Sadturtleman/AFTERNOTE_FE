@@ -16,14 +16,17 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
+import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailScreen
@@ -31,9 +34,6 @@ import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailSta
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 
@@ -71,42 +71,75 @@ inline fun <reified T : Any> NavGraphBuilder.afternoteComposable(noinline conten
 
 fun NavGraphBuilder.afternoteNavGraph(
     navController: NavController,
-    afternoteItems: List<Pair<String, String>>,
-    onItemsUpdated: (List<Pair<String, String>>) -> Unit,
+    afternoteItems: List<AfternoteItem>,
+    onItemsUpdated: (List<AfternoteItem>) -> Unit,
     playlistStateHolder: MemorialPlaylistStateHolder,
     afternoteProvider: AfternoteEditDataProvider
 ) {
     afternoteComposable<AfternoteRoute.AfternoteListRoute> {
-        val afternoteListItems =
-            afternoteItems.ifEmpty { afternoteProvider.getAfternoteItemsForDev() }
+        val listItems = afternoteItems.ifEmpty {
+            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        }
         AfternoteListRoute(
-            onNavigateToDetail = { navController.navigate(AfternoteRoute.DetailRoute) },
-            onNavigateToGalleryDetail = { navController.navigate(AfternoteRoute.GalleryDetailRoute) },
-            onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute) },
-            initialItems = AfternoteItemMapper.toAfternoteItems(afternoteListItems)
+            onNavigateToDetail = { itemId ->
+                navController.navigate(AfternoteRoute.DetailRoute(itemId = itemId))
+            },
+            onNavigateToGalleryDetail = { itemId ->
+                navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
+            },
+            onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+            initialItems = listItems
         )
     }
 
-    afternoteComposable<AfternoteRoute.DetailRoute> {
+    afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
+        val listItems = afternoteItems.ifEmpty {
+            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        }
+        val item = listItems.find { it.id == route.itemId }
         AfternoteDetailScreen(
+            serviceName = item?.serviceName ?: "",
+            userName = "서영",
             onBackClick = { navController.popBackStack() },
-            onEditClick = { navController.navigate(AfternoteRoute.EditRoute) }
+            onEditClick = {
+                if (item != null) {
+                    navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
+                }
+            }
         )
     }
 
-    afternoteComposable<AfternoteRoute.GalleryDetailRoute> {
+    afternoteComposable<AfternoteRoute.GalleryDetailRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<AfternoteRoute.GalleryDetailRoute>()
+        val listItems = afternoteItems.ifEmpty {
+            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        }
+        val item = listItems.find { it.id == route.itemId }
         GalleryDetailScreen(
             detailState = GalleryDetailState(
-                afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers()
+                afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers(),
+                serviceName = item?.serviceName ?: "갤러리",
+                userName = "서영"
             ),
             callbacks = GalleryDetailCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onEditClick = { navController.navigate(AfternoteRoute.EditRoute) }
+                onEditClick = {
+                    if (item != null) {
+                        navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
+                    }
+                }
             )
         )
     }
 
-    afternoteComposable<AfternoteRoute.EditRoute> {
+    afternoteComposable<AfternoteRoute.EditRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<AfternoteRoute.EditRoute>()
+        val listItems = afternoteItems.ifEmpty {
+            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        }
+        val initialItem = route.itemId?.let { id -> listItems.find { it.id == id } }
+
         LaunchedEffect(playlistStateHolder, afternoteProvider) {
             if (playlistStateHolder.songs.isEmpty()) {
                 playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
@@ -115,24 +148,25 @@ fun NavGraphBuilder.afternoteNavGraph(
 
         AfternoteEditScreen(
             onBackClick = { navController.popBackStack() },
-            onRegisterClick = { selectedService ->
-                // 현재 날짜를 포맷팅
-                val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-                val currentDate = dateFormat.format(Date())
-
-                // 목록에 추가 (레거시 형식 유지)
-                val newItem = selectedService to currentDate
-                val updatedItems = afternoteItems + newItem
-                onItemsUpdated(updatedItems)
-
-                // 메인 화면으로 이동
+            onRegisterClick = { payload: RegisterAfternotePayload ->
+                if (initialItem != null) {
+                    val updatedItems = afternoteItems.map {
+                        if (it.id == initialItem.id) AfternoteItemMapper.fromPayload(payload)
+                        else it
+                    }
+                    onItemsUpdated(updatedItems)
+                } else {
+                    val newItem = AfternoteItemMapper.fromPayload(payload)
+                    onItemsUpdated(afternoteItems + newItem)
+                }
                 navController.navigate(AfternoteRoute.AfternoteListRoute) {
                     popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
                     launchSingleTop = true
                 }
             },
             onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
-            playlistStateHolder = playlistStateHolder
+            playlistStateHolder = playlistStateHolder,
+            initialItem = initialItem
         )
     }
 

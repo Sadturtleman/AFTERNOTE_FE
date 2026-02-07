@@ -13,13 +13,13 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
 
 /**
- * 애프터노트 목록 Route. Maps domain items to display items and calls shared AfternoteListScreen.
+ * 애프터노트 목록 Route. List is supplied via [initialItems]; detail/edit resolve from nav graph state.
  */
 @Composable
 fun AfternoteListRoute(
     viewModel: AfternoteListViewModel = hiltViewModel(),
-    onNavigateToDetail: () -> Unit = {},
-    onNavigateToGalleryDetail: () -> Unit = {},
+    onNavigateToDetail: (String) -> Unit = {},
+    onNavigateToGalleryDetail: (String) -> Unit = {},
     onNavigateToAdd: () -> Unit = {},
     initialItems: List<AfternoteItem> = emptyList()
 ) {
@@ -53,11 +53,11 @@ fun AfternoteListRoute(
             selectedTab = uiState.selectedTab,
             onTabSelected = { viewModel.onEvent(AfternoteListEvent.SelectTab(it)) },
             onItemClick = { itemId ->
-                val item = uiState.items.find { it.id == itemId }
-                if (item?.serviceName == "갤러리") {
-                    onNavigateToGalleryDetail()
+                val item = uiState.items.find { it.id == itemId } ?: return@AfternoteListScreenListParams
+                if (item.serviceName == "갤러리") {
+                    onNavigateToGalleryDetail(itemId)
                 } else {
-                    onNavigateToDetail()
+                    onNavigateToDetail(itemId)
                 }
             }
         )

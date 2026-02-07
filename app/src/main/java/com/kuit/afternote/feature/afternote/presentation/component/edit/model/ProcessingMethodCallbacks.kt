@@ -7,7 +7,6 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 data class ProcessingMethodCallbacks(
-    val onAddClick: () -> Unit = {},
     val onItemMoreClick: (String) -> Unit = {},
     val onItemEditClick: (String) -> Unit = {},
     val onItemDeleteClick: (String) -> Unit = {},

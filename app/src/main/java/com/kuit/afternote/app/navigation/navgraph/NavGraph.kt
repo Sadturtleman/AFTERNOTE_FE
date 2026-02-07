@@ -28,6 +28,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
@@ -78,8 +79,8 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
     when (route) {
         "afternote_list" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
         "main" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
-        "afternote_detail" -> nav.navigate(AfternoteRoute.DetailRoute)
-        "afternote_edit" -> nav.navigate(AfternoteRoute.EditRoute)
+        "afternote_detail" -> nav.navigate(AfternoteRoute.DetailRoute(itemId = ""))
+        "afternote_edit" -> nav.navigate(AfternoteRoute.EditRoute())
         "fingerprint_login" -> nav.navigate(AfternoteRoute.FingerprintLoginRoute)
         "time_letter_main" -> nav.navigate(TimeLetterRoute.TimeLetterMainRoute)
         "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute)
@@ -241,7 +242,7 @@ private fun ReceiverAfternoteDetailContent(
 fun NavGraph(navHostController: NavHostController) {
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
-    var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = devModeScreensList
 
