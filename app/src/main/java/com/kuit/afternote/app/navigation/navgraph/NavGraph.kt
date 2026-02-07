@@ -2,8 +2,8 @@
 
 package com.kuit.afternote.app.navigation.navgraph
 
-import android.util.Log
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
@@ -28,16 +28,17 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
+import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
+import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
 import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
-import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
-import com.kuit.afternote.feature.mainpage.presentation.navgraph.mainPageNavGraph
-import com.kuit.afternote.feature.mainpage.presentation.screen.FingerprintLoginScreen
-import com.kuit.afternote.feature.mainpage.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
@@ -58,7 +59,7 @@ private const val TAG_FINGERPRINT = "FingerprintLogin"
 
 private val devModeScreensList =
     listOf(
-        ScreenInfo("메인 화면", "main"),
+        ScreenInfo("애프터노트 목록 화면", "afternote_list"),
         ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
         ScreenInfo("애프터노트 수정 화면", "afternote_edit"),
         ScreenInfo("스플래시 화면", "dev_splash"),
@@ -76,10 +77,11 @@ private val devModeScreensList =
 
 private fun navigateFromDevMode(route: String, nav: NavHostController) {
     when (route) {
-        "main" -> nav.navigate(MainPageRoute.MainRoute)
-        "afternote_detail" -> nav.navigate(MainPageRoute.DetailRoute)
-        "afternote_edit" -> nav.navigate(MainPageRoute.EditRoute)
-        "fingerprint_login" -> nav.navigate(MainPageRoute.FingerprintLoginRoute)
+        "afternote_list" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
+        "main" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
+        "afternote_detail" -> nav.navigate(AfternoteRoute.DetailRoute(itemId = ""))
+        "afternote_edit" -> nav.navigate(AfternoteRoute.EditRoute())
+        "fingerprint_login" -> nav.navigate(AfternoteRoute.FingerprintLoginRoute)
         "time_letter_main" -> nav.navigate(TimeLetterRoute.TimeLetterMainRoute)
         "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute)
         "draft_letter" -> nav.navigate(TimeLetterRoute.DraftLetterRoute)
@@ -240,7 +242,7 @@ private fun ReceiverAfternoteDetailContent(
 fun NavGraph(navHostController: NavHostController) {
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
-    var afternoteItems by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = devModeScreensList
 
@@ -257,12 +259,13 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(navHostController)
         recordNavGraph(navHostController)
-        mainPageNavGraph(
+        afternoteNavGraph(
             navController = navHostController,
             afternoteItems = afternoteItems,
             onItemsUpdated = { afternoteItems = it },
             playlistStateHolder = playlistStateHolder,
-            afternoteProvider = afternoteProvider
+            afternoteProvider = afternoteProvider,
+            userName = receiverProvider.getDefaultReceiverTitleForDev()
         )
         timeLetterNavGraph(navController = navHostController)
         settingNavGraph(navController = navHostController)
@@ -290,7 +293,7 @@ fun NavGraph(navHostController: NavHostController) {
                 onBackClick = { navHostController.popBackStack() },
                 onSignUpClick = { navHostController.navigate("dev_signup") },
                 onFindIdClick = {},
-                onLoginSuccess = { navHostController.navigate(MainPageRoute.MainRoute) }
+                onLoginSuccess = { navHostController.navigate(AfternoteRoute.AfternoteListRoute) }
             )
         }
 
@@ -309,7 +312,7 @@ fun NavGraph(navHostController: NavHostController) {
             ProfileSettingScreen(
                 email = email,
                 password = password,
-                onFinishClick = { navHostController.navigate(MainPageRoute.MainRoute) },
+                onFinishClick = { navHostController.navigate(AfternoteRoute.AfternoteListRoute) },
                 onBackClick = { navHostController.popBackStack() }
             )
         }
