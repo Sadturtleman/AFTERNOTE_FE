@@ -9,6 +9,11 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMeth
 data class RegisterAfternotePayload(
     val serviceName: String,
     val date: String,
+    val accountId: String = "",
+    val password: String = "",
+    val message: String = "",
+    val accountProcessingMethod: String = "",
+    val informationProcessingMethod: String = "",
     val processingMethods: List<AfternoteProcessingMethod> = emptyList(),
     val galleryProcessingMethods: List<AfternoteProcessingMethod> = emptyList()
 )

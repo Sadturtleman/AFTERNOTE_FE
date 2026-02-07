@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import java.util.UUID
 
@@ -19,6 +20,11 @@ object AfternoteItemMapper {
             serviceName = payload.serviceName,
             date = payload.date,
             type = serviceType,
+            accountId = payload.accountId,
+            password = payload.password,
+            message = payload.message,
+            accountProcessingMethod = payload.accountProcessingMethod,
+            informationProcessingMethod = payload.informationProcessingMethod,
             processingMethods = payload.processingMethods,
             galleryProcessingMethods = payload.galleryProcessingMethods
         )
@@ -32,11 +38,19 @@ object AfternoteItemMapper {
         pairs.mapIndexed { index, pair ->
             val (serviceName, date) = pair
             val serviceType = inferServiceType(serviceName)
+            val devData = devDataForServiceType(serviceType)
             AfternoteItem(
                 id = "dev_${serviceName}_${date}_$index",
                 serviceName = serviceName,
                 date = date,
-                type = serviceType
+                type = serviceType,
+                accountId = devData.accountId,
+                password = devData.password,
+                message = devData.message,
+                accountProcessingMethod = devData.accountProcessingMethod,
+                informationProcessingMethod = devData.informationProcessingMethod,
+                processingMethods = devData.processingMethods,
+                galleryProcessingMethods = devData.galleryProcessingMethods
             )
         }
 
@@ -66,4 +80,54 @@ object AfternoteItemMapper {
             "네이버 메일" -> ServiceType.BUSINESS
             else -> ServiceType.OTHER
         }
+
+    /**
+     * Dev 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
+     *
+     * AfternoteDetailScreen: id="qwerty123", pw="qwerty123", method=추모 계정,
+     *   processing=["게시물 내리기","추모 게시물 올리기","추모 계정으로 전환하기"],
+     *   message="이 계정에는 우리 가족 여행 사진이 많아.…"
+     *
+     * GalleryDetailScreen: infoMethod=TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
+     *   galleryProcessing=["'엽사' 폴더 박선호에게 전송","'흑역사' 폴더 삭제"],
+     *   message="" (없음)
+     */
+    private fun defaultSocialOrBusinessDevFields(): DevItemFields =
+        DevItemFields(
+            accountId = "qwerty123",
+            password = "qwerty123",
+            message = "이 계정에는 우리 가족 여행 사진이 많아.\n" +
+                "계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!",
+            accountProcessingMethod = "MEMORIAL_ACCOUNT",
+            processingMethods = listOf(
+                AfternoteProcessingMethod("1", "게시물 내리기"),
+                AfternoteProcessingMethod("2", "추모 게시물 올리기"),
+                AfternoteProcessingMethod("3", "추모 계정으로 전환하기")
+            )
+        )
+
+    private fun devDataForServiceType(type: ServiceType): DevItemFields =
+        when (type) {
+            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.BUSINESS ->
+                defaultSocialOrBusinessDevFields()
+            ServiceType.GALLERY_AND_FILES -> DevItemFields(
+                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                galleryProcessingMethods = listOf(
+                    AfternoteProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
+                    AfternoteProcessingMethod("2", "'흑역사' 폴더 삭제")
+                )
+            )
+            ServiceType.MEMORIAL -> DevItemFields()
+            ServiceType.ASSET_MANAGEMENT -> DevItemFields()
+        }
+
+    private data class DevItemFields(
+        val accountId: String = "",
+        val password: String = "",
+        val message: String = "",
+        val accountProcessingMethod: String = "",
+        val informationProcessingMethod: String = "",
+        val processingMethods: List<AfternoteProcessingMethod> = emptyList(),
+        val galleryProcessingMethods: List<AfternoteProcessingMethod> = emptyList()
+    )
 }

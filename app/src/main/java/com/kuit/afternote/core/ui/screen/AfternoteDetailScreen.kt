@@ -34,9 +34,24 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
+import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+
+/**
+ * Display data for [AfternoteDetailScreen].
+ */
+data class AfternoteDetailContent(
+    val serviceName: String = "인스타그램",
+    val userName: String = "서영",
+    val accountId: String = "",
+    val password: String = "",
+    val accountProcessingMethod: String = "",
+    val processingMethods: List<String> = emptyList(),
+    val message: String = "",
+    val finalWriteDate: String = "2025.11.26."
+)
 
 /**
  * 애프터노트 상세 화면
@@ -51,13 +66,13 @@ import com.kuit.afternote.ui.theme.Sansneo
  * - 편집 드롭다운 메뉴 (수정하기/삭제하기)
  * - 삭제 확인 다이얼로그
  *
+ * @param content Display data (service name, user name, account info, message, etc.)
  * @param isEditable true이면 편집/삭제 기능 표시 (작성자 모드), false이면 읽기 전용 (수신자 모드)
  */
 @Composable
 fun AfternoteDetailScreen(
     modifier: Modifier = Modifier,
-    serviceName: String = "인스타그램",
-    userName: String = "서영",
+    content: AfternoteDetailContent = AfternoteDetailContent(),
     isEditable: Boolean = true,
     onBackClick: () -> Unit,
     onEditClick: () -> Unit = {},
@@ -66,7 +81,7 @@ fun AfternoteDetailScreen(
 ) {
     if (isEditable && state.showDeleteDialog) {
         DeleteConfirmDialog(
-            serviceName = serviceName,
+            serviceName = content.serviceName,
             onDismiss = state::hideDeleteDialog,
             onConfirm = {
                 state.hideDeleteDialog()
@@ -102,165 +117,9 @@ fun AfternoteDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = B1)) {
-                                append(serviceName)
-                            }
-                            append("에 대한 ${userName}님의 기록")
-                        },
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            lineHeight = 24.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Bold,
-                            color = Gray9
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    InfoCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        content = {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = "최종 작성일 2025.11.26.",
-                                    style = TextStyle(
-                                        fontSize = 10.sp,
-                                        lineHeight = 16.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Normal,
-                                        color = Gray6
-                                    )
-                                )
-                                Text(
-                                    text = buildAnnotatedString {
-                                        append("사망 후 ")
-                                        withStyle(style = SpanStyle(color = B1)) {
-                                            append("추모 계정")
-                                        }
-                                        append("으로 전환")
-                                    },
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Gray9
-                                    )
-                                )
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    InfoCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        content = {
-                            Column {
-                                Text(
-                                    text = "기록에 대한 개인 정보",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Gray9
-                                    ),
-                                )
-                                Spacer(modifier = Modifier.height(7.dp))
-
-                                InfoRow(
-                                    label = "아이디",
-                                    value = "qwerty123"
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                InfoRow(
-                                    label = "비밀번호",
-                                    value = "qwerty123"
-                                )
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    InfoCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        content = {
-                            Column {
-                                Text(
-                                    text = "처리 방법",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Gray9
-                                    )
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                ProcessingMethodItem(text = "게시물 내리기")
-                                Spacer(modifier = Modifier.height(6.dp))
-                                ProcessingMethodItem(text = "추모 게시물 올리기")
-                                Spacer(modifier = Modifier.height(6.dp))
-                                ProcessingMethodItem(text = "추모 계정으로 전환하기")
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    InfoCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        content = {
-                            Column {
-                                Text(
-                                    text = "남기신 말씀",
-                                    style = TextStyle(
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Gray9
-                                    )
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Text(
-                                    text = "이 계정에는 우리 가족 여행 사진이 많아.\n" +
-                                        "계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!",
-                                    style = TextStyle(
-                                        fontSize = 14.sp,
-                                        lineHeight = 20.sp,
-                                        fontFamily = Sansneo,
-                                        fontWeight = FontWeight.Normal,
-                                        color = Gray9
-                                    )
-                                )
-                            }
-                        }
-                    )
-                }
+            Column(modifier = Modifier.fillMaxSize()) {
+                AfternoteDetailScrollContent(content = content)
             }
-
             if (isEditable) {
                 Box(
                     modifier = Modifier
@@ -271,14 +130,174 @@ fun AfternoteDetailScreen(
                         expanded = state.showDropdownMenu,
                         onDismissRequest = state::hideDropdownMenu,
                         onEditClick = onEditClick,
-                        onDeleteClick = {
-                            state.showDeleteDialog()
-                        }
+                        onDeleteClick = { state.showDeleteDialog() }
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun AfternoteDetailScrollContent(content: AfternoteDetailContent) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp)
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) {
+                    append(content.serviceName)
+                }
+                append("에 대한 ${content.userName}님의 기록")
+            },
+            style = TextStyle(
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
+                color = Gray9
+            )
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        InfoCard(
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "최종 작성일 ${content.finalWriteDate}",
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray6
+                        )
+                    )
+                    AccountProcessingMethodText(
+                        accountProcessingMethod = content.accountProcessingMethod
+                    )
+                }
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        InfoCard(
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                Column {
+                    Text(
+                        text = "기록에 대한 개인 정보",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(7.dp))
+                    InfoRow(label = "아이디", value = content.accountId)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    InfoRow(label = "비밀번호", value = content.password)
+                }
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        if (content.processingMethods.isNotEmpty()) {
+            InfoCard(
+                modifier = Modifier.fillMaxWidth(),
+                content = {
+                    Column {
+                        Text(
+                            text = "처리 방법",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        content.processingMethods.forEachIndexed { index, method ->
+                            if (index > 0) Spacer(modifier = Modifier.height(6.dp))
+                            ProcessingMethodItem(text = method)
+                        }
+                    }
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        InfoCard(
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                Column {
+                    Text(
+                        text = "남기신 말씀",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    val displayMessage = content.message.ifEmpty { "남기신 말씀이 없습니다." }
+                    val textColor = if (content.message.isNotEmpty()) Gray9 else Gray5
+                    Text(
+                        text = displayMessage,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = textColor
+                        )
+                    )
+                }
+            }
+        )
+    }
+}
+
+/**
+ * 계정 처리 방법 표시 텍스트
+ * accountProcessingMethod enum name → 사용자에게 보여줄 텍스트로 변환
+ */
+@Composable
+private fun AccountProcessingMethodText(accountProcessingMethod: String) {
+    val annotatedText = when (accountProcessingMethod) {
+        "MEMORIAL_ACCOUNT" -> buildAnnotatedString {
+            append("사망 후 ")
+            withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
+            append("으로 전환")
+        }
+        "PERMANENT_DELETE" -> buildAnnotatedString {
+            append("사망 후 ")
+            withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
+        }
+        "TRANSFER_TO_RECEIVER" -> buildAnnotatedString {
+            withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+            append("에게 정보 전달")
+        }
+        else -> buildAnnotatedString {
+            append(accountProcessingMethod)
+        }
+    }
+    Text(
+        text = annotatedText,
+        style = TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 22.sp,
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Medium,
+            color = Gray9
+        )
+    )
 }
 
 @Preview(
@@ -289,6 +308,13 @@ fun AfternoteDetailScreen(
 private fun AfternoteDetailScreenPreview() {
     AfternoteTheme {
         AfternoteDetailScreen(
+            content = AfternoteDetailContent(
+                accountId = "qwerty123",
+                password = "qwerty123",
+                accountProcessingMethod = "MEMORIAL_ACCOUNT",
+                processingMethods = listOf("게시물 내리기", "추모 게시물 올리기", "추모 계정으로 전환하기"),
+                message = "이 계정에는 우리 가족 여행 사진이 많아.\n계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!"
+            ),
             onBackClick = {},
             onEditClick = {}
         )
@@ -309,6 +335,7 @@ private fun AfternoteDetailScreenWithDeleteDialogPreview() {
             }
         }
         AfternoteDetailScreen(
+            content = AfternoteDetailContent(),
             onBackClick = {},
             onEditClick = {},
             state = stateWithDialog
@@ -330,6 +357,7 @@ private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
             }
         }
         AfternoteDetailScreen(
+            content = AfternoteDetailContent(),
             onBackClick = {},
             onEditClick = {},
             state = stateWithDropdown
@@ -346,6 +374,7 @@ private fun AfternoteDetailScreenWithEditDropdownMenuPreview() {
 private fun AfternoteDetailScreenReceiverModePreview() {
     AfternoteTheme {
         AfternoteDetailScreen(
+            content = AfternoteDetailContent(),
             isEditable = false,
             onBackClick = {},
             state = rememberAfternoteDetailState(

@@ -7,6 +7,7 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -18,11 +19,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.screen.AfternoteDetailContent
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
+import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
@@ -35,7 +39,16 @@ import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylist
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
+private const val TAG_AFTERNOTE_EDIT = "AfternoteEdit"
 private const val TAG_FINGERPRINT = "FingerprintLogin"
+
+/**
+ * Holder and clear callback for hoisted edit state (keeps param count ≤7).
+ */
+data class AfternoteEditStateHandling(
+    val holder: MutableState<AfternoteEditState?>,
+    val onClear: () -> Unit
+)
 
 /**
  * afternote feature 전용 라이트 모드 테마 래퍼
@@ -104,8 +117,16 @@ private fun AfternoteDetailRouteContent(
     val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
     val item = listItems.find { it.id == route.itemId }
     AfternoteDetailScreen(
-        serviceName = item?.serviceName ?: "",
-        userName = userName,
+        content = AfternoteDetailContent(
+            serviceName = item?.serviceName ?: "",
+            userName = userName,
+            accountId = item?.accountId ?: "",
+            password = item?.password ?: "",
+            accountProcessingMethod = item?.accountProcessingMethod ?: "",
+            processingMethods = item?.processingMethods?.map { it.text } ?: emptyList(),
+            message = item?.message ?: "",
+            finalWriteDate = item?.date ?: "2025.11.26."
+        ),
         onBackClick = { navController.popBackStack() },
         onEditClick = {
             if (item != null) {
@@ -129,7 +150,11 @@ private fun AfternoteGalleryDetailRouteContent(
         detailState = GalleryDetailState(
             afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers(),
             serviceName = item?.serviceName ?: "갤러리",
-            userName = userName
+            userName = userName,
+            finalWriteDate = item?.date ?: "2025.11.26.",
+            informationProcessingMethod = item?.informationProcessingMethod ?: "",
+            processingMethods = item?.galleryProcessingMethods?.map { it.text } ?: emptyList(),
+            message = item?.message ?: ""
         ),
         callbacks = GalleryDetailCallbacks(
             onBackClick = { navController.popBackStack() },
@@ -149,11 +174,33 @@ private fun AfternoteEditRouteContent(
     afternoteItems: List<AfternoteItem>,
     onItemsUpdated: (List<AfternoteItem>) -> Unit,
     playlistStateHolder: MemorialPlaylistStateHolder,
-    afternoteProvider: AfternoteEditDataProvider
+    afternoteProvider: AfternoteEditDataProvider,
+    editStateHandling: AfternoteEditStateHandling
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.EditRoute>()
-    val listItems = resolveListItems(afternoteItems, afternoteProvider)
-    val initialItem = route.itemId?.let { id -> listItems.find { it.id == id } }
+    val listItems = remember(afternoteItems, afternoteProvider) {
+        resolveListItems(afternoteItems, afternoteProvider)
+    }
+    val initialItem = remember(route.itemId, listItems) {
+        route.itemId?.let { id -> listItems.find { it.id == id } }
+    }
+    if (route.itemId != null && initialItem == null) {
+        Log.w(
+            TAG_AFTERNOTE_EDIT,
+            "Edit opened but item not found: itemId=${route.itemId}, " +
+                "listSize=${listItems.size}, " +
+                "ids=${listItems.take(3).map { it.id }}"
+        )
+    }
+
+    val newState = rememberAfternoteEditState()
+    val state = editStateHandling.holder.value ?: newState
+    LaunchedEffect(Unit) {
+        if (editStateHandling.holder.value == null) {
+            Log.d(TAG_AFTERNOTE_EDIT, "Initialising afternoteEditStateHolder with newState")
+            editStateHandling.holder.value = newState
+        }
+    }
 
     LaunchedEffect(playlistStateHolder, afternoteProvider) {
         if (playlistStateHolder.songs.isEmpty()) {
@@ -162,7 +209,10 @@ private fun AfternoteEditRouteContent(
     }
 
     AfternoteEditScreen(
-        onBackClick = { navController.popBackStack() },
+        onBackClick = {
+            editStateHandling.onClear()
+            navController.popBackStack()
+        },
         onRegisterClick = { payload: RegisterAfternotePayload ->
             if (initialItem != null) {
                 val updatedItems = afternoteItems.map {
@@ -174,6 +224,7 @@ private fun AfternoteEditRouteContent(
                 val newItem = AfternoteItemMapper.fromPayload(payload)
                 onItemsUpdated(afternoteItems + newItem)
             }
+            editStateHandling.onClear()
             navController.navigate(AfternoteRoute.AfternoteListRoute) {
                 popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
                 launchSingleTop = true
@@ -181,7 +232,8 @@ private fun AfternoteEditRouteContent(
         },
         onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
         playlistStateHolder = playlistStateHolder,
-        initialItem = initialItem
+        initialItem = initialItem,
+        state = state
     )
 }
 
@@ -261,7 +313,8 @@ fun NavGraphBuilder.afternoteNavGraph(
     onItemsUpdated: (List<AfternoteItem>) -> Unit,
     playlistStateHolder: MemorialPlaylistStateHolder,
     afternoteProvider: AfternoteEditDataProvider,
-    userName: String
+    userName: String,
+    editStateHandling: AfternoteEditStateHandling
 ) {
     afternoteComposable<AfternoteRoute.AfternoteListRoute> {
         val listItems = resolveListItems(afternoteItems, afternoteProvider)
@@ -296,7 +349,8 @@ fun NavGraphBuilder.afternoteNavGraph(
             afternoteItems = afternoteItems,
             onItemsUpdated = onItemsUpdated,
             playlistStateHolder = playlistStateHolder,
-            afternoteProvider = afternoteProvider
+            afternoteProvider = afternoteProvider,
+            editStateHandling = editStateHandling
         )
     }
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import android.util.Log
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +58,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val TAG = "AfternoteEditScreen"
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
@@ -86,18 +88,29 @@ fun AfternoteEditScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(initialItem) {
-        initialItem?.let { item ->
-            val processingMethodsList = item.processingMethods.map {
-                ProcessingMethodItem(it.id, it.text)
-            }
-            val galleryProcessingMethodsList = item.galleryProcessingMethods.map {
-                ProcessingMethodItem(it.id, it.text)
-            }
+    LaunchedEffect(initialItem?.id) {
+        val item = initialItem ?: run {
+            Log.d(TAG, "LaunchedEffect: initialItem is null, skipping loadFromExisting")
+            return@LaunchedEffect
+        }
+        Log.d(
+            TAG,
+            "LaunchedEffect: item.id=${item.id}, state.loadedItemId=${state.loadedItemId}, " +
+                "needsLoad=${state.loadedItemId != item.id}"
+        )
+        if (state.loadedItemId != item.id) {
             state.loadFromExisting(
-                serviceName = item.serviceName,
-                processingMethodsList = processingMethodsList,
-                galleryProcessingMethodsList = galleryProcessingMethodsList
+                LoadFromExistingParams(
+                    itemId = item.id,
+                    serviceName = item.serviceName,
+                    accountId = item.accountId,
+                    password = item.password,
+                    message = item.message,
+                    accountProcessingMethodName = item.accountProcessingMethod,
+                    informationProcessingMethodName = item.informationProcessingMethod,
+                    processingMethodsList = item.processingMethods.map { ProcessingMethodItem(it.id, it.text) },
+                    galleryProcessingMethodsList = item.galleryProcessingMethods.map { ProcessingMethodItem(it.id, it.text) }
+                )
             )
         }
     }
@@ -148,6 +161,11 @@ fun AfternoteEditScreen(
                         RegisterAfternotePayload(
                             serviceName = state.selectedService,
                             date = date,
+                            accountId = state.idState.text.toString(),
+                            password = state.passwordState.text.toString(),
+                            message = state.messageState.text.toString(),
+                            accountProcessingMethod = state.selectedProcessingMethod.name,
+                            informationProcessingMethod = state.selectedInformationProcessingMethod.name,
                             processingMethods = processingMethods,
                             galleryProcessingMethods = galleryProcessingMethods
                         )
