@@ -120,11 +120,11 @@ fun NavGraph(navHostController: NavHostController) {
                         "afternote_edit" -> navHostController.navigate(MainPageRoute.EditRoute)
                         "fingerprint_login" -> navHostController.navigate(MainPageRoute.FingerprintLoginRoute)
                         "time_letter_main" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
-                        "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute)
+                        "time_letter_writer" -> navHostController.navigate(TimeLetterRoute.TimeLetterWriterRoute())
                         "draft_letter" -> navHostController.navigate(TimeLetterRoute.DraftLetterRoute)
                         "receive_list" -> navHostController.navigate(TimeLetterRoute.ReceiveListRoute)
                         "receiver_afternote_main" -> navHostController.navigate("receiver_afternote_main")
-                        "letter_empty" -> navHostController.navigate(TimeLetterRoute.LetterEmptyRoute)
+                        "letter_empty" -> navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute)
                         "setting_main" -> navHostController.navigate(SettingRoute.SettingMainRoute)
                         else -> navHostController.navigate(route) // 기타 route는 문자열로 처리
                     }

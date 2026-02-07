@@ -1,19 +1,24 @@
 package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterStatus
 import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.GetTimeLetterUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.UpdateTimeLetterUseCase
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWriterUiState
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,24 +27,73 @@ import javax.inject.Inject
  * 타임레터 작성 화면의 ViewModel
  *
  * 편지 작성에 필요한 상태를 관리하고, 임시저장(DRAFT)/정식등록(SCHEDULED)을
- * CreateTimeLetterUseCase로 처리합니다.
+ * CreateTimeLetterUseCase, UpdateTimeLetterUseCase로 처리합니다.
  * 수신자 목록은 설정 화면과 동일한 GET /users/receivers를 사용합니다.
+ * 라우트에 draftId가 있으면 해당 임시저장 편지를 불러와 수정 모드로 진입합니다.
  */
 @HiltViewModel
 class TimeLetterWriterViewModel
     @Inject
     constructor(
+        savedStateHandle: SavedStateHandle,
         private val createTimeLetterUseCase: CreateTimeLetterUseCase,
+        private val updateTimeLetterUseCase: UpdateTimeLetterUseCase,
+        private val getTimeLetterUseCase: GetTimeLetterUseCase,
         private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
+        private val draftIdFromRoute: Long? =
+            savedStateHandle.toRoute<TimeLetterRoute.TimeLetterWriterRoute>().draftId
+
         private val _uiState = MutableStateFlow(TimeLetterWriterUiState())
         val uiState: StateFlow<TimeLetterWriterUiState> = _uiState.asStateFlow()
 
         init {
             loadDraftCount()
             loadReceivers()
+            if (draftIdFromRoute != null) {
+                loadDraft(draftIdFromRoute)
+            }
+        }
+
+        /**
+         * 임시저장된 편지 불러오기 (GET /time-letters/{timeLetterId})
+         */
+        private fun loadDraft(timeLetterId: Long) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true) }
+                getTimeLetterUseCase(timeLetterId)
+                    .onSuccess { letter ->
+                        val (date, time) = parseSendAtToDateAndTime(letter.sendAt)
+                        _uiState.update {
+                            it.copy(
+                                draftId = letter.id,
+                                title = letter.title ?: "",
+                                content = letter.content ?: "",
+                                sendDate = date,
+                                sendTime = time,
+                                isLoading = false
+                            )
+                        }
+                        validateSaveEnabled()
+                    }
+                    .onFailure {
+                        _uiState.update { it.copy(isLoading = false) }
+                    }
+            }
+        }
+
+        /**
+         * sendAt (yyyy-MM-ddTHH:mm:ss) -> (날짜, 시간) 쌍으로 변환
+         */
+        private fun parseSendAtToDateAndTime(sendAt: String?): Pair<String, String> {
+            if (sendAt.isNullOrBlank()) return "" to ""
+            val parts = sendAt.split("T")
+            val date = parts.getOrNull(0)?.replace("-", ". ")?.trim() ?: ""
+            val timePart = parts.getOrNull(1) ?: ""
+            val time = timePart.take(5) // HH:mm
+            return date to time
         }
 
         /**
@@ -218,28 +272,63 @@ class TimeLetterWriterViewModel
         }
 
         /**
-         * 타임레터 정식등록 (status = SCHEDULED)
+         * 등록 버튼 클릭 시: 등록 완료 팝업을 잠깐 보여준 뒤 실제 타임레터 정식등록을 수행합니다.
          *
          * @param onSuccess 저장 성공 시 콜백
          */
-        fun saveTimeLetter(onSuccess: () -> Unit) {
+        fun registerWithPopUpThenSave(onSuccess: () -> Unit) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(showRegisteredPopUp = true) }
+                delay(2000L)
+                _uiState.update { it.copy(showRegisteredPopUp = false) }
+                saveTimeLetter(showPopUpAfterSuccess = false, onSuccess = onSuccess)
+            }
+        }
+
+        /**
+         * 타임레터 정식등록 (status = SCHEDULED)
+         *
+         * draftId가 있으면 PATCH /time-letters/{id}, 없으면 POST /time-letters
+         *
+         * @param showPopUpAfterSuccess 저장 성공 후 등록 완료 팝업 표시 여부
+         * @param onSuccess 저장 성공 시 콜백
+         */
+        fun saveTimeLetter(
+            showPopUpAfterSuccess: Boolean = true,
+            onSuccess: () -> Unit
+        ) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
-                val result = createTimeLetterUseCase(
-                    title = state.title.ifBlank { null },
-                    content = state.content.ifBlank { null },
-                    sendAt = sendAt,
-                    status = TimeLetterStatus.SCHEDULED,
-                    mediaList = null
-                )
+                val result = if (state.draftId != null) {
+                    updateTimeLetterUseCase(
+                        timeLetterId = state.draftId,
+                        title = state.title.ifBlank { null },
+                        content = state.content.ifBlank { null },
+                        sendAt = sendAt,
+                        status = TimeLetterStatus.SCHEDULED,
+                        mediaList = null
+                    )
+                } else {
+                    createTimeLetterUseCase(
+                        title = state.title.ifBlank { null },
+                        content = state.content.ifBlank { null },
+                        sendAt = sendAt,
+                        status = TimeLetterStatus.SCHEDULED,
+                        mediaList = null
+                    )
+                }
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess { _ ->
-                    _uiState.update { it.copy(showRegisteredPopUp = true) }
-                    delay(2000L)
-                    onSuccess()
-                    _uiState.update { it.copy(showRegisteredPopUp = false) }
+                    if (showPopUpAfterSuccess) {
+                        _uiState.update { it.copy(showRegisteredPopUp = true) }
+                        delay(2000L)
+                        onSuccess()
+                        _uiState.update { it.copy(showRegisteredPopUp = false) }
+                    } else {
+                        onSuccess()
+                    }
                 }
                 result.onFailure {
                     // TODO: 에러 메시지 UiState에 반영
@@ -250,7 +339,7 @@ class TimeLetterWriterViewModel
         /**
          * 임시저장 (status = DRAFT)
          *
-         * 현재 작성 중인 편지를 임시저장합니다. (POST /time-letters, status=DRAFT)
+         * draftId가 있으면 PATCH /time-letters/{id}, 없으면 POST /time-letters
          *
          * @param onSuccess 저장 성공 시 콜백
          */
@@ -259,15 +348,26 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
-                val result = createTimeLetterUseCase(
-                    title = state.title.ifBlank { null },
-                    content = state.content.ifBlank { null },
-                    sendAt = sendAt,
-                    status = TimeLetterStatus.DRAFT,
-                    mediaList = null
-                )
+                val result = if (state.draftId != null) {
+                    updateTimeLetterUseCase(
+                        timeLetterId = state.draftId,
+                        title = state.title.ifBlank { null },
+                        content = state.content.ifBlank { null },
+                        sendAt = sendAt,
+                        status = TimeLetterStatus.DRAFT,
+                        mediaList = null
+                    )
+                } else {
+                    createTimeLetterUseCase(
+                        title = state.title.ifBlank { null },
+                        content = state.content.ifBlank { null },
+                        sendAt = sendAt,
+                        status = TimeLetterStatus.DRAFT,
+                        mediaList = null
+                    )
+                }
                 _uiState.update { it.copy(isLoading = false) }
-                result.onSuccess {
+                result.onSuccess { _ ->
                     refreshDraftCount()
                     _uiState.update { it.copy(showDraftSavePopUp = true) }
                     delay(2000L)

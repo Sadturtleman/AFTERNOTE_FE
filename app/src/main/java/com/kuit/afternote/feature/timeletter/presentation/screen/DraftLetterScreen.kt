@@ -54,12 +54,14 @@ data class DraftLetterItem(
  *
  * @param modifier Modifier
  * @param onCloseClick 닫기 클릭 콜백
+ * @param onLetterClick 편지 클릭 콜백 (일반 모드, 작성 화면으로 이동)
  * @param viewModel DraftLetterViewModel (hiltViewModel() 기본)
  */
 @Composable
 fun DraftLetterScreen(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit = {},
+    onLetterClick: (DraftLetterItem) -> Unit = {},
     viewModel: DraftLetterViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -120,6 +122,8 @@ fun DraftLetterScreen(
                         onItemClick = {
                             if (uiState.isEditMode) {
                                 viewModel.toggleSelection(letter.id)
+                            } else {
+                                onLetterClick(letter)
                             }
                         }
                     )
