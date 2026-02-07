@@ -41,12 +41,27 @@ object AfternoteItemMapper {
         }
 
     /**
-     * 서비스명으로부터 ServiceType 추론
+     * Edit screen category dropdown value from service name.
+     * Use when loading existing item so selectedCategory matches the dropdown options.
+     */
+    fun categoryStringForEditScreen(serviceName: String): String =
+        when (inferServiceType(serviceName)) {
+            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER -> "소셜네트워크"
+            ServiceType.BUSINESS -> "비즈니스"
+            ServiceType.GALLERY_AND_FILES -> "갤러리 및 파일"
+            ServiceType.ASSET_MANAGEMENT -> "재산 처리"
+            ServiceType.MEMORIAL -> "추모 가이드라인"
+        }
+
+    /**
+     * 서비스명으로부터 ServiceType 추론 (단일 소스; 목록/편집 공용)
      */
     private fun inferServiceType(serviceName: String): ServiceType =
         when (serviceName) {
-            "인스타그램", "페이스북", "트위터", "카카오톡", "네이버" -> ServiceType.SOCIAL_NETWORK
             "갤러리", "파일" -> ServiceType.GALLERY_AND_FILES
+            "인스타그램", "페이스북", "X", "스레드", "틱톡", "유튜브",
+            "카카오톡", "카카오스토리", "네이버 블로그", "네이버 카페", "네이버 밴드",
+            "네이버", "디스코드" -> ServiceType.SOCIAL_NETWORK
             "추모 가이드라인" -> ServiceType.MEMORIAL
             "네이버 메일" -> ServiceType.BUSINESS
             else -> ServiceType.OTHER
