@@ -8,7 +8,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class AfternoteEditReceiverCallbacks(
     val onAddClick: () -> Unit = {},
-    val onItemEditClick: (String) -> Unit = {},
     val onItemDeleteClick: (String) -> Unit = {},
     val onItemAdded: (String) -> Unit = {},
     val onTextFieldVisibilityChanged: (Boolean) -> Unit = {}

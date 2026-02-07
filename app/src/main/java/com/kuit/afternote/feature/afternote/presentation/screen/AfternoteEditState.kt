@@ -213,9 +213,6 @@ class AfternoteEditState(
     val galleryAfternoteEditReceiverCallbacks: AfternoteEditReceiverCallbacks by lazy {
         AfternoteEditReceiverCallbacks(
             onAddClick = ::showAddAfternoteEditReceiverDialog,
-            onItemEditClick = { _ ->
-                // TODO: 수신자 수정 로직
-            },
             onItemDeleteClick = ::onAfternoteEditReceiverDelete,
             onItemAdded = ::onAfternoteEditReceiverItemAdded,
             onTextFieldVisibilityChanged = { _ ->

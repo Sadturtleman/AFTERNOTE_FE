@@ -28,7 +28,8 @@ fun EditDropdownMenu(
     onDismissRequest: () -> Unit,
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    offset: DpOffset = DpOffset(x = 0.dp, y = 0.dp)
+    offset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
+    showEditItem: Boolean = true
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -39,27 +40,29 @@ fun EditDropdownMenu(
         shadowElevation = 4.dp,
         modifier = modifier.width(110.dp)
     ) {
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = "수정하기",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            onClick = {
-                onDismissRequest()
-                onEditClick()
-            },
-            contentPadding = PaddingValues(all = 16.dp)
-        )
+        if (showEditItem) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = "수정하기",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                            textAlign = TextAlign.Center
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                onClick = {
+                    onDismissRequest()
+                    onEditClick()
+                },
+                contentPadding = PaddingValues(all = 16.dp)
+            )
+        }
 
         DropdownMenuItem(
             text = {

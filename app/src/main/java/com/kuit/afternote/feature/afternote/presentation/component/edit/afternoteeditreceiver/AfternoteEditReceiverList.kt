@@ -79,7 +79,7 @@ fun AfternoteEditReceiverList(
                 onDismissDropdown = {
                     state.expandedStates[receiver.id] = false
                 },
-                onEditClick = { events.onItemEditClick(receiver.id) },
+                showEditItem = false,
                 onDeleteClick = { events.onItemDeleteClick(receiver.id) }
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -114,7 +114,7 @@ private fun AfternoteEditReceiverItem(
     expanded: Boolean = false,
     onMoreClick: () -> Unit = {},
     onDismissDropdown: () -> Unit = {},
-    onEditClick: () -> Unit = {},
+    showEditItem: Boolean = true,
     onDeleteClick: () -> Unit = {}
 ) {
     Row(
@@ -167,7 +167,7 @@ private fun AfternoteEditReceiverItem(
             EditDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = onDismissDropdown,
-                onEditClick = onEditClick,
+                showEditItem = showEditItem,
                 onDeleteClick = onDeleteClick
             )
         }
