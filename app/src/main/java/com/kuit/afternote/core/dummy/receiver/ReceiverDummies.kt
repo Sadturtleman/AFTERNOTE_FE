@@ -1,7 +1,7 @@
 package com.kuit.afternote.core.dummy.receiver
 
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
@@ -34,12 +34,12 @@ data class ReceiverDummyDetail(
  * Replace with API load when backend is ready.
  */
 object ReceiverDummies {
-    val receiverList: List<MainPageEditReceiver> = listOf(
-        MainPageEditReceiver(id = "receiver_1", name = "김지은", label = "딸"),
-        MainPageEditReceiver(id = "receiver_2", name = "김혜성", label = "아들"),
-        MainPageEditReceiver(id = "receiver_3", name = "박서연", label = "조카"),
-        MainPageEditReceiver(id = "receiver_4", name = "황은주", label = "언니"),
-        MainPageEditReceiver(id = "receiver_5", name = "황은경", label = "동생")
+    val receiverList: List<AfternoteEditReceiver> = listOf(
+        AfternoteEditReceiver(id = "receiver_1", name = "김지은", label = "딸"),
+        AfternoteEditReceiver(id = "receiver_2", name = "김혜성", label = "아들"),
+        AfternoteEditReceiver(id = "receiver_3", name = "박서연", label = "조카"),
+        AfternoteEditReceiver(id = "receiver_4", name = "황은주", label = "언니"),
+        AfternoteEditReceiver(id = "receiver_5", name = "황은경", label = "동생")
     )
 
     private val receiverDetails: Map<String, ReceiverDummyDetail> = mapOf(
@@ -140,35 +140,37 @@ object ReceiverDummies {
                 id = "instagram",
                 serviceNameResId = R.string.receiver_afternote_item_instagram,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.img_insta_pattern
             ),
             AfternoteListItemSeed(
                 id = "gallery",
                 serviceNameResId = R.string.receiver_afternote_item_gallery,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.ic_gallery
             ),
             AfternoteListItemSeed(
                 id = "memorial_guideline",
                 serviceNameResId = R.string.receiver_afternote_item_memorial_guideline,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.ic_memorial_guideline
             ),
             AfternoteListItemSeed(
                 id = "naver_mail",
                 serviceNameResId = R.string.receiver_afternote_item_naver_mail,
                 serviceNameLiteral = null,
-                date = "2025.11.26",
+                date = "2026.2.6",
                 iconResId = R.drawable.img_naver_mail
             )
         )
 
     /**
      * Dummy time letter items for a receiver. Replace with API load by receiverId when backend is ready.
+     * Currently used only for development and previews.
      */
+    @Suppress("unused")
     fun defaultTimeLetterItems(receiverId: String): List<TimeLetterItem> {
         val detail = detailOf(receiverId)
         return List(detail.timeLetterCount.coerceAtLeast(1)) { index ->
@@ -190,7 +192,9 @@ object ReceiverDummies {
 
     /**
      * Dummy daily answer items for a receiver. Replace with API load by receiverId when backend is ready.
+     * Currently used only for development and previews.
      */
+    @Suppress("unused")
     fun dailyAnswerItems(
         receiverId: String,
         question: String,

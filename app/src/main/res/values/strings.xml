@@ -31,4 +31,16 @@
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
     <string name="login_kakao_failed">카카오 로그인에 실패했습니다.</string>
     <string name="login_kakao_sdk_not_initialized">카카오 SDK가 초기화되지 않았습니다. KAKAO_NATIVE_APP_KEY를 확인해주세요.</string>
+
+    <!-- Fingerprint / Biometric -->
+    <string name="biometric_prompt_title">지문 인증</string>
+    <string name="biometric_prompt_subtitle">사용자 인증 후 조회가 가능합니다.</string>
+    <string name="biometric_prompt_negative">취소</string>
+    <string name="biometric_not_available">지문 인증을 사용할 수 없습니다.</string>
+
+    <!-- Setting: unhandled menu -->
+    <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
+
+    <!-- Afternote detail: design not yet implemented -->
+    <string name="design_pending">디자인 예정</string>
 </resources>

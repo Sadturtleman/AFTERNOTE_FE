@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,6 +44,9 @@ class TimeLetterWriterViewModel
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
+        private companion object {
+            private const val TAG = "TimeLetterWriterVM"
+        }
         private val draftIdFromRoute: Long? =
             savedStateHandle.toRoute<TimeLetterRoute.TimeLetterWriterRoute>().draftId
 
@@ -321,6 +325,7 @@ class TimeLetterWriterViewModel
                 }
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess { _ ->
+                    Log.d(TAG, "saveTimeLetter onSuccess")
                     if (showPopUpAfterSuccess) {
                         _uiState.update { it.copy(showRegisteredPopUp = true) }
                         delay(2000L)
@@ -331,6 +336,7 @@ class TimeLetterWriterViewModel
                     }
                 }
                 result.onFailure {
+                    Log.e(TAG, "saveTimeLetter failed", it)
                     // TODO: 에러 메시지 UiState에 반영
                 }
             }

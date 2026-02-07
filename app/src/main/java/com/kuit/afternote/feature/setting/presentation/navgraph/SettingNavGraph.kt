@@ -1,9 +1,12 @@
 package com.kuit.afternote.feature.setting.presentation.navgraph
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -11,8 +14,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
@@ -105,8 +109,12 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
 }
 
+private const val TAG_SETTING_NAV = "SettingNavGraph"
+
 @Composable
 private fun SettingMainRouteContent(navController: NavController) {
+    val context = LocalContext.current
+    val unhandledMessage = stringResource(R.string.setting_menu_not_connected)
     SettingMainScreen(
         onClick = { title ->
             when (title) {
@@ -119,7 +127,12 @@ private fun SettingMainRouteContent(navController: NavController) {
                 "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)
                 "패스키 관리" -> navController.navigate(SettingRoute.PassKeyAddRoute)
                 "앱 잠금 설정" -> navController.navigate(SettingRoute.AppLockPasswordModifyRoute)
-                else -> { /* TODO: 나머지는 추후 연결 */ }
+                else -> {
+                    Log.w(TAG_SETTING_NAV, "Unhandled setting menu: title=$title")
+                    Toast
+                        .makeText(context, unhandledMessage, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
     )
@@ -189,13 +202,13 @@ private fun ReceiverListRouteContent(navController: NavController) {
     val listViewModel: ReceiverListViewModel = hiltViewModel()
     val listState by listViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { listViewModel.loadReceivers() }
-    val receiversAsMainPage = listState.receivers.map { r ->
-        MainPageEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
+    val receiversAsAfternote = listState.receivers.map { r ->
+        AfternoteEditReceiver(id = r.receiverId.toString(), name = r.name, label = r.relation)
     }
     ReceiverManagementScreen(
         onBackClick = { navController.popBackStack() },
         onRegisterClick = { navController.navigate(SettingRoute.ReceiverRegisterRoute) },
-        receivers = receiversAsMainPage,
+        receivers = receiversAsAfternote,
         onReceiverClick = { receiver ->
             navController.navigate(SettingRoute.ReceiverDetailRoute(receiverId = receiver.id))
         }

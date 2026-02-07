@@ -35,10 +35,6 @@ class TimeLetterViewModel
         private val _uiState = MutableStateFlow<TimeLetterUiState>(TimeLetterUiState.Loading)
         val uiState: StateFlow<TimeLetterUiState> = _uiState.asStateFlow()
 
-        init {
-            loadLetters()
-        }
-
         /**
          * 뷰 모드 변경 (리스트 / 블록)
          */
