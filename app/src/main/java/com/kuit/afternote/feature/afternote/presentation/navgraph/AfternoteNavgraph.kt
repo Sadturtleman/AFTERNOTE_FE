@@ -69,38 +69,69 @@ inline fun <reified T : Any> NavGraphBuilder.afternoteComposable(noinline conten
     }
 }
 
-fun NavGraphBuilder.afternoteNavGraph(
-    navController: NavController,
+private fun resolveListItems(
     afternoteItems: List<AfternoteItem>,
-    onItemsUpdated: (List<AfternoteItem>) -> Unit,
-    playlistStateHolder: MemorialPlaylistStateHolder,
     afternoteProvider: AfternoteEditDataProvider
-) {
-    afternoteComposable<AfternoteRoute.AfternoteListRoute> {
-        val listItems = afternoteItems.ifEmpty {
-            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
-        }
-        AfternoteListRoute(
-            onNavigateToDetail = { itemId ->
-                navController.navigate(AfternoteRoute.DetailRoute(itemId = itemId))
-            },
-            onNavigateToGalleryDetail = { itemId ->
-                navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
-            },
-            onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
-            initialItems = listItems
-        )
+): List<AfternoteItem> =
+    afternoteItems.ifEmpty {
+        AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
     }
 
-    afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
-        val listItems = afternoteItems.ifEmpty {
-            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+@Composable
+private fun AfternoteListRouteContent(
+    navController: NavController,
+    listItems: List<AfternoteItem>
+) {
+    AfternoteListRoute(
+        onNavigateToDetail = { itemId ->
+            navController.navigate(AfternoteRoute.DetailRoute(itemId = itemId))
+        },
+        onNavigateToGalleryDetail = { itemId ->
+            navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
+        },
+        onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+        initialItems = listItems
+    )
+}
+
+@Composable
+private fun AfternoteDetailRouteContent(
+    backStackEntry: NavBackStackEntry,
+    navController: NavController,
+    listItems: List<AfternoteItem>,
+    userName: String
+) {
+    val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
+    val item = listItems.find { it.id == route.itemId }
+    AfternoteDetailScreen(
+        serviceName = item?.serviceName ?: "",
+        userName = userName,
+        onBackClick = { navController.popBackStack() },
+        onEditClick = {
+            if (item != null) {
+                navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
+            }
         }
-        val item = listItems.find { it.id == route.itemId }
-        AfternoteDetailScreen(
-            serviceName = item?.serviceName ?: "",
-            userName = "서영",
+    )
+}
+
+@Composable
+private fun AfternoteGalleryDetailRouteContent(
+    backStackEntry: NavBackStackEntry,
+    navController: NavController,
+    listItems: List<AfternoteItem>,
+    afternoteProvider: AfternoteEditDataProvider,
+    userName: String
+) {
+    val route = backStackEntry.toRoute<AfternoteRoute.GalleryDetailRoute>()
+    val item = listItems.find { it.id == route.itemId }
+    GalleryDetailScreen(
+        detailState = GalleryDetailState(
+            afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers(),
+            serviceName = item?.serviceName ?: "갤러리",
+            userName = userName
+        ),
+        callbacks = GalleryDetailCallbacks(
             onBackClick = { navController.popBackStack() },
             onEditClick = {
                 if (item != null) {
@@ -108,65 +139,164 @@ fun NavGraphBuilder.afternoteNavGraph(
                 }
             }
         )
+    )
+}
+
+@Composable
+private fun AfternoteEditRouteContent(
+    backStackEntry: NavBackStackEntry,
+    navController: NavController,
+    afternoteItems: List<AfternoteItem>,
+    onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    playlistStateHolder: MemorialPlaylistStateHolder,
+    afternoteProvider: AfternoteEditDataProvider
+) {
+    val route = backStackEntry.toRoute<AfternoteRoute.EditRoute>()
+    val listItems = resolveListItems(afternoteItems, afternoteProvider)
+    val initialItem = route.itemId?.let { id -> listItems.find { it.id == id } }
+
+    LaunchedEffect(playlistStateHolder, afternoteProvider) {
+        if (playlistStateHolder.songs.isEmpty()) {
+            playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
+        }
+    }
+
+    AfternoteEditScreen(
+        onBackClick = { navController.popBackStack() },
+        onRegisterClick = { payload: RegisterAfternotePayload ->
+            if (initialItem != null) {
+                val updatedItems = afternoteItems.map {
+                    if (it.id == initialItem.id) AfternoteItemMapper.fromPayload(payload)
+                    else it
+                }
+                onItemsUpdated(updatedItems)
+            } else {
+                val newItem = AfternoteItemMapper.fromPayload(payload)
+                onItemsUpdated(afternoteItems + newItem)
+            }
+            navController.navigate(AfternoteRoute.AfternoteListRoute) {
+                popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
+                launchSingleTop = true
+            }
+        },
+        onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+        playlistStateHolder = playlistStateHolder,
+        initialItem = initialItem
+    )
+}
+
+@Composable
+private fun AfternoteFingerprintLoginContent(navController: NavController) {
+    val context = LocalContext.current
+    val activity = context as? FragmentActivity
+    val promptTitle = stringResource(R.string.biometric_prompt_title)
+    val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
+    val notAvailableMessage = stringResource(R.string.biometric_not_available)
+    val biometricPrompt =
+        remember(activity) {
+            try {
+                activity?.let { fragActivity ->
+                    val executor = ContextCompat.getMainExecutor(fragActivity)
+                    BiometricPrompt(
+                        fragActivity,
+                        executor,
+                        object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationSucceeded(
+                                result: BiometricPrompt.AuthenticationResult
+                            ) {
+                                navController.popBackStack()
+                            }
+                        }
+                    )
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG_FINGERPRINT, "FingerprintLoginRoute: BiometricPrompt failed", e)
+                null
+            }
+        }
+    val promptInfo =
+        remember(promptTitle, promptSubtitle) {
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(promptTitle)
+                .setSubtitle(promptSubtitle)
+                .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                .build()
+        }
+    FingerprintLoginScreen(
+        onFingerprintAuthClick = {
+            if (activity == null) return@FingerprintLoginScreen
+            val biometricManager = BiometricManager.from(context)
+            when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
+                BiometricManager.BIOMETRIC_SUCCESS -> biometricPrompt?.authenticate(promptInfo)
+                else ->
+                    android.widget.Toast
+                        .makeText(context, notAvailableMessage, android.widget.Toast.LENGTH_SHORT)
+                        .show()
+            }
+        }
+    )
+}
+
+@Composable
+private fun AfternoteAddSongRouteContent(
+    navController: NavController,
+    playlistStateHolder: MemorialPlaylistStateHolder,
+    afternoteProvider: AfternoteEditDataProvider
+) {
+    AddSongScreen(
+        songs = afternoteProvider.getAddSongSearchResults(),
+        callbacks = AddSongCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onSongsAdded = { added ->
+                added.forEach { playlistStateHolder.addSong(it) }
+                navController.popBackStack()
+            }
+        )
+    )
+}
+
+fun NavGraphBuilder.afternoteNavGraph(
+    navController: NavController,
+    afternoteItems: List<AfternoteItem>,
+    onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    playlistStateHolder: MemorialPlaylistStateHolder,
+    afternoteProvider: AfternoteEditDataProvider,
+    userName: String
+) {
+    afternoteComposable<AfternoteRoute.AfternoteListRoute> {
+        val listItems = resolveListItems(afternoteItems, afternoteProvider)
+        AfternoteListRouteContent(navController = navController, listItems = listItems)
+    }
+
+    afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
+        val listItems = resolveListItems(afternoteItems, afternoteProvider)
+        AfternoteDetailRouteContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            listItems = listItems,
+            userName = userName
+        )
     }
 
     afternoteComposable<AfternoteRoute.GalleryDetailRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<AfternoteRoute.GalleryDetailRoute>()
-        val listItems = afternoteItems.ifEmpty {
-            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
-        }
-        val item = listItems.find { it.id == route.itemId }
-        GalleryDetailScreen(
-            detailState = GalleryDetailState(
-                afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers(),
-                serviceName = item?.serviceName ?: "갤러리",
-                userName = "서영"
-            ),
-            callbacks = GalleryDetailCallbacks(
-                onBackClick = { navController.popBackStack() },
-                onEditClick = {
-                    if (item != null) {
-                        navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
-                    }
-                }
-            )
+        val listItems = resolveListItems(afternoteItems, afternoteProvider)
+        AfternoteGalleryDetailRouteContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            listItems = listItems,
+            afternoteProvider = afternoteProvider,
+            userName = userName
         )
     }
 
     afternoteComposable<AfternoteRoute.EditRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<AfternoteRoute.EditRoute>()
-        val listItems = afternoteItems.ifEmpty {
-            AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
-        }
-        val initialItem = route.itemId?.let { id -> listItems.find { it.id == id } }
-
-        LaunchedEffect(playlistStateHolder, afternoteProvider) {
-            if (playlistStateHolder.songs.isEmpty()) {
-                playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
-            }
-        }
-
-        AfternoteEditScreen(
-            onBackClick = { navController.popBackStack() },
-            onRegisterClick = { payload: RegisterAfternotePayload ->
-                if (initialItem != null) {
-                    val updatedItems = afternoteItems.map {
-                        if (it.id == initialItem.id) AfternoteItemMapper.fromPayload(payload)
-                        else it
-                    }
-                    onItemsUpdated(updatedItems)
-                } else {
-                    val newItem = AfternoteItemMapper.fromPayload(payload)
-                    onItemsUpdated(afternoteItems + newItem)
-                }
-                navController.navigate(AfternoteRoute.AfternoteListRoute) {
-                    popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
-                    launchSingleTop = true
-                }
-            },
-            onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+        AfternoteEditRouteContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            afternoteItems = afternoteItems,
+            onItemsUpdated = onItemsUpdated,
             playlistStateHolder = playlistStateHolder,
-            initialItem = initialItem
+            afternoteProvider = afternoteProvider
         )
     }
 
@@ -179,89 +309,14 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.FingerprintLoginRoute> {
-        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: composable entered")
-        val context = LocalContext.current
-        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: context=${context::class.java.name}")
-        val activity = context as? FragmentActivity
-        Log.d(
-            TAG_FINGERPRINT,
-            "FingerprintLoginRoute: activity=${activity?.javaClass?.name ?: "null"}"
-        )
-        val promptTitle = stringResource(R.string.biometric_prompt_title)
-        val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
-        val notAvailableMessage = stringResource(R.string.biometric_not_available)
-        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: stringResource done")
-        val biometricPrompt =
-            remember(activity) {
-                try {
-                    Log.d(
-                        TAG_FINGERPRINT,
-                        "FingerprintLoginRoute: building BiometricPrompt, activity=$activity"
-                    )
-                    activity?.let { fragActivity ->
-                        val executor = ContextCompat.getMainExecutor(fragActivity)
-                        BiometricPrompt(
-                            fragActivity,
-                            executor,
-                            object : BiometricPrompt.AuthenticationCallback() {
-                                override fun onAuthenticationSucceeded(
-                                    result: BiometricPrompt.AuthenticationResult
-                                ) {
-                                    Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: auth succeeded, popping")
-                                    navController.popBackStack()
-                                }
-                            }
-                        ).also {
-                            Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: BiometricPrompt created")
-                        }
-                    }
-                } catch (e: Throwable) {
-                    Log.e(TAG_FINGERPRINT, "FingerprintLoginRoute: BiometricPrompt failed", e)
-                    null
-                }
-            }
-        val promptInfo =
-            remember(promptTitle, promptSubtitle) {
-                try {
-                    Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: building PromptInfo")
-                    BiometricPrompt.PromptInfo.Builder()
-                        .setTitle(promptTitle)
-                        .setSubtitle(promptSubtitle)
-                        .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-                        .build()
-                        .also { Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: PromptInfo created") }
-                } catch (e: Throwable) {
-                    Log.e(TAG_FINGERPRINT, "FingerprintLoginRoute: PromptInfo failed", e)
-                    throw e
-                }
-            }
-        Log.d(TAG_FINGERPRINT, "FingerprintLoginRoute: showing FingerprintLoginScreen")
-        FingerprintLoginScreen(
-            onFingerprintAuthClick = {
-                if (activity == null) return@FingerprintLoginScreen
-                val biometricManager = BiometricManager.from(context)
-                when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-                    BiometricManager.BIOMETRIC_SUCCESS ->
-                        biometricPrompt?.authenticate(promptInfo)
-                    else ->
-                        android.widget.Toast
-                            .makeText(context, notAvailableMessage, android.widget.Toast.LENGTH_SHORT)
-                            .show()
-                }
-            }
-        )
+        AfternoteFingerprintLoginContent(navController = navController)
     }
 
     afternoteComposable<AfternoteRoute.AddSongRoute> {
-        AddSongScreen(
-            songs = afternoteProvider.getAddSongSearchResults(),
-            callbacks = AddSongCallbacks(
-                onBackClick = { navController.popBackStack() },
-                onSongsAdded = { added ->
-                    added.forEach { playlistStateHolder.addSong(it) }
-                    navController.popBackStack()
-                }
-            )
+        AfternoteAddSongRouteContent(
+            navController = navController,
+            playlistStateHolder = playlistStateHolder,
+            afternoteProvider = afternoteProvider
         )
     }
 }

@@ -264,7 +264,8 @@ fun NavGraph(navHostController: NavHostController) {
             afternoteItems = afternoteItems,
             onItemsUpdated = { afternoteItems = it },
             playlistStateHolder = playlistStateHolder,
-            afternoteProvider = afternoteProvider
+            afternoteProvider = afternoteProvider,
+            userName = receiverProvider.getDefaultReceiverTitleForDev()
         )
         timeLetterNavGraph(navController = navHostController)
         settingNavGraph(navController = navHostController)
