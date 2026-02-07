@@ -10,20 +10,6 @@ import java.util.UUID
  */
 object AfternoteItemMapper {
     /**
-     * Pair를 AfternoteItem으로 변환 (레거시; 처리 방법은 빈 목록)
-     */
-    fun toAfternoteItem(pair: Pair<String, String>): AfternoteItem {
-        val (serviceName, date) = pair
-        val serviceType = inferServiceType(serviceName)
-        return AfternoteItem(
-            id = UUID.randomUUID().toString(),
-            serviceName = serviceName,
-            date = date,
-            type = serviceType
-        )
-    }
-
-    /**
      * 등록 페이로드로부터 AfternoteItem 생성 (처리 방법 포함)
      */
     fun fromPayload(payload: RegisterAfternotePayload): AfternoteItem {
@@ -37,11 +23,6 @@ object AfternoteItemMapper {
             galleryProcessingMethods = payload.galleryProcessingMethods
         )
     }
-
-    /**
-     * List<Pair>를 List<AfternoteItem>으로 변환 (매번 새 UUID 부여)
-     */
-    fun toAfternoteItems(pairs: List<Pair<String, String>>): List<AfternoteItem> = pairs.map { toAfternoteItem(it) }
 
     /**
      * List<Pair>를 List<AfternoteItem>으로 변환하며 **안정적인 id**를 부여.

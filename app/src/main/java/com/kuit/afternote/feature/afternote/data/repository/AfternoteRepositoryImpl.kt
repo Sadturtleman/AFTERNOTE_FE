@@ -13,7 +13,9 @@ import javax.inject.Inject
 /**
  * Data layer: calls API, maps DTO → domain at boundary.
  * Repository interface is defined by feature owner (Domain); this impl is for use once wired.
+ * Methods are unused until Domain/UI wires the repository.
  */
+@Suppress("UNUSED")
 class AfternoteRepositoryImpl
     @Inject
     constructor(
@@ -53,7 +55,7 @@ class AfternoteRepositoryImpl
             }
         )
         val response = api.createAfternoteSocial(body)
-        response.requireData()?.afternoteId ?: 0L
+        response.requireData().afternoteId
     }
 
     suspend fun createGallery(
@@ -72,6 +74,6 @@ class AfternoteRepositoryImpl
             receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) }
         )
         val response = api.createAfternoteGallery(body)
-        response.requireData()?.afternoteId ?: 0L
+        response.requireData().afternoteId
     }
 }
