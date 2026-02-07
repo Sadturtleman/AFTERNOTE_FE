@@ -291,6 +291,13 @@ class AfternoteEditState(
         pickedMemorialPhotoUri = uri?.toString()
     }
 
+    /**
+     * 추모 영상 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+     */
+    fun onFuneralVideoSelected(uri: android.net.Uri?) {
+        funeralVideoUrl = uri?.toString()
+    }
+
     fun showAddAfternoteEditReceiverDialog() {
         activeDialog = DialogType.ADD_AFTERNOTE_EDIT_RECEIVER
     }

@@ -124,6 +124,10 @@ fun AfternoteEditScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             state.onMemorialPhotoSelected(uri)
         }
+    val memorialVideoPickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            state.onFuneralVideoSelected(uri)
+        }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -170,6 +174,11 @@ fun AfternoteEditScreen(
                 onPhotoAddClick = {
                     memorialPhotoPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                onVideoAddClick = {
+                    memorialVideoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                     )
                 },
                 bottomPadding = paddingValues
@@ -219,6 +228,7 @@ private fun EditContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
+    onVideoAddClick: () -> Unit,
     bottomPadding: PaddingValues
 ) {
     Column(
@@ -271,6 +281,7 @@ private fun EditContent(
                 state = state,
                 onNavigateToAddSong = onNavigateToAddSong,
                 onPhotoAddClick = onPhotoAddClick,
+                onVideoAddClick = onVideoAddClick,
                 bottomPadding = bottomPadding
             )
         }
@@ -282,6 +293,7 @@ private fun CategoryContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
+    onVideoAddClick: () -> Unit,
     bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
@@ -301,9 +313,7 @@ private fun CategoryContent(
                     onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
                     onPhotoAddClick = onPhotoAddClick,
-                    onVideoAddClick = {
-                        // TODO: 영상 선택 로직
-                    }
+                    onVideoAddClick = onVideoAddClick
                 )
             )
         }
