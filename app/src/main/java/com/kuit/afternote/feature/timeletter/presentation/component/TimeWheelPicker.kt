@@ -94,8 +94,9 @@ fun TimeWheelPicker(
 
         Row(
             modifier = Modifier
+                .align(Alignment.Center)
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 21.dp),
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -103,6 +104,8 @@ fun TimeWheelPicker(
                 count = amPmList.size,
                 state = amPmState,
                 modifier = Modifier.width(60.dp),
+                itemHeight = 40.dp,
+                unfocusedCount = 1,
                 focus = {}
             ) { index ->
                 TimePickerText(
@@ -117,6 +120,8 @@ fun TimeWheelPicker(
                 count = hours.size,
                 state = hourState,
                 modifier = Modifier.width(50.dp),
+                itemHeight = 40.dp,
+                unfocusedCount = 1,
                 focus = {}
             ) { index ->
                 TimePickerText(
@@ -131,6 +136,8 @@ fun TimeWheelPicker(
                 count = minutes.size,
                 state = minuteState,
                 modifier = Modifier.width(50.dp),
+                itemHeight = 40.dp,
+                unfocusedCount = 1,
                 focus = {}
             ) { index ->
                 TimePickerText(

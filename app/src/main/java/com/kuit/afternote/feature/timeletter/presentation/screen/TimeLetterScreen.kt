@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
@@ -66,8 +68,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 @Composable
 fun TimeLetterScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimeLetterViewModel = androidx.lifecycle.viewmodel.compose
-        .viewModel(),
+    viewModel: TimeLetterViewModel = hiltViewModel(),
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {},
     onAddClick: () -> Unit = {}
@@ -116,11 +117,9 @@ fun TimeLetterScreen(
                 is TimeLetterUiState.Success -> {
                     val letters = (uiState as TimeLetterUiState.Success).letters
 
-                    // 필터 + 토글 Row
+                    // 필터 + 토글 Row (좌우 패딩은 ScaffoldContentWithOptionalFab contentPadding에서 적용됨)
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -156,7 +155,8 @@ fun TimeLetterScreen(
                                         sendDate = letter.sendDate,
                                         title = letter.title,
                                         content = letter.content,
-                                        imageResId = letter.imageResId
+                                        imageResId = letter.imageResId,
+                                        onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
@@ -308,9 +308,7 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                     val letters = uiState.letters
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -345,7 +343,8 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                                         sendDate = letter.sendDate,
                                         title = letter.title,
                                         content = letter.content,
-                                        imageResId = letter.imageResId
+                                        imageResId = letter.imageResId,
+                                        onDeleteClick = {}
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
