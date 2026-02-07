@@ -123,19 +123,10 @@ class AfternoteEditState(
     var activeDialog by mutableStateOf<DialogType?>(null)
         private set
 
-    // Processing Method Lists
-    private val defaultProcessingMethods = listOf(
-        ProcessingMethodItem("1", "게시물 내리기"),
-        ProcessingMethodItem("2", "추모 게시물 올리기"),
-        ProcessingMethodItem("3", "추모 계정으로 전환하기")
-    )
-    private val initialGalleryProcessingMethods = listOf(
-        ProcessingMethodItem("1", "'엽사' 폴더 박선호에게 전송"),
-        ProcessingMethodItem("2", "'흑역사' 폴더 삭제")
-    )
-    var processingMethods by mutableStateOf(defaultProcessingMethods)
+    // Processing Method Lists (empty until loaded; use dummies only in Previews)
+    var processingMethods by mutableStateOf<List<ProcessingMethodItem>>(emptyList())
         private set
-    var galleryProcessingMethods by mutableStateOf(initialGalleryProcessingMethods)
+    var galleryProcessingMethods by mutableStateOf<List<ProcessingMethodItem>>(emptyList())
         private set
 
     // Memorial Guideline

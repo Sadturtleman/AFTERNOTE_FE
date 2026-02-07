@@ -337,7 +337,7 @@ fun NavGraph(navHostController: NavHostController) {
 
         composable("fingerprint_login") {
             FingerprintLoginRouteContent(navHostController = navHostController)
-        }
+`        }
         composable("record_main") {
             RecordMainScreen(
                 onDiaryClick = { navHostController.navigate(RecordRoute.ListRoute) },

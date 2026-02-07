@@ -50,7 +50,7 @@ fun GalleryAndFileEditContent(
     }
     val spacerHeight = viewportHeight * 0.1f
 
-    GalleryAndFileEditContentContent(
+    GalleryAndFileEditContentBody(
         modifier = modifier,
         params = params,
         spacerHeight = spacerHeight
@@ -58,7 +58,7 @@ fun GalleryAndFileEditContent(
 }
 
 @Composable
-private fun GalleryAndFileEditContentContent(
+private fun GalleryAndFileEditContentBody(
     modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams,
     spacerHeight: Dp
