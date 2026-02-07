@@ -1,11 +1,18 @@
 package com.kuit.afternote.feature.timeletter.presentation.screen
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +21,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -46,9 +68,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
+import coil3.compose.AsyncImage
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
@@ -137,6 +161,25 @@ fun TimeLetterWriterScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
+    var isMenuOpen by remember { mutableStateOf(false) }
+    var selectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var selectedVoices by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var addedLinks by remember { mutableStateOf<List<String>>(emptyList()) }
+    var showLinkDialog by remember { mutableStateOf(false) }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
+    ) { uris -> if (uris.isNotEmpty()) selectedImages = selectedImages + uris }
+
+    // 2. 음성(오디오) 피커
+    val voicePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris -> if (uris.isNotEmpty()) selectedVoices = selectedVoices + uris }
+
+    // 3. 파일 피커 (모든 타입)
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris -> if (uris.isNotEmpty()) selectedFiles = selectedFiles + uris }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (showWritingPlusMenu) {
@@ -149,7 +192,12 @@ fun TimeLetterWriterScreen(
                 onDismissRequest = onDismissPlusMenu,
                 properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
             ) {
-                WritingPlusMenu()
+                WritingPlusMenu(
+                    onImageClick={},
+                    onVoiceClick={},
+                    onFileClick={},
+                    onLinkClick={}
+                )
             }
         }
 
@@ -277,11 +325,24 @@ fun TimeLetterWriterScreen(
             bottomBar = {
                 TimeLetterWriterBottomBar(
                     draftCount = draftCount,
-                    onAddClick = {},
+                    onLinkClick = { isMenuOpen = !isMenuOpen },
+                    onAddClick = { /* 더보기 동작 */ },
                     onSaveDraftClick = onSaveDraftClick,
                     onDraftCountClick = onDraftCountClick,
-                    onLinkClick = {},
-                    onMoreClick = onMoreClick
+                    isMenuOpen = isMenuOpen,
+                    onMenuDismiss = { isMenuOpen = false },
+                    onImageAddClick = {
+                        imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
+                    onVoiceAddClick = {
+                        voicePickerLauncher.launch(arrayOf("audio/*"))
+                    },
+                    onFileAddClick = {
+                        filePickerLauncher.launch(arrayOf("*/*"))
+                    },
+                    onLinkAddClick = {
+                        showLinkDialog = true
+                    }
                 )
             }
         ) { innerPadding ->
@@ -289,6 +350,7 @@ fun TimeLetterWriterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -382,6 +444,45 @@ fun TimeLetterWriterScreen(
                             thickness = 0.4.dp
                         )
                     }
+
+                    // [3] 이미지 그리드 (제목과 본문 사이로 이동!)
+                    if (selectedImages.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        SelectedImageGrid(images = selectedImages) { selectedImages = selectedImages - it }
+                    }
+
+                    // (2) 음성
+                    if (selectedVoices.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AttachmentList(
+                            items = selectedVoices,
+                            iconRes = R.drawable.ic_sound, // 아이콘 리소스 확인 필요
+                            labelExtractor = { "음성 녹음 파일 ${selectedVoices.indexOf(it) + 1}" }, // 실제 파일명 대신 임시 이름
+                            onRemove = { selectedVoices = selectedVoices - it }
+                        )
+                    }
+
+                    // (3) 파일
+                    if (selectedFiles.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AttachmentList(
+                            items = selectedFiles,
+                            iconRes = R.drawable.ic_file, // 아이콘 리소스 확인 필요
+                            labelExtractor = { "첨부 파일 ${selectedFiles.indexOf(it) + 1}" },
+                            onRemove = { selectedFiles = selectedFiles - it }
+                        )
+                    }
+
+                    // (4) 링크
+                    if (addedLinks.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        AttachmentList(
+                            items = addedLinks,
+                            iconRes = R.drawable.ic_plus_link, // 아이콘 리소스 확인 필요
+                            labelExtractor = { it }, // 링크 주소 그대로 표시
+                            onRemove = { addedLinks = addedLinks - it }
+                        )
+                    }
                 }
 
                 Column(
@@ -397,7 +498,7 @@ fun TimeLetterWriterScreen(
                             color = Color(0xFF000000),
                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight(400)
+                            fontWeight = FontWeight(400), lineHeight = 24.sp // 가독성 위해 줄간격 추가
                         ),
                         cursorBrush = SolidColor(Color(0xFF000000)),
                         singleLine = true,
@@ -455,9 +556,9 @@ fun TimeLetterWriterScreen(
                     },
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .weight(1f)
-                        .fillMaxWidth()
+                        .fillMaxWidth().heightIn(min = 200.dp)
                 )
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
 
@@ -480,10 +581,8 @@ fun TimeLetterWriterScreen(
             Box(
                 modifier = Modifier
                     .zIndex(2f)
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp)
-                    ).clip(RoundedCornerShape(12.dp))
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
                     .padding(vertical = 16.dp)
             ) {
@@ -497,7 +596,17 @@ fun TimeLetterWriterScreen(
                 )
             }
         }
-
+        if (showLinkDialog) {
+            LinkInputDialog(
+                onDismiss = { showLinkDialog = false },
+                onConfirm = { link ->
+                    if (link.isNotBlank()) {
+                        addedLinks = addedLinks + link
+                    }
+                    showLinkDialog = false
+                }
+            )
+        }
         // TimePicker 오버레이 (TimeWheelPicker)
         if (showTimePicker) {
             val now = LocalTime.now()
@@ -532,7 +641,8 @@ fun TimeLetterWriterScreen(
                     .shadow(
                         elevation = 8.dp,
                         shape = RoundedCornerShape(12.dp)
-                    ).clip(RoundedCornerShape(12.dp))
+                    )
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
                     .padding(vertical = 16.dp)
             ) {
@@ -545,6 +655,170 @@ fun TimeLetterWriterScreen(
         }
     }
 }
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SelectedImageGrid(
+    images: List<Uri>,
+    onRemoveImage: (Uri) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        Text(
+            text = "첨부된 이미지 (${images.size})",
+            fontSize = 12.sp,
+            color = Color(0xFF9E9E9E),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // LazyVerticalGrid 대신 FlowRow 사용
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            maxItemsInEachRow = 3
+        ) {
+            images.forEach { uri ->
+                Box(
+                    modifier = Modifier
+                        .width(100.dp) // 적절한 크기 고정 (또는 weight 로직 사용 가능)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray)
+                ) {
+                    AsyncImage(
+                        model = uri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "삭제",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                            .size(20.dp)
+                            .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                            .padding(3.dp)
+                            .clickable { onRemoveImage(uri) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun <T> AttachmentList(
+    items: List<T>,
+    iconRes: Int,
+    labelExtractor: (T) -> String,
+    onRemove: (T) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        items.forEach { item ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = labelExtractor(item),
+                    fontSize = 14.sp,
+                    color = Color(0xFF333333),
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1
+                )
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "삭제",
+                    tint = Color(0xFF999999),
+                    modifier = Modifier.size(18.dp).clickable { onRemove(item) }
+                )
+            }
+        }
+    }
+}
+
+// [다이얼로그] 링크 입력창
+@Composable
+fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+    var text by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "링크",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 입력 필드
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    placeholder = { Text("URL을 입력하세요", color = Color(0xFF999999)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFF5F5F5),
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 버튼 영역
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { onConfirm(text) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBBDEFB)), // 연한 파랑
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                    ) {
+                        Text("링크 추가하기", color = Color(0xFF212121), fontSize = 16.sp)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "돌아가기",
+                        color = Color(0xFF333333),
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .clickable { onDismiss() }
+                            .padding(8.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 
 @Preview(
     showBackground = true
