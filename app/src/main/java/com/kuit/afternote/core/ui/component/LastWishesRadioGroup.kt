@@ -6,16 +6,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -184,7 +184,7 @@ private fun LastWishOtherCard(
             ),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, borderColor),
-        color = White
+        color = White,
     ) {
         Column(
             modifier = Modifier
@@ -233,34 +233,22 @@ private fun LastWishOtherTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(160.dp),
-        placeholder = {
-            Text(
-                text = "Text Field",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray4
-                )
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color.Transparent,
-            unfocusedBorderColor = Color.Transparent,
-            disabledBorderColor = Color.Transparent,
-            errorBorderColor = Color.Transparent,
-            focusedContainerColor = Gray1,
-            unfocusedContainerColor = Gray1,
-            disabledContainerColor = Gray1,
-            errorContainerColor = Gray1
-        )
+    val state = rememberTextFieldState(initialText = value)
+    LaunchedEffect(value) {
+        if (state.text.toString() != value) {
+            state.edit { replace(0, length, value) }
+        }
+    }
+    LaunchedEffect(state) {
+        snapshotFlow { state.text.toString() }.collect { onValueChange(it) }
+    }
+    OutlineTextField(
+        modifier = modifier,
+        textFieldState = state,
+        placeholder = "Text Field",
+        containerColor = Gray1,
+        height = 160.dp,
+        shape = RoundedCornerShape(16.dp)
     )
 }
 
