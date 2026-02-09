@@ -34,8 +34,10 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        Row {
-            Spacer(Modifier.width(155.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Spacer(modifier = Modifier.weight(12f))
             Image(
                 painter = painterResource(R.drawable.img_empty_state),
                 contentDescription = "빈 애프터노트",
@@ -44,7 +46,7 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
                     .height(109.dp)
                     .alpha(0.6f)
             )
-            Spacer(Modifier.width(129.dp))
+            Spacer(modifier = Modifier.weight(10f))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
