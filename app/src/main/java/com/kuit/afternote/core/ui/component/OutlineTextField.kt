@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -66,6 +67,8 @@ private val PasswordOutputTransformation = OutputTransformation {
     val originalLength = length
     replace(0, originalLength, PASSWORD_MASK_CHAR.toString().repeat(originalLength))
 }
+
+
 
 // ============================================================================
 // Basic Variants (placeholder inside field, 70.dp height)
@@ -175,6 +178,34 @@ fun OutlineTextField(
                 )
             }
         },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+    )
+}
+
+@Composable
+fun OutlineTextField(
+    textFieldState: TextFieldState,
+    label: String,
+    keyboardType: KeyboardType = KeyboardType.Phone,
+    outputTransformation: OutputTransformation
+) {
+    OutlinedTextField(
+        state = textFieldState,
+        lineLimits = TextFieldLineLimits.SingleLine,
+        placeholder = {
+            Text(
+                text = label,
+                fontSize = 16.sp,
+                fontFamily = Sansneo,
+                color = Gray4
+            )
+        },
+        shape = RoundedCornerShape(8.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        outputTransformation = outputTransformation,
+        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
