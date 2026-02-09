@@ -33,7 +33,7 @@ fun ReceiverInfoItem(receiver: TimeLetterReceiver) {
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_default_profile),
+            painter = painterResource(id = R.drawable.ic_default_profile_receiver),
             contentDescription = "default_profile",
             modifier = Modifier
                 .padding(all = 2.54.dp)

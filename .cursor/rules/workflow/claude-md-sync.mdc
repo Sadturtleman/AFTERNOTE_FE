@@ -1,0 +1,36 @@
+---
+description: Keep CLAUDE.md in sync with .cursor/rules whenever rules are added, removed, or renamed
+globs: ".cursor/rules/**/*.mdc,CLAUDE.md,.cursorrules"
+alwaysApply: true
+---
+
+# CLAUDE.md Sync Rule - Critical
+
+## Responsibility
+
+- **You (the AI) are responsible for keeping `CLAUDE.md` in sync with the Cursor rules.** The user does not maintain `CLAUDE.md`; you must update it whenever rules change.
+
+## When to Update CLAUDE.md
+
+**Whenever you add, remove, or rename any file under `.cursor/rules/`**, you **MUST** update `CLAUDE.md` in the same change so that:
+
+1. The **Detailed Guidelines** section accurately lists all current rule files.
+2. Each rule is referenced under the correct subsection: **Workflow**, **Tech Stack**, or **Quality**.
+3. Format: one line per rule: `- @.cursor/rules/<category>/<filename>.mdc - *<short description>*`
+4. No stale references: remove entries for deleted or renamed rules; add entries for new rules.
+
+## How to Update
+
+1. **After adding a rule:** Add a new line under the appropriate subsection (Workflow / Tech Stack / Quality) with the `@` path and a brief description.
+2. **After removing a rule:** Remove that rule’s line from `CLAUDE.md`.
+3. **After renaming a rule:** Remove the old line and add a new line with the new path and description.
+4. **Order:** Keep a consistent order within each subsection (e.g. alphabetical by filename or by logical group).
+
+## CLAUDE.md Structure to Maintain
+
+- **Core Rules:** `@.cursorrules` (do not remove).
+- **Workflow:** All `.cursor/rules/workflow/*.mdc` files.
+- **Tech Stack:** All `.cursor/rules/tech-stack/*.mdc` files.
+- **Quality:** All `.cursor/rules/quality/*.mdc` files.
+
+Do not leave `CLAUDE.md` out of date when you modify `.cursor/rules/` or `.cursorrules`.

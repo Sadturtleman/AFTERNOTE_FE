@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.notification
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ fun NotificationSettingsScreen(
     var isEmailEnabled by remember { mutableStateOf(true) }
     var isPushEnabled by remember { mutableStateOf(false) }
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         topBar = {
             TopBar(

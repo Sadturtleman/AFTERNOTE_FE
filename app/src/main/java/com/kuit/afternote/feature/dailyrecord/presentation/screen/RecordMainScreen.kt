@@ -53,7 +53,8 @@ fun RecordMainScreen(
     onDiaryClick: () -> Unit,
     onDeepMindClick: () -> Unit,
     onWeekendReportClick: () -> Unit,
-    onQuestionClick: () -> Unit
+    onQuestionClick: () -> Unit,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     Scaffold(
@@ -62,7 +63,10 @@ fun RecordMainScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = {
+                    selectedBottomNavItem = it
+                    onBottomNavTabSelected(it)
+                }
             )
         },
         floatingActionButton = {

@@ -90,41 +90,27 @@ fun LastWishesRadioGroup(
                 verticalArrangement = Arrangement.spacedBy(space = 8.dp)
             ) {
                 options.forEach { option ->
-                    LastWishRadioButton(
-                        option = option,
-                        selected = selectedValue == option.value,
-                        onClick = { onOptionSelected(option.value) }
-                    )
+                    val selected = selectedValue == option.value
+                    SelectableRadioCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        selected = selected,
+                        onClick = { onOptionSelected(option.value) },
+                    ) {
+                        Text(
+                            text = option.text,
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = if (selected) B1 else Gray9
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LastWishRadioButton(
-    modifier: Modifier = Modifier,
-    option: LastWishOption,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    SelectableRadioCard(
-        modifier = modifier.fillMaxWidth(),
-        selected = selected,
-        onClick = onClick,
-        borderWhenUnselected = true
-    ) {
-        Text(
-            text = option.text,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = if (selected) B1 else Gray9
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 

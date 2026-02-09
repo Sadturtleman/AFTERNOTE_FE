@@ -1,0 +1,36 @@
+---
+description: PR/CI required checks - commitlint, ktlint, build
+globs: "**/*"
+alwaysApply: true
+---
+
+# Required Checks (PR/CI)
+
+**Code must pass these checks before merge. Follow them when writing or changing code.**
+
+## 1. Commitlint
+
+- **Scope**: PR title and commit messages.
+- **Rule**: Conventional Commits format; every line (subject, body, footer) ≤ 100 characters.
+- **Config**: `commitlint.config.cjs`.
+- **Verify locally**: `echo "type(scope): subject" | npx commitlint`
+- **CI**: `.github/workflows/commitlint.yml` runs on PR (opened, synchronize, reopened).
+
+## 2. Ktlint
+
+- **Scope**: Kotlin code style (`.kt`, `.kts`).
+- **Rule**: Code must pass ktlint; follow `.editorconfig` and `app/config/ktlint/baseline.xml` for existing exceptions.
+- **Verify locally**: `./gradlew ktlintCheck`
+- **CI**: `.github/workflows/ktlint.yml` runs on PR (targeting main/develop).
+
+## 3. Build / App Distribution
+
+- **Scope**: Repository state must allow a successful debug build and app distribution.
+- **Rule**: Code and config must not break `./gradlew assembleDebug` or the steps used by Firebase App Distribution.
+- **Verify locally**: `./gradlew assembleDebug`
+- **CI**: `.github/workflows/firebase_app_distribution.yml` runs on PR merge to main; `.github/workflows/pr-build-check.yml` runs on PR (opened, synchronize, reopened) to catch build failures before merge.
+
+## Before Pushing / Opening PR
+
+- Run `./scripts/check-pr-commitlint-ktlint.sh` (optional) to verify commitlint + ktlint locally.
+- Ensure PR title follows Conventional Commits; ensure `./gradlew ktlintCheck` and `./gradlew assembleDebug` pass.

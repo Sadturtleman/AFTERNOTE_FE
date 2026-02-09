@@ -42,7 +42,7 @@ fun TimeLetterRegisteredPopUp(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painterResource(R.drawable.letter),
+                painterResource(R.drawable.img_time_letter_placeholder),
                 contentDescription = "타임레터",
                 modifier = Modifier
                     .padding(top = 32.dp)

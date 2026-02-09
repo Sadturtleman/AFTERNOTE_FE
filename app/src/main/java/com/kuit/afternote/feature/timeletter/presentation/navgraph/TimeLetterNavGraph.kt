@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.timeletter.presentation.navgraph
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -8,10 +9,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
-import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
+import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
 /**
@@ -28,7 +29,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
         TimeLetterScreen(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
-            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
+            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) }
         )
     }
 
@@ -48,11 +49,16 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
             onNavigateBack = { navController.popBackStack() },
-            onRecipientClick = {
-                // TODO: 수신자 선택 화면으로 이동
+            onRecipientClick = { viewModel.showRecipientDropdown() },
+            receivers = uiState.receivers,
+            showRecipientDropdown = uiState.showRecipientDropdown,
+            onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
+            onReceiverSelected = { receiver ->
+                viewModel.updateRecipientName(receiver.receiver_name)
+                viewModel.hideRecipientDropdown()
             },
             onRegisterClick = {
-                viewModel.saveTimeLetter {
+                viewModel.registerWithPopUpThenSave {
                     navController.popBackStack()
                 }
             },
@@ -74,28 +80,35 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTimePickerDismiss = viewModel::hideTimePicker,
             onTimeSelected = { hour, minute ->
                 viewModel.updateSendTime("%02d:%02d".format(hour, minute))
-            }
+            },
+            showWritingPlusMenu = uiState.showWritingPlusMenu,
+            onMoreClick = viewModel::showPlusMenu,
+            onDismissPlusMenu = viewModel::hidePlusMenu,
+            showRegisteredPopUp = uiState.showRegisteredPopUp,
+            showDraftSavePopUp = uiState.showDraftSavePopUp
         )
     }
 
     composable<TimeLetterRoute.DraftLetterRoute> {
         DraftLetterScreen(
-            onCloseClick = { navController.popBackStack() }
+            onCloseClick = { navController.popBackStack() },
+            onLetterClick = { letter ->
+                letter.id.toLongOrNull()?.let { draftId ->
+                    navController.navigate(TimeLetterRoute.TimeLetterWriterRoute(draftId = draftId))
+                }
+            }
         )
     }
 
     composable<TimeLetterRoute.ReceiveListRoute> {
+        val receiveListViewModel: ReceiveListViewModel = hiltViewModel()
+        val receiveListState by receiveListViewModel.uiState.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) { receiveListViewModel.loadReceivers() }
         ReceiveListScreen(
-            receivers = emptyList(), // TODO: ViewModel에서 데이터 가져오기
+            receivers = receiveListState.receivers,
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected
         )
     }
 
-    composable<TimeLetterRoute.LetterEmptyRoute> {
-        LetterEmptyScreen(
-            onNavigateBack = { navController.popBackStack() },
-            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
-        )
-    }
 }

@@ -14,7 +14,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
@@ -57,9 +56,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val useMockApi = project.findProperty("USE_MOCK_API") as? String ?: "false"
-        buildConfigField("Boolean", "USE_MOCK_API", useMockApi)
 
         // Test credentials from local.properties (not committed to git)
         val testEmail = properties["TEST_EMAIL"] as? String ?: ""
@@ -160,6 +156,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kakao.sdk.user)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.biometric)
 
     // ---------------------------------------------------------------
     // Test Implementation (Unit Tests)

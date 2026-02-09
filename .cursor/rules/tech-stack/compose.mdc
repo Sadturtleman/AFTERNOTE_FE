@@ -51,16 +51,33 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 - Preview 함수는 `private`으로 선언하고, `@Preview(showBackground = true)`를 사용합니다.
 - 모든 상태를 보여 줘(선택됨/선택 안 됨, 활성화/비활성화 등).
 
+#### Preview + Hilt ViewModel (render 이슈 방지) - Critical
+**Compose Preview는 Hilt 컨테이너 없이 실행되므로, 화면에서 `hiltViewModel()`을 그대로 사용하면 Preview가 렌더되지 않습니다.**
+다음 패턴을 적용하여 Preview에서도 정상 렌더되도록 합니다.
+
+1. **ViewModel Contract 인터페이스**: 화면이 ViewModel에서 실제로 사용하는 멤버만 정의한 인터페이스를 작성합니다 (예: `XxxViewModelContract` — `uiState`, `loadXxx()`, `updateXxx()` 등).
+2. **실제 ViewModel**: `@HiltViewModel` ViewModel이 해당 인터페이스를 구현하도록 합니다 (`override` 적용).
+3. **화면 파라미터**: 화면 Composable의 ViewModel 파라미터 타입을 **인터페이스**로 두고, 기본값은 `hiltViewModel<실제ViewModel>()`로 합니다.
+4. **Fake ViewModel (Preview 전용)**: 인터페이스를 구현하는 Fake 클래스를 같은 화면 파일(또는 Preview 전용 위치)에 두고, 샘플 `UiState`와 no-op 메서드로 채웁니다.
+5. **Preview에서 Fake 사용**: `@Preview` Composable에서는 `hiltViewModel()`을 호출하지 말고, `remember { FakeXxxViewModel() }`를 넘깁니다.
+
+- **❌ 금지**: Preview에서 `hiltViewModel()`에 의존 (Preview 컨텍스트에 Hilt 없음 → 렌더 실패).
+- **✅ 권장**: Contract 인터페이스 + Fake ViewModel을 Preview에 전달하여 Hilt 없이 렌더.
+
 ## File Structure
 - **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
 - **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다.
 
 ## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
 
+### REM 구현 시 우선순위 (Implementation preference)
+- **1순위: `Spacer(Modifier.weight())` 사용**: 레이아웃에 제한된 높이가 있을 때(스크롤 없음) 큰 간격(24dp 이상)은 **반드시 weight으로 구현**한다. 비율 계산이나 `BoxWithConstraints`보다 단순하고 유지보수에 유리하다.
+- **2순위: BoxWithConstraints**: 스크롤 가능한 컨테이너(`verticalScroll`, `LazyColumn`) 내부에서는 `weight()`를 쓸 수 없으므로, 이 경우에만 `BoxWithConstraints` + 비율 기반 `Spacer(Modifier.height(...))`를 사용한다.
+
 ### 핵심 규칙
 3. **큰 간격은 weight과 Arrangement로 해결**: padding 값이 큰 경우(24dp 이상) `Spacer(Modifier.weight())` 또는 `Arrangement.SpaceBetween`, `Arrangement.SpaceEvenly` 등을 사용
    - **❌ 금지**: `padding(top = 100.dp)` 같은 큰 padding 값
-   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(1f))`
+   - **✅ 권장**: `Column(verticalArrangement = Arrangement.SpaceBetween) { ... }` 또는 `Spacer(Modifier.weight(0.056f))` 등 비율 weight
 4. **공통 컴포넌트 최대한 활용**: `core` 모듈에 있는 공통 컴포넌트(`Header`, `LabeledTextField`, `MessageTextField`, `CustomRadioButton`, `BottomNavigationBar` 등)를 최대한 재사용
 5. **컴포넌트 오버로딩**: 전체적인 틀은 비슷하지만 세부 디자인이 다른 경우, 별도 컴포넌트를 만들지 말고 **오버로딩**으로 처리
    - **예시**: `Header(title: String)`, `Header(title: String, onBackClick: () -> Unit)`, `Header(title: String, onBackClick: () -> Unit, onActionClick: () -> Unit)`
@@ -71,7 +88,7 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 - 금지: 의미 없는 산술로 새 값을 만들지 않습니다 (예: `16.dp - 8.dp`).
 
 ### 적용 우선순위
-1. **큰 간격 (24dp 이상)**: `Spacer(Modifier.weight())` 또는 `Arrangement` 사용
+1. **큰 간격 (24dp 이상)**: **REM 구현 시 weight 우선** — `Spacer(Modifier.weight(ratio))` 또는 `Arrangement` 사용 (예: `weight(0.056f)`, `weight(0.08f)`로 비율 간격)
    - **⚠️ 중요 예외**: 스크롤 가능한 컨테이너 내부에서는 `Modifier.weight()`를 사용할 수 없음 → 아래 **스크롤 컨테이너 반응형 간격** 섹션 참조
 2. **중간 간격 (8-24dp)**: `Spacer(Modifier.height())` 사용
 3. **작은 간격 (8dp 이하)**: `Spacer(Modifier.height())` 사용 (고정값 허용)
@@ -221,16 +238,17 @@ Column(
  6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
  7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
 
-## Parameter Refactoring Pattern (LongParameterList 해결) - Critical
-- **문제**: Composable 함수에 10개 이상의 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것은 부족함
+## Parameter Refactoring Pattern (LongParameterList / S107 해결) - Critical
+- **제한**: 함수·생성자 파라미터는 **최대 7개** (Sonar S107 / kotlin:S107). 이 이상이 되면 Params 데이터 클래스로 묶어서 전달합니다.
+- **문제**: Composable 또는 NavGraph 함수에 7개 초과 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것으로 해결합니다.
 - **⚠️ Critical: @Suppress는 최후의 수단**
-  - State Hoisting 패턴 적용 후 `LongParameterList` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - State Hoisting 패턴 적용 후 `LongParameterList` 또는 S107 경고가 발생하면, `@Suppress` 전에 반드시 다음 방법을 시도합니다:
   - **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
     * 예: `RecipientCallbacks`, `ProcessingMethodCallbacks` 같은 인터페이스/데이터 클래스 사용
     * 파라미터 11개 → 4개로 감소 가능 (콜백 5개를 1개로 그룹화)
-  - **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
-    * 예: `SelectionDropdownState` 클래스 생성
-    * 파라미터 10개 → 7개로 감소 가능
+  - **UI 상태·Params 캡슐화**: 여러 인자를 하나의 Params/State 클래스로 묶기
+    * 예: `SelectionDropdownState`, `AfternoteNavGraphParams` 클래스 생성
+    * 파라미터 8개 이상 → 7개 이하로 감소 (IDE S107 경고 방지)
   - **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
     * UI 컴포넌트는 초기값을 직접 알 필요 없이 완성된 `state`만 받으면 됨
 - **올바른 접근**: 다음 패턴을 순서대로 적용

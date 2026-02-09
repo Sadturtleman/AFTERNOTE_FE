@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,9 +34,11 @@ import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.rememberSelectionDropdownState
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
+import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.rememberSelectionDropdownState
+import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.White
@@ -45,7 +48,8 @@ fun ReceiverRegisterScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
-    onAddProfileImageClick: () -> Unit = {}
+    onAddProfileImageClick: () -> Unit = {},
+    registerViewModel: RegisterReceiverViewModel? = null
 ) {
     val nameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
@@ -54,16 +58,27 @@ fun ReceiverRegisterScreen(
     val relationshipOptions = listOf("딸", "아들", "친구", "가족", "연인", "동료", "기타")
     val dropdownState = rememberSelectionDropdownState()
 
+    val onRegisterAction: () -> Unit = {
+        if (registerViewModel != null) {
+            registerViewModel.registerReceiver(
+                name = nameState.text.toString().trim(),
+                relation = relationshipSelectedValue,
+                phone = phoneNumberState.text.toString().trim().takeIf { it.isNotBlank() },
+                email = emailState.text.toString().trim().takeIf { it.isNotBlank() }
+            )
+        } else {
+            onRegisterClick()
+        }
+    }
+
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
             TopBar(
                 title = "수신자 등록",
                 onBackClick = onBackClick,
-                onActionClick = {
-                    // TODO: 수신자 등록 API 호출
-                    onRegisterClick()
-                },
+                onActionClick = onRegisterAction,
                 actionText = "등록"
             )
         }
@@ -125,12 +140,14 @@ fun ReceiverRegisterScreen(
 
                 // 관계 (Required)
                 SelectionDropdown(
-                    label = "관계",
-                    isRequired = true,
-                    labelStyle = LabelStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontWeight = FontWeight.Medium
+                    labelParams = SelectionDropdownLabelParams(
+                        label = "관계",
+                        isRequired = true,
+                        labelStyle = LabelStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     ),
                     selectedValue = relationshipSelectedValue,
                     options = relationshipOptions,
@@ -177,7 +194,7 @@ private fun ProfileImageWithAddButton(
     ) {
         // Profile Image
         Image(
-            painter = painterResource(R.drawable.img_profile),
+            painter = painterResource(R.drawable.img_default_profile),
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .size(135.dp)

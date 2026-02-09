@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray1
@@ -45,13 +49,14 @@ fun ReceiverManagementScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit = {},
-    receivers: List<MainPageEditReceiver> = emptyList(),
-    onReceiverClick: (MainPageEditReceiver) -> Unit = {}
+    receivers: List<AfternoteEditReceiver> = emptyList(),
+    onReceiverClick: (AfternoteEditReceiver) -> Unit = {}
 ) {
     val groupedReceivers = remember(receivers) {
         KoreanConsonantUtil.groupByInitialConsonant(receivers) { it.name }
     }
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
@@ -124,8 +129,8 @@ fun ReceiverManagementScreen(
 private fun ConsonantSection(
     modifier: Modifier = Modifier,
     consonant: Char,
-    receivers: List<MainPageEditReceiver>,
-    onReceiverClick: (MainPageEditReceiver) -> Unit
+    receivers: List<AfternoteEditReceiver>,
+    onReceiverClick: (AfternoteEditReceiver) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -166,8 +171,8 @@ private fun ConsonantSection(
 
 @Composable
 private fun ReceiverManagementItem(
-    receiver: MainPageEditReceiver,
-    onReceiverClick: (MainPageEditReceiver) -> Unit
+    receiver: AfternoteEditReceiver,
+    onReceiverClick: (AfternoteEditReceiver) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -210,16 +215,15 @@ private fun ReceiverManagementItem(
 @Composable
 private fun ReceiverManagementScreenWithDataPreview() {
     AfternoteTheme {
-        ReceiverManagementScreen(
-            onBackClick = {},
-            receivers = listOf(
-                MainPageEditReceiver(id = "1", name = "김지은", label = "조카"),
-                MainPageEditReceiver(id = "2", name = "김혜성", label = "조카"),
-                MainPageEditReceiver(id = "3", name = "박서연", label = "딸"),
-                MainPageEditReceiver(id = "4", name = "황은주", label = "언니"),
-                MainPageEditReceiver(id = "5", name = "황은경", label = "동생")
+        CompositionLocalProvider(
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+        ) {
+            val provider = DataProviderLocals.LocalReceiverDataProvider.current
+            ReceiverManagementScreen(
+                onBackClick = {},
+                receivers = provider.getReceiverList()
             )
-        )
+        }
     }
 }
 

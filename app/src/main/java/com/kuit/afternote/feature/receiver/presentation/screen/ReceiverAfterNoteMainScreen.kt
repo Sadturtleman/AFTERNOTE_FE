@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
@@ -52,10 +51,14 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun ReceiverAfterNoteMainScreen(
     title: String,
+    onNavigateToFullList: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    onNavigateToFullList: () -> Unit = {}
+    profileImageResId: Int? = null,
+    albumCovers: List<AlbumCover>,
+    songCount: Int = 16
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
+    val profileResId = profileImageResId ?: R.drawable.img_default_profile_deceased
 
     Scaffold(
         topBar = {
@@ -96,23 +99,18 @@ fun ReceiverAfterNoteMainScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Image(
-                                    painter = painterResource(R.drawable.img_profile_placeholder),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(140.dp)
+                                ProfileImage(
+                                    fallbackImageRes = profileResId,
+                                    profileImageSize = 140.dp,
+                                    isEditable = false
                                 )
                             }
                         },
                         playlistContent = {
                             MemorialPlaylist(
                                 label = "추모 플레이리스트",
-                                songCount = 16,
-                                albumCovers = listOf(
-                                    AlbumCover("1"),
-                                    AlbumCover("2"),
-                                    AlbumCover("3"),
-                                    AlbumCover("4")
-                                ),
+                                songCount = songCount,
+                                albumCovers = albumCovers,
                                 onAddSongClick = null
                             )
                         },
@@ -186,6 +184,6 @@ private fun ReceiverSectionHeader(title: String = LABEL_VIDEO_SECTION) {
 @Composable
 fun PreviewReceiverAfterNoteMain() {
     AfternoteTheme {
-        ReceiverAfterNoteMainScreen("박서연")
+        ReceiverAfterNoteMainScreen(title = "박서연", albumCovers = emptyList())
     }
 }

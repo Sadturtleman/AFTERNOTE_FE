@@ -49,7 +49,7 @@ fun TimeLetterListItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .padding( vertical = 12.dp)
     ) {
         // 상단: 수신인 & 발송 예정일
         Row(
@@ -125,7 +125,7 @@ fun TimeLetterListItem(
             horizontalArrangement = Arrangement.End
         ) {
             Image(
-                painter = painterResource(id = R.drawable.pencil),
+                painter = painterResource(id = R.drawable.ic_pencil),
                 contentDescription = "수정",
                 modifier = Modifier
                     .size(24.dp)
@@ -133,7 +133,7 @@ fun TimeLetterListItem(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Image(
-                painter = painterResource(R.drawable.trash),
+                painter = painterResource(R.drawable.ic_trash),
                 contentDescription = "삭제",
                 modifier = Modifier
                     .size(24.dp)

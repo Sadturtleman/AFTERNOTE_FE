@@ -99,7 +99,7 @@ fun SongPlaylistScreen(
     title: String,
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
@@ -150,7 +150,7 @@ fun SongPlaylistScreen(
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
     onSongsSelected: (List<PlaylistSongDisplay>) -> Unit,
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME,
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
     initialSelectedSongIds: Set<String>? = null
 ) {
     var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet<String>()) }
@@ -241,7 +241,7 @@ fun SongPlaylistScreen(
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
     managementContent: SongPlaylistScreenManagementContent,
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME,
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
     initialSelectedSongIds: Set<String>? = null
 ) {
     var selectedSongIds by remember {

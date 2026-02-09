@@ -9,13 +9,15 @@ import androidx.compose.runtime.setValue
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 
 /**
- * AfternoteDetailScreen의 상태를 관리하는 State Holder
+ * Detail screen UI state (dropdown, delete dialog, bottom nav).
+ * Used by [SocialNetworkDetailScreen] and
+ * [com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailScreen].
  *
  * @param defaultBottomNavItem 기본 선택된 하단 네비게이션 아이템
  */
 @Stable
 class AfternoteDetailState(
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE
 ) {
     var selectedBottomNavItem by mutableStateOf(defaultBottomNavItem)
         private set
@@ -63,13 +65,13 @@ class AfternoteDetailState(
 }
 
 /**
- * AfternoteDetailState를 생성하는 Composable 함수
+ * Creates [AfternoteDetailState] for detail screens (social network, gallery).
  *
  * @param defaultBottomNavItem 기본 선택된 하단 네비게이션 아이템
  */
 @Stable
 @Composable
-fun rememberAfternoteDetailState(defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME): AfternoteDetailState =
+fun rememberAfternoteDetailState(defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE): AfternoteDetailState =
     remember(defaultBottomNavItem) {
         AfternoteDetailState(defaultBottomNavItem = defaultBottomNavItem)
     }

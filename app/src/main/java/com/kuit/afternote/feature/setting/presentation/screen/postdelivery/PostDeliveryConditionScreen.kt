@@ -1,5 +1,8 @@
+// K2 false positive: state assigned in DatePickerDialog lambdas is read at recomposition (KT-78881).
+@file:Suppress("AssignedValueIsNeverRead")
 package com.kuit.afternote.feature.setting.presentation.screen.postdelivery
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,8 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.Label
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.ProcessingMethodOption
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.processingmethod.ProcessingMethodRadioButton
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodOption
+import com.kuit.afternote.core.ui.component.SelectableRadioCard
+import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.feature.setting.presentation.component.DatePickerDialog
 import com.kuit.afternote.feature.setting.presentation.component.SelectedDateText
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -109,6 +113,7 @@ fun PostDeliveryConditionScreen(
         TriggerConditionOption.ReceiverRequest
     )
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
@@ -142,14 +147,21 @@ fun PostDeliveryConditionScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     deliveryMethods.forEach { method ->
-                        ProcessingMethodRadioButton(
+                        val option = object : ProcessingMethodOption {
+                            override val title: String = method.title
+                            override val description: String = method.description
+                        }
+                        val isSelected = selectedDeliveryMethod == method
+                        SelectableRadioCard(
+                            selected = isSelected,
+                            onClick = { selectedDeliveryMethod = method },
                             modifier = Modifier.fillMaxWidth(),
-                            option = object : ProcessingMethodOption {
-                                override val title: String = method.title
-                                override val description: String = method.description
-                            },
-                            selected = selectedDeliveryMethod == method,
-                            onClick = { selectedDeliveryMethod = method }
+                            content = {
+                                OptionRadioCardContent(
+                                    option = option,
+                                    selected = isSelected
+                                )
+                            }
                         )
                     }
                 }
@@ -177,19 +189,25 @@ fun PostDeliveryConditionScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     triggerConditions.forEach { condition ->
-                        ProcessingMethodRadioButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            option = object : ProcessingMethodOption {
-                                override val title: String = condition.title
-                                override val description: String = condition.description
-                            },
-                            selected = selectedTriggerCondition == condition,
+                        val option = object : ProcessingMethodOption {
+                            override val title: String = condition.title
+                            override val description: String = condition.description
+                        }
+                        val isSelected = selectedTriggerCondition == condition
+                        SelectableRadioCard(
+                            selected = isSelected,
                             onClick = {
                                 selectedTriggerCondition = condition
-                                // 특정 날짜에 전달 선택 시 다이얼로그 표시
                                 if (condition == TriggerConditionOption.SpecificDate) {
                                     showDatePickerDialog = true
                                 }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            content = {
+                                OptionRadioCardContent(
+                                    option = option,
+                                    selected = isSelected
+                                )
                             }
                         )
                     }

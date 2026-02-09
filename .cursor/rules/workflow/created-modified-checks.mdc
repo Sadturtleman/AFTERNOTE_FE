@@ -1,0 +1,38 @@
+---
+description: Commitlint, ktlint, and app distribution checks for created or modified files
+globs: "**/*.kt,**/*.kts,.github/**/*.yml,.github/**/*.yaml,commitlint.config.cjs,build.gradle.kts,settings.gradle.kts,**/build.gradle.kts,gradle.properties"
+alwaysApply: true
+---
+
+# Required Checks for Created or Modified Files
+
+**Scope**: Only files you create or modify. Existing untouched files are out of scope. For any file you create or change, ensure the following before considering the task done.
+
+## 1. Commitlint
+
+- **When**: You suggest or write commit messages or PR titles.
+- **Requirement**: Use Conventional Commits; every line (subject, body, footer) ≤ 100 characters.
+- **Config**: `commitlint.config.cjs`.
+- When proposing commit/PR text, run `echo "type(scope): subject" | npx commitlint` (or equivalent) to verify. CI: `.github/workflows/commitlint.yml`.
+
+## 2. Ktlint
+
+- **When**: You create or modify Kotlin sources (`.kt`, `.kts`) or Gradle scripts.
+- **Requirement**: Code must pass ktlint; follow `.editorconfig` and any `app/config/ktlint/baseline.xml` for exceptions.
+- After editing Kotlin/Gradle files, run `./gradlew ktlintCheck` and fix any reported issues before marking the task complete. CI: `.github/workflows/ktlint.yml`.
+
+## 3. App Distribution Automation
+
+- **When**: You create or modify code, Gradle config, or CI workflows that affect the build or distribution pipeline.
+- **Requirement**: Do not introduce errors in the app distribution automation (debug build + Firebase App Distribution). `./gradlew assembleDebug` must succeed; workflow steps in `.github/workflows/firebase_app_distribution.yml` (e.g. google-services.json, Build Debug APK, Upload to Firebase) must remain valid.
+- After changes that could affect build/distribution, run `./gradlew assembleDebug` and fix any failures before marking the task complete.
+
+## Completion checklist (for created or modified work)
+
+Before considering the task done:
+
+1. Propose commit/PR text that follows Conventional Commits (and would pass commitlint).
+2. After changing Kotlin/Gradle files: run `./gradlew ktlintCheck` and fix violations.
+3. After changes that affect build/distribution: run `./gradlew assembleDebug` and fix build errors.
+
+Optionally: `./scripts/check-pr-commitlint-ktlint.sh` to verify commitlint + ktlint together.

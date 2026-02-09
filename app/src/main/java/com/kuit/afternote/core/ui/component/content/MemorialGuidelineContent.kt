@@ -25,7 +25,7 @@ data class MemorialGuidelineSlots(
 
 /**
  * Shared memorial guideline layout: section order and spacing only.
- * Used by mainpage (edit) and receiver (view) to avoid duplicate structure.
+ * Used by afternote (edit) and receiver (view) to avoid duplicate structure.
  *
  * @param modifier Modifier for the root Column
  * @param slots Content for each section (intro, photo, playlist, last wish, video)

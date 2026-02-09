@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
-import android.R.attr.onClick
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,12 +25,17 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupPositionProvider
 import com.kuit.afternote.R
 
 @Composable
-fun WritingPlusMenu(modifier: Modifier = Modifier) {
+fun WritingPlusMenu(modifier: Modifier = Modifier, onImageClick: () -> Unit, onVoiceClick: () -> Unit, onFileClick: () -> Unit, onLinkClick: () -> Unit) {
     Box(
         modifier = Modifier
             .shadow(elevation = 10.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
@@ -44,7 +48,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
         ) {
             Row(
                 modifier = modifier
-                    .clickable(onClick = {})
+                    .clickable(onClick = {onImageClick()})
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .height(56.dp),
@@ -67,7 +71,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
             }
             Row(
                 modifier = modifier
-                    .clickable(onClick = {})
+                    .clickable(onClick = {onVoiceClick()})
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .height(56.dp),
@@ -90,7 +94,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
             }
             Row(
                 modifier = modifier
-                    .clickable(onClick = {})
+                    .clickable(onClick = {onFileClick()})
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .height(56.dp),
@@ -113,7 +117,7 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
             }
             Row(
                 modifier = modifier
-                    .clickable(onClick = {})
+                    .clickable(onClick = {onLinkClick()})
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .height(56.dp),
@@ -138,8 +142,24 @@ fun WritingPlusMenu(modifier: Modifier = Modifier) {
     }
 }
 
+class DropUpPositionProvider(private val xOffset: Int = 0, private val yOffset: Int = 0) : PopupPositionProvider {
+    override fun calculatePosition(
+        anchorBounds: IntRect,
+        windowSize: IntSize,
+        layoutDirection: LayoutDirection,
+        popupContentSize: IntSize
+    ): IntOffset {
+        // x: 아이콘(Anchor)의 왼쪽 선에 맞춤 + xOffset
+        val x = anchorBounds.left + xOffset
+
+        // y: 아이콘의 위쪽 선 - 팝업 높이 - yOffset
+        val y = anchorBounds.top - popupContentSize.height - yOffset
+
+        return IntOffset(x, y)
+    }
+}
 @Preview
 @Composable
 private fun PlusMenuPrev() {
-    WritingPlusMenu()
+    WritingPlusMenu(modifier = Modifier,{}, {}, {} ,{})
 }

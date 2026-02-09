@@ -2,12 +2,15 @@ package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +35,8 @@ fun ViewModeToggle(
             .background(
                 color = Color(0xFFEEEEEE),
                 shape = RoundedCornerShape(40.dp)
-            ).padding(
+            )
+            .padding(
                 vertical = 6.dp,
                 horizontal = 16.dp
             ),
@@ -71,8 +75,12 @@ private fun ToggleButton(
         modifier = Modifier
             .background(
                 color = Color(0xFFEEEEEE)
-            ).size(
-                24.dp
+            )
+            .size(24.dp)
+            .clickable( // 1. 클릭 가능하도록 수정
+                onClick = onClick,
+                indication = null, // 클릭 시 파동(Ripple) 효과를 없애고 싶을 때
+                interactionSource = remember { MutableInteractionSource() }
             ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)

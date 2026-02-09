@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +20,8 @@ import com.kuit.afternote.ui.theme.Gray2
 @Composable
 fun ThumbSwitch(
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true
 ) {
     // 트랙 (배경)
     Box(
@@ -31,7 +31,8 @@ fun ThumbSwitch(
             .background(
                 color = if (checked) Color(0xFF91C1FF) else Gray2,
                 shape = CircleShape
-            ).clickable { onCheckedChange(!checked) }
+            )
+            .clickable(enabled = enabled) { onCheckedChange(!checked) }
             .padding(2.dp), // 내부 여백
         contentAlignment = Alignment.CenterStart
     ) {

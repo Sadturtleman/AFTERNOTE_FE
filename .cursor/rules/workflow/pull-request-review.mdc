@@ -17,7 +17,7 @@ alwaysApply: true
 - **Types**: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`, `build`, `ci`, `perf`
 
 #### 예시
-- `feat(mainpage): 애프터노트 작성 화면 플레이리스트 곡 수 동기화`
+- `feat(afternote): 애프터노트 작성 화면 플레이리스트 곡 수 동기화`
 - `fix(edit): 노래 추가 화면 뒤로가기 시 잘못된 카테고리 복원 문제`
 - `refactor(nav): MemorialPlaylist 공유 상태 holder 도입`
 
@@ -56,17 +56,6 @@ alwaysApply: true
 
 ---
 
-## PR 통과 조건 (CI) - Critical
-
-**PR이 merge되려면 CI가 모두 통과해야 합니다.** 코드 리뷰 Approve만으로는 부족하고, 아래가 만족되어야 합니다.
-
-- **Commitlint:** PR **제목**이 Conventional Commits 형식(`type(scope): subject`)을 만족해야 합니다.
-- **Ktlint:** PR 브랜치의 코드 전체가 ktlint를 통과해야 합니다.
-
-PR 생성·업데이트 전에 로컬에서 `./gradlew ktlintCheck`로 코드를 검사해 두는 것을 권장합니다.
-
----
-
 ## 코드 리뷰 규칙 - Critical
 
 **코드 리뷰 없이 바로 merge하면, 잘못된 부분이 수정되지 않은 채 merge될 수 있습니다. 서로의 PR에 대해 코드 리뷰를 진행한 후 merge합니다.**
@@ -91,7 +80,6 @@ PR 생성·업데이트 전에 로컬에서 `./gradlew ktlintCheck`로 코드를
 ```
 브랜치 작업 → 커밋(Conventional Commits 권장) → 푸시
   → PR 생성 (제목: type(scope): subject, 본문: 목적/변경사항/수정 파일/검증)
-  → CI 통과 (commitlint: PR 제목, ktlint: 브랜치 코드)
   → 코드 리뷰 요청
   → 팀원 리뷰 (Comment / Request changes)
   → 피드백 반영 또는 논의

@@ -1,0 +1,66 @@
+---
+description: Coil 3 image loading rules (dependencies, User-Agent, AsyncImage, error handling)
+globs: **/presentation/**/*.kt, **/ui/**/*.kt, **/component/**/*.kt, **/core/**/*.kt
+alwaysApply: false
+---
+
+# Coil 3 Image Loading Rules
+
+## Dependencies - Critical
+
+### coil-network-okhttp Required
+- **Coil 3 is modular.** `coil-compose` alone cannot load network (http/https) images.
+- **Must add** `coil-network-okhttp` dependency in the app module (e.g. in `libs.versions.toml` and `app/build.gradle.kts`).
+- Without it, Coil has no Fetcher for URLs and fails silently, showing the `error` drawable.
+
+## HTTP 403 Prevention - Critical
+
+### User-Agent Header for Network Images
+- Some servers (e.g. Wikipedia, Wikimedia) block requests without a `User-Agent` header and return **403 Forbidden**.
+- **Always add User-Agent** when loading external URLs via Coil:
+
+```kotlin
+ImageRequest.Builder(context)
+    .data(url)
+    .httpHeaders(
+        NetworkHeaders.Builder()
+            .set("User-Agent", "AppName Android App")
+            .build()
+    )
+    .build()
+```
+
+- Use the app’s real name (e.g. `"Afternote Android App"`) instead of a generic string when applicable.
+
+## AsyncImage Best Practices
+
+### Prefer AsyncImage
+- Use **AsyncImage** (with `ImageRequest` when you need headers/options) over `rememberAsyncImagePainter` for built-in error/placeholder handling.
+
+### Always Add onError Logging
+- **Silent failures make debugging difficult.** Always add an `onError` callback and log the throwable (e.g. with `Log.e(TAG, "Coil load failed: uri=...", state.result.throwable)`).
+- This surfaces "Unable to create a fetcher", network errors, and 403s in Logcat.
+
+### Always Provide error (and optionally placeholder)
+- Set **error** to a fallback painter (e.g. `painterResource(fallbackDrawable)`) so failed loads show a defined image instead of nothing.
+- Optionally set **placeholder** for loading state.
+
+## Required Imports for Network Images
+
+When using Coil 3 for network URLs with headers:
+
+```kotlin
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+```
+
+## Summary of Issues Encountered
+
+| Issue | Root Cause | Rule |
+|-------|-----------|------|
+| Image not loading (silent failure) | Missing `coil-network-okhttp` | Always add network dependency with Coil 3 |
+| HTTP 403 Forbidden | No User-Agent header | Always set User-Agent for external URLs |
+| Hard to debug | No error logging | Always add `onError` callback with logging |
