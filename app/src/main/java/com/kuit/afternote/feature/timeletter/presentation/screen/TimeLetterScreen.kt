@@ -149,7 +149,7 @@ fun TimeLetterScreen(
                         Image(
                             painterResource(R.drawable.ic_down_vector),
                             contentDescription = "아래 열기",
-                            modifier = Modifier.padding(start = 13.dp)
+                            modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         ViewModeToggle(

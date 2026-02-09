@@ -45,7 +45,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 @Suppress("AssignedValueIsNeverRead")
-fun ReceiverAfterNoteScreen() {
+fun ReceiverAfterNoteScreen(showBottomBar: Boolean = true) {
     var showDialog by remember { mutableStateOf(false) }
 
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
@@ -122,10 +122,12 @@ fun ReceiverAfterNoteScreen() {
     Scaffold(
         topBar = { TopHeader() },
         bottomBar = {
-            BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
-            )
+            if (showBottomBar) {
+                BottomNavigationBar(
+                    selectedItem = selectedBottomNavItem,
+                    onItemSelected = { selectedBottomNavItem = it }
+                )
+            }
         }
     ) { innerPadding ->
         LazyColumn(

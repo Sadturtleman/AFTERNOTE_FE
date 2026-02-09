@@ -59,9 +59,14 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingS
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListRoute
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteListRoute
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
@@ -88,7 +93,9 @@ private val devModeScreensList =
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
         ScreenInfo("임시저장 화면", "draft_letter"),
         ScreenInfo("수신자 목록 화면", "receive_list"),
-        ScreenInfo("수신자 애프터노트 메인", "receiver_afternote_main"),
+        ScreenInfo("수신자 메인 (4탭)", "receiver_main/1"),
+        ScreenInfo("수신자 타임레터 목록", "receiver_time_letter_list/1"),
+        ScreenInfo("수신자 온보딩", "receiver_onboarding"),
         //ScreenInfo("타임레터 빈 화면", "letter_empty"),
         ScreenInfo("설정 화면", "setting_main")
     )
@@ -104,7 +111,8 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
         "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute())
         "draft_letter" -> nav.navigate(TimeLetterRoute.DraftLetterRoute)
         "receive_list" -> nav.navigate(TimeLetterRoute.ReceiveListRoute)
-        "receiver_afternote_main" -> nav.navigate("receiver_afternote_main")
+        "receiver_afternote_main" -> nav.navigate("receiver_main/1")
+        "receiver_main/1" -> nav.navigate("receiver_main/1")
         "setting_main" -> nav.navigate(SettingRoute.SettingMainRoute)
         else -> nav.navigate(route)
     }
@@ -426,12 +434,13 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-        composable("receiver_afternote_main") {
-            ReceiverAfterNoteMainScreen(
-                title = receiverProvider.getDefaultReceiverTitleForDev(),
-                albumCovers = afternoteProvider.getAlbumCovers(),
-                onNavigateToFullList = { navHostController.navigate("receiver_afternote_list") },
-                onBackClick = { navHostController.popBackStack() }
+        composable("receiver_main/{receiverId}") { backStackEntry ->
+            val receiverId = backStackEntry.arguments?.getString("receiverId") ?: "1"
+            ReceiverMainRoute(
+                receiverId = receiverId,
+                navController = navHostController,
+                receiverTitle = receiverProvider.getDefaultReceiverTitleForDev(),
+                albumCovers = afternoteProvider.getAlbumCovers()
             )
         }
 
@@ -443,6 +452,34 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverAfternoteDetailContent(
                 navHostController = navHostController,
                 itemId = backStackEntry.arguments?.getString("itemId")
+            )
+        }
+
+        composable("receiver_time_letter_list/{receiverId}") {
+            ReceiverTimeLetterRoute(
+                navController = navHostController,
+                onBackClick = { navHostController.popBackStack() }
+            )
+        }
+
+        composable("receiver_time_letter_detail/{receiverId}/{timeLetterId}") {
+            ReceiverTimeLetterDetailRoute(
+                onBackClick = { navHostController.popBackStack() }
+            )
+        }
+
+        composable("receiver_onboarding") {
+            ReceiverOnboardingScreen(
+                onLoginClick = { navHostController.popBackStack() },
+                onStartClick = { navHostController.navigate("receiver_verify") },
+                onCheckClick = {},
+                onSignUpClick = { navHostController.popBackStack() }
+            )
+        }
+
+        composable("receiver_verify") {
+            VerifyReceiverScreen(
+                onBackClick = { navHostController.popBackStack() }
             )
         }
 
