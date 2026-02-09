@@ -54,9 +54,21 @@ fun VerifyReceiverScreen(onBackClick: () -> Unit) {
             paddingValues = paddingValues,
             buttonContent = {
                 val (title, action, enabled) = when (step) {
-                    VerifySelfStep.START -> Triple("인증 시작하기", { step = VerifySelfStep.PHONE_AUTH }, true)
-                    VerifySelfStep.PHONE_AUTH -> Triple("다음", { step = VerifySelfStep.MASTER_CODE }, phoneNumber.text.length == 11)
-                    VerifySelfStep.MASTER_CODE -> Triple("다음", { /* 완료 로직 */ }, masterCode.length == 6)
+                    VerifySelfStep.START -> Triple(
+                        "인증 시작하기",
+                        { step = VerifySelfStep.PHONE_AUTH },
+                        true
+                    )
+                    VerifySelfStep.PHONE_AUTH -> Triple(
+                        "다음",
+                        { step = VerifySelfStep.MASTER_CODE },
+                        phoneNumber.text.length == 11
+                    )
+                    VerifySelfStep.MASTER_CODE -> Triple(
+                        "다음",
+                        { /* 완료 로직 */ },
+                        masterCode.length == 6
+                    )
                 }
 
                 ClickButton(

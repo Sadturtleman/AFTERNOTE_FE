@@ -49,7 +49,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
 @Suppress("AssignedValueIsNeverRead")
-fun MindRecordScreen() {
+fun MindRecordScreen(showBottomBar: Boolean = true) {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableIntStateOf(10) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
@@ -69,10 +69,12 @@ fun MindRecordScreen() {
             )
         },
         bottomBar = {
-            BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
-            )
+            if (showBottomBar) {
+                BottomNavigationBar(
+                    selectedItem = selectedBottomNavItem,
+                    onItemSelected = { selectedBottomNavItem = it }
+                )
+            }
         }
     ) { innerPadding ->
         LazyColumn(
@@ -124,7 +126,7 @@ fun MindRecordScreen() {
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                            // 년월 선택 버튼
+                            // 년월 선택 버튼 - 클릭 시 휠 날짜 선택 다이얼로그 표시
                             OutlinedButton(
                                 onClick = { showDatePicker = true },
                                 shape = RoundedCornerShape(20.dp),
