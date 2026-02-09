@@ -10,13 +10,23 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
@@ -24,21 +34,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.app.di.TokenManagerEntryPoint
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
 import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
+import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
-import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
-import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -57,6 +67,11 @@ import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.Gray1
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 
@@ -241,9 +256,60 @@ private fun ReceiverAfternoteDetailContent(
     }
 }
 
+@Composable
+private fun HomePlaceholderContent(
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Gray1,
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = BottomNavItem.HOME,
+                onItemSelected = onBottomNavTabSelected
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(Modifier.padding(paddingValues)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.home_coming_soon),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
+    val context = LocalContext.current
+    val tokenManager = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            TokenManagerEntryPoint::class.java
+        ).tokenManager()
+    }
+    val scope = rememberCoroutineScope()
+    val navigateToUserMode: () -> Unit = {
+        scope.launch {
+            val token = tokenManager.getAccessToken()
+            withContext(Dispatchers.Main.immediate) {
+                if (!token.isNullOrEmpty()) {
+                    navHostController.navigate("home") {
+                        launchSingleTop = true
+                    }
+                } else {
+                    navHostController.navigate(OnboardingRoute.SplashRoute)
+                }
+            }
+        }
+    }
+
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
@@ -251,39 +317,73 @@ fun NavGraph(navHostController: NavHostController) {
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     val devModeScreens = devModeScreensList
 
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit = { item ->
+        when (item) {
+            BottomNavItem.HOME ->
+                navHostController.navigate("home") {
+                    launchSingleTop = true
+                }
+            BottomNavItem.AFTERNOTE ->
+                navHostController.navigate(AfternoteRoute.AfternoteListRoute) {
+                    launchSingleTop = true
+                }
+            BottomNavItem.RECORD ->
+                navHostController.navigate("record_main") {
+                    launchSingleTop = true
+                }
+            BottomNavItem.TIME_LETTER ->
+                navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
+                    launchSingleTop = true
+                }
+        }
+    }
+
     NavHost(
         navController = navHostController,
         startDestination = "dev"
     ) {
         composable("mode_selection") {
             ModeSelectionScreen(
-                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) },
+                onUserModeClick = navigateToUserMode,
                 onDevModeClick = { navHostController.navigate("dev") }
             )
         }
 
+        composable("home") {
+            HomePlaceholderContent(onBottomNavTabSelected = onBottomNavTabSelected)
+        }
+
         onboardingNavGraph(navHostController)
-        recordNavGraph(navHostController)
+        recordNavGraph(
+            navController = navHostController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
         afternoteNavGraph(
             navController = navHostController,
-            afternoteItems = afternoteItems,
-            onItemsUpdated = { afternoteItems = it },
-            playlistStateHolder = playlistStateHolder,
-            afternoteProvider = afternoteProvider,
-            userName = receiverProvider.getDefaultReceiverTitleForDev(),
-            editStateHandling = AfternoteEditStateHandling(
-                holder = afternoteEditStateHolder,
-                onClear = { afternoteEditStateHolder.value = null }
-            )
+            params = AfternoteNavGraphParams(
+                afternoteItems = afternoteItems,
+                onItemsUpdated = { afternoteItems = it },
+                playlistStateHolder = playlistStateHolder,
+                afternoteProvider = afternoteProvider,
+                userName = receiverProvider.getDefaultReceiverTitleForDev(),
+                editStateHandling = AfternoteEditStateHandling(
+                    holder = afternoteEditStateHolder,
+                    onClear = { afternoteEditStateHolder.value = null }
+                )
+            ),
+            onBottomNavTabSelected = onBottomNavTabSelected
         )
-        timeLetterNavGraph(navController = navHostController)
+        timeLetterNavGraph(
+            navController = navHostController,
+            onNavItemSelected = onBottomNavTabSelected
+        )
         settingNavGraph(navController = navHostController)
 
         composable("dev") {
             DevModeScreen(
                 screens = devModeScreens,
                 onScreenClick = { navigateFromDevMode(it, navHostController) },
-                onUserModeClick = { navHostController.navigate(OnboardingRoute.SplashRoute) }
+                onUserModeClick = navigateToUserMode
             )
         }
 
@@ -348,14 +448,6 @@ fun NavGraph(navHostController: NavHostController) {
 
         composable("fingerprint_login") {
             FingerprintLoginRouteContent(navHostController = navHostController)
-        }
-        composable("record_main") {
-            RecordMainScreen(
-                onDiaryClick = { navHostController.navigate(RecordRoute.ListRoute) },
-                onDeepMindClick = { navHostController.navigate(RecordRoute.ListRoute) },
-                onWeekendReportClick = { navHostController.navigate(RecordRoute.WeekendReportRoute) },
-                onQuestionClick = { navHostController.navigate(RecordRoute.QuestionRouteList) }
-            )
         }
     }
 }

@@ -17,7 +17,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
  */
 @Stable
 class AfternoteDetailState(
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE
 ) {
     var selectedBottomNavItem by mutableStateOf(defaultBottomNavItem)
         private set
@@ -71,7 +71,7 @@ class AfternoteDetailState(
  */
 @Stable
 @Composable
-fun rememberAfternoteDetailState(defaultBottomNavItem: BottomNavItem = BottomNavItem.HOME): AfternoteDetailState =
+fun rememberAfternoteDetailState(defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE): AfternoteDetailState =
     remember(defaultBottomNavItem) {
         AfternoteDetailState(defaultBottomNavItem = defaultBottomNavItem)
     }

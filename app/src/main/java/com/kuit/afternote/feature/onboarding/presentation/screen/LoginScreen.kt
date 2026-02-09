@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.screen
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -54,8 +55,6 @@ fun LoginScreen(
     val email = rememberTextFieldState()
     val pw = rememberTextFieldState()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    // Capture string resources in Composable context for use in callbacks
     val kakaoSdkNotInitializedMessage = stringResource(R.string.login_kakao_sdk_not_initialized)
     val kakaoFailedMessage = stringResource(R.string.login_kakao_failed)
 
@@ -66,53 +65,79 @@ fun LoginScreen(
         }
     }
 
+    val callbacks = LoginScreenContentCallbacks(
+        onBackClick = onBackClick,
+        onLoginClick = { emailText, passwordText -> viewModel.login(emailText, passwordText) },
+        onKakaoLoginClick = {
+            handleKakaoLogin(
+                context = context,
+                viewModel = viewModel,
+                sdkNotInitializedMessage = kakaoSdkNotInitializedMessage,
+                failedMessage = kakaoFailedMessage
+            )
+        },
+        onSignUpClick = onSignUpClick,
+        onFindIdClick = onFindIdClick
+    )
+
     LoginScreenContent(
         modifier = modifier,
         email = email,
         pw = pw,
         uiState = uiState,
-        onBackClick = onBackClick,
-        onLoginClick = { emailText, passwordText ->
-            viewModel.login(emailText, passwordText)
-        },
-        onKakaoLoginClick = {
-            if (!KakaoSdk.isInitialized) {
-                Log.e("KakaoLogin", "KakaoSdk is NOT initialized. Check KAKAO_NATIVE_APP_KEY/local.properties.")
-                viewModel.setErrorMessage(kakaoSdkNotInitializedMessage)
-                return@LoginScreenContent
-            }
-            UserApiClient.instance.loginWithKakao(
-                context = context,
-                uiMode = LoginUiMode.AUTO
-            ) { token, error ->
-                if (error != null) {
-                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        Log.e("KakaoLogin", "User cancelled Kakao login.")
-                        return@loginWithKakao
-                    }
-                    Log.e("KakaoLogin", "Kakao SDK login failed. type=${error::class.java.name}", error)
-                    viewModel.setErrorMessage(error.message ?: kakaoFailedMessage)
-                    return@loginWithKakao
-                }
-
-                val accessToken = token?.accessToken
-                if (accessToken.isNullOrBlank()) {
-                    Log.e("KakaoLogin", "Kakao SDK returned empty accessToken.")
-                    viewModel.setErrorMessage(kakaoFailedMessage)
-                    return@loginWithKakao
-                }
-
-                if (BuildConfig.DEBUG) {
-                    Log.d("KakaoLogin", "Kakao accessToken=$accessToken")
-                }
-                Log.d("KakaoLogin", "Kakao SDK login success. Calling /auth/kakao.")
-                viewModel.kakaoLogin(accessToken)
-            }
-        },
-        onSignUpClick = onSignUpClick,
-        onFindIdClick = onFindIdClick
+        callbacks = callbacks
     )
 }
+
+/**
+ * Runs Kakao SDK login and forwards result to [viewModel]. Call from Composable.
+ */
+private fun handleKakaoLogin(
+    context: Context,
+    viewModel: LoginViewModel,
+    sdkNotInitializedMessage: String,
+    failedMessage: String
+) {
+    if (!KakaoSdk.isInitialized) {
+        Log.e("KakaoLogin", "KakaoSdk is NOT initialized. Check KAKAO_NATIVE_APP_KEY/local.properties.")
+        viewModel.setErrorMessage(sdkNotInitializedMessage)
+        return
+    }
+    UserApiClient.instance.loginWithKakao(
+        context = context,
+        uiMode = LoginUiMode.AUTO
+    ) { token, error ->
+        if (error != null) {
+            if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                Log.e("KakaoLogin", "User cancelled Kakao login.")
+                return@loginWithKakao
+            }
+            Log.e("KakaoLogin", "Kakao SDK login failed. type=${error::class.java.name}", error)
+            viewModel.setErrorMessage(error.message ?: failedMessage)
+            return@loginWithKakao
+        }
+        val accessToken = token?.accessToken
+        if (accessToken.isNullOrBlank()) {
+            Log.e("KakaoLogin", "Kakao SDK returned empty accessToken.")
+            viewModel.setErrorMessage(failedMessage)
+            return@loginWithKakao
+        }
+        if (BuildConfig.DEBUG) {
+            Log.d("KakaoLogin", "Kakao accessToken=$accessToken")
+        }
+        Log.d("KakaoLogin", "Kakao SDK login success. Calling /auth/kakao.")
+        viewModel.kakaoLogin(accessToken)
+    }
+}
+
+/** Callbacks for [LoginScreenContent]. Groups events to keep parameter count ≤7. */
+private data class LoginScreenContentCallbacks(
+    val onBackClick: () -> Unit,
+    val onLoginClick: (email: String, password: String) -> Unit,
+    val onKakaoLoginClick: () -> Unit,
+    val onSignUpClick: () -> Unit,
+    val onFindIdClick: () -> Unit
+)
 
 @Composable
 private fun LoginScreenContent(
@@ -120,17 +145,13 @@ private fun LoginScreenContent(
     email: TextFieldState,
     pw: TextFieldState,
     uiState: LoginUiState,
-    onBackClick: () -> Unit,
-    onLoginClick: (email: String, password: String) -> Unit,
-    onKakaoLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit,
-    onFindIdClick: () -> Unit
+    callbacks: LoginScreenContentCallbacks
 ) {
     Scaffold(
         topBar = {
             TopBar(
                 title = "로그인",
-                onBackClick = onBackClick
+                onBackClick = callbacks.onBackClick
             )
         }
     ) { paddingValues ->
@@ -156,10 +177,11 @@ private fun LoginScreenContent(
                 keyboardType = KeyboardType.Password
             )
 
-            if (uiState.errorMessage != null) {
+            val errorText = uiState.errorMessage?.takeIf { it.isNotBlank() }
+            if (errorText != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = uiState.errorMessage,
+                    text = errorText,
                     color = Gray9
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -170,7 +192,7 @@ private fun LoginScreenContent(
             ClickButton(
                 title = "로그인",
                 onButtonClick = {
-                    onLoginClick(
+                    callbacks.onLoginClick(
                         email.text.toString().trim(),
                         pw.text.toString()
                     )
@@ -182,7 +204,7 @@ private fun LoginScreenContent(
 
             ClickButton(
                 title = stringResource(id = R.string.login_kakao_button),
-                onButtonClick = onKakaoLoginClick,
+                onButtonClick = callbacks.onKakaoLoginClick,
                 color = B3
             )
 
@@ -190,7 +212,7 @@ private fun LoginScreenContent(
 
             ClickButton(
                 title = "간편 회원가입하기",
-                onButtonClick = onSignUpClick,
+                onButtonClick = callbacks.onSignUpClick,
                 color = B3
             )
 
@@ -200,10 +222,7 @@ private fun LoginScreenContent(
                 text = "아이디/비밀번호 찾기",
                 color = Gray6,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier
-                    .clickable {
-                        onFindIdClick()
-                    }
+                modifier = Modifier.clickable { callbacks.onFindIdClick() }
             )
 
             Spacer(modifier = Modifier.weight(0.3f))
@@ -217,15 +236,18 @@ private fun LoginScreenPreview() {
     AfternoteTheme {
         val email = rememberTextFieldState()
         val pw = rememberTextFieldState()
-        LoginScreenContent(
-            email = email,
-            pw = pw,
-            uiState = LoginUiState(errorMessage = "로그인에 실패했습니다."),
+        val callbacks = LoginScreenContentCallbacks(
             onBackClick = {},
             onLoginClick = { _, _ -> },
             onKakaoLoginClick = {},
             onSignUpClick = {},
             onFindIdClick = {}
+        )
+        LoginScreenContent(
+            email = email,
+            pw = pw,
+            uiState = LoginUiState(errorMessage = "로그인에 실패했습니다."),
+            callbacks = callbacks
         )
     }
 }
