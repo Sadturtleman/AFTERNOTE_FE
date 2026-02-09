@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">afternote</string>
+
+    <!-- Bottom navigation labels -->
+    <string name="nav_home">홈</string>
+    <string name="nav_record">기록</string>
+    <string name="nav_timeletter">타임레터</string>
+    <string name="nav_afternote">애프터노트</string>
     <string name="song_search_label">노래 검색</string>
     <string name="song_search_placeholder">노래 제목 또는 가수명</string>
     <string name="add_button">추가하기</string>

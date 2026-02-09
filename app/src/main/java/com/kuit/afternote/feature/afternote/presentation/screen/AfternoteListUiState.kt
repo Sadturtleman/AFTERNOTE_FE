@@ -15,7 +15,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
  */
 data class AfternoteListUiState(
     val selectedTab: AfternoteTab = AfternoteTab.ALL,
-    val selectedBottomNavItem: BottomNavItem = BottomNavItem.HOME,
+    val selectedBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
     val items: List<AfternoteItem> = emptyList(),
     val isLoading: Boolean = false,
     val loadError: String? = null

@@ -48,7 +48,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ReceiverAfterNoteScreen() {
     var showDialog by remember { mutableStateOf(false) }
 
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
 
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {

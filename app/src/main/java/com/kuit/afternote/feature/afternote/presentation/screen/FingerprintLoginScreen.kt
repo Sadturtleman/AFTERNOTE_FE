@@ -34,7 +34,7 @@ fun FingerprintLoginScreen(
     modifier: Modifier = Modifier,
     onFingerprintAuthClick: () -> Unit = {}
 ) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.HOME) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

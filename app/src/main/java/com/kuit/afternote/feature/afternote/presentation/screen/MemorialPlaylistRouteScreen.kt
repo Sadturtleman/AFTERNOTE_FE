@@ -85,7 +85,7 @@ fun MemorialPlaylistRouteScreen(
                 )
             }
         ),
-        defaultBottomNavItem = BottomNavItem.HOME,
+        defaultBottomNavItem = BottomNavItem.AFTERNOTE,
         initialSelectedSongIds = initialSelectedSongIds
     )
 }
