@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
 import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle
@@ -76,11 +78,27 @@ fun TimeLetterScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val viewMode by viewModel.viewMode.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshLetters()
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
-                TimeLetterHeader(onBackClick = onBackClick)
+                TopBar(
+                    title = "타임 레터",
+                    onBackClick = onBackClick,
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_vector),
+                                contentDescription = "뒤로가기",
+                                modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                            )
+                        }
+                    }
+                )
             }
         },
         bottomBar = {
@@ -177,34 +195,6 @@ fun TimeLetterScreen(
     }
 }
 
-// 공통 헤더 분리
-@Composable
-private fun TimeLetterHeader(onBackClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(29.dp),
-        contentAlignment = Alignment.Center // 자식들을 중앙 정렬
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_vector),
-            contentDescription = "뒤로가기",
-            modifier = Modifier
-                .align(Alignment.CenterStart) // 왼쪽 중앙에 배치
-                .padding(start = 23.dp)
-                .size(width = 6.dp, height = 12.dp)
-                .clickable { onBackClick() }
-        )
-
-        Text(
-            text = "타임 레터",
-            color = Color(0xFF212121),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
 // 빈 화면 컨텐츠
 @Composable
 private fun LetterEmptyContent(modifier: Modifier = Modifier) {
@@ -275,7 +265,19 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
-                TimeLetterHeader(onBackClick = {})
+                TopBar(
+                    title = "타임 레터",
+                    onBackClick = {},
+                    navigationIcon = {
+                        IconButton(onClick = {}) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_vector),
+                                contentDescription = "뒤로가기",
+                                modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                            )
+                        }
+                    }
+                )
             }
         },
         bottomBar = {
@@ -320,7 +322,7 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                         Image(
                             painterResource(R.drawable.ic_down_vector),
                             contentDescription = "아래 열기",
-                            modifier = Modifier.padding(start = 13.dp)
+                            modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         ViewModeToggle(

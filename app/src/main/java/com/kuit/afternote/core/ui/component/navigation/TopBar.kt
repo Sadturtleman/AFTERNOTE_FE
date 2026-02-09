@@ -171,6 +171,73 @@ fun TopBar(
     )
 }
 
+/**
+ * TopBar with optional custom [navigationIcon] and [titleContent] slots.
+ * Use when the screen must keep its existing top bar UI (e.g. X icon, recipient dropdown).
+ *
+ * @param title Default title text when [titleContent] is null
+ * @param onBackClick Back/close click callback
+ * @param onActionClick Action button click (right side). Shown only when [actionText] is not empty
+ * @param actionText Action button label (e.g. "등록", "편집", "완료")
+ * @param navigationIcon Custom left icon; when null, default back arrow is used
+ * @param titleContent Custom center content; when null, [title] is shown as Text
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(
+    title: String = "",
+    onBackClick: () -> Unit,
+    onActionClick: () -> Unit = {},
+    actionText: String = "",
+    navigationIcon: (@Composable () -> Unit)? = null,
+    titleContent: (@Composable () -> Unit)? = null
+) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    CenterAlignedTopAppBar(
+        title = {
+            if (titleContent != null) {
+                titleContent()
+            } else {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Sansneo
+                )
+            }
+        },
+        navigationIcon = {
+            if (navigationIcon != null) {
+                navigationIcon()
+            } else {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        },
+        actions = {
+            if (actionText.isNotEmpty()) {
+                TextButton(onClick = onActionClick) {
+                    Text(
+                        text = actionText,
+                        fontSize = 14.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray5
+                    )
+                }
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
 @Preview(showBackground = true, name = "Material3 - 뒤로가기 있음")
 @Composable
 private fun TopBarWithBackPreview() {

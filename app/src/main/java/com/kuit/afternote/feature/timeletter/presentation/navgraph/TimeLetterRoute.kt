@@ -7,14 +7,11 @@ sealed interface TimeLetterRoute {
     data object TimeLetterMainRoute : TimeLetterRoute
 
     @Serializable
-    data object TimeLetterWriterRoute : TimeLetterRoute
+    data class TimeLetterWriterRoute(val draftId: Long? = null) : TimeLetterRoute
 
     @Serializable
     data object DraftLetterRoute : TimeLetterRoute
 
     @Serializable
     data object ReceiveListRoute : TimeLetterRoute
-
-    @Serializable
-    data object LetterEmptyRoute : TimeLetterRoute
 }

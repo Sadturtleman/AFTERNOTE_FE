@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
-import com.kuit.afternote.feature.timeletter.presentation.screen.LetterEmptyScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
@@ -30,7 +29,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
         TimeLetterScreen(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
-            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
+            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) }
         )
     }
 
@@ -59,7 +58,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
                 viewModel.hideRecipientDropdown()
             },
             onRegisterClick = {
-                viewModel.saveTimeLetter {
+                viewModel.registerWithPopUpThenSave {
                     navController.popBackStack()
                 }
             },
@@ -92,7 +91,12 @@ fun NavGraphBuilder.timeLetterNavGraph(
 
     composable<TimeLetterRoute.DraftLetterRoute> {
         DraftLetterScreen(
-            onCloseClick = { navController.popBackStack() }
+            onCloseClick = { navController.popBackStack() },
+            onLetterClick = { letter ->
+                letter.id.toLongOrNull()?.let { draftId ->
+                    navController.navigate(TimeLetterRoute.TimeLetterWriterRoute(draftId = draftId))
+                }
+            }
         )
     }
 
@@ -107,10 +111,4 @@ fun NavGraphBuilder.timeLetterNavGraph(
         )
     }
 
-    composable<TimeLetterRoute.LetterEmptyRoute> {
-        LetterEmptyScreen(
-            onNavigateBack = { navController.popBackStack() },
-            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute) }
-        )
-    }
 }
