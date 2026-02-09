@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.timeletter.presentation.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
@@ -34,8 +38,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftDeleteBottomBar
-import com.kuit.afternote.feature.timeletter.presentation.component.DraftLetterHeader
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.DraftLetterViewModel
 
@@ -74,11 +78,20 @@ fun DraftLetterScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
-                DraftLetterHeader(
-                    isEditMode = uiState.isEditMode,
-                    onCloseClick = onCloseClick,
-                    onEditClick = viewModel::enterEditMode,
-                    onCompleteClick = viewModel::exitEditMode
+                TopBar(
+                    title = "임시 저장된 레터",
+                    onBackClick = onCloseClick,
+                    onActionClick = if (uiState.isEditMode) viewModel::exitEditMode else viewModel::enterEditMode,
+                    actionText = if (uiState.isEditMode) "완료" else "편집",
+                    navigationIcon = {
+                        IconButton(onClick = onCloseClick) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_x),
+                                contentDescription = "닫기",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 )
             }
         },
@@ -189,11 +202,20 @@ private fun DraftLetterScreenEditPreview() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            DraftLetterHeader(
-                isEditMode = true,
-                onCloseClick = {},
-                onEditClick = {},
-                onCompleteClick = {}
+            TopBar(
+                title = "임시 저장된 레터",
+                onBackClick = {},
+                onActionClick = {},
+                actionText = "완료",
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_x),
+                            contentDescription = "닫기",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             )
         },
         bottomBar = {
