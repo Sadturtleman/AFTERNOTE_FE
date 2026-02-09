@@ -150,7 +150,7 @@ class LoginViewModel
 
         private fun mapLoginHttpCodeToMessage(code: Int): String =
             when (code) {
-                400 -> "입력 정보를 확인해주세요."
+                400,
                 401 -> "이메일 또는 비밀번호가 올바르지 않습니다."
                 404 -> "등록되지 않은 이메일입니다."
                 500, 502, 503 -> "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."

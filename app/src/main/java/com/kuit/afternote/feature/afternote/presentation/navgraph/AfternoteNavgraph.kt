@@ -26,6 +26,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
 import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
@@ -57,6 +58,18 @@ private const val TAG_FINGERPRINT = "FingerprintLogin"
 data class AfternoteEditStateHandling(
     val holder: MutableState<AfternoteEditState?>,
     val onClear: () -> Unit
+)
+
+/**
+ * Parameters for [afternoteNavGraph]. Groups 6 arguments to keep function param count ≤7.
+ */
+data class AfternoteNavGraphParams(
+    val afternoteItems: List<AfternoteItem>,
+    val onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    val playlistStateHolder: MemorialPlaylistStateHolder,
+    val afternoteProvider: AfternoteEditDataProvider,
+    val userName: String,
+    val editStateHandling: AfternoteEditStateHandling
 )
 
 /**
@@ -102,7 +115,8 @@ private fun resolveListItems(
 @Composable
 private fun AfternoteListRouteContent(
     navController: NavController,
-    listItems: List<AfternoteItem>
+    listItems: List<AfternoteItem>,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
     AfternoteListRoute(
         onNavigateToDetail = { itemId ->
@@ -112,6 +126,7 @@ private fun AfternoteListRouteContent(
             navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
         },
         onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+        onBottomNavTabSelected = onBottomNavTabSelected,
         initialItems = listItems
     )
 }
@@ -342,16 +357,19 @@ private fun AfternoteAddSongRouteContent(
 
 fun NavGraphBuilder.afternoteNavGraph(
     navController: NavController,
-    afternoteItems: List<AfternoteItem>,
-    onItemsUpdated: (List<AfternoteItem>) -> Unit,
-    playlistStateHolder: MemorialPlaylistStateHolder,
-    afternoteProvider: AfternoteEditDataProvider,
-    userName: String,
-    editStateHandling: AfternoteEditStateHandling
+    params: AfternoteNavGraphParams,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
+    val afternoteItems = params.afternoteItems
+    val afternoteProvider = params.afternoteProvider
+
     afternoteComposable<AfternoteRoute.AfternoteListRoute> {
         val listItems = resolveListItems(afternoteItems, afternoteProvider)
-        AfternoteListRouteContent(navController = navController, listItems = listItems)
+        AfternoteListRouteContent(
+            navController = navController,
+            listItems = listItems,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
     }
 
     afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
@@ -360,7 +378,7 @@ fun NavGraphBuilder.afternoteNavGraph(
             backStackEntry = backStackEntry,
             navController = navController,
             listItems = listItems,
-            userName = userName
+            userName = params.userName
         )
     }
 
@@ -371,7 +389,7 @@ fun NavGraphBuilder.afternoteNavGraph(
             navController = navController,
             listItems = listItems,
             afternoteProvider = afternoteProvider,
-            userName = userName
+            userName = params.userName
         )
     }
 
@@ -380,16 +398,16 @@ fun NavGraphBuilder.afternoteNavGraph(
             backStackEntry = backStackEntry,
             navController = navController,
             afternoteItems = afternoteItems,
-            onItemsUpdated = onItemsUpdated,
-            playlistStateHolder = playlistStateHolder,
+            onItemsUpdated = params.onItemsUpdated,
+            playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider,
-            editStateHandling = editStateHandling
+            editStateHandling = params.editStateHandling
         )
     }
 
     afternoteComposable<AfternoteRoute.MemorialPlaylistRoute> {
         MemorialPlaylistRouteScreen(
-            playlistStateHolder = playlistStateHolder,
+            playlistStateHolder = params.playlistStateHolder,
             onBackClick = { navController.popBackStack() },
             onNavigateToAddSongScreen = { navController.navigate(AfternoteRoute.AddSongRoute) }
         )
@@ -402,7 +420,7 @@ fun NavGraphBuilder.afternoteNavGraph(
     afternoteComposable<AfternoteRoute.AddSongRoute> {
         AfternoteAddSongRouteContent(
             navController = navController,
-            playlistStateHolder = playlistStateHolder,
+            playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider
         )
     }

@@ -10,6 +10,7 @@ import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
 
@@ -22,6 +23,7 @@ fun AfternoteListRoute(
     onNavigateToDetail: (String) -> Unit = {},
     onNavigateToGalleryDetail: (String) -> Unit = {},
     onNavigateToAdd: () -> Unit = {},
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     initialItems: List<AfternoteItem> = emptyList()
 ) {
     LaunchedEffect(initialItems) {
@@ -45,7 +47,10 @@ fun AfternoteListRoute(
         shell = AfternoteListScreenShellParams(
             title = "애프터노트",
             bottomBarSelectedItem = uiState.selectedBottomNavItem,
-            onBottomBarItemSelected = { viewModel.onEvent(AfternoteListEvent.SelectBottomNav(it)) },
+            onBottomBarItemSelected = {
+                viewModel.onEvent(AfternoteListEvent.SelectBottomNav(it))
+                onBottomNavTabSelected(it)
+            },
             showFab = true,
             onFabClick = onNavigateToAdd
         ),
