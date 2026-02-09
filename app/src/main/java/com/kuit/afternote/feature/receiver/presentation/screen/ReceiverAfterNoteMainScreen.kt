@@ -127,9 +127,11 @@ fun ReceiverAfterNoteMainScreen(
                 )
             }
             item {
+                Spacer(modifier = Modifier.height(70.dp))
+
                 ClickButton(
                     color = B3,
-                    title = "애프터노트 전체 확인하기",
+                    title = "애프터노트 확인하기",
                     onButtonClick = onNavigateToFullList
                 )
                 Spacer(modifier = Modifier.height(20.dp))

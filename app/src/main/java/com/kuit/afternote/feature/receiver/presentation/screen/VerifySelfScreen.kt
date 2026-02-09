@@ -28,12 +28,10 @@ fun VerifySelfScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
-    var step by remember { mutableStateOf(VerifyStep.EMAIL_AUTH) }
-    val email = rememberTextFieldState()
+    var step by remember { mutableStateOf(VerifyStep.MASTER_KEY_AUTH) }
     val masterKey = rememberTextFieldState()
     val deathCertificate = rememberTextFieldState()
     val familyRelationCertificate = rememberTextFieldState()
-    val authCode = rememberTextFieldState()
 
     Scaffold(
         topBar = {
@@ -57,18 +55,6 @@ fun VerifySelfScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             when (step) {
-                VerifyStep.EMAIL_AUTH -> {
-                    SignUpContentButton(
-                        onNextClick = { step = VerifyStep.MASTER_KEY_AUTH }
-                    ) {
-                        EmailInputContent(
-                            email = email,
-                            authCode = authCode,
-                            onAuthClick = {}
-                        )
-                    }
-                }
-
                 VerifyStep.MASTER_KEY_AUTH -> {
                     SignUpContentButton(
                         onNextClick = { step = VerifyStep.UPLOAD_PDF_AUTH }

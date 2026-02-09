@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -41,6 +42,42 @@ fun ClickButton(
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = color
+        )
+    ) {
+        Text(
+            text = title,
+            fontSize = 16.sp,
+            color = Gray9,
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+fun ClickButton(
+    onButtonClick: () -> Unit,
+    title: String,
+    isTrue: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        enabled = isTrue,
+        onClick = onButtonClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .dropShadow(
+                shape = RoundedCornerShape(8.dp),
+                color = Color.Black.copy(alpha = 0.05f),
+                offsetX = 5.dp,
+                offsetY = 0.dp,
+                blur = 5.dp,
+                spread = 0.dp
+            ),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isTrue) B3 else Gray3
         )
     ) {
         Text(
