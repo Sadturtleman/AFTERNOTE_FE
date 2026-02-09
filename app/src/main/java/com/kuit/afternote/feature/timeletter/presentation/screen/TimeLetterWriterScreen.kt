@@ -40,6 +40,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -81,6 +82,7 @@ import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroup
 import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftSavePopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRegisteredPopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
@@ -260,61 +262,41 @@ fun TimeLetterWriterScreen(
         Scaffold(
             modifier = Modifier.fillMaxWidth(),
             topBar = {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .statusBarsPadding()
-                            .height(43.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 24.dp)
-                                .clickable { keyboardController?.hide() }
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.img_writing),
-                                contentDescription = "키보드 숨기기",
-                                modifier = Modifier.size(width = 20.dp, height = 22.dp)
-                            )
+                Column(modifier = Modifier.statusBarsPadding()) {
+                    TopBar(
+                        title = "${recipientName}님께",
+                        onBackClick = onNavigateBack,
+                        onActionClick = onRegisterClick,
+                        actionText = "등록",
+                        navigationIcon = {
+                            IconButton(onClick = { keyboardController?.hide() }) {
+                                Image(
+                                    painter = painterResource(R.drawable.img_writing),
+                                    contentDescription = "키보드 숨기기",
+                                    modifier = Modifier.size(width = 20.dp, height = 22.dp)
+                                )
+                            }
+                        },
+                        titleContent = {
+                            Row(
+                                modifier = Modifier.clickable { onRecipientClick() },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "${recipientName}님께",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight(700),
+                                    fontFamily = FontFamily(Font(R.font.sansneobold)),
+                                    color = Color(0xFF212121)
+                                )
+                                Image(
+                                    painter = painterResource(R.drawable.ic_down),
+                                    contentDescription = "수신자 선택",
+                                    modifier = Modifier.padding(start = 14.dp)
+                                )
+                            }
                         }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Row(
-                            modifier = Modifier.clickable { onRecipientClick() },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "${recipientName}님께",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight(700),
-                                fontFamily = FontFamily(Font(R.font.sansneobold)),
-                                color = Color(0xFF212121)
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.ic_down),
-                                contentDescription = "수신자 선택",
-                                modifier = Modifier.padding(start = 14.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Text(
-                            text = "등록",
-                            color = Color(0xFF9E9E9E),
-                            textAlign = TextAlign.Center,
-                            fontFamily = FontFamily(Font(R.font.sansneoregular)),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Normal,
-                            lineHeight = 20.sp,
-                            modifier = Modifier
-                                .padding(end = 24.dp)
-                                .clickable { onRegisterClick() }
-                        )
-                    }
+                    )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         color = Color(0xFF9E9E9E),
