@@ -212,13 +212,7 @@ fun TopBar(
             if (navigationIcon != null) {
                 navigationIcon()
             } else {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
+                TopBarBackButton(onBackClick = onBackClick)
             }
         },
         actions = {
