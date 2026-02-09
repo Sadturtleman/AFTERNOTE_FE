@@ -44,7 +44,8 @@ complexity:
         active: false
     LongParameterList:
         active: true
-        functionThreshold: 10
+        # 7 to align with Sonar S107 (kotlin:S107) so IDE and CI agree
+        functionThreshold: 7
         constructorThreshold: 7
         ignoreDefaultParameters: false
         ignoreDataClasses: true

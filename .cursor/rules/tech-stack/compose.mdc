@@ -238,16 +238,17 @@ Column(
  6. **조건부 렌더링**: `if (showDialog)` 대신 `state.activeDialog?.let { ... }` 패턴 사용
  7. **UI 분리**: Scaffold 내부의 긴 UI 코드를 `EditContent` 같은 private Composable로 분리
 
-## Parameter Refactoring Pattern (LongParameterList 해결) - Critical
-- **문제**: Composable 함수에 10개 이상의 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것은 부족함
+## Parameter Refactoring Pattern (LongParameterList / S107 해결) - Critical
+- **제한**: 함수·생성자 파라미터는 **최대 7개** (Sonar S107 / kotlin:S107). 이 이상이 되면 Params 데이터 클래스로 묶어서 전달합니다.
+- **문제**: Composable 또는 NavGraph 함수에 7개 초과 파라미터가 필요할 때 단순히 하나의 data class로 묶는 것으로 해결합니다.
 - **⚠️ Critical: @Suppress는 최후의 수단**
-  - State Hoisting 패턴 적용 후 `LongParameterList` 경고가 발생하면, `@Suppress`를 사용하기 전에 반드시 다음 방법들을 시도해야 합니다:
+  - State Hoisting 패턴 적용 후 `LongParameterList` 또는 S107 경고가 발생하면, `@Suppress` 전에 반드시 다음 방법을 시도합니다:
   - **콜백 그룹화**: 3개 이상의 콜백이 있으면 Event Interface나 data class로 묶기
     * 예: `RecipientCallbacks`, `ProcessingMethodCallbacks` 같은 인터페이스/데이터 클래스 사용
     * 파라미터 11개 → 4개로 감소 가능 (콜백 5개를 1개로 그룹화)
-  - **UI 상태 캡슐화**: `expanded`, `boxWidth` 같은 UI 상태는 State Class로 묶기
-    * 예: `SelectionDropdownState` 클래스 생성
-    * 파라미터 10개 → 7개로 감소 가능
+  - **UI 상태·Params 캡슐화**: 여러 인자를 하나의 Params/State 클래스로 묶기
+    * 예: `SelectionDropdownState`, `AfternoteNavGraphParams` 클래스 생성
+    * 파라미터 8개 이상 → 7개 이하로 감소 (IDE S107 경고 방지)
   - **초기값 처리**: `initialShowTextField`, `initialExpandedItemId` 같은 초기값은 State 생성자로 옮기기
     * UI 컴포넌트는 초기값을 직접 알 필요 없이 완성된 `state`만 받으면 됨
 - **올바른 접근**: 다음 패턴을 순서대로 적용

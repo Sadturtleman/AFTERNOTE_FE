@@ -39,7 +39,7 @@ fun RecordDailyQuestionScreen(
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = BottomNavItem.HOME,
+                selectedItem = BottomNavItem.RECORD,
                 onItemSelected = { }
             )
         },

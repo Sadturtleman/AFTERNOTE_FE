@@ -49,7 +49,7 @@ fun RecordFirstDiaryListScreen(
         modifier = modifier.fillMaxWidth(),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = BottomNavItem.HOME,
+                selectedItem = BottomNavItem.RECORD,
                 onItemSelected = { }
             )
         },

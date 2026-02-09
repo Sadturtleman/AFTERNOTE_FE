@@ -101,7 +101,7 @@ class AfternoteEditState(
     albumCovers: List<AlbumCover>
 ) {
     // Navigation
-    var selectedBottomNavItem by mutableStateOf(BottomNavItem.HOME)
+    var selectedBottomNavItem by mutableStateOf(BottomNavItem.AFTERNOTE)
         private set
 
     // Category & Service
