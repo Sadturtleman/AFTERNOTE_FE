@@ -2,9 +2,6 @@ package com.kuit.afternote.core.ui.component.navigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +23,20 @@ import com.kuit.afternote.core.uimodel.Step
 import com.kuit.afternote.feature.onboarding.presentation.component.StepProgressBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
+import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Sansneo
+
+@Composable
+private fun TopBarBackButton(onBackClick: () -> Unit) {
+    IconButton(onClick = onBackClick) {
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_left_tab),
+            contentDescription = null,
+            modifier = Modifier.size(width = 8.dp, height = 14.dp),
+            tint = Gray8
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,17 +56,7 @@ fun TopBar(
                 fontFamily = Sansneo
             )
         },
-        navigationIcon = {
-            IconButton(
-                onClick = onBackClick
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        },
+        navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
         scrollBehavior = scrollBehavior
     )
 }
@@ -81,17 +81,7 @@ fun TopBar(
                 fontFamily = Sansneo
             )
         },
-        navigationIcon = {
-            IconButton(
-                onClick = onBackClick
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        },
+        navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
         actions = {
             TextButton(onClick = onActionClick) {
                 Text(
@@ -145,17 +135,7 @@ fun TopBar(
                     fontFamily = Sansneo
                 )
             },
-            navigationIcon = {
-                IconButton(
-                    onClick = onBackClick
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            },
+            navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
             scrollBehavior = scrollBehavior
         )
         StepProgressBar(
@@ -177,18 +157,7 @@ fun TopBar(
         title = {
             // 타이틀 없음 (빈 공간)
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    contentDescription = "뒤로가기",
-                    modifier = Modifier.size(
-                        width = 6.dp,
-                        height = 12.dp
-                    )
-                )
-            }
-        },
+        navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
         actions = {
             IconButton(onClick = onEditClick) {
                 Icon(

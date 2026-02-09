@@ -328,8 +328,10 @@ private fun CategoryContent(
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
                     funeralVideoUrl = state.funeralVideoUrl,
+                    customLastWishText = state.customLastWishText,
                     onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
+                    onCustomLastWishChanged = state::onCustomLastWishChanged,
                     onPhotoAddClick = onPhotoAddClick,
                     onVideoAddClick = onVideoAddClick
                 )

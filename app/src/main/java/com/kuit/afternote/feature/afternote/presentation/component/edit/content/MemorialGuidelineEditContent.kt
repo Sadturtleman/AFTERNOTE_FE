@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.LastWishOption
+import com.kuit.afternote.core.ui.component.LastWishOtherState
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
@@ -75,7 +76,11 @@ fun MemorialGuidelineEditContent(
                 LastWishesRadioGroup(
                     options = params.lastWishOptions,
                     selectedValue = params.selectedLastWish,
-                    onOptionSelected = params.onLastWishSelected
+                    onOptionSelected = params.onLastWishSelected,
+                    otherState = LastWishOtherState(
+                        text = params.customLastWishText,
+                        onTextChange = params.onCustomLastWishChanged
+                    )
                 )
             },
             videoContent = {
@@ -118,8 +123,10 @@ private fun MemorialGuidelineEditContentPreview() {
                 selectedLastWish = "calm",
                 lastWishOptions = lastWishOptions,
                 funeralVideoUrl = null,
+                customLastWishText = "",
                 onSongAddClick = {},
                 onLastWishSelected = {},
+                onCustomLastWishChanged = {},
                 onPhotoAddClick = {},
                 onVideoAddClick = {}
             )
