@@ -399,7 +399,13 @@ fun NavGraph(navHostController: NavHostController) {
             navController = navHostController,
             params = AfternoteNavGraphParams(
                 afternoteItems = afternoteItems,
-                onItemsUpdated = { afternoteItems = it },
+                onItemsUpdated = { newItems ->
+                    Log.d(
+                        "NavGraphAfternote",
+                        "onItemsUpdated called with size=${newItems.size}"
+                    )
+                    afternoteItems = newItems
+                },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
                 userName = receiverProvider.getDefaultReceiverTitleForDev(),

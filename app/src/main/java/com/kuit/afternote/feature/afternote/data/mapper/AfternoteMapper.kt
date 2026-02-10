@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.mapper
 
+import android.util.Log
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItemDto
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
@@ -9,6 +10,7 @@ import com.kuit.afternote.feature.afternote.domain.model.ServiceType
  * Server: afternoteId, title, category, createdAt.
  */
 object AfternoteMapper {
+    private const val TAG = "AfternoteMapper"
     fun toDomain(dto: AfternoteListItemDto): AfternoteItem =
         AfternoteItem(
             id = dto.afternoteId.toString(),
@@ -32,12 +34,16 @@ object AfternoteMapper {
         }
     }
 
-    private fun categoryToServiceType(category: String): ServiceType =
-        when (category.uppercase()) {
-            "SOCIAL" -> ServiceType.SOCIAL_NETWORK
-            "GALLERY" -> ServiceType.GALLERY_AND_FILES
-            "MUSIC", "PLAYLIST" -> ServiceType.MEMORIAL
-            "BUSINESS" -> ServiceType.BUSINESS
-            else -> ServiceType.OTHER
-        }
+    private fun categoryToServiceType(category: String): ServiceType {
+        val type =
+            when (category.uppercase()) {
+                "SOCIAL" -> ServiceType.SOCIAL_NETWORK
+                "GALLERY" -> ServiceType.GALLERY_AND_FILES
+                "MUSIC", "PLAYLIST" -> ServiceType.MEMORIAL
+                "BUSINESS" -> ServiceType.BUSINESS
+                else -> ServiceType.OTHER
+            }
+        Log.d(TAG, "categoryToServiceType: category=$category -> type=$type")
+        return type
+    }
 }

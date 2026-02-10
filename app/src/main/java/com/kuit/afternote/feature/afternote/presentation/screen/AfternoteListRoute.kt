@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,35 +10,51 @@ import com.kuit.afternote.core.ui.screen.AfternoteListScreen
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
 
+data class AfternoteListRouteCallbacks(
+    val onNavigateToDetail: (String) -> Unit = {},
+    val onNavigateToGalleryDetail: (String) -> Unit = {},
+    val onNavigateToMemorialGuidelineDetail: (String) -> Unit = {},
+    val onNavigateToAdd: () -> Unit = {},
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+)
+
 /**
- * 애프터노트 목록 Route. List is supplied via [initialItems]; detail/edit resolve from nav graph state.
+ * 애프터노트 목록 Route.
+ *
+ * 실제 동작에서는 항상 서버에서 목록을 우선 로드합니다.
+ * [initialItems]는 Preview나 명시적인 더미 모드에서만 사용해야 하며,
+ * 프로덕션 경로에서는 빈 리스트로 전달됩니다.
  */
 @Composable
 fun AfternoteListRoute(
     viewModel: AfternoteListViewModel = hiltViewModel(),
-    onNavigateToDetail: (String) -> Unit = {},
-    onNavigateToGalleryDetail: (String) -> Unit = {},
-    onNavigateToMemorialGuidelineDetail: (String) -> Unit = {},
-    onNavigateToAdd: () -> Unit = {},
-    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    initialItems: List<AfternoteItem> = emptyList()
+    callbacks: AfternoteListRouteCallbacks = AfternoteListRouteCallbacks(),
+    initialItems: List<AfternoteItem> = emptyList(),
+    onItemsChanged: (List<AfternoteItem>) -> Unit = {}
 ) {
-    LaunchedEffect(initialItems) {
+    LaunchedEffect(Unit) {
+        // 항상 서버 데이터를 우선 로드
+        viewModel.loadAfternotes()
+        // Preview·더미 모드에서 initialItems를 명시적으로 넘긴 경우에만 사용
         if (initialItems.isNotEmpty()) {
-            // NavGraph에서 전달된 더미/캐시 데이터를 우선 표시
             viewModel.setItems(initialItems)
-        } else {
-            // 전달된 아이템이 없으면 서버에서 목록 로드
-            viewModel.loadAfternotes()
         }
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.items) {
+        Log.d("AfternoteListRoute", "uiState.items changed size=${uiState.items.size}")
+        if (uiState.items.isNotEmpty()) {
+            Log.d("AfternoteListRoute", "onItemsChanged invoked with size=${uiState.items.size}")
+            onItemsChanged(uiState.items)
+        }
+    }
 
     val displayItems = uiState.items.map { item ->
         AfternoteListDisplayItem(
@@ -54,10 +71,10 @@ fun AfternoteListRoute(
             bottomBarSelectedItem = uiState.selectedBottomNavItem,
             onBottomBarItemSelected = {
                 viewModel.onEvent(AfternoteListEvent.SelectBottomNav(it))
-                onBottomNavTabSelected(it)
+                callbacks.onBottomNavTabSelected(it)
             },
             showFab = true,
-            onFabClick = onNavigateToAdd
+            onFabClick = callbacks.onNavigateToAdd
         ),
         list = AfternoteListScreenListParams(
             items = displayItems,
@@ -67,9 +84,9 @@ fun AfternoteListRoute(
                 val item = uiState.items.find { it.id == itemId } ?: return@AfternoteListScreenListParams
                 // Design has two detail screens only: Social Network, Gallery and Files. Others use Social-style detail.
                 when (item.type) {
-                    ServiceType.GALLERY_AND_FILES -> onNavigateToGalleryDetail(itemId)
-                    ServiceType.MEMORIAL -> onNavigateToMemorialGuidelineDetail(itemId)
-                    else -> onNavigateToDetail(itemId)
+                    ServiceType.GALLERY_AND_FILES -> callbacks.onNavigateToGalleryDetail(itemId)
+                    ServiceType.MEMORIAL -> callbacks.onNavigateToMemorialGuidelineDetail(itemId)
+                    else -> callbacks.onNavigateToDetail(itemId)
                 }
             }
         )

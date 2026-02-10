@@ -28,32 +28,34 @@ import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
-import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
-import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
-import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
-import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
-import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
-import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
 import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
 import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
+import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
+import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRouteCallbacks
+import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
+import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
+import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 private const val TAG_AFTERNOTE_EDIT = "AfternoteEdit"
 private const val TAG_FINGERPRINT = "FingerprintLogin"
+private const val TAG_AFTERNOTE_DETAIL = "AfternoteDetail"
 
 /**
  * Holder and clear callback for hoisted edit state (keeps param count ≤7).
@@ -118,22 +120,27 @@ private fun resolveListItems(
 @Composable
 private fun AfternoteListRouteContent(
     navController: NavController,
-    listItems: List<AfternoteItem>,
-    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
+    onItemsUpdated: (List<AfternoteItem>) -> Unit
 ) {
     AfternoteListRoute(
-        onNavigateToDetail = { itemId ->
-            navController.navigate(AfternoteRoute.DetailRoute(itemId = itemId))
-        },
-        onNavigateToGalleryDetail = { itemId ->
-            navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
-        },
-        onNavigateToMemorialGuidelineDetail = { itemId ->
-            navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
-        },
-        onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
-        onBottomNavTabSelected = onBottomNavTabSelected,
-        initialItems = listItems
+        callbacks =
+            AfternoteListRouteCallbacks(
+                onNavigateToDetail = { itemId ->
+                    navController.navigate(AfternoteRoute.DetailRoute(itemId = itemId))
+                },
+                onNavigateToGalleryDetail = { itemId ->
+                    navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
+                },
+                onNavigateToMemorialGuidelineDetail = { itemId ->
+                    navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
+                },
+                onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+                onBottomNavTabSelected = onBottomNavTabSelected
+            ),
+        // 프로덕션에서는 항상 서버 데이터를 우선 사용하므로 빈 리스트 전달
+        initialItems = emptyList(),
+        onItemsChanged = onItemsUpdated
     )
 }
 
@@ -169,6 +176,14 @@ private fun AfternoteDetailRouteContent(
     val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
     val item = listItems.find { it.id == route.itemId }
     val showDesignPending = item == null || item.type !in DESIGNED_DETAIL_TYPES
+
+    val listSummary = listItems.joinToString { "${it.id}:${it.type}" }
+
+    Log.d(
+        TAG_AFTERNOTE_DETAIL,
+        "DetailRoute: itemId=${route.itemId}, listIds=$listSummary, " +
+            "foundType=${item?.type}, showDesignPending=$showDesignPending"
+    )
 
     if (showDesignPending) {
         DesignPendingDetailContent(onBackClick = { navController.popBackStack() })
@@ -398,30 +413,28 @@ fun NavGraphBuilder.afternoteNavGraph(
     val afternoteProvider = params.afternoteProvider
 
     afternoteComposable<AfternoteRoute.AfternoteListRoute> {
-        val listItems = resolveListItems(afternoteItems, afternoteProvider)
+        resolveListItems(afternoteItems, afternoteProvider)
         AfternoteListRouteContent(
             navController = navController,
-            listItems = listItems,
-            onBottomNavTabSelected = onBottomNavTabSelected
+            onBottomNavTabSelected = onBottomNavTabSelected,
+            onItemsUpdated = params.onItemsUpdated
         )
     }
 
     afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
-        val listItems = resolveListItems(afternoteItems, afternoteProvider)
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = listItems,
+            listItems = afternoteItems,
             userName = params.userName
         )
     }
 
     afternoteComposable<AfternoteRoute.GalleryDetailRoute> { backStackEntry ->
-        val listItems = resolveListItems(afternoteItems, afternoteProvider)
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = listItems,
+            listItems = afternoteItems,
             afternoteProvider = afternoteProvider,
             userName = params.userName
         )
@@ -440,11 +453,10 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.MemorialGuidelineDetailRoute> { backStackEntry ->
-        val listItems = resolveListItems(afternoteItems, afternoteProvider)
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = listItems,
+            listItems = afternoteItems,
             userName = params.userName
         )
     }
