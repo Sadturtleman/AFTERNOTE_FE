@@ -94,12 +94,14 @@ fun GalleryDetailScreen(
     modifier: Modifier = Modifier,
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
+    isEditable: Boolean = true,
     uiState: AfternoteDetailState = rememberAfternoteDetailState()
 ) {
     GalleryDetailScaffold(
         modifier = modifier,
         detailState = detailState,
         callbacks = callbacks,
+        isEditable = isEditable,
         uiState = uiState
     )
 }
@@ -109,15 +111,23 @@ private fun GalleryDetailScaffold(
     modifier: Modifier,
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
+    isEditable: Boolean,
     uiState: AfternoteDetailState
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            TopBar(
-                onBackClick = callbacks.onBackClick,
-                onEditClick = uiState::toggleDropdownMenu
-            )
+            if (isEditable) {
+                TopBar(
+                    onBackClick = callbacks.onBackClick,
+                    onEditClick = uiState::toggleDropdownMenu
+                )
+            } else {
+                TopBar(
+                    title = "",
+                    onBackClick = callbacks.onBackClick
+                )
+            }
         },
         bottomBar = {
             BottomNavigationBar(
@@ -130,6 +140,7 @@ private fun GalleryDetailScaffold(
             modifier = Modifier.padding(paddingValues),
             detailState = detailState,
             callbacks = callbacks,
+            isEditable = isEditable,
             uiState = uiState
         )
     }
@@ -140,6 +151,7 @@ private fun GalleryDetailContent(
     modifier: Modifier,
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
+    isEditable: Boolean,
     uiState: AfternoteDetailState
 ) {
     Box(
@@ -149,28 +161,30 @@ private fun GalleryDetailContent(
             GalleryDetailScrollableContent(detailState = detailState)
         }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 20.dp)
-        ) {
-            EditDropdownMenu(
-                expanded = uiState.showDropdownMenu,
-                onDismissRequest = uiState::hideDropdownMenu,
-                onEditClick = { callbacks.onEditClick() },
-                onDeleteClick = { uiState.showDeleteDialog() }
+        if (isEditable) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(end = 20.dp)
+            ) {
+                EditDropdownMenu(
+                    expanded = uiState.showDropdownMenu,
+                    onDismissRequest = uiState::hideDropdownMenu,
+                    onEditClick = { callbacks.onEditClick() },
+                    onDeleteClick = { uiState.showDeleteDialog() }
+                )
+            }
+
+            GalleryDetailDeleteDialog(
+                showDialog = uiState.showDeleteDialog,
+                serviceName = detailState.serviceName,
+                onDismiss = uiState::hideDeleteDialog,
+                onConfirm = {
+                    uiState.hideDeleteDialog()
+                    callbacks.onDeleteConfirm()
+                }
             )
         }
-
-        GalleryDetailDeleteDialog(
-            showDialog = uiState.showDeleteDialog,
-            serviceName = detailState.serviceName,
-            onDismiss = uiState::hideDeleteDialog,
-            onConfirm = {
-                uiState.hideDeleteDialog()
-                callbacks.onDeleteConfirm()
-            }
-        )
     }
 }
 

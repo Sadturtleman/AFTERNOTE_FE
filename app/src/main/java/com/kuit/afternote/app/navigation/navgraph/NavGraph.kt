@@ -26,7 +26,14 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
+import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetailState
@@ -63,7 +70,6 @@ import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -225,6 +231,8 @@ private fun ReceiverAfternoteListRouteContent(navHostController: NavHostControll
     )
 }
 
+private enum class ReceiverDetailCategory { GALLERY, MEMORIAL_GUIDELINE, SOCIAL }
+
 @Composable
 private fun ReceiverAfternoteDetailContent(
     navHostController: NavHostController,
@@ -238,20 +246,54 @@ private fun ReceiverAfternoteDetailContent(
                 .firstOrNull { it.id == itemId }
                 ?: receiverProvider.getAfternoteListSeedsForReceiverList().firstOrNull()
         }
+    val category = receiverDetailCategoryFromSeed(seed)
     val serviceName = seed?.serviceNameLiteral ?: ""
     val userName = receiverProvider.getDefaultReceiverTitleForDev()
-    AfternoteTheme(darkTheme = false) {
-        SocialNetworkDetailScreen(
+    val defaultState = rememberAfternoteDetailState(
+        defaultBottomNavItem = BottomNavItem.AFTERNOTE
+    )
+    when (category) {
+        ReceiverDetailCategory.GALLERY -> GalleryDetailScreen(
+            detailState = GalleryDetailState(
+                serviceName = serviceName.ifEmpty { "갤러리" },
+                userName = userName,
+                finalWriteDate = seed?.date ?: ""
+            ),
+            callbacks = GalleryDetailCallbacks(
+                onBackClick = { navHostController.popBackStack() },
+                onEditClick = {}
+            ),
+            isEditable = false,
+            uiState = defaultState
+        )
+        ReceiverDetailCategory.MEMORIAL_GUIDELINE -> MemorialGuidelineDetailScreen(
+            detailState = MemorialGuidelineDetailState(
+                userName = userName,
+                finalWriteDate = seed?.date ?: ""
+            ),
+            callbacks = MemorialGuidelineDetailCallbacks(
+                onBackClick = { navHostController.popBackStack() }
+            ),
+            isEditable = false,
+            uiState = defaultState
+        )
+        ReceiverDetailCategory.SOCIAL -> SocialNetworkDetailScreen(
             content = SocialNetworkDetailContent(
                 serviceName = serviceName,
                 userName = userName
             ),
             isEditable = false,
             onBackClick = { navHostController.popBackStack() },
-            state = rememberAfternoteDetailState(
-                defaultBottomNavItem = BottomNavItem.AFTERNOTE
-            )
+            state = defaultState
         )
+    }
+}
+
+private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): ReceiverDetailCategory {
+    return when (seed?.serviceNameLiteral) {
+        "갤러리" -> ReceiverDetailCategory.GALLERY
+        "추모 가이드라인" -> ReceiverDetailCategory.MEMORIAL_GUIDELINE
+        else -> ReceiverDetailCategory.SOCIAL
     }
 }
 

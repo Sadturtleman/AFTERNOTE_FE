@@ -1,11 +1,9 @@
 package com.kuit.afternote.feature.user.domain.repository
 
 import com.kuit.afternote.feature.user.domain.model.PushSettings
-import com.kuit.afternote.feature.user.domain.model.ReceiverAfterNoteSourceItem
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
-import com.kuit.afternote.feature.user.domain.model.ReceiverTimeLetterItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 
 /**
@@ -48,8 +46,4 @@ interface UserRepository {
         page: Int,
         size: Int
     ): Result<ReceiverDailyQuestionsResult>
-
-    suspend fun getReceiverTimeLetters(receiverId: Long): Result<List<ReceiverTimeLetterItem>>
-
-    suspend fun getReceiverAfterNotes(receiverId: Long): Result<List<ReceiverAfterNoteSourceItem>>
 }
