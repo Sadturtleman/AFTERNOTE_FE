@@ -29,7 +29,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
         TimeLetterScreen(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
-            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) }
+            onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) },
+            onShowAllClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) }
         )
     }
 

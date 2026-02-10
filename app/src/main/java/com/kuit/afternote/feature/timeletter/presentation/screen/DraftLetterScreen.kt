@@ -97,14 +97,21 @@ fun DraftLetterScreen(
         },
         bottomBar = {
             if (uiState.isEditMode) {
-                DraftDeleteBottomBar(
-                    onDeleteAll = {
-                        viewModel.deleteAll { viewModel.loadTemporaryLetters() }
-                    },
-                    onDeleteSelected = {
-                        viewModel.deleteSelected { viewModel.loadTemporaryLetters() }
-                    }
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding() // 시스템 내비게이션 바 영역 확보
+                        .padding(bottom = 36.dp, start = 20.dp, end = 20.dp) // 프리뷰와 동일한 하단 여백 추가
+                ) {
+                    DraftDeleteBottomBar(
+                        onDeleteAll = {
+                            viewModel.deleteAll { viewModel.loadTemporaryLetters() }
+                        },
+                        onDeleteSelected = {
+                            viewModel.deleteSelected { viewModel.loadTemporaryLetters() }
+                        }
+                    )
+                }
             }
         }
     ) { innerPadding ->

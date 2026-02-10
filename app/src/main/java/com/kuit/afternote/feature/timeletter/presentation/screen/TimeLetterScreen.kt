@@ -65,6 +65,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
  * @param viewModel 타임레터 ViewModel
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
  * @param onBackClick 뒤로가기 클릭 콜백
+ * @param onShowAllClick 전체보기 클릭 시 수신 목록 화면으로 이동 콜백
  * @param modifier Modifier
  */
 @Composable
@@ -73,7 +74,8 @@ fun TimeLetterScreen(
     viewModel: TimeLetterViewModel = hiltViewModel(),
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {},
-    onAddClick: () -> Unit = {}
+    onAddClick: () -> Unit = {},
+    onShowAllClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val viewMode by viewModel.viewMode.collectAsStateWithLifecycle()
@@ -140,17 +142,22 @@ fun TimeLetterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "전체보기",
-                            fontFamily = FontFamily(Font(R.font.sansneomedium)),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Image(
-                            painterResource(R.drawable.ic_down_vector),
-                            contentDescription = "아래 열기",
-                            modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
-                        )
+                        Row(
+                            modifier = Modifier.clickable(onClick = onShowAllClick),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "전체보기",
+                                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Image(
+                                painterResource(R.drawable.ic_down_vector),
+                                contentDescription = "아래 열기",
+                                modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
+                            )
+                        }
                         Spacer(modifier = Modifier.weight(1f))
                         ViewModeToggle(
                             currentMode = viewMode,
