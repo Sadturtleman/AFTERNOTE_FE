@@ -41,6 +41,17 @@
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
 
+    <!-- Receiver verify (email auth) -->
+    <string name="receiver_verify_title">수신자 인증</string>
+    <string name="receiver_verify_self_title">수신자 본인 확인</string>
+    <string name="receiver_verify_intro">고객의 소중한 정보를 보호하기 위해\n가족관계 및 사망 사실 확인이 필요합니다.</string>
+    <string name="receiver_verify_start_button">인증 시작하기</string>
+    <string name="receiver_verify_next_button">다음</string>
+    <string name="receiver_verify_confirm_button">인증하기</string>
+    <string name="receiver_verify_email_description">수신자님 본인 확인을 위해\n작성하신 이메일로 인증번호를 보내드립니다.</string>
+    <string name="receiver_verify_email_label">이메일 주소</string>
+    <string name="receiver_verify_code_description">입력하신 이메일로 인증번호를 보냈습니다.\n수신된 메일에서 인증번호를 확인하고 입력해주세요.</string>
+
     <!-- Dev mode: data source toggle -->
     <string name="dev_use_mock_data">목(mock) 데이터 사용</string>
 

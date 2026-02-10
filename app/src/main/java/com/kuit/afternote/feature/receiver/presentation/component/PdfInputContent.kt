@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +41,9 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun PdfInputContent(
     deadPdf: TextFieldState,
     familyPdf: TextFieldState,
+    onDeadImageAdd: () -> Unit,
     onDeadFileAdd: () -> Unit,
+    onFamilyImageAdd: () -> Unit,
     onFamilyFileAdd: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -61,22 +66,22 @@ fun PdfInputContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 사망진단서 Row -> onDeadFileAdd 연결
         SinglePdfInputRow(
             title = "사망진단서 업로드",
             textFieldState = deadPdf,
             label = "서류 촬영 또는 파일 첨부",
-            onActionClick = onDeadFileAdd
+            onImageAdd = onDeadImageAdd,
+            onFileAdd = onDeadFileAdd
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 가족관계증명서 Row -> onFamilyFileAdd 연결
         SinglePdfInputRow(
             title = "가족관계증명서 업로드",
             textFieldState = familyPdf,
             label = "서류 촬영 또는 파일 첨부",
-            onActionClick = onFamilyFileAdd
+            onImageAdd = onFamilyImageAdd,
+            onFileAdd = onFamilyFileAdd
         )
     }
 }
@@ -86,7 +91,8 @@ private fun SinglePdfInputRow(
     title: String,
     textFieldState: TextFieldState,
     label: String,
-    onActionClick: () -> Unit
+    onImageAdd: () -> Unit,
+    onFileAdd: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -101,17 +107,13 @@ private fun SinglePdfInputRow(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 1. Box는 전체 너비를 채웁니다.
         Box(modifier = Modifier.fillMaxWidth()) {
-            // 2. 텍스트 필드 그리기
             OutlineTextField(
                 textFieldState = textFieldState,
                 label = label,
                 onFileAddClick = { expanded = true }
             )
 
-            // 3. 드롭다운 메뉴 위치 잡기
-            // 메뉴를 감싸는 투명한 Box를 만들어 우측 상단(버튼 위치 근처)으로 보냅니다.
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -120,28 +122,64 @@ private fun SinglePdfInputRow(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    // 4. offset 조정: x는 0 (이미 우측 정렬함), y는 TextField 높이(약 60~70dp)만큼 내려줌
                     offset = DpOffset(x = 0.dp, y = 60.dp),
-                    modifier = Modifier.background(Color.White) // 배경색 명시 (혹시 투명해서 안보일까봐)
+                    modifier = Modifier.background(Color.White)
                 ) {
                     DropdownMenuItem(
                         text = { Text("이미지 추가") },
-                        leadingIcon = { Icon(Icons.Outlined.PhotoCamera, contentDescription = null, tint = B2) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Outlined.PhotoCamera,
+                                contentDescription = null,
+                                tint = B2
+                            )
+                        },
                         onClick = {
-                            onActionClick()
+                            onImageAdd()
                             expanded = false
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("파일 추가") },
-                        leadingIcon = { Icon(Icons.Outlined.Photo, contentDescription = null, tint = B2) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Outlined.Photo,
+                                contentDescription = null,
+                                tint = B2
+                            )
+                        },
                         onClick = {
-                            onActionClick()
+                            onFileAdd()
                             expanded = false
                         }
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PdfInputContentPreview() {
+    // 1. Preview용 상태 생성
+    val deadState = rememberTextFieldState()
+    val familyState = rememberTextFieldState()
+
+    // 2. 배경 깔고 패딩 좀 주어서 실제 화면처럼 보이게 설정
+    Surface(
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(modifier = Modifier.padding(16.dp)) {
+            PdfInputContent(
+                deadPdf = deadState,
+                familyPdf = familyState,
+                onDeadImageAdd = {},
+                onDeadFileAdd = {},
+                onFamilyImageAdd = {},
+                onFamilyFileAdd = {}
+            )
         }
     }
 }

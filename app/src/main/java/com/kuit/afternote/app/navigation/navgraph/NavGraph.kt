@@ -65,6 +65,7 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLet
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.VerifySelfScreen
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
@@ -504,14 +505,21 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverOnboardingScreen(
                 onLoginClick = { navHostController.popBackStack() },
                 onStartClick = { navHostController.navigate("receiver_verify") },
-                onCheckClick = {},
                 onSignUpClick = { navHostController.popBackStack() }
             )
         }
 
         composable("receiver_verify") {
             VerifyReceiverScreen(
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
+                onVerifySuccess = { navHostController.navigate("receiver_verify_self") }
+            )
+        }
+
+        composable("receiver_verify_self") {
+            VerifySelfScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onNextClick = { navHostController.popBackStack() }
             )
         }
 
