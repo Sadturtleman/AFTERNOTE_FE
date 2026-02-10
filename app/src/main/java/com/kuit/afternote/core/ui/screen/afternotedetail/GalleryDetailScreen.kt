@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.presentation.screen
+package com.kuit.afternote.core.ui.screen.afternotedetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,8 +42,6 @@ import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.core.ui.screen.AfternoteDetailState
-import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.B1
