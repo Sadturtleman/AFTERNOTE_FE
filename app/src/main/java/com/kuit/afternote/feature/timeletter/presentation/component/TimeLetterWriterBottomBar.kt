@@ -73,7 +73,17 @@ fun TimeLetterWriterBottomBar(
                     .clickable { onLinkClick() }
             )
 
-            // [Popup] 상태가 true일 때만 Box(아이콘) 기준으로 렌더링
+
+        }
+        Spacer(Modifier.width(16.dp))
+        Box(){
+            Image(
+                painterResource(R.drawable.ic_additional),
+                contentDescription = "더보기",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onAddClick() } // 클릭 이벤트 연결
+            )
             if (isMenuOpen) {
                 Popup(
                     // 아이콘 위로 16dp 정도 띄워서 표시
@@ -94,14 +104,7 @@ fun TimeLetterWriterBottomBar(
                 }
             }
         }
-        Spacer(Modifier.width(16.dp))
-        Image(
-            painterResource(R.drawable.ic_additional),
-            contentDescription = "더보기",
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onAddClick() } // 클릭 이벤트 연결
-        )
+
         Spacer(Modifier.weight(1f))
         Text(
             text = "임시저장",

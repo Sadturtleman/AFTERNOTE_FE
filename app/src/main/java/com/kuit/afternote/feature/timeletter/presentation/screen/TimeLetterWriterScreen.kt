@@ -15,14 +15,14 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -64,7 +64,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -75,58 +74,23 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
-import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
-import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
-import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
-import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import com.kuit.afternote.core.ui.component.DateWheelPicker
 import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftSavePopUp
+import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRegisteredPopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
+import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
+import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
+import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import java.time.LocalDate
 import java.time.LocalTime
 
 private val RecipientDropdownMaxHeight = 300.dp
 
-/**
- * 타임레터 작성 화면
- *
- * @param recipientName 수신자 이름
- * @param title 제목
- * @param content 내용
- * @param sendDate 선택된 발송 날짜
- * @param sendTime 선택된 발송 시간 (HH:mm)
- * @param showDatePicker DatePicker 표시 여부
- * @param showTimePicker TimePicker 표시 여부
- * @param draftCount 임시저장된 레터 개수
- * @param onTitleChange 제목 변경 콜백
- * @param onContentChange 내용 변경 콜백
- * @param onNavigateBack 뒤로가기 콜백
- * @param onRecipientClick 수신자 선택 클릭 콜백
- * @param onRegisterClick 등록 클릭 콜백
- * @param onSaveDraftClick 임시저장 클릭 콜백
- * @param onDraftCountClick 임시저장 개수 클릭 콜백 (DraftLetterScreen으로 이동)
- * @param onDateClick 날짜 선택 클릭 콜백
- * @param onTimeClick 시간 선택 클릭 콜백
- * @param onDatePickerDismiss DatePicker 닫기 콜백
- * @param onDateSelected 날짜 선택 완료 콜백
- * @param onTimePickerDismiss TimePicker 닫기 콜백
- * @param onTimeSelected 시간 선택 콜백 (24시간 형식 hour, minute)
- * @param showWritingPlusMenu 더보기(작성 플러스) 메뉴 표시 여부
- * @param onMoreClick 더보기 아이콘 클릭 콜백
- * @param onDismissPlusMenu 더보기 메뉴 닫기 콜백
- * @param receivers 수신자 목록 (드롭다운에 표시)
- * @param showRecipientDropdown 수신자 선택 드롭다운 표시 여부
- * @param onRecipientDropdownDismiss 수신자 드롭다운 닫기 콜백
- * @param onReceiverSelected 수신자 선택 콜백
- * @param showRegisteredPopUp 타임레터 등록 완료 팝업 표시 여부
- * @param showDraftSavePopUp 임시저장 완료 팝업 표시 여부
- * @param modifier Modifier
- */
 @Composable
 fun TimeLetterWriterScreen(
     modifier: Modifier = Modifier,
@@ -163,27 +127,30 @@ fun TimeLetterWriterScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
+
+    // UI State
     var isMenuOpen by remember { mutableStateOf(false) }
     var selectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var selectedVoices by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var addedLinks by remember { mutableStateOf<List<String>>(emptyList()) }
     var showLinkDialog by remember { mutableStateOf(false) }
+
+    // Activity Result Launchers
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
     ) { uris -> if (uris.isNotEmpty()) selectedImages = selectedImages + uris }
 
-    // 2. 음성(오디오) 피커
     val voicePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments()
     ) { uris -> if (uris.isNotEmpty()) selectedVoices = selectedVoices + uris }
 
-    // 3. 파일 피커 (모든 타입)
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments()
     ) { uris -> if (uris.isNotEmpty()) selectedFiles = selectedFiles + uris }
 
     Box(modifier = modifier.fillMaxSize()) {
+        // [Popup & Overlays]
         if (showWritingPlusMenu) {
             Popup(
                 alignment = Alignment.BottomStart,
@@ -195,49 +162,11 @@ fun TimeLetterWriterScreen(
                 properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
             ) {
                 WritingPlusMenu(
-                    onImageClick={},
-                    onVoiceClick={},
-                    onFileClick={},
-                    onLinkClick={}
+                    onImageClick = {},
+                    onVoiceClick = {},
+                    onFileClick = {},
+                    onLinkClick = {}
                 )
-            }
-        }
-
-        if (showRecipientDropdown) {
-            val groupedReceivers = groupByChosung(receivers) { it.receiver_name }
-            val topBarHeightPx = with(density) { 44.dp.roundToPx() }
-            val dropdownOffsetY = WindowInsets.statusBars.getTop(density) + topBarHeightPx
-            Popup(
-                alignment = Alignment.TopStart,
-                offset = IntOffset(0, dropdownOffsetY),
-                onDismissRequest = onRecipientDropdownDismiss,
-                properties = PopupProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(RecipientDropdownMaxHeight)
-                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
-                        .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
-                        .background(Color.White)
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        chosungGroupedItems(groupedReceivers) { receiver ->
-                            Box(
-                                modifier = Modifier.clickable {
-                                    onReceiverSelected(receiver)
-                                    onRecipientDropdownDismiss()
-                                }
-                            ) {
-                                ReceiverInfoItem(receiver = receiver)
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -250,6 +179,7 @@ fun TimeLetterWriterScreen(
                 TimeLetterRegisteredPopUp()
             }
         }
+
         if (showDraftSavePopUp) {
             Popup(
                 alignment = Alignment.Center,
@@ -259,6 +189,8 @@ fun TimeLetterWriterScreen(
                 DraftSavePopUp()
             }
         }
+
+        // [Main Scaffold]
         Scaffold(
             modifier = Modifier.fillMaxWidth(),
             topBar = {
@@ -307,8 +239,8 @@ fun TimeLetterWriterScreen(
             bottomBar = {
                 TimeLetterWriterBottomBar(
                     draftCount = draftCount,
-                    onLinkClick = { isMenuOpen = !isMenuOpen },
-                    onAddClick = { /* 더보기 동작 */ },
+                    onLinkClick = {  },
+                    onAddClick = { isMenuOpen = !isMenuOpen },
                     onSaveDraftClick = onSaveDraftClick,
                     onDraftCountClick = onDraftCountClick,
                     isMenuOpen = isMenuOpen,
@@ -328,6 +260,7 @@ fun TimeLetterWriterScreen(
                 )
             }
         ) { innerPadding ->
+            // [Content Area - Vertical Scroll]
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -336,11 +269,13 @@ fun TimeLetterWriterScreen(
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
+                // [1] 발송 날짜/시간 선택 영역 (Row)
                 Row(
                     modifier = Modifier
                         .height(62.dp)
                         .padding(horizontal = 20.dp)
                 ) {
+                    // 날짜
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -353,10 +288,7 @@ fun TimeLetterWriterScreen(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal
                         )
-                        Box(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            // 선택된 날짜 표시
+                        Box(modifier = Modifier.fillMaxWidth()) {
                             if (sendDate.isNotEmpty()) {
                                 Text(
                                     text = sendDate,
@@ -385,6 +317,7 @@ fun TimeLetterWriterScreen(
 
                     Spacer(modifier = Modifier.width(26.dp))
 
+                    // 시간
                     Column(
                         modifier = Modifier
                             .width(106.dp)
@@ -398,9 +331,7 @@ fun TimeLetterWriterScreen(
                             fontWeight = FontWeight.Normal,
                             lineHeight = 18.sp
                         )
-                        Box(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
                             if (sendTime.isNotEmpty()) {
                                 Text(
                                     text = sendTime,
@@ -426,47 +357,9 @@ fun TimeLetterWriterScreen(
                             thickness = 0.4.dp
                         )
                     }
+                } // <--- [중요] Row Close
 
-                    // [3] 이미지 그리드 (제목과 본문 사이로 이동!)
-                    if (selectedImages.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        SelectedImageGrid(images = selectedImages) { selectedImages = selectedImages - it }
-                    }
-
-                    // (2) 음성
-                    if (selectedVoices.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        AttachmentList(
-                            items = selectedVoices,
-                            iconRes = R.drawable.ic_sound, // 아이콘 리소스 확인 필요
-                            labelExtractor = { "음성 녹음 파일 ${selectedVoices.indexOf(it) + 1}" }, // 실제 파일명 대신 임시 이름
-                            onRemove = { selectedVoices = selectedVoices - it }
-                        )
-                    }
-
-                    // (3) 파일
-                    if (selectedFiles.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        AttachmentList(
-                            items = selectedFiles,
-                            iconRes = R.drawable.ic_file, // 아이콘 리소스 확인 필요
-                            labelExtractor = { "첨부 파일 ${selectedFiles.indexOf(it) + 1}" },
-                            onRemove = { selectedFiles = selectedFiles - it }
-                        )
-                    }
-
-                    // (4) 링크
-                    if (addedLinks.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        AttachmentList(
-                            items = addedLinks,
-                            iconRes = R.drawable.ic_plus_link, // 아이콘 리소스 확인 필요
-                            labelExtractor = { it }, // 링크 주소 그대로 표시
-                            onRemove = { addedLinks = addedLinks - it }
-                        )
-                    }
-                }
-
+                // [2] 제목 입력 영역
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -480,7 +373,8 @@ fun TimeLetterWriterScreen(
                             color = Color(0xFF000000),
                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight(400), lineHeight = 24.sp // 가독성 위해 줄간격 추가
+                            fontWeight = FontWeight(400),
+                            lineHeight = 24.sp
                         ),
                         cursorBrush = SolidColor(Color(0xFF000000)),
                         singleLine = true,
@@ -489,7 +383,6 @@ fun TimeLetterWriterScreen(
                                 if (title.isEmpty()) {
                                     Text(
                                         text = "제목",
-                                        // BodyLarge-R
                                         style = TextStyle(
                                             fontSize = 18.sp,
                                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
@@ -512,6 +405,7 @@ fun TimeLetterWriterScreen(
 
                 Spacer(modifier = Modifier.height(17.dp))
 
+                // [3] 본문 입력 영역
                 BasicTextField(
                     value = content,
                     onValueChange = onContentChange,
@@ -538,16 +432,62 @@ fun TimeLetterWriterScreen(
                     },
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .fillMaxWidth().heightIn(min = 200.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = 200.dp)
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // [4] 첨부 파일 표시 영역 (본문 하단에 수직 배치)
+
+                // (1) 이미지
+                if (selectedImages.isNotEmpty()) {
+                    SelectedImageGrid(images = selectedImages) { selectedImages = selectedImages - it }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // (2) 음성
+                if (selectedVoices.isNotEmpty()) {
+                    AttachmentList(
+                        items = selectedVoices,
+                        iconRes = R.drawable.ic_sound,
+                        labelExtractor = { "음성 녹음 파일 ${selectedVoices.indexOf(it) + 1}" },
+                        onRemove = { selectedVoices = selectedVoices - it }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // (3) 파일
+                if (selectedFiles.isNotEmpty()) {
+                    AttachmentList(
+                        items = selectedFiles,
+                        iconRes = R.drawable.ic_file,
+                        labelExtractor = { "첨부 파일 ${selectedFiles.indexOf(it) + 1}" },
+                        onRemove = { selectedFiles = selectedFiles - it }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // (4) 링크
+                if (addedLinks.isNotEmpty()) {
+                    AttachmentList(
+                        items = addedLinks,
+                        iconRes = R.drawable.ic_plus_link,
+                        labelExtractor = { it },
+                        onRemove = { addedLinks = addedLinks - it }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // 하단 여백 (스크롤 시 마지막 내용이 잘리지 않도록)
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
 
-        // DatePicker 오버레이
+        // [Dialogs & Pickers Overlays]
+        // 1. DatePicker
         if (showDatePicker) {
             var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-            // 배경 딤 처리 + 클릭 시 닫기
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -559,7 +499,6 @@ fun TimeLetterWriterScreen(
                     .zIndex(1f)
             )
 
-            // DateWheelPicker 오버레이 (발송 날짜 아래 위치) - zIndex로 딤 위에 그려 휠 터치 전달
             Box(
                 modifier = Modifier
                     .zIndex(2f)
@@ -567,6 +506,7 @@ fun TimeLetterWriterScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
                     .padding(vertical = 16.dp)
+                    .align(Alignment.Center) // 중앙 정렬 추가
             ) {
                 DateWheelPicker(
                     modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
@@ -578,6 +518,8 @@ fun TimeLetterWriterScreen(
                 )
             }
         }
+
+        // 2. Link Input Dialog
         if (showLinkDialog) {
             LinkInputDialog(
                 onDismiss = { showLinkDialog = false },
@@ -589,7 +531,8 @@ fun TimeLetterWriterScreen(
                 }
             )
         }
-        // TimePicker 오버레이 (TimeWheelPicker)
+
+        // 3. TimePicker
         if (showTimePicker) {
             val now = LocalTime.now()
             val (initialHour, initialMinute) = if (sendTime.isNotBlank()) {
@@ -616,17 +559,14 @@ fun TimeLetterWriterScreen(
                     .zIndex(1f)
             )
 
-            // TimeWheelPicker 카드 - zIndex로 딤 위에 그려 휠 터치 전달
             Box(
                 modifier = Modifier
                     .zIndex(2f)
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color.White)
                     .padding(vertical = 16.dp)
+                    .align(Alignment.Center) // 중앙 정렬 추가
             ) {
                 TimeWheelPicker(
                     initialHour = initialHour,
@@ -637,6 +577,7 @@ fun TimeLetterWriterScreen(
         }
     }
 }
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SelectedImageGrid(
@@ -651,7 +592,6 @@ fun SelectedImageGrid(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // LazyVerticalGrid 대신 FlowRow 사용
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -661,7 +601,7 @@ fun SelectedImageGrid(
             images.forEach { uri ->
                 Box(
                     modifier = Modifier
-                        .width(100.dp) // 적절한 크기 고정 (또는 weight 로직 사용 가능)
+                        .width(100.dp)
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.LightGray)
@@ -725,14 +665,15 @@ fun <T> AttachmentList(
                     imageVector = Icons.Default.Close,
                     contentDescription = "삭제",
                     tint = Color(0xFF999999),
-                    modifier = Modifier.size(18.dp).clickable { onRemove(item) }
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickable { onRemove(item) }
                 )
             }
         }
     }
 }
 
-// [다이얼로그] 링크 입력창
 @Composable
 fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
@@ -757,7 +698,6 @@ fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 입력 필드
                 TextField(
                     value = text,
                     onValueChange = { text = it },
@@ -774,13 +714,14 @@ fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 버튼 영역
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Button(
                         onClick = { onConfirm(text) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBBDEFB)), // 연한 파랑
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBBDEFB)),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
                     ) {
                         Text("링크 추가하기", color = Color(0xFF212121), fontSize = 16.sp)
                     }
@@ -800,11 +741,7 @@ fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     }
 }
 
-
-
-@Preview(
-    showBackground = true
-)
+@Preview(showBackground = true)
 @Composable
 private fun TimeLetterWriterScreenPreview() {
     TimeLetterWriterScreen(
