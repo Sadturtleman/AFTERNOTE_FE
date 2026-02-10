@@ -36,15 +36,17 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
+import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeItemUiModel
+import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.getAfternoteSourceDisplayResIds
 import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
-import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverAfterNotesViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
-import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverTimeLettersViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
@@ -107,6 +109,21 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     composable<SettingRoute.ReceiverTimeLetterListRoute> { backStackEntry ->
         ReceiverTimeLetterListRouteContent(navController, backStackEntry.toRoute())
     }
+    composable<SettingRoute.NoticeRoute> {
+        NoticeScreen(
+            items = sampleNoticeItems(),
+            onBackClick = { navController.popBackStack() },
+            onItemClick = { }
+        )
+    }
+}
+
+private fun sampleNoticeItems(): List<NoticeItemUiModel> = List(10) { index ->
+    NoticeItemUiModel(
+        id = index.toString(),
+        title = "애프터노트 서비스 출시 안내",
+        dateText = "2025. 11. 20"
+    )
 }
 
 private const val TAG_SETTING_NAV = "SettingNavGraph"
@@ -127,6 +144,7 @@ private fun SettingMainRouteContent(navController: NavController) {
                 "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)
                 "패스키 관리" -> navController.navigate(SettingRoute.PassKeyAddRoute)
                 "앱 잠금 설정" -> navController.navigate(SettingRoute.AppLockPasswordModifyRoute)
+                "공지사항" -> navController.navigate(SettingRoute.NoticeRoute)
                 else -> {
                     Log.w(TAG_SETTING_NAV, "Unhandled setting menu: title=$title")
                     Toast
@@ -259,7 +277,7 @@ private fun ReceiverAfternoteListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverAfternoteListRoute
 ) {
-    val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
+    val afterNotesViewModel: ReceiverAfternotesListViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteItems = afterNotesState.items.map { item ->
         val (stringResId, iconResId) = getAfternoteSourceDisplayResIds(item.sourceType)
@@ -285,7 +303,7 @@ private fun ReceiverTimeLetterListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverTimeLetterListRoute
 ) {
-    val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
+    val timeLettersViewModel: ReceiverTimeLettersListViewModel = hiltViewModel()
     val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
     val timeLetterItems = timeLettersState.items.map { item ->
         TimeLetterItem(

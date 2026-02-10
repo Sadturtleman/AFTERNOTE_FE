@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.screen
+package com.kuit.afternote.core.ui.screen.afternotedetail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -11,7 +11,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 /**
  * Detail screen UI state (dropdown, delete dialog, bottom nav).
  * Used by [SocialNetworkDetailScreen] and
- * [com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailScreen].
+ * [GalleryDetailScreen].
  *
  * @param defaultBottomNavItem 기본 선택된 하단 네비게이션 아이템
  */

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.ErrorRed
+import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
@@ -50,6 +51,74 @@ import com.kuit.afternote.ui.theme.White
 
 private const val DEFAULT_PLACEHOLDER = "Text Field"
 private const val PASSWORD_MASK_CHAR = '\u2022'
+
+private val OutlineTextFieldShape = RoundedCornerShape(8.dp)
+private val OutlineTextFieldHeightBasic = 70.dp
+private val OutlineTextFieldHeightLabeled = 56.dp
+private val OutlineTextFieldHeightMultiline = 160.dp
+
+/**
+ * Shared placeholder content for outline text fields (simple: 16.sp, Gray4).
+ */
+@Composable
+private fun OutlineTextFieldPlaceholderSimple(text: String) {
+    Text(
+        text = text,
+        fontSize = 16.sp,
+        fontFamily = Sansneo,
+        color = Gray4
+    )
+}
+
+/**
+ * Shared placeholder content with line height (16.sp, lineHeight 20.sp, Gray4).
+ */
+@Composable
+private fun OutlineTextFieldPlaceholderWithLineHeight(text: String) {
+    Text(
+        text = text,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        fontFamily = Sansneo,
+        fontWeight = FontWeight.Normal,
+        color = Gray4
+    )
+}
+
+@Composable
+private fun outlineTextFieldBasicColors() = OutlinedTextFieldDefaults.colors(
+    unfocusedBorderColor = Gray4,
+    disabledTextColor = Gray9,
+    disabledPlaceholderColor = Gray4,
+    disabledContainerColor = White
+)
+
+@Composable
+private fun outlineTextFieldBasicColorsSimple() = OutlinedTextFieldDefaults.colors(
+    unfocusedBorderColor = Gray4
+)
+
+@Composable
+private fun outlineTextFieldFilledColors(containerColor: Color) =
+    OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = Color.Transparent,
+        focusedBorderColor = Color.Transparent,
+        unfocusedContainerColor = containerColor,
+        focusedContainerColor = containerColor
+    )
+
+@Composable
+private fun outlineTextFieldFilledColorsAll(containerColor: Color) =
+    OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = Color.Transparent,
+        unfocusedBorderColor = Color.Transparent,
+        disabledBorderColor = Color.Transparent,
+        errorBorderColor = Color.Transparent,
+        focusedContainerColor = containerColor,
+        unfocusedContainerColor = containerColor,
+        disabledContainerColor = containerColor,
+        errorContainerColor = containerColor
+    )
 
 /**
  * Style configuration for labeled OutlineTextField.
@@ -96,21 +165,9 @@ fun OutlineTextField(
     OutlinedTextField(
         state = textFieldState,
         lineLimits = TextFieldLineLimits.SingleLine,
-        placeholder = {
-            Text(
-                text = label,
-                fontSize = 16.sp,
-                fontFamily = Sansneo,
-                color = Gray4
-            )
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Gray4,
-            disabledTextColor = Gray9,
-            disabledPlaceholderColor = Gray4,
-            disabledContainerColor = White
-        ),
-        shape = RoundedCornerShape(8.dp),
+        placeholder = { OutlineTextFieldPlaceholderSimple(text = label) },
+        colors = outlineTextFieldBasicColors(),
+        shape = OutlineTextFieldShape,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         outputTransformation = if (keyboardType == KeyboardType.Password) {
             PasswordOutputTransformation
@@ -121,7 +178,7 @@ fun OutlineTextField(
         readOnly = false,
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(OutlineTextFieldHeightBasic)
             .then(
                 if (focusRequester != null) {
                     Modifier
@@ -151,22 +208,15 @@ fun OutlineTextField(
     OutlinedTextField(
         state = textFieldState,
         lineLimits = TextFieldLineLimits.SingleLine,
-        placeholder = {
-            Text(
-                text = label,
-                fontSize = 16.sp,
-                fontFamily = Sansneo,
-                color = Gray4
-            )
-        },
-        shape = RoundedCornerShape(8.dp),
+        placeholder = { OutlineTextFieldPlaceholderSimple(text = label) },
+        shape = OutlineTextFieldShape,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         outputTransformation = if (keyboardType == KeyboardType.Password) {
             PasswordOutputTransformation
         } else {
             null
         },
-        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
+        colors = outlineTextFieldBasicColorsSimple(),
         trailingIcon = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -180,7 +230,7 @@ fun OutlineTextField(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(OutlineTextFieldHeightBasic)
     )
 }
 
@@ -224,16 +274,9 @@ fun OutlineTextField(
     OutlinedTextField(
         state = textFieldState,
         lineLimits = TextFieldLineLimits.SingleLine,
-        placeholder = {
-            Text(
-                text = label,
-                fontSize = 16.sp,
-                fontFamily = Sansneo,
-                color = Gray4
-            )
-        },
-        shape = RoundedCornerShape(8.dp),
-        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
+        placeholder = { OutlineTextFieldPlaceholderSimple(text = label) },
+        shape = OutlineTextFieldShape,
+        colors = outlineTextFieldBasicColorsSimple(),
         readOnly = true,
         trailingIcon = {
             Row(
@@ -252,7 +295,7 @@ fun OutlineTextField(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(OutlineTextFieldHeightBasic)
     )
 }
 
@@ -308,23 +351,9 @@ fun OutlineTextField(
                 vertical = 16.dp,
                 horizontal = 24.dp
             ),
-            placeholder = {
-                Text(
-                    text = placeholder,
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray4
-                )
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = style.containerColor,
-                focusedContainerColor = style.containerColor
-            ),
-            shape = RoundedCornerShape(8.dp),
+            placeholder = { OutlineTextFieldPlaceholderWithLineHeight(text = placeholder) },
+            colors = outlineTextFieldFilledColors(style.containerColor),
+            shape = OutlineTextFieldShape,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             outputTransformation = if (keyboardType == KeyboardType.Password) {
                 PasswordOutputTransformation
@@ -333,14 +362,14 @@ fun OutlineTextField(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .background(style.containerColor, RoundedCornerShape(8.dp))
+                .height(OutlineTextFieldHeightLabeled)
+                .background(style.containerColor, OutlineTextFieldShape)
                 .then(
                     if (isError) {
                         Modifier.border(
                             width = 1.dp,
                             color = ErrorRed,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = OutlineTextFieldShape
                         )
                     } else {
                         Modifier
@@ -402,27 +431,13 @@ fun OutlineTextField(
         OutlinedTextField(
             state = textFieldState,
             lineLimits = TextFieldLineLimits.MultiLine(),
-            placeholder = {
-                Text(
-                    text = placeholder,
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray4
-                )
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedContainerColor = White,
-                focusedContainerColor = White
-            ),
+            placeholder = { OutlineTextFieldPlaceholderWithLineHeight(text = placeholder) },
+            colors = outlineTextFieldFilledColors(White),
             shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions.Default,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(OutlineTextFieldHeightMultiline)
                 .background(White, RoundedCornerShape(16.dp)),
             contentPadding = PaddingValues(all = 16.dp),
             textStyle = TextStyle(
@@ -434,6 +449,51 @@ fun OutlineTextField(
             )
         )
     }
+}
+
+// ============================================================================
+// Filled box variant (no label, multiline-style container)
+// ============================================================================
+
+/**
+ * Multiline-style outlined text field with no label (e.g. "기타 직접 입력" box).
+ *
+ * @param modifier Modifier for the field.
+ * @param textFieldState Text field state holder.
+ * @param placeholder Placeholder text when empty.
+ * @param containerColor Background and border fill color.
+ * @param height Height of the field.
+ * @param shape Shape of the container.
+ */
+@Composable
+fun OutlineTextField(
+    modifier: Modifier = Modifier,
+    textFieldState: TextFieldState,
+    placeholder: String = DEFAULT_PLACEHOLDER,
+    containerColor: Color = Gray1,
+    height: Dp = OutlineTextFieldHeightMultiline,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp)
+) {
+    OutlinedTextField(
+        state = textFieldState,
+        lineLimits = TextFieldLineLimits.MultiLine(),
+        placeholder = { OutlineTextFieldPlaceholderWithLineHeight(text = placeholder) },
+        colors = outlineTextFieldFilledColorsAll(containerColor),
+        shape = shape,
+        keyboardOptions = KeyboardOptions.Default,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .background(containerColor, shape),
+        contentPadding = PaddingValues(all = 16.dp),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 20.sp,
+            fontFamily = Sansneo,
+            fontWeight = FontWeight.Normal,
+            color = Gray9
+        )
+    )
 }
 
 // ============================================================================

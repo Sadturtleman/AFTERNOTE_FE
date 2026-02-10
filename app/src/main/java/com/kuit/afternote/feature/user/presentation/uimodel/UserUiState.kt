@@ -70,28 +70,3 @@ data class ReceiverDailyQuestionsUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
-
-data class ReceiverTimeLetterItemUi(
-    val timeLetterId: Long,
-    val receiverName: String,
-    val sendAt: String,
-    val title: String,
-    val content: String
-)
-
-data class ReceiverTimeLettersUiState(
-    val items: List<ReceiverTimeLetterItemUi> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)
-
-data class ReceiverAfterNoteSourceItemUi(
-    val sourceType: String,
-    val lastUpdatedAt: String
-)
-
-data class ReceiverAfterNotesUiState(
-    val items: List<ReceiverAfterNoteSourceItemUi> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)

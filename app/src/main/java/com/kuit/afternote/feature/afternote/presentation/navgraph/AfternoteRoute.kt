@@ -23,4 +23,7 @@ sealed interface AfternoteRoute {
 
     @Serializable
     data object MemorialPlaylistRoute : AfternoteRoute
+
+    @Serializable
+    data class MemorialGuidelineDetailRoute(val itemId: String = "") : AfternoteRoute
 }

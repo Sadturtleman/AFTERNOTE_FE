@@ -7,6 +7,16 @@
     <string name="nav_timeletter">타임레터</string>
     <string name="nav_afternote">애프터노트</string>
     <string name="home_coming_soon">홈 (준비 중)</string>
+
+    <!-- Home screen -->
+    <string name="home_greeting">안녕하세요, %1$s님</string>
+    <string name="home_subtitle">오늘도 당신의 삶을 차분히 정리해보세요.</string>
+    <string name="home_recipient_complete">수신인 지정 완료</string>
+    <string name="home_next_step">다음 준비 단계</string>
+    <string name="home_review_records">돌아보는 나의 기록</string>
+    <string name="home_daily_question_cta">마음의 기록 남기기</string>
+    <string name="home_record_now">지금 애프터노트에 기록하기</string>
+    <string name="home_read_past_record">그날의 기록 다시 읽기</string>
     <string name="song_search_label">노래 검색</string>
     <string name="song_search_placeholder">노래 제목 또는 가수명</string>
     <string name="add_button">추가하기</string>

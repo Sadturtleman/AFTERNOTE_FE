@@ -146,6 +146,9 @@ class AfternoteEditState(
     var playlistSongCount by mutableIntStateOf(16)
         private set
 
+    var customLastWishText by mutableStateOf("")
+        private set
+
     // Memorial Playlist State Holder (옵셔널 - 공유 상태)
     var playlistStateHolder: MemorialPlaylistStateHolder? = null
         private set
@@ -289,6 +292,10 @@ class AfternoteEditState(
 
     fun onLastWishSelected(wish: String?) {
         selectedLastWish = wish
+    }
+
+    fun onCustomLastWishChanged(text: String) {
+        customLastWishText = text
     }
 
     /**

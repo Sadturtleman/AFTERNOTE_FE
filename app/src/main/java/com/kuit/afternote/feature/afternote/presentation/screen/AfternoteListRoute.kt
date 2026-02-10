@@ -22,6 +22,7 @@ fun AfternoteListRoute(
     viewModel: AfternoteListViewModel = hiltViewModel(),
     onNavigateToDetail: (String) -> Unit = {},
     onNavigateToGalleryDetail: (String) -> Unit = {},
+    onNavigateToMemorialGuidelineDetail: (String) -> Unit = {},
     onNavigateToAdd: () -> Unit = {},
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     initialItems: List<AfternoteItem> = emptyList()
@@ -61,10 +62,10 @@ fun AfternoteListRoute(
             onItemClick = { itemId ->
                 val item = uiState.items.find { it.id == itemId } ?: return@AfternoteListScreenListParams
                 // Design has two detail screens only: Social Network, Gallery and Files. Others use Social-style detail.
-                if (item.type == ServiceType.GALLERY_AND_FILES) {
-                    onNavigateToGalleryDetail(itemId)
-                } else {
-                    onNavigateToDetail(itemId)
+                when (item.type) {
+                    ServiceType.GALLERY_AND_FILES -> onNavigateToGalleryDetail(itemId)
+                    ServiceType.MEMORIAL -> onNavigateToMemorialGuidelineDetail(itemId)
+                    else -> onNavigateToDetail(itemId)
                 }
             }
         )

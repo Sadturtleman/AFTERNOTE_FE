@@ -2,6 +2,7 @@ package com.kuit.afternote.core.ui.component.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,19 +30,24 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxWidth()
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        Image(
-            painter = painterResource(R.drawable.img_empty_state),
-            contentDescription = "빈 애프터노트",
-            modifier = Modifier
-                .width(106.dp)
-                .height(109.dp)
-                .alpha(0.6f)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Spacer(modifier = Modifier.weight(12f))
+            Image(
+                painter = painterResource(R.drawable.img_empty_state),
+                contentDescription = "빈 애프터노트",
+                modifier = Modifier
+                    .width(106.dp)
+                    .height(109.dp)
+                    .alpha(0.6f)
+            )
+            Spacer(modifier = Modifier.weight(10f))
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -54,7 +60,8 @@ fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Normal,
                 color = Gray4,
                 textAlign = TextAlign.Center
-            )
+            ),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.weight(1f))

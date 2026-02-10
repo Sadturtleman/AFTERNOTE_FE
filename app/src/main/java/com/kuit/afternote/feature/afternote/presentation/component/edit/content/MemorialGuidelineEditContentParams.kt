@@ -15,8 +15,10 @@ data class MemorialGuidelineEditContentParams(
     val selectedLastWish: String?,
     val lastWishOptions: List<LastWishOption>,
     val funeralVideoUrl: String?,
+    val customLastWishText: String,
     val onSongAddClick: () -> Unit,
     val onLastWishSelected: (String) -> Unit,
+    val onCustomLastWishChanged: (String) -> Unit,
     val onPhotoAddClick: () -> Unit,
     val onVideoAddClick: () -> Unit
 )

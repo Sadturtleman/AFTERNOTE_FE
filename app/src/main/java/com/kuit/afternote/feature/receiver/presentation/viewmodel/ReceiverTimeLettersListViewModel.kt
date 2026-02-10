@@ -1,13 +1,11 @@
-package com.kuit.afternote.feature.user.presentation.viewmodel
+package com.kuit.afternote.feature.receiver.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
-import com.kuit.afternote.feature.user.domain.usecase.GetReceiverTimeLettersUseCase
-import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverTimeLetterItemUi
-import com.kuit.afternote.feature.user.presentation.uimodel.ReceiverTimeLettersUiState
+import com.kuit.afternote.feature.receiver.domain.usecase.GetReceivedTimeLettersUseCase
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceivedTimeLetterListItemUi
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLettersListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,39 +15,40 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * 수신인별 타임레터 목록 화면 ViewModel.
- * GET /users/receivers/{receiverId}/time-letters
+ * 수신인별 타임레터 목록 화면 ViewModel (설정 플로우).
+ *
+ * GET /api/received/{receiverId}/time-letters API로 배달된 타임레터 목록을 조회합니다.
  */
 @HiltViewModel
-class ReceiverTimeLettersViewModel
+class ReceiverTimeLettersListViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
-        private val getReceiverTimeLettersUseCase: GetReceiverTimeLettersUseCase
+        private val getReceivedTimeLettersUseCase: GetReceivedTimeLettersUseCase
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(ReceiverTimeLettersUiState())
-        val uiState: StateFlow<ReceiverTimeLettersUiState> = _uiState.asStateFlow()
+
+        private val _uiState = MutableStateFlow(ReceiverTimeLettersListUiState())
+        val uiState: StateFlow<ReceiverTimeLettersListUiState> = _uiState.asStateFlow()
 
         init {
-            val receiverId = savedStateHandle.toRoute<SettingRoute.ReceiverTimeLetterListRoute>()
-                .receiverId.toLongOrNull()
+            val receiverId = savedStateHandle.get<String>("receiverId")?.toLongOrNull()
             if (receiverId != null) loadTimeLetters(receiverId)
         }
 
         fun loadTimeLetters(receiverId: Long) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-                getReceiverTimeLettersUseCase(receiverId = receiverId)
+                getReceivedTimeLettersUseCase(receiverId = receiverId)
                     .onSuccess { list ->
                         _uiState.update {
                             it.copy(
                                 items = list.map { item ->
-                                    ReceiverTimeLetterItemUi(
+                                    ReceivedTimeLetterListItemUi(
                                         timeLetterId = item.timeLetterId,
-                                        receiverName = item.receiverName,
-                                        sendAt = item.sendAt,
-                                        title = item.title,
-                                        content = item.content
+                                        receiverName = item.receiverName.orEmpty(),
+                                        sendAt = item.sendAt.orEmpty(),
+                                        title = item.title.orEmpty(),
+                                        content = item.content.orEmpty()
                                     )
                                 },
                                 isLoading = false,
