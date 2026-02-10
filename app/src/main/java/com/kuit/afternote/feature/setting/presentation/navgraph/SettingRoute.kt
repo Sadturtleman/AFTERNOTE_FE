@@ -61,4 +61,7 @@ sealed interface SettingRoute {
         val receiverId: String = "",
         val receiverName: String = ""
     ) : SettingRoute
+
+    @Serializable
+    data object NoticeRoute : SettingRoute
 }

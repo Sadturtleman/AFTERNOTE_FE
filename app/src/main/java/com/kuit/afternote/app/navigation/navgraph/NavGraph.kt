@@ -10,23 +10,14 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
@@ -49,6 +40,8 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSta
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
+import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
+import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -72,7 +65,6 @@ import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.Gray1
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -265,31 +257,20 @@ private fun ReceiverAfternoteDetailContent(
 }
 
 @Composable
-private fun HomePlaceholderContent(
-    onBottomNavTabSelected: (BottomNavItem) -> Unit
+private fun HomeScreenContent(
+    onBottomNavTabSelected: (BottomNavItem) -> Unit,
+    onSettingsClick: () -> Unit = {}
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Gray1,
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = BottomNavItem.HOME,
-                onItemSelected = onBottomNavTabSelected
-            )
+    HomeScreen(
+        event = object : HomeScreenEvent {
+            override fun onBottomNavTabSelected(item: BottomNavItem) =
+                onBottomNavTabSelected(item)
+            override fun onProfileClick() = Unit
+            override fun onSettingsClick() = onSettingsClick()
+            override fun onDailyQuestionCtaClick() = Unit
+            override fun onFabClick() = Unit
         }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(Modifier.padding(paddingValues)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(R.string.home_coming_soon),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -358,7 +339,14 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("home") {
-            HomePlaceholderContent(onBottomNavTabSelected = onBottomNavTabSelected)
+            HomeScreenContent(
+                onBottomNavTabSelected = onBottomNavTabSelected,
+                onSettingsClick = {
+                    navHostController.navigate(SettingRoute.SettingMainRoute) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         onboardingNavGraph(navHostController)
