@@ -10,7 +10,10 @@ import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingS
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 
-fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
+fun NavGraphBuilder.onboardingNavGraph(
+    navController: NavController,
+    onNavigateToReceiverOnboarding: () -> Unit
+) {
     composable<OnboardingRoute.LoginRoute> {
         LoginScreen(
             onBackClick = { navController.popBackStack() },
@@ -37,7 +40,7 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
     composable<OnboardingRoute.SplashRoute> {
         SplashScreen(
             onLoginClick = { navController.navigate(OnboardingRoute.LoginRoute) },
-            onCheckClick = {},
+            onCheckClick = onNavigateToReceiverOnboarding,
             onStartClick = {},
             onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
         )

@@ -361,7 +361,10 @@ fun NavGraph(navHostController: NavHostController) {
             HomePlaceholderContent(onBottomNavTabSelected = onBottomNavTabSelected)
         }
 
-        onboardingNavGraph(navHostController)
+        onboardingNavGraph(
+            navController = navHostController,
+            onNavigateToReceiverOnboarding = { navHostController.navigate("receiver_onboarding") }
+        )
         recordNavGraph(
             navController = navHostController,
             onBottomNavTabSelected = onBottomNavTabSelected
@@ -400,7 +403,7 @@ fun NavGraph(navHostController: NavHostController) {
             SplashScreen(
                 onLoginClick = { navHostController.navigate("dev_login") },
                 onStartClick = { navHostController.navigate("dev_signup") },
-                onCheckClick = {},
+                onCheckClick = { navHostController.navigate("receiver_onboarding") },
                 onSignUpClick = { navHostController.navigate("dev_signup") }
             )
         }
