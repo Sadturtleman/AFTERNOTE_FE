@@ -29,7 +29,11 @@ fun AfternoteListRoute(
 ) {
     LaunchedEffect(initialItems) {
         if (initialItems.isNotEmpty()) {
+            // NavGraph에서 전달된 더미/캐시 데이터를 우선 표시
             viewModel.setItems(initialItems)
+        } else {
+            // 전달된 아이템이 없으면 서버에서 목록 로드
+            viewModel.loadAfternotes()
         }
     }
 

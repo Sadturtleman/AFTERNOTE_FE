@@ -1,28 +1,33 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
 import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.remote.requireSuccess
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentialsDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponseDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
+import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import javax.inject.Inject
 
 /**
- * Data layer: calls API, maps DTO → domain at boundary.
- * Repository interface is defined by feature owner (Domain); this impl is for use once wired.
- * Methods are unused until Domain/UI wires the repository.
+ * Data layer: calls Afternote API, maps DTO → domain at boundary.
+ *
+ * API spec: GET/POST /afternotes, GET/PATCH/DELETE /afternotes/{id}.
  */
-@Suppress("UNUSED")
 class AfternoteRepositoryImpl
     @Inject
     constructor(
         private val api: AfternoteApiService
-    ) {
+    ) : AfternoteRepository {
 
-    suspend fun getAfternotes(
+    override suspend fun getAfternotes(
         category: String?,
         page: Int,
         size: Int
@@ -32,7 +37,7 @@ class AfternoteRepositoryImpl
         AfternoteMapper.toDomainList(data.content)
     }
 
-    suspend fun createSocial(
+    override suspend fun createSocial(
         title: String,
         processMethod: String,
         actions: List<String>,
@@ -58,7 +63,7 @@ class AfternoteRepositoryImpl
         response.requireData().afternoteId
     }
 
-    suspend fun createGallery(
+    override suspend fun createGallery(
         title: String,
         processMethod: String,
         actions: List<String>,
@@ -75,5 +80,48 @@ class AfternoteRepositoryImpl
         )
         val response = api.createAfternoteGallery(body)
         response.requireData().afternoteId
+    }
+
+    /**
+     * GET /afternotes/{afternoteId} — 상세 조회.
+     */
+    override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetailResponseDto> =
+        runCatching {
+            val response = api.getAfternoteDetail(afternoteId = afternoteId)
+            response.requireData()
+        }
+
+    /**
+     * POST /afternotes (PLAYLIST category).
+     */
+    override suspend fun createPlaylist(
+        title: String,
+        playlist: AfternotePlaylistDto
+    ): Result<Long> = runCatching {
+        val body = AfternoteCreatePlaylistRequestDto(
+            category = "PLAYLIST",
+            title = title,
+            playlist = playlist
+        )
+        val response = api.createAfternotePlaylist(body)
+        response.requireData().afternoteId
+    }
+
+    /**
+     * PATCH /afternotes/{afternoteId} — 부분 수정 (수정할 필드만 전송).
+     */
+    override suspend fun updateAfternote(
+        afternoteId: Long,
+        body: AfternoteUpdateRequestDto
+    ): Result<Long> = runCatching {
+        val response = api.updateAfternote(afternoteId = afternoteId, body = body)
+        response.requireData().afternoteId
+    }
+
+    /**
+     * DELETE /afternotes/{afternoteId}.
+     */
+    override suspend fun deleteAfternote(afternoteId: Long): Result<Unit> = runCatching {
+        api.deleteAfternote(afternoteId = afternoteId).requireSuccess()
     }
 }

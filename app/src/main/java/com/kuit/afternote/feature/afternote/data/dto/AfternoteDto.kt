@@ -71,3 +71,79 @@ data class AfternoteReceiverRefDto(
 data class AfternoteIdResponseDto(
     @SerialName("afternote_id") val afternoteId: Long
 )
+
+// --- GET /afternotes/{afternoteId} (detail) ---
+
+/**
+ * Server response for GET /afternotes/{afternoteId}.
+ * Common fields always present; category-specific fields (credentials, receivers, playlist) are null when not applicable.
+ */
+@Serializable
+data class AfternoteDetailResponseDto(
+    @SerialName("afternoteId") val afternoteId: Long,
+    val category: String,
+    val title: String,
+    @SerialName("createdAt") val createdAt: String,
+    @SerialName("updatedAt") val updatedAt: String,
+    val credentials: AfternoteCredentialsDto? = null,
+    val receivers: List<AfternoteDetailReceiverDto>? = null,
+    val processMethod: String? = null,
+    val actions: List<String>? = null,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val playlist: AfternotePlaylistDto? = null
+)
+
+@Serializable
+data class AfternoteDetailReceiverDto(
+    val name: String? = null,
+    val relation: String? = null,
+    val phone: String? = null
+)
+
+@Serializable
+data class AfternotePlaylistDto(
+    val profilePhoto: String? = null,
+    val atmosphere: String? = null,
+    val songs: List<AfternoteSongDto> = emptyList(),
+    @SerialName("memorialVideo") val memorialVideo: AfternoteMemorialVideoDto? = null
+)
+
+@Serializable
+data class AfternoteSongDto(
+    val id: Long? = null,
+    val title: String,
+    val artist: String,
+    @SerialName("coverUrl") val coverUrl: String? = null
+)
+
+@Serializable
+data class AfternoteMemorialVideoDto(
+    @SerialName("videoUrl") val videoUrl: String? = null,
+    @SerialName("thumbnailUrl") val thumbnailUrl: String? = null
+)
+
+// --- POST /afternotes (PLAYLIST category) ---
+
+@Serializable
+data class AfternoteCreatePlaylistRequestDto(
+    val category: String = "PLAYLIST",
+    val title: String,
+    val playlist: AfternotePlaylistDto
+)
+
+// --- PATCH /afternotes/{afternoteId} (partial update) ---
+
+/**
+ * Partial update request. Only include fields to change; category cannot be changed.
+ * Send only fields valid for the afternote's category (SOCIAL: credentials, etc.; GALLERY: receivers; PLAYLIST: playlist).
+ */
+@Serializable
+data class AfternoteUpdateRequestDto(
+    val title: String? = null,
+    val processMethod: String? = null,
+    val actions: List<String>? = null,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val credentials: AfternoteCredentialsDto? = null,
+    val receivers: List<AfternoteReceiverRefDto>? = null,
+    val playlist: AfternotePlaylistDto? = null
+)
