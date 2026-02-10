@@ -117,25 +117,14 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
 
 @Composable
 private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: composable entered")
     val context = LocalContext.current
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: context=${context::class.java.name}")
     val activity = context as? FragmentActivity
-    Log.d(
-        TAG_FINGERPRINT,
-        "fingerprint_login: activity=${activity?.javaClass?.name ?: "null"}"
-    )
     val promptTitle = stringResource(R.string.biometric_prompt_title)
     val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
     val notAvailableMessage = stringResource(R.string.biometric_not_available)
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: stringResource done")
     val biometricPrompt =
         remember(activity) {
             try {
-                Log.d(
-                    TAG_FINGERPRINT,
-                    "fingerprint_login: building BiometricPrompt, activity=$activity"
-                )
                 activity?.let { fragActivity ->
                     val executor = ContextCompat.getMainExecutor(fragActivity)
                     BiometricPrompt(
@@ -145,38 +134,24 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                             override fun onAuthenticationSucceeded(
                                 result: BiometricPrompt.AuthenticationResult
                             ) {
-                                Log.d(
-                                    TAG_FINGERPRINT,
-                                    "fingerprint_login: auth succeeded, popping"
-                                )
                                 navHostController.popBackStack()
                             }
                         }
-                    ).also {
-                        Log.d(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt created")
-                    }
+                    )
                 }
             } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt failed", e)
+                Log.e(TAG_FINGERPRINT, "BiometricPrompt creation failed", e)
                 null
             }
         }
     val promptInfo =
         remember(promptTitle, promptSubtitle) {
-            try {
-                Log.d(TAG_FINGERPRINT, "fingerprint_login: building PromptInfo")
-                BiometricPrompt.PromptInfo.Builder()
-                    .setTitle(promptTitle)
-                    .setSubtitle(promptSubtitle)
-                    .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-                    .build()
-                    .also { Log.d(TAG_FINGERPRINT, "fingerprint_login: PromptInfo created") }
-            } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: PromptInfo failed", e)
-                throw e
-            }
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(promptTitle)
+                .setSubtitle(promptSubtitle)
+                .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                .build()
         }
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: showing FingerprintLoginScreen")
     FingerprintLoginScreen(
         onFingerprintAuthClick = {
             if (activity == null) return@FingerprintLoginScreen
@@ -398,12 +373,8 @@ fun NavGraph(navHostController: NavHostController) {
         afternoteNavGraph(
             navController = navHostController,
             params = AfternoteNavGraphParams(
-                afternoteItems = afternoteItems,
+                afternoteItemsProvider = { afternoteItems },
                 onItemsUpdated = { newItems ->
-                    Log.d(
-                        "NavGraphAfternote",
-                        "onItemsUpdated called with size=${newItems.size}"
-                    )
                     afternoteItems = newItems
                 },
                 playlistStateHolder = playlistStateHolder,

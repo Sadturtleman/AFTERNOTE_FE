@@ -69,7 +69,7 @@ data class AfternoteEditStateHandling(
  * Parameters for [afternoteNavGraph]. Groups 6 arguments to keep function param count ≤7.
  */
 data class AfternoteNavGraphParams(
-    val afternoteItems: List<AfternoteItem>,
+    val afternoteItemsProvider: () -> List<AfternoteItem>,
     val onItemsUpdated: (List<AfternoteItem>) -> Unit,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
@@ -144,8 +144,8 @@ private fun AfternoteListRouteContent(
     )
 }
 
-/** Detail categories that have a designed screen: 갤러리 및 파일, 소셜 네트워크, 추모 가이드라인 (own routes). */
-private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.MEMORIAL)
+/** Types with a designed detail screen on the generic DetailRoute (social-style layout). */
+private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
 
 @Composable
 private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
@@ -177,12 +177,10 @@ private fun AfternoteDetailRouteContent(
     val item = listItems.find { it.id == route.itemId }
     val showDesignPending = item == null || item.type !in DESIGNED_DETAIL_TYPES
 
-    val listSummary = listItems.joinToString { "${it.id}:${it.type}" }
-
     Log.d(
         TAG_AFTERNOTE_DETAIL,
-        "DetailRoute: itemId=${route.itemId}, listIds=$listSummary, " +
-            "foundType=${item?.type}, showDesignPending=$showDesignPending"
+        "DetailRoute: itemId=${route.itemId}, type=${item?.type}, " +
+            "listSize=${listItems.size}, showDesignPending=$showDesignPending"
     )
 
     if (showDesignPending) {
@@ -409,11 +407,9 @@ fun NavGraphBuilder.afternoteNavGraph(
     params: AfternoteNavGraphParams,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
-    val afternoteItems = params.afternoteItems
     val afternoteProvider = params.afternoteProvider
 
     afternoteComposable<AfternoteRoute.AfternoteListRoute> {
-        resolveListItems(afternoteItems, afternoteProvider)
         AfternoteListRouteContent(
             navController = navController,
             onBottomNavTabSelected = onBottomNavTabSelected,
@@ -422,29 +418,32 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
+        val currentItems = params.afternoteItemsProvider()
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = afternoteItems,
+            listItems = currentItems,
             userName = params.userName
         )
     }
 
     afternoteComposable<AfternoteRoute.GalleryDetailRoute> { backStackEntry ->
+        val currentItems = params.afternoteItemsProvider()
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = afternoteItems,
+            listItems = currentItems,
             afternoteProvider = afternoteProvider,
             userName = params.userName
         )
     }
 
     afternoteComposable<AfternoteRoute.EditRoute> { backStackEntry ->
+        val currentItems = params.afternoteItemsProvider()
         AfternoteEditRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            afternoteItems = afternoteItems,
+            afternoteItems = currentItems,
             onItemsUpdated = params.onItemsUpdated,
             playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider,
@@ -453,10 +452,11 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.MemorialGuidelineDetailRoute> { backStackEntry ->
+        val currentItems = params.afternoteItemsProvider()
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = afternoteItems,
+            listItems = currentItems,
             userName = params.userName
         )
     }

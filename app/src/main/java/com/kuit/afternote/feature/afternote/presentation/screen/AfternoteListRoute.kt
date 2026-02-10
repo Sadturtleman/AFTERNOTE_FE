@@ -49,9 +49,8 @@ fun AfternoteListRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.items) {
-        Log.d("AfternoteListRoute", "uiState.items changed size=${uiState.items.size}")
         if (uiState.items.isNotEmpty()) {
-            Log.d("AfternoteListRoute", "onItemsChanged invoked with size=${uiState.items.size}")
+            Log.d("AfternoteListRoute", "items loaded: size=${uiState.items.size}")
             onItemsChanged(uiState.items)
         }
     }
