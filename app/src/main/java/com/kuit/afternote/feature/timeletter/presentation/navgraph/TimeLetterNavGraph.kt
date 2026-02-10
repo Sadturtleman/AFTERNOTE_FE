@@ -7,13 +7,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
+
+private const val SELECTED_RECEIVER_NAME_KEY = "selected_receiver_name"
 
 /**
  * 타임레터 기능의 네비게이션 그래프
@@ -30,13 +34,38 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) },
-            onShowAllClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) }
+            onShowAllClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) },
+            onLetterClick = { letter ->
+                navController.navigate(
+                    TimeLetterRoute.TimeLetterDetailRoute(
+                        id = letter.id,
+                        receiverName = letter.receivername,
+                        sendDate = letter.sendDate,
+                        title = letter.title,
+                        content = letter.content
+                    )
+                )
+            },
+            onEditLetter = { letter ->
+                letter.id.toLongOrNull()?.let { draftId ->
+                    navController.navigate(TimeLetterRoute.TimeLetterWriterRoute(draftId = draftId))
+                }
+            }
         )
     }
 
     composable<TimeLetterRoute.TimeLetterWriterRoute> {
         val viewModel: TimeLetterWriterViewModel = hiltViewModel()
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit) {
+            val name = navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.get<String>(SELECTED_RECEIVER_NAME_KEY)
+            if (name != null) {
+                viewModel.updateRecipientName(name)
+            }
+        }
 
         TimeLetterWriterScreen(
             recipientName = uiState.recipientName.ifEmpty { "수신자 선택" },
@@ -108,8 +137,24 @@ fun NavGraphBuilder.timeLetterNavGraph(
         ReceiveListScreen(
             receivers = receiveListState.receivers,
             onBackClick = { navController.popBackStack() },
-            onNavItemSelected = onNavItemSelected
+            onNavItemSelected = onNavItemSelected,
+            onReceiverClick = { receiver ->
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set(SELECTED_RECEIVER_NAME_KEY, receiver.receiver_name)
+                navController.popBackStack()
+            }
         )
     }
 
+    composable<TimeLetterRoute.TimeLetterDetailRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<TimeLetterRoute.TimeLetterDetailRoute>()
+        TimeLetterDetailScreen(
+            receiverName = route.receiverName,
+            sendDate = route.sendDate,
+            title = route.title,
+            content = route.content,
+            onBackClick = { navController.popBackStack() }
+        )
+    }
 }

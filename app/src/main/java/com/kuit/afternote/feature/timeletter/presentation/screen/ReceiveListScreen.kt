@@ -34,6 +34,7 @@ import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosu
  * @param receivers 수신자 목록
  * @param onBackClick 뒤로가기 클릭 콜백
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
+ * @param onReceiverClick 수신자 선택 시 콜백 (타임레터 작성 화면에서 진입 시 사용)
  * @param modifier Modifier
  */
 @Composable
@@ -41,6 +42,7 @@ fun ReceiveListScreen(
     receivers: List<TimeLetterReceiver>,
     onBackClick: () -> Unit = {},
     onNavItemSelected: (BottomNavItem) -> Unit = {},
+    onReceiverClick: (TimeLetterReceiver) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // 초성별로 그룹화
@@ -79,7 +81,10 @@ fun ReceiveListScreen(
                 .padding(innerPadding)
         ) {
             chosungGroupedItems(groupedReceivers) { receiver ->
-                ReceiverInfoItem(receiver = receiver)
+                ReceiverInfoItem(
+                    receiver = receiver,
+                    onClick = { onReceiverClick(receiver) }
+                )
             }
         }
     }
