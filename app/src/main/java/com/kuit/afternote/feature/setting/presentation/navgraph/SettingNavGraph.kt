@@ -42,11 +42,11 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.getAftern
 import com.kuit.afternote.feature.setting.presentation.screen.security.PassKeyAddScreen
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
-import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverAfterNotesViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
-import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverTimeLettersViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 
 fun NavGraphBuilder.settingNavGraph(navController: NavController) {
@@ -277,7 +277,7 @@ private fun ReceiverAfternoteListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverAfternoteListRoute
 ) {
-    val afterNotesViewModel: ReceiverAfterNotesViewModel = hiltViewModel()
+    val afterNotesViewModel: ReceiverAfternotesListViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteItems = afterNotesState.items.map { item ->
         val (stringResId, iconResId) = getAfternoteSourceDisplayResIds(item.sourceType)
@@ -303,7 +303,7 @@ private fun ReceiverTimeLetterListRouteContent(
     navController: NavController,
     route: SettingRoute.ReceiverTimeLetterListRoute
 ) {
-    val timeLettersViewModel: ReceiverTimeLettersViewModel = hiltViewModel()
+    val timeLettersViewModel: ReceiverTimeLettersListViewModel = hiltViewModel()
     val timeLettersState by timeLettersViewModel.uiState.collectAsStateWithLifecycle()
     val timeLetterItems = timeLettersState.items.map { item ->
         TimeLetterItem(

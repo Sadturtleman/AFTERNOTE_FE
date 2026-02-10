@@ -48,16 +48,3 @@ data class ReceiverDailyQuestionsResult(
     val items: List<DailyQuestionAnswerItem>,
     val hasNext: Boolean
 )
-
-data class ReceiverTimeLetterItem(
-    val timeLetterId: Long,
-    val receiverName: String,
-    val sendAt: String,
-    val title: String,
-    val content: String
-)
-
-data class ReceiverAfterNoteSourceItem(
-    val sourceType: String,
-    val lastUpdatedAt: String
-)

@@ -71,7 +71,7 @@ data class ReceiverDetailResponseDto(
     @SerialName("afterNoteCount") val afterNoteCount: Int
 )
 
-// --- GET /users/receivers/{receiverId}/daily-questions ---
+// --- GET /users/receivers/{receiverId}/daily-questions (time-letters, after-notes are in Received API) ---
 
 @Serializable
 data class DailyQuestionAnswerItemDto(
@@ -85,33 +85,4 @@ data class DailyQuestionAnswerItemDto(
 data class ReceiverDailyQuestionsResponseDto(
     @SerialName("items") val items: List<DailyQuestionAnswerItemDto>,
     @SerialName("hasNext") val hasNext: Boolean
-)
-
-// --- GET /users/receivers/{receiverId}/time-letters ---
-
-@Serializable
-data class ReceiverTimeLetterItemDto(
-    @SerialName("timeLetterId") val timeLetterId: Long,
-    @SerialName("receiverName") val receiverName: String,
-    @SerialName("sendAt") val sendAt: String,
-    @SerialName("title") val title: String,
-    @SerialName("content") val content: String
-)
-
-@Serializable
-data class ReceiverTimeLettersResponseDto(
-    @SerialName("items") val items: List<ReceiverTimeLetterItemDto>
-)
-
-// --- GET /users/receivers/{receiverId}/after-notes ---
-
-@Serializable
-data class ReceiverAfterNoteSourceItemDto(
-    @SerialName("sourceType") val sourceType: String,
-    @SerialName("lastUpdatedAt") val lastUpdatedAt: String
-)
-
-@Serializable
-data class ReceiverAfterNotesResponseDto(
-    @SerialName("items") val items: List<ReceiverAfterNoteSourceItemDto>
 )

@@ -28,8 +28,8 @@ import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
-import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
@@ -42,9 +42,12 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMap
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
 import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailCallbacks
-import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.GalleryDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -125,14 +128,17 @@ private fun AfternoteListRouteContent(
         onNavigateToGalleryDetail = { itemId ->
             navController.navigate(AfternoteRoute.GalleryDetailRoute(itemId = itemId))
         },
+        onNavigateToMemorialGuidelineDetail = { itemId ->
+            navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
+        },
         onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
         onBottomNavTabSelected = onBottomNavTabSelected,
         initialItems = listItems
     )
 }
 
-/** Detail categories that have a designed screen: 갤러리 및 파일 (own route), 소셜 네트워크 (this route). */
-private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
+/** Detail categories that have a designed screen: 갤러리 및 파일, 소셜 네트워크, 추모 가이드라인 (own routes). */
+private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.MEMORIAL)
 
 @Composable
 private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
@@ -355,6 +361,34 @@ private fun AfternoteAddSongRouteContent(
     )
 }
 
+@Composable
+private fun AfternoteMemorialGuidelineDetailContent(
+    backStackEntry: NavBackStackEntry,
+    navController: NavController,
+    listItems: List<AfternoteItem>,
+    userName: String
+) {
+    val route = backStackEntry.toRoute<AfternoteRoute.MemorialGuidelineDetailRoute>()
+    val item = listItems.find { it.id == route.itemId }
+    MemorialGuidelineDetailScreen(
+        detailState = MemorialGuidelineDetailState(
+            userName = userName,
+            finalWriteDate = item?.date ?: "2025.11.26.",
+            songCount = 0,
+            albumCovers = emptyList(),
+            lastWish = item?.message ?: ""
+        ),
+        callbacks = MemorialGuidelineDetailCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onEditClick = {
+                if (item != null) {
+                    navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
+                }
+            }
+        )
+    )
+}
+
 fun NavGraphBuilder.afternoteNavGraph(
     navController: NavController,
     params: AfternoteNavGraphParams,
@@ -402,6 +436,16 @@ fun NavGraphBuilder.afternoteNavGraph(
             playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider,
             editStateHandling = params.editStateHandling
+        )
+    }
+
+    afternoteComposable<AfternoteRoute.MemorialGuidelineDetailRoute> { backStackEntry ->
+        val listItems = resolveListItems(afternoteItems, afternoteProvider)
+        AfternoteMemorialGuidelineDetailContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            listItems = listItems,
+            userName = params.userName
         )
     }
 

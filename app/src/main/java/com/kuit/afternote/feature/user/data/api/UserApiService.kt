@@ -1,11 +1,9 @@
 package com.kuit.afternote.feature.user.data.api
 
 import com.kuit.afternote.data.remote.ApiResponse
-import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNotesResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
-import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLettersResponseDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
@@ -25,7 +23,7 @@ import retrofit2.http.Query
  * - GET /users/me, PATCH /users/me
  * - GET /users/push-settings, PATCH /users/push-settings
  * - GET /users/receivers, POST /users/receivers, GET /users/receivers/{receiverId}
- * - GET /users/receivers/{receiverId}/daily-questions, time-letters, after-notes
+ * - GET /users/receivers/{receiverId}/daily-questions
  */
 interface UserApiService {
     @GET("users/me")
@@ -103,14 +101,4 @@ interface UserApiService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): ApiResponse<ReceiverDailyQuestionsResponseDto?>
-
-    @GET("users/receivers/{receiverId}/time-letters")
-    suspend fun getReceiverTimeLetters(
-        @Path("receiverId") receiverId: Long
-    ): ApiResponse<ReceiverTimeLettersResponseDto?>
-
-    @GET("users/receivers/{receiverId}/after-notes")
-    suspend fun getReceiverAfterNotes(
-        @Path("receiverId") receiverId: Long
-    ): ApiResponse<ReceiverAfterNotesResponseDto?>
 }

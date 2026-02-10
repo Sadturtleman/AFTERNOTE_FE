@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.ui.screen
+package com.kuit.afternote.core.ui.screen.afternotedetail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

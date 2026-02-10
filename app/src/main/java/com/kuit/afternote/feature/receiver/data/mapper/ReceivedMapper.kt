@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.receiver.data.mapper
 
+import com.kuit.afternote.feature.receiver.data.dto.ReceivedAfternoteResponseDto
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedTimeLetterResponseDto
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 
 /**
@@ -18,5 +20,14 @@ object ReceivedMapper {
             sendAt = dto.sendAt,
             title = dto.title,
             content = dto.content
+        )
+
+    /**
+     * [ReceivedAfternoteResponseDto]를 [ReceivedAfternote]로 변환합니다.
+     */
+    fun toReceivedAfternote(dto: ReceivedAfternoteResponseDto): ReceivedAfternote =
+        ReceivedAfternote(
+            sourceType = dto.sourceType,
+            lastUpdatedAt = dto.lastUpdatedAt
         )
 }

@@ -26,10 +26,17 @@ import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
+import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.screen.SocialNetworkDetailContent
-import com.kuit.afternote.core.ui.screen.SocialNetworkDetailScreen
-import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
+import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
+import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetailState
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
@@ -40,31 +47,29 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSta
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
-import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
-import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
+import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
+import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteListRoute
-import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
+import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -226,6 +231,8 @@ private fun ReceiverAfternoteListRouteContent(navHostController: NavHostControll
     )
 }
 
+private enum class ReceiverDetailCategory { GALLERY, MEMORIAL_GUIDELINE, SOCIAL }
+
 @Composable
 private fun ReceiverAfternoteDetailContent(
     navHostController: NavHostController,
@@ -239,20 +246,54 @@ private fun ReceiverAfternoteDetailContent(
                 .firstOrNull { it.id == itemId }
                 ?: receiverProvider.getAfternoteListSeedsForReceiverList().firstOrNull()
         }
+    val category = receiverDetailCategoryFromSeed(seed)
     val serviceName = seed?.serviceNameLiteral ?: ""
     val userName = receiverProvider.getDefaultReceiverTitleForDev()
-    AfternoteTheme(darkTheme = false) {
-        SocialNetworkDetailScreen(
+    val defaultState = rememberAfternoteDetailState(
+        defaultBottomNavItem = BottomNavItem.AFTERNOTE
+    )
+    when (category) {
+        ReceiverDetailCategory.GALLERY -> GalleryDetailScreen(
+            detailState = GalleryDetailState(
+                serviceName = serviceName.ifEmpty { "갤러리" },
+                userName = userName,
+                finalWriteDate = seed?.date ?: ""
+            ),
+            callbacks = GalleryDetailCallbacks(
+                onBackClick = { navHostController.popBackStack() },
+                onEditClick = {}
+            ),
+            isEditable = false,
+            uiState = defaultState
+        )
+        ReceiverDetailCategory.MEMORIAL_GUIDELINE -> MemorialGuidelineDetailScreen(
+            detailState = MemorialGuidelineDetailState(
+                userName = userName,
+                finalWriteDate = seed?.date ?: ""
+            ),
+            callbacks = MemorialGuidelineDetailCallbacks(
+                onBackClick = { navHostController.popBackStack() }
+            ),
+            isEditable = false,
+            uiState = defaultState
+        )
+        ReceiverDetailCategory.SOCIAL -> SocialNetworkDetailScreen(
             content = SocialNetworkDetailContent(
                 serviceName = serviceName,
                 userName = userName
             ),
             isEditable = false,
             onBackClick = { navHostController.popBackStack() },
-            state = rememberAfternoteDetailState(
-                defaultBottomNavItem = BottomNavItem.AFTERNOTE
-            )
+            state = defaultState
         )
+    }
+}
+
+private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): ReceiverDetailCategory {
+    return when (seed?.serviceNameLiteral) {
+        "갤러리" -> ReceiverDetailCategory.GALLERY
+        "추모 가이드라인" -> ReceiverDetailCategory.MEMORIAL_GUIDELINE
+        else -> ReceiverDetailCategory.SOCIAL
     }
 }
 

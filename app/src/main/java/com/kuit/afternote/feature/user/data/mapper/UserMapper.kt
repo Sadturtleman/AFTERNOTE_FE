@@ -1,19 +1,15 @@
 package com.kuit.afternote.feature.user.data.mapper
 
 import com.kuit.afternote.feature.user.data.dto.DailyQuestionAnswerItemDto
-import com.kuit.afternote.feature.user.data.dto.ReceiverAfterNoteSourceItemDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
-import com.kuit.afternote.feature.user.data.dto.ReceiverTimeLetterItemDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
 import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.PushSettings
-import com.kuit.afternote.feature.user.domain.model.ReceiverAfterNoteSourceItem
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
-import com.kuit.afternote.feature.user.domain.model.ReceiverTimeLetterItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 
 /**
@@ -67,19 +63,4 @@ object UserMapper {
         hasNext: Boolean
     ): ReceiverDailyQuestionsResult =
         ReceiverDailyQuestionsResult(items = items, hasNext = hasNext)
-
-    fun toReceiverTimeLetterItem(dto: ReceiverTimeLetterItemDto): ReceiverTimeLetterItem =
-        ReceiverTimeLetterItem(
-            timeLetterId = dto.timeLetterId,
-            receiverName = dto.receiverName,
-            sendAt = dto.sendAt,
-            title = dto.title,
-            content = dto.content
-        )
-
-    fun toReceiverAfterNoteSourceItem(dto: ReceiverAfterNoteSourceItemDto): ReceiverAfterNoteSourceItem =
-        ReceiverAfterNoteSourceItem(
-            sourceType = dto.sourceType,
-            lastUpdatedAt = dto.lastUpdatedAt
-        )
 }
