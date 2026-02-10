@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.receiver.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -22,15 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -46,6 +45,8 @@ import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLetterUiState
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray6
@@ -53,10 +54,13 @@ import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-@Suppress("AssignedValueIsNeverRead")
-fun TimeLetterScreen(onBackClick: () -> Unit) {
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
-
+fun TimeLetterScreen(
+    uiState: ReceiverTimeLetterUiState,
+    onBackClick: () -> Unit,
+    onLetterClick: (ReceivedTimeLetter) -> Unit,
+    onBottomNavSelected: (BottomNavItem) -> Unit,
+    showBottomBar: Boolean = true
+) {
     Scaffold(
         topBar = {
             TopBar(
@@ -65,82 +69,122 @@ fun TimeLetterScreen(onBackClick: () -> Unit) {
             )
         },
         bottomBar = {
-            BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
-            )
+            if (showBottomBar) {
+                BottomNavigationBar(
+                    selectedItem = uiState.selectedBottomNavItem,
+                    onItemSelected = onBottomNavSelected
+                )
+            }
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp)
-        ) {
-            // 1. 오늘의 타임 레터 헤더
-            item {
-                Row(
+        when {
+            uiState.isLoading && uiState.timeLetters.isEmpty() -> {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            uiState.errorMessage != null && uiState.timeLetters.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "오늘의 타임 레터",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        text = uiState.errorMessage,
                         color = Gray9,
                         fontFamily = Sansneo
                     )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Go",
-                        tint = B3
-                    )
                 }
             }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp)
+                ) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "오늘의 타임 레터",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = Gray9,
+                                fontFamily = Sansneo
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = "이동",
+                                tint = B3
+                            )
+                        }
+                    }
 
-            // 2. 오늘의 타임 레터 카드 (Hero Image)
-            item {
-                TodayTimeLetterCard()
-                Spacer(modifier = Modifier.height(32.dp))
-            }
+                    item {
+                        TodayTimeLetterCard(
+                            letter = uiState.timeLetters.firstOrNull(),
+                            onLetterClick = onLetterClick
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
 
-            // 3. 날짜 순서로 확인하기 헤더 & 카드
-            item {
-                Text(
-                    text = "날짜 순서로 확인하기",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Gray9,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    fontFamily = Sansneo
-                )
-                TimeLetterActionCard(
-                    desc = "고인이 작성한 편지를 날짜 순서로 확인합니다.",
-                    subDesc = "9개의 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기", // Light Blue tint
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-            }
+                    item {
+                        Text(
+                            text = "날짜 순서로 확인하기",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Gray9,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            fontFamily = Sansneo
+                        )
+                        TimeLetterActionCard(
+                            desc = "고인이 작성한 편지를 날짜 순서로 확인합니다.",
+                            subDesc = "${uiState.totalCount}개의 레터가 있습니다.",
+                            btnText = "타임 레터 확인하러 가기"
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
 
-            // 4. 읽지 않은 타임 레터 헤더 & 카드
-            item {
-                Text(
-                    text = "읽지 않은 타임 레터 확인하기",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Gray9,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    fontFamily = Sansneo
-                )
-                TimeLetterActionCard(
-                    desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
-                    subDesc = "5개의 읽지 않은 타임 레터가 있습니다.",
-                    btnText = "타임 레터 확인하러 가기" // Light Orange tint
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                    item {
+                        Text(
+                            text = "읽지 않은 타임 레터 확인하기",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Gray9,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            fontFamily = Sansneo
+                        )
+                        TimeLetterActionCard(
+                            desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
+                            subDesc = "0개의 읽지 않은 타임 레터가 있습니다.",
+                            btnText = "타임 레터 확인하러 가기"
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+                    items(
+                        items = uiState.timeLetters,
+                        key = { it.timeLetterId }
+                    ) { letter ->
+                        TimeLetterListItem(
+                            letter = letter,
+                            onClick = { onLetterClick(letter) }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
             }
         }
     }
@@ -149,11 +193,19 @@ fun TimeLetterScreen(onBackClick: () -> Unit) {
 // --- Components ---
 
 @Composable
-fun TodayTimeLetterCard() {
+fun TodayTimeLetterCard(
+    letter: ReceivedTimeLetter? = null,
+    onLetterClick: (ReceivedTimeLetter) -> Unit = {}
+) {
+    val enabled = letter != null
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp),
+            .height(220.dp)
+            .then(
+                if (enabled) Modifier.clickable { letter?.let(onLetterClick) }
+                else Modifier
+            ),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -186,34 +238,32 @@ fun TodayTimeLetterCard() {
                     .padding(20.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Top Info
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "수신인: 박채연",
+                        text = "수신인: ${letter?.receiverName ?: "-"}",
                         color = Color.White.copy(alpha = 0.9f),
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "발송 예정일: 2027. 11. 24",
+                        text = "발송 예정일: ${letter?.sendAt ?: "-"}",
                         color = Color.White.copy(alpha = 0.9f),
                         fontSize = 12.sp
                     )
                 }
 
-                // Bottom Text
                 Column {
                     Text(
-                        text = "채연아 20번째 생일을 축하해",
+                        text = letter?.title ?: "타임 레터가 없습니다",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "너가 태어난 게 엊그제같은데 벌써 스무살이라니.. 엄마가 없어도 씩씩하게 자랄 채연이를 상상하면 너무 기특해서 안아주고 싶...",
+                        text = letter?.content?.take(80)?.plus("...").orEmpty().ifEmpty { " " },
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 14.sp,
                         lineHeight = 20.sp,
@@ -222,6 +272,53 @@ fun TodayTimeLetterCard() {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TimeLetterListItem(
+    letter: ReceivedTimeLetter,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = letter.title.orEmpty().ifEmpty { "제목 없음" },
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    color = Gray9,
+                    fontFamily = Sansneo,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = letter.sendAt.orEmpty(),
+                    fontSize = 12.sp,
+                    color = Gray6,
+                    fontFamily = Sansneo,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "상세 보기",
+                tint = B3
+            )
         }
     }
 }
@@ -253,7 +350,7 @@ fun TimeLetterActionCard(
             // Background Decoration Icon (편지 모양)
             Image(
                 painter = painterResource(R.drawable.img_timeletter),
-                contentDescription = null,
+                contentDescription = "편지 장식",
                 modifier = Modifier
                     .align(Alignment.BottomEnd) // 살짝 잘리게 배치
                     .size(width = 160.dp, height = 100.dp)
@@ -299,8 +396,25 @@ fun TimeLetterActionCard(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewTimeLetter() {
+private fun PreviewTimeLetter() {
     MaterialTheme {
-        TimeLetterScreen {}
+        val sampleState = ReceiverTimeLetterUiState(
+            timeLetters = listOf(
+                ReceivedTimeLetter(
+                    timeLetterId = 1L,
+                    receiverName = "박채연",
+                    sendAt = "2027. 11. 24",
+                    title = "채연아 20번째 생일을 축하해",
+                    content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니.."
+                )
+            ),
+            totalCount = 1
+        )
+        TimeLetterScreen(
+            uiState = sampleState,
+            onBackClick = { },
+            onLetterClick = { },
+            onBottomNavSelected = { }
+        )
     }
 }

@@ -3,6 +3,8 @@ package com.kuit.afternote.feature.receiver.data.di
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedRepository
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedRepositoryImpl
+import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryImpl
+import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedTimeLetterRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -18,6 +20,12 @@ abstract class ReceiverModule {
     @Binds
     @Singleton
     abstract fun bindReceivedRepository(impl: ReceivedRepositoryImpl): ReceivedRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReceivedTimeLetterRepository(
+        impl: ReceivedTimeLetterRepositoryImpl
+    ): ReceivedTimeLetterRepository
 
     companion object {
         @Provides

@@ -55,7 +55,8 @@ fun ReceiverAfterNoteMainScreen(
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
     albumCovers: List<AlbumCover>,
-    songCount: Int = 16
+    songCount: Int = 16,
+    showBottomBar: Boolean = true
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
     val profileResId = profileImageResId ?: R.drawable.img_default_profile_deceased
@@ -68,10 +69,12 @@ fun ReceiverAfterNoteMainScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
-            )
+            if (showBottomBar) {
+                BottomNavigationBar(
+                    selectedItem = selectedBottomNavItem,
+                    onItemSelected = { selectedBottomNavItem = it }
+                )
+            }
         }
     ) { innerPadding ->
         LazyColumn(
@@ -127,9 +130,11 @@ fun ReceiverAfterNoteMainScreen(
                 )
             }
             item {
+                Spacer(modifier = Modifier.height(70.dp))
+
                 ClickButton(
                     color = B3,
-                    title = "애프터노트 전체 확인하기",
+                    title = "애프터노트 확인하기",
                     onButtonClick = onNavigateToFullList
                 )
                 Spacer(modifier = Modifier.height(20.dp))
