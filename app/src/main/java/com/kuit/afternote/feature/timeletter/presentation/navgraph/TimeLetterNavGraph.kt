@@ -50,7 +50,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
             onNavigateBack = { navController.popBackStack() },
-            onRecipientClick = { viewModel.showRecipientDropdown() },
+            onRecipientClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) },
             receivers = uiState.receivers,
             showRecipientDropdown = uiState.showRecipientDropdown,
             onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
