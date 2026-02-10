@@ -105,8 +105,10 @@ class AfternoteEditViewModel
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
-            val processMethod = payload.accountProcessingMethod
-                .ifEmpty { payload.informationProcessingMethod }
+            val processMethod = toServerProcessMethod(
+                accountProcessingMethod = payload.accountProcessingMethod,
+                informationProcessingMethod = payload.informationProcessingMethod
+            )
             val leaveMessage = payload.message.ifEmpty { null }
 
             return when (category) {
@@ -144,8 +146,10 @@ class AfternoteEditViewModel
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
-            val processMethod = payload.accountProcessingMethod
-                .ifEmpty { payload.informationProcessingMethod }
+            val processMethod = toServerProcessMethod(
+                accountProcessingMethod = payload.accountProcessingMethod,
+                informationProcessingMethod = payload.informationProcessingMethod
+            )
 
             val body = AfternoteUpdateRequestDto(
                 title = payload.serviceName,
@@ -174,6 +178,29 @@ class AfternoteEditViewModel
             )
             return updateUseCase(afternoteId = afternoteId, body = body)
         }
+
+        /**
+         * 클라이언트 enum 이름을 서버 processMethod 코드로 변환.
+         *
+         * - \"사망 후 추모 계정으로 전환\" 옵션 → MEMORIAL
+         * - \"사망 후 데이터 보관 요청\" 옵션 → DELETE
+         * - \"수신자에게 정보 전달\" 옵션 → RECEIVER
+         *
+         * 서버에서 내려오는 processMethod 의미에 맞춰 매핑합니다.
+         */
+        private fun toServerProcessMethod(
+            accountProcessingMethod: String,
+            informationProcessingMethod: String
+        ): String =
+            when (accountProcessingMethod) {
+                // 사망 후 추모 계정으로 전환
+                "MEMORIAL_ACCOUNT" -> "MEMORIAL"
+                // 사망 후 데이터 보관 요청 (계정/데이터 보관)
+                "PERMANENT_DELETE" -> "DELETE"
+                // 수신자(또는 추가 수신자)에게 정보 전달
+                "TRANSFER_TO_RECEIVER" -> "RECEIVER"
+                else -> accountProcessingMethod.ifEmpty { informationProcessingMethod }
+            }
 
         private fun buildPlaylistDto(
             playlistStateHolder: MemorialPlaylistStateHolder?
