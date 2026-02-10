@@ -8,11 +8,13 @@ import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +22,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
@@ -39,10 +44,13 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScre
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRouteCallbacks
@@ -79,18 +87,6 @@ data class AfternoteNavGraphParams(
 
 /**
  * afternote feature 전용 라이트 모드 테마 래퍼
- * Preview 함수에서 사용하여 다크 모드를 강제로 비활성화합니다.
- *
- * 사용 예시:
- * ```
- * @Preview(showBackground = true)
- * @Composable
- * private fun MyScreenPreview() {
- *     AfternoteLightTheme {
- *         MyScreen()
- *     }
- * }
- * ```
  */
 @Composable
 fun AfternoteLightTheme(content: @Composable () -> Unit) {
@@ -138,7 +134,6 @@ private fun AfternoteListRouteContent(
                 onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
                 onBottomNavTabSelected = onBottomNavTabSelected
             ),
-        // 프로덕션에서는 항상 서버 데이터를 우선 사용하므로 빈 리스트 전달
         initialItems = emptyList(),
         onItemsChanged = onItemsUpdated
     )
@@ -146,6 +141,16 @@ private fun AfternoteListRouteContent(
 
 /** Types with a designed detail screen on the generic DetailRoute (social-style layout). */
 private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
+
+@Composable
+private fun DetailLoadingContent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
 
 @Composable
 private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
@@ -166,80 +171,184 @@ private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
     }
 }
 
+// -- Detail Route (Social / Other types) --
+
 @Composable
 private fun AfternoteDetailRouteContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
-    listItems: List<AfternoteItem>,
     userName: String
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
-    val item = listItems.find { it.id == route.itemId }
-    val showDesignPending = item == null || item.type !in DESIGNED_DETAIL_TYPES
+    val viewModel: AfternoteDetailViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(route.itemId) {
+        route.itemId.toLongOrNull()?.let { viewModel.loadDetail(it) }
+    }
+
+    LaunchedEffect(uiState.deleteSuccess) {
+        if (uiState.deleteSuccess) {
+            navController.popBackStack()
+        }
+    }
+
+    val detail = uiState.detail
 
     Log.d(
         TAG_AFTERNOTE_DETAIL,
-        "DetailRoute: itemId=${route.itemId}, type=${item?.type}, " +
-            "listSize=${listItems.size}, showDesignPending=$showDesignPending"
+        "DetailRoute: itemId=${route.itemId}, type=${detail?.type}, " +
+            "isLoading=${uiState.isLoading}"
     )
 
-    if (showDesignPending) {
-        DesignPendingDetailContent(onBackClick = { navController.popBackStack() })
-    } else {
-        SocialNetworkDetailScreen(
+    when {
+        uiState.isLoading -> DetailLoadingContent()
+        detail == null || detail.type !in DESIGNED_DETAIL_TYPES ->
+            DesignPendingDetailContent(onBackClick = { navController.popBackStack() })
+        else -> SocialNetworkDetailScreen(
             content = SocialNetworkDetailContent(
-                serviceName = item.serviceName,
+                serviceName = detail.title,
                 userName = userName,
-                accountId = item.accountId,
-                password = item.password,
-                accountProcessingMethod = item.accountProcessingMethod,
-                processingMethods = item.processingMethods.map { it.text },
-                message = item.message,
-                finalWriteDate = item.date
+                accountId = detail.credentialsId ?: "",
+                password = detail.credentialsPassword ?: "",
+                accountProcessingMethod = detail.processMethod ?: "",
+                processingMethods = detail.actions,
+                message = detail.leaveMessage ?: "",
+                finalWriteDate = detail.updatedAt
             ),
             onBackClick = { navController.popBackStack() },
-            onEditClick = { navController.navigate(AfternoteRoute.EditRoute(itemId = item.id)) }
+            onEditClick = {
+                navController.navigate(
+                    AfternoteRoute.EditRoute(itemId = detail.id.toString())
+                )
+            },
+            onDeleteConfirm = { viewModel.deleteAfternote(detail.id) }
         )
     }
 }
+
+// -- Gallery Detail Route --
 
 @Composable
 private fun AfternoteGalleryDetailRouteContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
-    listItems: List<AfternoteItem>,
-    afternoteProvider: AfternoteEditDataProvider,
     userName: String
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.GalleryDetailRoute>()
-    val item = listItems.find { it.id == route.itemId }
-    GalleryDetailScreen(
-        detailState = GalleryDetailState(
-            afternoteEditReceivers = afternoteProvider.getAfternoteEditReceivers(),
-            serviceName = item?.serviceName ?: "갤러리",
-            userName = userName,
-            finalWriteDate = item?.date ?: "2025.11.26.",
-            informationProcessingMethod = item?.informationProcessingMethod ?: "",
-            processingMethods = item?.galleryProcessingMethods?.map { it.text } ?: emptyList(),
-            message = item?.message ?: ""
-        ),
-        callbacks = GalleryDetailCallbacks(
-            onBackClick = { navController.popBackStack() },
-            onEditClick = {
-                if (item != null) {
-                    navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
-                }
-            }
+    val viewModel: AfternoteDetailViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(route.itemId) {
+        route.itemId.toLongOrNull()?.let { viewModel.loadDetail(it) }
+    }
+
+    LaunchedEffect(uiState.deleteSuccess) {
+        if (uiState.deleteSuccess) {
+            navController.popBackStack()
+        }
+    }
+
+    val detail = uiState.detail
+
+    when {
+        uiState.isLoading -> DetailLoadingContent()
+        detail == null -> DesignPendingDetailContent(
+            onBackClick = { navController.popBackStack() }
         )
-    )
+        else -> GalleryDetailScreen(
+            detailState = GalleryDetailState(
+                serviceName = detail.title,
+                userName = userName,
+                finalWriteDate = detail.updatedAt,
+                afternoteEditReceivers = detail.receivers.map { r ->
+                    AfternoteEditReceiver(
+                        id = "",
+                        name = r.name,
+                        label = r.relation
+                    )
+                },
+                informationProcessingMethod = detail.processMethod ?: "",
+                processingMethods = detail.actions,
+                message = detail.leaveMessage ?: ""
+            ),
+            callbacks = GalleryDetailCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onEditClick = {
+                    navController.navigate(
+                        AfternoteRoute.EditRoute(itemId = detail.id.toString())
+                    )
+                },
+                onDeleteConfirm = { viewModel.deleteAfternote(detail.id) }
+            )
+        )
+    }
 }
+
+// -- Memorial Guideline Detail Route --
+
+@Composable
+private fun AfternoteMemorialGuidelineDetailContent(
+    backStackEntry: NavBackStackEntry,
+    navController: NavController,
+    userName: String
+) {
+    val route = backStackEntry.toRoute<AfternoteRoute.MemorialGuidelineDetailRoute>()
+    val viewModel: AfternoteDetailViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(route.itemId) {
+        route.itemId.toLongOrNull()?.let { viewModel.loadDetail(it) }
+    }
+
+    LaunchedEffect(uiState.deleteSuccess) {
+        if (uiState.deleteSuccess) {
+            navController.popBackStack()
+        }
+    }
+
+    val detail = uiState.detail
+
+    when {
+        uiState.isLoading -> DetailLoadingContent()
+        detail == null -> DesignPendingDetailContent(
+            onBackClick = { navController.popBackStack() }
+        )
+        else -> MemorialGuidelineDetailScreen(
+            detailState = MemorialGuidelineDetailState(
+                userName = userName,
+                finalWriteDate = detail.updatedAt,
+                profileImageUri = detail.playlist?.profilePhoto,
+                albumCovers = detail.playlist?.songs?.map { s ->
+                    AlbumCover(
+                        id = (s.id ?: 0L).toString(),
+                        imageUrl = s.coverUrl,
+                        title = s.title
+                    )
+                } ?: emptyList(),
+                songCount = detail.playlist?.songs?.size ?: 0,
+                lastWish = detail.leaveMessage ?: ""
+            ),
+            callbacks = MemorialGuidelineDetailCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onEditClick = {
+                    navController.navigate(
+                        AfternoteRoute.EditRoute(itemId = detail.id.toString())
+                    )
+                },
+                onDeleteConfirm = { viewModel.deleteAfternote(detail.id) }
+            )
+        )
+    }
+}
+
+// -- Edit Route --
 
 @Composable
 private fun AfternoteEditRouteContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
     afternoteItems: List<AfternoteItem>,
-    onItemsUpdated: (List<AfternoteItem>) -> Unit,
     playlistStateHolder: MemorialPlaylistStateHolder,
     afternoteProvider: AfternoteEditDataProvider,
     editStateHandling: AfternoteEditStateHandling
@@ -255,16 +364,17 @@ private fun AfternoteEditRouteContent(
         Log.w(
             TAG_AFTERNOTE_EDIT,
             "Edit opened but item not found: itemId=${route.itemId}, " +
-                "listSize=${listItems.size}, " +
-                "ids=${listItems.take(3).map { it.id }}"
+                "listSize=${listItems.size}"
         )
     }
+
+    val editViewModel: AfternoteEditViewModel = hiltViewModel()
+    val saveState by editViewModel.saveState.collectAsStateWithLifecycle()
 
     val newState = rememberAfternoteEditState()
     val state = editStateHandling.holder.value ?: newState
     LaunchedEffect(Unit) {
         if (editStateHandling.holder.value == null) {
-            Log.d(TAG_AFTERNOTE_EDIT, "Initialising afternoteEditStateHolder with newState")
             editStateHandling.holder.value = newState
         }
     }
@@ -275,27 +385,29 @@ private fun AfternoteEditRouteContent(
         }
     }
 
+    LaunchedEffect(saveState.saveSuccess) {
+        if (saveState.saveSuccess) {
+            editStateHandling.onClear()
+            navController.navigate(AfternoteRoute.AfternoteListRoute) {
+                popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     AfternoteEditScreen(
         onBackClick = {
             editStateHandling.onClear()
             navController.popBackStack()
         },
         onRegisterClick = { payload: RegisterAfternotePayload ->
-            if (initialItem != null) {
-                val updatedItems = afternoteItems.map {
-                    if (it.id == initialItem.id) AfternoteItemMapper.fromPayload(payload)
-                    else it
-                }
-                onItemsUpdated(updatedItems)
-            } else {
-                val newItem = AfternoteItemMapper.fromPayload(payload)
-                onItemsUpdated(afternoteItems + newItem)
-            }
-            editStateHandling.onClear()
-            navController.navigate(AfternoteRoute.AfternoteListRoute) {
-                popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
-                launchSingleTop = true
-            }
+            editViewModel.saveAfternote(
+                editingId = initialItem?.id?.toLongOrNull(),
+                category = state.selectedCategory,
+                payload = payload,
+                receivers = state.afternoteEditReceivers,
+                playlistStateHolder = playlistStateHolder
+            )
         },
         onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
         playlistStateHolder = playlistStateHolder,
@@ -303,6 +415,8 @@ private fun AfternoteEditRouteContent(
         state = state
     )
 }
+
+// -- Fingerprint Login --
 
 @Composable
 private fun AfternoteFingerprintLoginContent(navController: NavController) {
@@ -356,6 +470,8 @@ private fun AfternoteFingerprintLoginContent(navController: NavController) {
     )
 }
 
+// -- Add Song Route --
+
 @Composable
 private fun AfternoteAddSongRouteContent(
     navController: NavController,
@@ -374,33 +490,7 @@ private fun AfternoteAddSongRouteContent(
     )
 }
 
-@Composable
-private fun AfternoteMemorialGuidelineDetailContent(
-    backStackEntry: NavBackStackEntry,
-    navController: NavController,
-    listItems: List<AfternoteItem>,
-    userName: String
-) {
-    val route = backStackEntry.toRoute<AfternoteRoute.MemorialGuidelineDetailRoute>()
-    val item = listItems.find { it.id == route.itemId }
-    MemorialGuidelineDetailScreen(
-        detailState = MemorialGuidelineDetailState(
-            userName = userName,
-            finalWriteDate = item?.date ?: "2025.11.26.",
-            songCount = 0,
-            albumCovers = emptyList(),
-            lastWish = item?.message ?: ""
-        ),
-        callbacks = MemorialGuidelineDetailCallbacks(
-            onBackClick = { navController.popBackStack() },
-            onEditClick = {
-                if (item != null) {
-                    navController.navigate(AfternoteRoute.EditRoute(itemId = item.id))
-                }
-            }
-        )
-    )
-}
+// -- Nav Graph --
 
 fun NavGraphBuilder.afternoteNavGraph(
     navController: NavController,
@@ -418,22 +508,17 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
-        val currentItems = params.afternoteItemsProvider()
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = currentItems,
             userName = params.userName
         )
     }
 
     afternoteComposable<AfternoteRoute.GalleryDetailRoute> { backStackEntry ->
-        val currentItems = params.afternoteItemsProvider()
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = currentItems,
-            afternoteProvider = afternoteProvider,
             userName = params.userName
         )
     }
@@ -444,7 +529,6 @@ fun NavGraphBuilder.afternoteNavGraph(
             backStackEntry = backStackEntry,
             navController = navController,
             afternoteItems = currentItems,
-            onItemsUpdated = params.onItemsUpdated,
             playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider,
             editStateHandling = params.editStateHandling
@@ -452,11 +536,9 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.MemorialGuidelineDetailRoute> { backStackEntry ->
-        val currentItems = params.afternoteItemsProvider()
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            listItems = currentItems,
             userName = params.userName
         )
     }

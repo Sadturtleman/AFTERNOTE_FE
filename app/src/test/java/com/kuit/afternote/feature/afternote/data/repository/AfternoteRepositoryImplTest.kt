@@ -140,7 +140,7 @@ class AfternoteRepositoryImplTest {
         }
 
     @Test
-    fun getAfternoteDetail_whenSuccess_returnsDetailDto() =
+    fun getAfternoteDetail_whenSuccess_returnsDetail() =
         runTest {
             val detail =
                 AfternoteDetailResponseDto(
@@ -169,8 +169,8 @@ class AfternoteRepositoryImplTest {
             val result = repository.getAfternoteDetail(afternoteId = 10L)
 
             assertTrue(result.isSuccess)
-            val dto = result.getOrNull()
-            assertEquals(10L, dto?.afternoteId)
+            val detailDomain = result.getOrNull()
+            assertEquals(10L, detailDomain?.id)
             coVerify(exactly = 1) { api.getAfternoteDetail(afternoteId = 10L) }
         }
 

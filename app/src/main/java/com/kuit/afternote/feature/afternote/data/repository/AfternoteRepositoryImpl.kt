@@ -7,13 +7,13 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryReque
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentialsDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponseDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import javax.inject.Inject
 
 /**
@@ -83,12 +83,12 @@ class AfternoteRepositoryImpl
     }
 
     /**
-     * GET /afternotes/{afternoteId} — 상세 조회.
+     * GET /afternotes/{afternoteId} — 상세 조회. DTO → domain 매핑 포함.
      */
-    override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetailResponseDto> =
+    override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail> =
         runCatching {
             val response = api.getAfternoteDetail(afternoteId = afternoteId)
-            response.requireData()
+            AfternoteMapper.toDetailDomain(response.requireData())
         }
 
     /**

@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.domain.repository.iface
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponseDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 
 /**
@@ -40,7 +40,7 @@ interface AfternoteRepository {
         receiverIds: List<Long>
     ): Result<Long>
 
-    suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetailResponseDto>
+    suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail>
 
     suspend fun createPlaylist(
         title: String,
