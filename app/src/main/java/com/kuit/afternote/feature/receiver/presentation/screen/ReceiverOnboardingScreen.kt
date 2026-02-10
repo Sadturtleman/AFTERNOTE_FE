@@ -93,7 +93,7 @@ fun ReceiverOnboardingScreen(
             ClickButton(
                 color = B2,
                 onButtonClick = onStartClick,
-                title = "사망 등록 및 열람 요청하기"
+                title = "본인 확인 및 열람 요청하기"
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -101,7 +101,7 @@ fun ReceiverOnboardingScreen(
             ClickButton(
                 color = B3,
                 onButtonClick = onCheckClick,
-                title = "수신자 본인 확인하기"
+                title = "수신자 등록하기"
             )
 
 

@@ -14,4 +14,17 @@ sealed interface TimeLetterRoute {
 
     @Serializable
     data object ReceiveListRoute : TimeLetterRoute
+
+    /**
+     * 타임레터 상세 화면 라우트.
+     * 리스트 아이템 클릭 시 해당 타임레터 데이터를 담아 이동한다.
+     */
+    @Serializable
+    data class TimeLetterDetailRoute(
+        val id: String,
+        val receiverName: String,
+        val sendDate: String,
+        val title: String,
+        val content: String
+    ) : TimeLetterRoute
 }

@@ -65,7 +65,10 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
  * @param viewModel 타임레터 ViewModel
  * @param onNavItemSelected 하단 네비게이션 아이템 선택 콜백
  * @param onBackClick 뒤로가기 클릭 콜백
+ * @param onAddClick 추가 버튼 클릭 콜백
  * @param onShowAllClick 전체보기 클릭 시 수신 목록 화면으로 이동 콜백
+ * @param onLetterClick 타임레터 아이템 클릭 시 상세 화면으로 이동 콜백
+ * @param onEditLetter 타임레터 아이템 수정(연필) 클릭 시 작성 화면으로 이동하여 수정하는 콜백
  * @param modifier Modifier
  */
 @Composable
@@ -75,7 +78,9 @@ fun TimeLetterScreen(
     onNavItemSelected: (BottomNavItem) -> Unit = {},
     onBackClick: () -> Unit = {},
     onAddClick: () -> Unit = {},
-    onShowAllClick: () -> Unit = {}
+    onShowAllClick: () -> Unit = {},
+    onLetterClick: (TimeLetterItem) -> Unit = {},
+    onEditLetter: (TimeLetterItem) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val viewMode by viewModel.viewMode.collectAsStateWithLifecycle()
@@ -181,6 +186,8 @@ fun TimeLetterScreen(
                                         title = letter.title,
                                         content = letter.content,
                                         imageResId = letter.imageResId,
+                                        onClick = { onLetterClick(letter) },
+                                        onEditClick = { onEditLetter(letter) },
                                         onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
@@ -191,7 +198,8 @@ fun TimeLetterScreen(
                             TimeLetterBlockList(
                                 modifier = Modifier.weight(1f),
                                 timeLetterItemList = letters,
-                                contentPadding = PaddingValues(bottom = 16.dp)
+                                contentPadding = PaddingValues(bottom = 16.dp),
+                                onItemClick = onLetterClick
                             )
                         }
                     }

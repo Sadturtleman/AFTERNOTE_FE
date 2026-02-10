@@ -52,7 +52,7 @@ fun VerifySelfScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(44.dp))
 
             when (step) {
                 VerifyStep.MASTER_KEY_AUTH -> {

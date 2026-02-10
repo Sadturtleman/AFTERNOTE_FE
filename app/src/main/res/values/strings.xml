@@ -61,4 +61,9 @@
 
     <!-- Afternote detail: design not yet implemented -->
     <string name="design_pending">디자인 예정</string>
+
+    <!-- Time letter detail -->
+    <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
+    <string name="time_letter_detail_receiver_to">%1$s님께</string>
+    <string name="content_description_expand_down">아래로</string>
 </resources>
