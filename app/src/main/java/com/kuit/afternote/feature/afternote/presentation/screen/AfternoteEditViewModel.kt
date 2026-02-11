@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentialsDto
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "AfternoteEditVM"
 private const val CATEGORY_SOCIAL = "소셜네트워크"
 private const val CATEGORY_BUSINESS = "비즈니스"
 private const val CATEGORY_GALLERY = "갤러리 및 파일"
@@ -70,7 +72,22 @@ class AfternoteEditViewModel
             receivers: List<AfternoteEditReceiver>,
             playlistStateHolder: MemorialPlaylistStateHolder?
         ) {
-            if (_saveState.value.isSaving) return
+            if (_saveState.value.isSaving) {
+                Log.w(TAG, "saveAfternote: already saving, ignoring duplicate call")
+                return
+            }
+
+            Log.d(
+                TAG,
+                "saveAfternote: editingId=$editingId, category=$category, " +
+                    "serviceName=${payload.serviceName}, " +
+                    "accountProcessingMethod=${payload.accountProcessingMethod}, " +
+                    "informationProcessingMethod=${payload.informationProcessingMethod}, " +
+                    "processingMethods=${payload.processingMethods}, " +
+                    "galleryProcessingMethods=${payload.galleryProcessingMethods}, " +
+                    "receivers=${receivers.map { it.id }}, " +
+                    "hasPlaylist=${playlistStateHolder != null}"
+            )
 
             viewModelScope.launch {
                 _saveState.update { it.copy(isSaving = true, error = null) }
@@ -92,11 +109,13 @@ class AfternoteEditViewModel
                 }
                 result
                     .onSuccess { id ->
+                        Log.d(TAG, "saveAfternote: SUCCESS, savedId=$id")
                         _saveState.update {
                             it.copy(isSaving = false, saveSuccess = true, savedId = id)
                         }
                     }
                     .onFailure { e ->
+                        Log.e(TAG, "saveAfternote: FAILURE, category=$category", e)
                         _saveState.update {
                             it.copy(
                                 isSaving = false,
@@ -186,11 +205,22 @@ class AfternoteEditViewModel
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
+            val isSocialOrBusiness =
+                category == CATEGORY_SOCIAL || category == CATEGORY_BUSINESS
             val processMethod = toServerProcessMethod(
-                accountProcessingMethod = payload.accountProcessingMethod,
-                informationProcessingMethod = payload.informationProcessingMethod
+                accountProcessingMethod =
+                    if (isSocialOrBusiness) payload.accountProcessingMethod else "",
+                informationProcessingMethod =
+                    if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
             )
             val leaveMessage = payload.message.ifEmpty { null }
+
+            Log.d(
+                TAG,
+                "performCreate: category=$category, title=${payload.serviceName}, " +
+                    "processMethod=$processMethod, actions=$actions, " +
+                    "leaveMessage=$leaveMessage"
+            )
 
             return when (category) {
                 CATEGORY_GALLERY -> {
@@ -198,10 +228,14 @@ class AfternoteEditViewModel
                         informationProcessingMethod = payload.informationProcessingMethod,
                         editReceivers = receivers
                     )
+                    // API requires non-empty actions for GALLERY; use default when none added
+                    val galleryActions =
+                        if (actions.isEmpty()) listOf("정보 전달") else actions
+                    Log.d(TAG, "performCreate GALLERY: receiverIds=$receiverIds, actions=$galleryActions")
                     createGalleryUseCase(
                         title = payload.serviceName,
                         processMethod = processMethod,
-                        actions = actions,
+                        actions = galleryActions,
                         leaveMessage = leaveMessage,
                         receiverIds = receiverIds
                     )
@@ -233,9 +267,13 @@ class AfternoteEditViewModel
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
+            val isSocialOrBusiness =
+                category == CATEGORY_SOCIAL || category == CATEGORY_BUSINESS
             val processMethod = toServerProcessMethod(
-                accountProcessingMethod = payload.accountProcessingMethod,
-                informationProcessingMethod = payload.informationProcessingMethod
+                accountProcessingMethod =
+                    if (isSocialOrBusiness) payload.accountProcessingMethod else "",
+                informationProcessingMethod =
+                    if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
             )
 
             val body = AfternoteUpdateRequestDto(
@@ -273,10 +311,10 @@ class AfternoteEditViewModel
         /**
          * 클라이언트 enum 이름을 서버 processMethod 코드로 변환.
          *
-         * - \"사망 후 추모 계정으로 전환\" 옵션 → MEMORIAL
-         * - \"사망 후 데이터 보관 요청\" 옵션 → DELETE
-         * - \"수신자에게 정보 전달\" 옵션 → TRANSFER
-         * - \"추가 수신자에게 정보 전달\" 옵션 → ADDITIONAL
+         * - "사망 후 추모 계정으로 전환" 옵션 → MEMORIAL
+         * - "사망 후 데이터 보관 요청" 옵션 → DELETE
+         * - "수신자에게 정보 전달" 옵션 → TRANSFER
+         * - "추가 수신자에게 정보 전달" 옵션 → ADDITIONAL
          *
          * 서버에서 내려오는 processMethod 의미에 맞춰 매핑합니다.
          */

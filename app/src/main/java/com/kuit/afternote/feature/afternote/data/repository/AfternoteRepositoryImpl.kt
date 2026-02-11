@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
+import android.util.Log
 import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.data.remote.requireSuccess
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
@@ -15,6 +16,8 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import javax.inject.Inject
+
+private const val TAG = "AfternoteRepo"
 
 /**
  * Data layer: calls Afternote API, maps DTO → domain at boundary.
@@ -59,8 +62,22 @@ class AfternoteRepositoryImpl
                 else -> null
             }
         )
+        Log.d(
+            TAG,
+            "createSocial: title=${body.title}, processMethod=${body.processMethod}, " +
+                "actions=${body.actions}, hasCredentials=${body.credentials != null}"
+        )
         val response = api.createAfternoteSocial(body)
+        Log.d(
+            TAG,
+            "createSocial response: status=${response.status}, code=${response.code}, " +
+                "message=${response.message}, data=${response.data}"
+        )
         response.requireData().afternoteId
+    }.also { result ->
+        result.onFailure { e ->
+            Log.e(TAG, "createSocial: FAILED", e)
+        }
     }
 
     override suspend fun createGallery(
@@ -78,8 +95,27 @@ class AfternoteRepositoryImpl
             leaveMessage = leaveMessage,
             receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) }
         )
+        Log.d(
+            TAG,
+            "createGallery: title=${body.title}, processMethod=${body.processMethod}, " +
+                "actions=${body.actions}, receiverIds=$receiverIds"
+        )
         val response = api.createAfternoteGallery(body)
+        Log.d(
+            TAG,
+            "createGallery response: status=${response.status}, code=${response.code}, " +
+                "message=${response.message}, data=${response.data}"
+        )
         response.requireData().afternoteId
+    }.also { result ->
+        result.onFailure { e ->
+            if (e is retrofit2.HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(TAG, "createGallery: FAILED ${e.code()} body=$errorBody", e)
+            } else {
+                Log.e(TAG, "createGallery: FAILED", e)
+            }
+        }
     }
 
     /**
@@ -103,8 +139,21 @@ class AfternoteRepositoryImpl
             title = title,
             playlist = playlist
         )
+        Log.d(
+            TAG,
+            "createPlaylist: title=${body.title}, songsCount=${playlist.songs.size}"
+        )
         val response = api.createAfternotePlaylist(body)
+        Log.d(
+            TAG,
+            "createPlaylist response: status=${response.status}, code=${response.code}, " +
+                "message=${response.message}, data=${response.data}"
+        )
         response.requireData().afternoteId
+    }.also { result ->
+        result.onFailure { e ->
+            Log.e(TAG, "createPlaylist: FAILED", e)
+        }
     }
 
     /**
@@ -114,8 +163,22 @@ class AfternoteRepositoryImpl
         afternoteId: Long,
         body: AfternoteUpdateRequestDto
     ): Result<Long> = runCatching {
+        Log.d(
+            TAG,
+            "updateAfternote: id=$afternoteId, title=${body.title}, " +
+                "processMethod=${body.processMethod}, actions=${body.actions}"
+        )
         val response = api.updateAfternote(afternoteId = afternoteId, body = body)
+        Log.d(
+            TAG,
+            "updateAfternote response: status=${response.status}, code=${response.code}, " +
+                "message=${response.message}, data=${response.data}"
+        )
         response.requireData().afternoteId
+    }.also { result ->
+        result.onFailure { e ->
+            Log.e(TAG, "updateAfternote: FAILED, id=$afternoteId", e)
+        }
     }
 
     /**
