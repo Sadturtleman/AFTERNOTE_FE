@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.screen.AfternoteListScreen
@@ -48,9 +49,13 @@ fun AfternoteListRoute(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.items) {
+    // Propagate items to parent only when the list actually changes (by ID set).
+    // Avoids expensive NavHost recomposition on every return from sub-routes
+    // when the API returns the same data.
+    val itemIds = remember(uiState.items) { uiState.items.map { it.id }.toSet() }
+    LaunchedEffect(itemIds) {
         if (uiState.items.isNotEmpty()) {
-            Log.d("AfternoteListRoute", "items loaded: size=${uiState.items.size}")
+            Log.d("AfternoteListRoute", "items changed: size=${uiState.items.size}")
             onItemsChanged(uiState.items)
         }
     }

@@ -1,0 +1,51 @@
+---
+description: Edit screen data source, category identification, and nav-level state holder lifecycle
+globs: "**/afternote/**/AfternoteEdit*.kt", "**/afternote/**/AfternoteNavgraph*.kt", "**/navgraph/**/*Edit*.kt"
+alwaysApply: false
+---
+
+# Edit Screen Data Flow & Nav-Level State - Critical
+
+These rules prevent bugs where edit-screen data is wrong, missing, or stale due to wrong data source, title-based category inference, or reused state from a previous session.
+
+## 1. Single Data Source When Editing by ID
+
+When the user enters **edit mode** (route has an itemId / existing item):
+
+- **Use the detail API as the single source of truth.** Load edit data only via the detail API (e.g. `loadForEdit` → `getDetailUseCase`), then map into edit state (e.g. `LoadFromExistingParams` → `state.loadFromExisting()`).
+- **Do not pass or use list-item data** (e.g. `initialItem` from the list) to populate edit state when `route.itemId != null`. The list API often omits fields (e.g. `processMethod`, `informationProcessingMethod`, gallery actions). Using both list and detail causes:
+  - **Race condition**: A synchronous `LaunchedEffect(initialItem?.id)` can run first and call `loadFromExisting` with incomplete data, setting `loadedItemId`. When the async detail API completes and tries to apply the correct data, the guard `state.loadedItemId != route.itemId` is already false, so the detail result is discarded.
+- **Fix pattern**: When `route.itemId != null`, pass `initialItem = null` so only `loadForEdit` (detail API) fills the edit state.
+
+## 2. Identify Category from API / ServiceType, Not from Title
+
+- **Do not infer category** (e.g. Gallery, Social, Playlist) from **display titles** (e.g. "갤러리", "파일", "소셜네트워크"). Titles can be localized or user-edited and are unreliable for logic.
+- **Use API category or ServiceType** from the detail response (e.g. `detail.category` → `"GALLERY"`, `"SOCIAL"`) and map to edit-screen display strings (e.g. `serverCategoryToEditScreenCategory(detail.category)` → `categoryDisplayString`).
+- **Edit screen category state** (e.g. `selectedCategory`) must be set from this API-derived value when loading for edit, so the correct UI section (Gallery vs Social vs Information) and process-method options are shown.
+
+## 3. Category-Specific List Mapping in loadForEdit
+
+When building edit-state params from the detail API (e.g. `LoadFromExistingParams`):
+
+- **Route list fields by category.** For example:
+  - **Gallery**: `detail.actions` (or equivalent) → `galleryProcessingMethodsList`; do **not** put Gallery actions into the social/business list or hardcode `galleryProcessingMethodsList = emptyList()`.
+  - **Social/Business/Other**: `detail.actions` → `processingMethodsList` (or the list used by the Social section).
+- **Do not hardcode** category-specific lists (e.g. `galleryProcessingMethodsList`) to `emptyList()` for all categories; populate them from the detail response when the category matches.
+- **Process-method enum mapping** (e.g. `serverProcessMethodToInfoEnum`) should apply only to the categories that use that enum (e.g. Gallery/Information), not to Social. Use explicit checks (e.g. `isGalleryCategory`) so Social does not get the wrong mapping.
+
+## 4. Edit State Holder Lifecycle (Create vs Edit)
+
+When using a **NavGraph-level state holder** for the edit screen (e.g. `editStateHandling.holder`):
+
+- **Create mode** (`route.itemId == null`): Always use a **fresh** edit state and **clear** the holder (or bypass it). Do not use `editStateHandling.holder.value ?: newState` when in create mode, because:
+  - The holder is only cleared on explicit paths (e.g. TopBar back, save success). If the user left the previous edit session via system back or bottom nav, `onClear()` may never run, so the holder still holds the previous edit’s data.
+  - Reusing that holder on the next screen (create) causes **stale data** from the last edited afternote (e.g. gallery processing methods, category, processMethod) to appear on the new-afternote creation screen.
+- **Fix pattern**: When `route.itemId == null`, set state to a fresh instance (e.g. `newState` only) and set `editStateHandling.holder.value = null` so the next composition does not reuse stale state.
+
+## 5. State Holder Instance Consistency with LaunchedEffect + Async Load
+
+When a `LaunchedEffect` (or similar) triggers an async call (e.g. detail API) and then writes to a state holder (e.g. `state.loadFromExisting(params)`):
+
+- Ensure the **state reference** passed into the async flow is the **same instance** that the UI observes (e.g. the one stored in `editStateHandling.holder.value`). If the NavGraph uses `val state = editStateHandling.holder.value ?: newState` and the LaunchedEffect captures `state`, then:
+  - If at first composition `holder.value` is null, `state` is `newState`; that same `newState` must later be stored in the holder so that when the async callback runs, it writes to the instance the UI is reading.
+- Avoid patterns where the LaunchedEffect captures one instance (e.g. `newState`) but the UI later observes another (e.g. a different instance later stored in the holder), which would make the loaded data never appear.
