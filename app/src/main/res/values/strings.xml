@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">afternote</string>
+    <string name="app_name">Afternote</string>
 
     <!-- Bottom navigation labels -->
     <string name="nav_home">홈</string>
