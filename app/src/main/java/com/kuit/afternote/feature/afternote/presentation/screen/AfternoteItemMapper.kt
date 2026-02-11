@@ -55,11 +55,11 @@ object AfternoteItemMapper {
         }
 
     /**
-     * Edit screen category dropdown value from service name.
-     * Use when loading existing item so selectedCategory matches the dropdown options.
+     * Edit screen category dropdown value from [ServiceType].
+     * Prefer this when type is known; do not infer category from title (titles are user-defined).
      */
-    fun categoryStringForEditScreen(serviceName: String): String =
-        when (inferServiceType(serviceName)) {
+    fun categoryStringForEditScreen(serviceType: ServiceType): String =
+        when (serviceType) {
             ServiceType.SOCIAL_NETWORK, ServiceType.OTHER -> "소셜네트워크"
             ServiceType.BUSINESS -> "비즈니스"
             ServiceType.GALLERY_AND_FILES -> "갤러리 및 파일"
@@ -68,7 +68,9 @@ object AfternoteItemMapper {
         }
 
     /**
-     * 서비스명으로부터 ServiceType 추론 (단일 소스; 목록/편집 공용)
+     * 서비스명으로부터 ServiceType 추론.
+     * Only for dev/legacy data (e.g. toAfternoteItemsWithStableIds pairs). Do not use for
+     * user-defined titles; category/type must come from API or list item when available.
      */
     private fun inferServiceType(serviceName: String): ServiceType =
         when (serviceName) {

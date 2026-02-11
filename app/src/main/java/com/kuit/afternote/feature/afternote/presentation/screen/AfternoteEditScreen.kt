@@ -129,6 +129,7 @@ fun AfternoteEditScreen(
                 LoadFromExistingParams(
                     itemId = item.id,
                     serviceName = item.serviceName,
+                    categoryDisplayString = AfternoteItemMapper.categoryStringForEditScreen(item.type),
                     accountId = item.accountId,
                     password = item.password,
                     message = item.message,

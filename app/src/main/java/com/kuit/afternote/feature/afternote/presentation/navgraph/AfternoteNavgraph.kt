@@ -434,7 +434,11 @@ private fun AfternoteEditRouteContent(
             onBottomNavTabSelected = onBottomNavTabSelected
         ),
         playlistStateHolder = playlistStateHolder,
-        initialItem = initialItem,
+        // Don't pass initialItem when loadForEdit is used (route.itemId != null).
+        // The list item has empty processMethod fields; passing it would race with
+        // loadForEdit and set loadedItemId before the detail API responds,
+        // causing the full detail data (including processMethod) to be discarded.
+        initialItem = if (route.itemId != null) null else initialItem,
         state = state,
         saveError = saveError
     )

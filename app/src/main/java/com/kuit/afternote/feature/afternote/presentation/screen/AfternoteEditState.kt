@@ -404,15 +404,14 @@ class AfternoteEditState(
         Log.d(
             TAG,
             "loadFromExisting: itemId=${params.itemId}, serviceName=${params.serviceName}, " +
-                "category=${AfternoteItemMapper.categoryStringForEditScreen(params.serviceName)}, " +
-                "accountId=${params.accountId}, message=${params.message.take(20)}, " +
+                "category=${params.categoryDisplayString}, " +
                 "accountPM=${params.accountProcessingMethodName}, infoPM=${params.informationProcessingMethodName}, " +
                 "processingMethods=${params.processingMethodsList.size}, " +
                 "galleryProcessingMethods=${params.galleryProcessingMethodsList.size}"
         )
         loadedItemId = params.itemId
         selectedService = params.serviceName
-        selectedCategory = AfternoteItemMapper.categoryStringForEditScreen(params.serviceName)
+        selectedCategory = params.categoryDisplayString
 
         idState.edit { replace(0, length, params.accountId) }
         passwordState.edit { replace(0, length, params.password) }
@@ -437,10 +436,14 @@ class AfternoteEditState(
 
 /**
  * Parameters for pre-filling edit state from an existing afternote item.
+ *
+ * @param categoryDisplayString Edit-screen category dropdown value (e.g. "갤러리 및 파일").
+ *        Must come from API [detail.category], not inferred from title, so Gallery processMethod loads.
  */
 data class LoadFromExistingParams(
     val itemId: String,
     val serviceName: String,
+    val categoryDisplayString: String,
     val accountId: String,
     val password: String,
     val message: String,

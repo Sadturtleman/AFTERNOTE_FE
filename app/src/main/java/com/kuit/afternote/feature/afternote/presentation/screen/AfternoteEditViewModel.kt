@@ -184,10 +184,13 @@ class AfternoteEditViewModel
                             if (!isSocialCategory) serverProcessMethodToInfoEnum(processMethod)
                             else ""
 
+                        val categoryDisplayString = serverCategoryToEditScreenCategory(detail.category)
+
                         val params =
                             LoadFromExistingParams(
                                 itemId = detail.id.toString(),
                                 serviceName = detail.title,
+                                categoryDisplayString = categoryDisplayString,
                                 accountId = detail.credentialsId ?: "",
                                 password = detail.credentialsPassword ?: "",
                                 message = detail.leaveMessage ?: "",
@@ -438,6 +441,16 @@ class AfternoteEditViewModel
                 "TRANSFER", "RECEIVER" -> "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
                 "ADDITIONAL" -> "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER"
                 else -> processMethod
+            }
+
+        /** API category (e.g. GALLERY) → edit screen dropdown value so Gallery processMethod loads. */
+        private fun serverCategoryToEditScreenCategory(serverCategory: String): String =
+            when (serverCategory.uppercase()) {
+                "SOCIAL" -> CATEGORY_SOCIAL
+                "BUSINESS" -> CATEGORY_BUSINESS
+                "GALLERY" -> CATEGORY_GALLERY
+                "PLAYLIST", "MUSIC" -> CATEGORY_MEMORIAL
+                else -> CATEGORY_SOCIAL
             }
 
         private fun toServerProcessMethod(
