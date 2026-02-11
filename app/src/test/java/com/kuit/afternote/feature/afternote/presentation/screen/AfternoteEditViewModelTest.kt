@@ -6,6 +6,8 @@ import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfterno
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -34,6 +36,8 @@ class AfternoteEditViewModelTest {
     private lateinit var createPlaylistUseCase: CreatePlaylistAfternoteUseCase
     private lateinit var updateUseCase: UpdateAfternoteUseCase
     private lateinit var getDetailUseCase: GetAfternoteDetailUseCase
+    private lateinit var getReceiversUseCase: GetReceiversUseCase
+    private lateinit var getUserIdUseCase: GetUserIdUseCase
     private lateinit var viewModel: AfternoteEditViewModel
 
     private val socialPayload =
@@ -56,13 +60,18 @@ class AfternoteEditViewModelTest {
         createPlaylistUseCase = mockk()
         updateUseCase = mockk()
         getDetailUseCase = mockk()
+        getReceiversUseCase = mockk()
+        getUserIdUseCase = mockk()
+        coEvery { getUserIdUseCase() } returns null
         viewModel =
             AfternoteEditViewModel(
                 createSocialUseCase = createSocialUseCase,
                 createGalleryUseCase = createGalleryUseCase,
                 createPlaylistUseCase = createPlaylistUseCase,
                 updateUseCase = updateUseCase,
-                getDetailUseCase = getDetailUseCase
+                getDetailUseCase = getDetailUseCase,
+                getReceiversUseCase = getReceiversUseCase,
+                getUserIdUseCase = getUserIdUseCase
             )
     }
 

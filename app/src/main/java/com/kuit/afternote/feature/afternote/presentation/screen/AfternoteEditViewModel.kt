@@ -14,6 +14,8 @@ import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUse
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
+import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,8 @@ private const val CATEGORY_MEMORIAL = "추모 가이드라인"
  * 카테고리에 따라 적절한 create UseCase를 호출하거나,
  * 기존 항목 수정 시 update UseCase를 호출합니다.
  */
+private const val INFO_METHOD_TRANSFER = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
+
 @HiltViewModel
 class AfternoteEditViewModel
     @Inject
@@ -41,7 +45,9 @@ class AfternoteEditViewModel
         private val createGalleryUseCase: CreateGalleryAfternoteUseCase,
         private val createPlaylistUseCase: CreatePlaylistAfternoteUseCase,
         private val updateUseCase: UpdateAfternoteUseCase,
-        private val getDetailUseCase: GetAfternoteDetailUseCase
+        private val getDetailUseCase: GetAfternoteDetailUseCase,
+        private val getReceiversUseCase: GetReceiversUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
 
         private val _saveState = MutableStateFlow(AfternoteSaveState())
@@ -53,7 +59,8 @@ class AfternoteEditViewModel
          * @param editingId null이면 신규 생성, non-null이면 수정
          * @param category 선택된 카테고리 한국어 문자열
          * @param payload 편집 화면에서 수집된 데이터
-         * @param receivers 갤러리 카테고리의 수신자 목록
+         * @param receivers 갤러리 카테고리 시 "추가 수신자에게 정보 전달"일 때만 사용(수정 화면 수신자 추가 목록).
+         *                  "수신자에게 정보 전달"일 때는 수신자 목록(GET /users/receivers) ID를 사용함.
          * @param playlistStateHolder 추모 가이드라인의 플레이리스트 상태
          */
         fun saveAfternote(
@@ -152,6 +159,25 @@ class AfternoteEditViewModel
             }
         }
 
+        /**
+         * 갤러리 카테고리 저장 시 사용할 수신자 ID 목록.
+         * "수신자에게 정보 전달"(TRANSFER)이면 수신자 목록(GET /users/receivers)의 ID 사용,
+         * "추가 수신자에게 정보 전달"(ADDITIONAL)이면 편집 화면에서 추가한 수신자 ID 사용.
+         */
+        private suspend fun resolveGalleryReceiverIds(
+            informationProcessingMethod: String,
+            editReceivers: List<AfternoteEditReceiver>
+        ): List<Long> {
+            if (informationProcessingMethod == INFO_METHOD_TRANSFER) {
+                val userId = getUserIdUseCase() ?: return emptyList()
+                return getReceiversUseCase(userId = userId)
+                    .getOrNull()
+                    ?.map { it.receiverId }
+                    ?: emptyList()
+            }
+            return editReceivers.mapNotNull { it.id.toLongOrNull() }
+        }
+
         private suspend fun performCreate(
             category: String,
             payload: RegisterAfternotePayload,
@@ -167,13 +193,19 @@ class AfternoteEditViewModel
             val leaveMessage = payload.message.ifEmpty { null }
 
             return when (category) {
-                CATEGORY_GALLERY -> createGalleryUseCase(
-                    title = payload.serviceName,
-                    processMethod = processMethod,
-                    actions = actions,
-                    leaveMessage = leaveMessage,
-                    receiverIds = receivers.mapNotNull { it.id.toLongOrNull() }
-                )
+                CATEGORY_GALLERY -> {
+                    val receiverIds = resolveGalleryReceiverIds(
+                        informationProcessingMethod = payload.informationProcessingMethod,
+                        editReceivers = receivers
+                    )
+                    createGalleryUseCase(
+                        title = payload.serviceName,
+                        processMethod = processMethod,
+                        actions = actions,
+                        leaveMessage = leaveMessage,
+                        receiverIds = receiverIds
+                    )
+                }
                 CATEGORY_MEMORIAL -> {
                     val playlistDto = buildPlaylistDto(playlistStateHolder)
                     createPlaylistUseCase(
@@ -221,9 +253,13 @@ class AfternoteEditViewModel
                     else -> null
                 },
                 receivers = when (category) {
-                    CATEGORY_GALLERY -> receivers.mapNotNull { r ->
-                        r.id.toLongOrNull()?.let { AfternoteReceiverRefDto(receiverId = it) }
-                    }.ifEmpty { null }
+                    CATEGORY_GALLERY -> {
+                        val ids = resolveGalleryReceiverIds(
+                            informationProcessingMethod = payload.informationProcessingMethod,
+                            editReceivers = receivers
+                        )
+                        ids.map { AfternoteReceiverRefDto(receiverId = it) }.ifEmpty { null }
+                    }
                     else -> null
                 },
                 playlist = when (category) {
