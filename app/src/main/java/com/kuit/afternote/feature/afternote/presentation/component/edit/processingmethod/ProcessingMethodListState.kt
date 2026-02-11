@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverListState.kt
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
-========
+
 package com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/processingmethod/ProcessingMethodListState.kt
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -11,15 +8,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverListState.kt
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
-
-/**
- * MainPageEditReceiverList의 상태를 관리하는 State Holder
- */
-@Stable
-class MainPageEditReceiverListState(
-========
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 
 /**
@@ -27,8 +15,8 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Pr
  */
 @Stable
 class ProcessingMethodListState(
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/processingmethod/ProcessingMethodListState.kt
     initialShowTextField: Boolean = false,
+    initialExpandedItemId: String? = null
 ) {
     var showTextField by mutableStateOf(initialShowTextField)
         private set
@@ -43,14 +31,6 @@ class ProcessingMethodListState(
      * @param initialExpandedItemId 아이템 id; null이면 생성자에서 받은 [defaultExpandedItemId] 사용
      */
     fun initializeExpandedStates(
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverListState.kt
-        mainPageEditReceivers: List<MainPageEditReceiver>,
-        initialExpandedItemId: String?
-    ) {
-        mainPageEditReceivers.forEach { receiver ->
-            if (!expandedStates.containsKey(receiver.id)) {
-                expandedStates[receiver.id] = initialExpandedItemId == receiver.id
-========
         items: List<ProcessingMethodItem>,
         initialExpandedItemId: String?
     ) {
@@ -58,7 +38,6 @@ class ProcessingMethodListState(
         items.forEach { item ->
             if (!expandedStates.containsKey(item.id)) {
                 expandedStates[item.id] = expandedId == item.id
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/processingmethod/ProcessingMethodListState.kt
             }
         }
     }
@@ -79,14 +58,8 @@ class ProcessingMethodListState(
 }
 
 /**
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverListState.kt
  * MainPageEditReceiverListState를 생성하는 Composable 함수
- */
-@Composable
-fun rememberMainPageEditReceiverListState(initialShowTextField: Boolean = false,): MainPageEditReceiverListState =
-    remember {
-        MainPageEditReceiverListState(
-========
+ *
  * ProcessingMethodListState를 생성하는 Composable 함수
  */
 @Composable
@@ -96,7 +69,6 @@ fun rememberProcessingMethodListState(
 ): ProcessingMethodListState =
     remember {
         ProcessingMethodListState(
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/processingmethod/ProcessingMethodListState.kt
             initialShowTextField = initialShowTextField,
         )
     }

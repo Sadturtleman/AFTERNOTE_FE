@@ -1,7 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.data.di
 
-import com.kuit.afternote.feature.dailyrecord.data.repository.RecordRepository
-import com.kuit.afternote.feature.dailyrecord.data.repository.RecordRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

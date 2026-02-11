@@ -9,6 +9,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDailyQuestionListScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
@@ -19,7 +20,10 @@ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendR
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.recordNavGraph(navController: NavController) {
+fun NavGraphBuilder.recordNavGraph(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+    ) {
     composable("record_main") {
         RecordMainScreen(
             onDiaryClick = { navController.navigate(RecordRoute.DiaryRoute) },

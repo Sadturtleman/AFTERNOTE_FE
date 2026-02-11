@@ -4,7 +4,6 @@ package com.kuit.afternote.feature.dailyrecord.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel

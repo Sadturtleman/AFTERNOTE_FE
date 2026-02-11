@@ -74,11 +74,8 @@ fun ProcessingMethodList(
             visible = state.showTextField,
             onItemAdded = onItemAdded,
             onVisibilityChanged = { isVisible ->
-                state.setTextFieldVisible(isVisible)
                 params.onTextFieldVisibilityChanged(isVisible)
             },
-            previousFocusedState = state.previousFocusedState,
-            onPreviousFocusedStateChange = state::updatePreviousFocusedState
         )
 
         Spacer(modifier = Modifier.height(16.dp))

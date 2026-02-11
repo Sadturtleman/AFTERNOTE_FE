@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
-========
+
 package com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,15 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiver
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.model.MainPageEditReceiverCallbacks
-========
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -57,30 +49,17 @@ import com.kuit.afternote.ui.theme.White
  * - 하단 중앙에 추가 버튼 (파란 원형 버튼)
  */
 @Composable
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-fun MainPageEditReceiverList(
-    modifier: Modifier = Modifier,
-    mainPageEditReceivers: List<MainPageEditReceiver>,
-    events: MainPageEditReceiverCallbacks = MainPageEditReceiverCallbacks(),
-    state: MainPageEditReceiverListState = rememberMainPageEditReceiverListState()
-========
 fun AfternoteEditReceiverList(
     modifier: Modifier = Modifier,
     afternoteEditReceivers: List<AfternoteEditReceiver>,
     events: AfternoteEditReceiverCallbacks = AfternoteEditReceiverCallbacks(),
     state: AfternoteEditReceiverListState = rememberAfternoteEditReceiverListState()
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
 ) {
     val focusManager = LocalFocusManager.current
 
     // 초기화: 수신자들의 expanded 상태 설정
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-    LaunchedEffect(mainPageEditReceivers) {
-        state.initializeExpandedStates(mainPageEditReceivers, null)
-========
     LaunchedEffect(afternoteEditReceivers) {
         state.initializeExpandedStates(afternoteEditReceivers, null)
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
     }
 
     Column(
@@ -90,13 +69,8 @@ fun AfternoteEditReceiverList(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-        mainPageEditReceivers.forEachIndexed { _, receiver ->
-            MainPageEditReceiverItem(
-========
         afternoteEditReceivers.forEachIndexed { _, receiver ->
             AfternoteEditReceiverItem(
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
                 receiver = receiver,
                 expanded = state.expandedStates[receiver.id] ?: false,
                 onMoreClick = {
@@ -106,11 +80,7 @@ fun AfternoteEditReceiverList(
                 onDismissDropdown = {
                     state.expandedStates[receiver.id] = false
                 },
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-                onEditClick = { events.onItemEditClick(receiver.id) },
-========
                 showEditItem = false,
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
                 onDeleteClick = { events.onItemDeleteClick(receiver.id) }
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -139,15 +109,9 @@ fun AfternoteEditReceiverList(
  * - 더보기 아이콘: 오른쪽 정렬
  */
 @Composable
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-private fun MainPageEditReceiverItem(
-    modifier: Modifier = Modifier,
-    receiver: MainPageEditReceiver,
-========
 private fun AfternoteEditReceiverItem(
     modifier: Modifier = Modifier,
     receiver: AfternoteEditReceiver,
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
     expanded: Boolean = false,
     onMoreClick: () -> Unit = {},
     onDismissDropdown: () -> Unit = {},
@@ -213,17 +177,7 @@ private fun AfternoteEditReceiverItem(
 
 @Preview(showBackground = true)
 @Composable
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/MainPageEditReceiverList.kt
-private fun MainPageEditReceiverListPreview() {
-    AfternoteTheme {
-        MainPageEditReceiverList(
-            mainPageEditReceivers = listOf(
-                MainPageEditReceiver(id = "1", name = "김지은", label = "친구"),
-                MainPageEditReceiver(id = "2", name = "박선호", label = "가족")
-            ),
-            events = MainPageEditReceiverCallbacks()
-        )
-========
+
 private fun AfternoteEditReceiverListPreview() {
     AfternoteTheme {
         CompositionLocalProvider(
@@ -235,6 +189,5 @@ private fun AfternoteEditReceiverListPreview() {
                 events = AfternoteEditReceiverCallbacks()
             )
         }
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AfternoteEditReceiverList.kt
     }
 }

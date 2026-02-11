@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-package com.kuit.afternote.feature.mainpage.presentation.component.edit.mainpageeditreceiver
-========
+
 package com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,16 +30,10 @@ import androidx.compose.ui.window.DialogProperties
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.DropdownMenuStyle
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.mainpage.presentation.component.edit.dropdown.rememberSelectionDropdownState
-========
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.rememberSelectionDropdownState
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
@@ -64,11 +55,7 @@ private fun RelationshipDropdown(
     val dropdownState = rememberSelectionDropdownState()
 
     SelectionDropdown(
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-        label = "수신자와의 관계",
-========
         labelParams = SelectionDropdownLabelParams(label = "수신자와의 관계"),
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
         selectedValue = selectedValue,
         options = options,
         onValueSelected = onValueSelected,
@@ -88,15 +75,9 @@ private fun RelationshipDropdown(
  * - 연락처에서 추가하기 버튼 (B3 배경)
  */
 @Composable
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-fun AddMainPageEditReceiverDialog(
-    modifier: Modifier = Modifier,
-    params: AddMainPageEditReceiverDialogParams
-========
 fun AddAfternoteEditReceiverDialog(
     modifier: Modifier = Modifier,
     params: AddAfternoteEditReceiverDialogParams
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
 ) {
     Dialog(
         onDismissRequest = params.callbacks.onDismiss,
@@ -167,11 +148,7 @@ fun AddAfternoteEditReceiverDialog(
             // 수신자 이름 입력 필드
             OutlineTextField(
                 label = "수신자 이름",
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-                textFieldState = params.mainPageEditReceiverNameState,
-========
                 textFieldState = params.afternoteEditReceiverNameState,
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
                 keyboardType = KeyboardType.Text,
                 style = LabeledTextFieldStyle(containerColor = Gray1, labelSpacing = 7.95.dp)
             )
@@ -228,19 +205,11 @@ fun AddAfternoteEditReceiverDialog(
 
 @Preview(showBackground = true)
 @Composable
-<<<<<<<< HEAD:app/src/main/java/com/kuit/afternote/feature/mainpage/presentation/component/edit/mainpageeditreceiver/AddMainPageEditReceiverDialog.kt
-private fun AddMainPageEditReceiverDialogPreview() {
-    AfternoteTheme {
-        AddMainPageEditReceiverDialog(
-            params = AddMainPageEditReceiverDialogParams(
-                mainPageEditReceiverNameState = rememberTextFieldState(),
-========
 private fun AddAfternoteEditReceiverDialogPreview() {
     AfternoteTheme {
         AddAfternoteEditReceiverDialog(
             params = AddAfternoteEditReceiverDialogParams(
                 afternoteEditReceiverNameState = rememberTextFieldState(),
->>>>>>>> 18f1a0c82c9329353ff9254b226743d587b4b33f:app/src/main/java/com/kuit/afternote/feature/afternote/presentation/component/edit/afternoteeditreceiver/AddAfternoteEditReceiverDialog.kt
                 phoneNumberState = rememberTextFieldState(),
                 relationshipSelectedValue = "친구",
                 relationshipOptions = listOf("친구", "가족", "연인")
