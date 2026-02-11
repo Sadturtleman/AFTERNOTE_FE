@@ -308,7 +308,7 @@ private fun ReceiverTimeLetterListRouteContent(
     val timeLetterItems = timeLettersState.items.map { item ->
         TimeLetterItem(
             id = item.timeLetterId.toString(),
-            receivername = item.receiverName,
+            receivername = item.senderName,
             sendDate = item.sendAt,
             title = item.title,
             content = item.content,

@@ -1,7 +1,9 @@
 package com.kuit.afternote.feature.receiver.presentation.screen
 
 import ReceiverRecordListRow
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
@@ -22,10 +24,12 @@ fun ReceiverRecordListScreen(
     )
     Scaffold(
         topBar = {
-            TopBar(
-                title = "받은 기록함",
-                onBackClick = { onBackClick() }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "받은 기록함",
+                    onBackClick = { onBackClick() }
+                )
+            }
         }
     ) { paddingValues ->
         LazyColumn(

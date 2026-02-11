@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -63,10 +64,12 @@ fun ReceiverAfterNoteMainScreen(
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "故${title}님의 애프터노트",
-                onBackClick = { onBackClick() }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "故${title}님의 애프터노트",
+                    onBackClick = { onBackClick() }
+                )
+            }
         },
         bottomBar = {
             if (showBottomBar) {

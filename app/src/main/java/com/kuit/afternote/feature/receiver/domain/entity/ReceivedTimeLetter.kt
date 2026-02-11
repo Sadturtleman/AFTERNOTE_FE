@@ -7,8 +7,11 @@ package com.kuit.afternote.feature.receiver.domain.entity
  */
 data class ReceivedTimeLetter(
     val timeLetterId: Long,
-    val receiverName: String?,
-    val sendAt: String?,
     val title: String?,
-    val content: String?
+    val content: String?,
+    val sendAt: String?,
+    val status: String?,
+    val senderName: String?,
+    val deliveredAt: String?,
+    val createdAt: String?
 )

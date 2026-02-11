@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.timeletter.presentation.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,12 +25,16 @@ import com.kuit.afternote.R
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 
 @Composable
-fun ReceiverInfoItem(receiver: TimeLetterReceiver) {
+fun ReceiverInfoItem(
+    receiver: TimeLetterReceiver,
+    onClick: (() -> Unit)? = null
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(58.dp)
-            .padding(start = 20.dp),
+            .padding(start = 20.dp)
+            .then(if (onClick != null) Modifier.clickable { onClick!!() } else Modifier),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
     ) {
         Image(

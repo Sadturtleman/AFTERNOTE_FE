@@ -26,7 +26,7 @@ fun MasterKeyInputContent(masterKey: TextFieldState) {
             fontFamily = Sansneo
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
         Text(
             text = "고인에게 전달받은 마스터 키를 입력해주세요.",
@@ -36,7 +36,7 @@ fun MasterKeyInputContent(masterKey: TextFieldState) {
             color = Gray6
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(44.dp))
 
         OutlineTextField(
             textFieldState = masterKey,

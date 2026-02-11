@@ -31,11 +31,14 @@ data class CreateMindRecordReceiverRequestDto(
 
 @Serializable
 data class ReceivedTimeLetterResponseDto(
-    @SerialName("timeLetterId") val timeLetterId: Long,
-    @SerialName("receiverName") val receiverName: String? = null,
-    @SerialName("sendAt") val sendAt: String? = null,
+    @SerialName("id") val id: Long,
     @SerialName("title") val title: String? = null,
-    @SerialName("content") val content: String? = null
+    @SerialName("content") val content: String? = null,
+    @SerialName("sendAt") val sendAt: String? = null,
+    @SerialName("status") val status: String? = null,
+    @SerialName("senderName") val senderName: String? = null,
+    @SerialName("deliveredAt") val deliveredAt: String? = null,
+    @SerialName("createdAt") val createdAt: String? = null
 )
 
 @Serializable
