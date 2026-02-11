@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -26,6 +27,11 @@ fun BottomNavigationBar(
     selectedItem: BottomNavItem = BottomNavItem.HOME,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
+    val homeLabel = stringResource(BottomNavItem.HOME.labelResId)
+    val recordLabel = stringResource(BottomNavItem.RECORD.labelResId)
+    val timeLetterLabel = stringResource(BottomNavItem.TIME_LETTER.labelResId)
+    val afternoteLabel = stringResource(BottomNavItem.AFTERNOTE.labelResId)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -33,10 +39,9 @@ fun BottomNavigationBar(
             .padding(start = 38.dp, top = 19.dp, end = 32.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 홈
         BottomNavigationItem(
             iconRes = BottomNavItem.HOME.iconRes,
-            label = BottomNavItem.HOME.label,
+            label = homeLabel,
             isSelected = BottomNavItem.HOME == selectedItem,
             onClick = { onItemSelected(BottomNavItem.HOME) },
             iconTextSpacing = BottomNavItem.HOME.iconTextSpacing
@@ -44,10 +49,9 @@ fun BottomNavigationBar(
 
         Spacer(modifier = Modifier.weight(62f))
 
-        // 기록
         BottomNavigationItem(
             iconRes = BottomNavItem.RECORD.iconRes,
-            label = BottomNavItem.RECORD.label,
+            label = recordLabel,
             isSelected = BottomNavItem.RECORD == selectedItem,
             onClick = { onItemSelected(BottomNavItem.RECORD) },
             iconTextSpacing = BottomNavItem.RECORD.iconTextSpacing
@@ -55,10 +59,9 @@ fun BottomNavigationBar(
 
         Spacer(modifier = Modifier.weight(57f))
 
-        // 타임레터
         BottomNavigationItem(
             iconRes = BottomNavItem.TIME_LETTER.iconRes,
-            label = BottomNavItem.TIME_LETTER.label,
+            label = timeLetterLabel,
             isSelected = BottomNavItem.TIME_LETTER == selectedItem,
             onClick = { onItemSelected(BottomNavItem.TIME_LETTER) },
             iconTextSpacing = BottomNavItem.TIME_LETTER.iconTextSpacing
@@ -66,10 +69,9 @@ fun BottomNavigationBar(
 
         Spacer(modifier = Modifier.weight(46f))
 
-        // 애프터노트
         BottomNavigationItem(
             iconRes = BottomNavItem.AFTERNOTE.iconRes,
-            label = BottomNavItem.AFTERNOTE.label,
+            label = afternoteLabel,
             isSelected = BottomNavItem.AFTERNOTE == selectedItem,
             onClick = { onItemSelected(BottomNavItem.AFTERNOTE) },
             iconTextSpacing = BottomNavItem.AFTERNOTE.iconTextSpacing

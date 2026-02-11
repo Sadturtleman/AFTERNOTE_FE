@@ -1,0 +1,23 @@
+---
+description: Debugging and investigation — log first, no speculative fixes
+globs: "**/*"
+alwaysApply: true
+---
+
+# Debugging & Investigation (디버깅·조사)
+
+## ⚠️ Log First, No Strange or Complicated Things - Critical
+
+When the user reports **unclear behavior**, **bugs**, or **"X doesn't work" / "Y never appears"**:
+
+1. **Do first**: Add **logging** (or minimal instrumentation) so you can see actual values and flow (e.g. `Log.d(TAG, "key=$value")`, or log which branch is taken). Suggest where to look in Logcat.
+2. **Do not** implement speculative fixes, refactors, placeholder/error handling, new parameters, or other "strange or complicated" changes **before** the root cause is known or confirmed via logs.
+3. **Only after** logs (or user confirmation) show the cause, propose or implement a **targeted** fix.
+
+### Why
+- Guessing the cause and adding logic (e.g. `isNullOrBlank()`, Coil placeholder/error, new UI) can hide the real bug or add unnecessary complexity.
+- Logging reveals what is actually happening so the fix can be minimal and correct.
+
+### Summary
+- **Before doing strange and complicated things, just log.**
+- Do not add fixes or refactors before logging to understand the problem.

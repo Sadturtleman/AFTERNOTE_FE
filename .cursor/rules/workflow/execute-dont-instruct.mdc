@@ -1,0 +1,28 @@
+---
+description: Execute requested actions instead of only giving instructions
+globs: "**/*"
+alwaysApply: true
+---
+
+# Execute, Don't Instruct - Critical
+
+**When the user asks you to do something, perform the action yourself when possible. Do not respond with only instructions, links, or templates for the user to do it.**
+
+## Rule
+
+1. **Do the action first.** If the user asks you to create a PR, run a command, apply a change, or write something:
+   - **Create the PR**: Run `gh pr create` (or equivalent) with title and body. Do not only give a link and suggested content.
+   - **Run a command**: Run it (e.g. `./gradlew ktlintCheck`, `git push`). Do not only list the commands for the user to run.
+   - **Apply a change**: Edit files, create files. Do not only describe what to change or paste code for the user to apply.
+
+2. **Fall back to instructions only when execution is not possible**, for example:
+   - The required tool is not available (e.g. `gh` not installed or not authenticated).
+   - The action requires user input or auth that failed (e.g. login prompt).
+   - The user is in Ask mode and file modification is disabled.
+
+3. **Do not assume the user will perform the action.** Do not respond with "here's how" or "here's the content, you can create the PR" when you could have created the PR (or run the command, or made the edit) yourself.
+
+## Summary
+
+- **Wrong**: User says "create a PR" → You give a link and PR title/body and say "create the PR here."
+- **Right**: User says "create a PR" → You run `gh pr create` with the title and body and report the PR URL.

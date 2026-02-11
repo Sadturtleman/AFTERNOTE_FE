@@ -4,11 +4,11 @@ This project shows deprecation warnings when building with Gradle 9.1. These com
 
 ## Warnings (from `--warning-mode all`)
 
-| Warning | Source | Action |
-|--------|--------|--------|
-| Multi-string dependency notation for `com.android.tools.lint:lint-gradle:31.13.0` | Android Gradle Plugin (AGP) | Upgrade AGP when a Gradle-10–compatible version is available |
-| Multi-string dependency notation for `com.android.tools.build:aapt2:8.13.0-13719691:osx` | Android Gradle Plugin (AGP) | Same as above |
-| `ReportingExtension.file(String)` deprecated; use `getBaseDirectory().file(String)` | A plugin (e.g. ktlint or detekt) | Upgrade the plugin when it uses the new API |
+| Warning | Source                        | Action |
+|--------|-------------------------------|--------|
+| Multi-string dependency notation for `com.android.tools.lint:lint-gradle:31.13.0` | Android Gradle Plugin (AGP)   | Upgrade AGP when a Gradle-10–compatible version is available |
+| Multi-string dependency notation for `com.android.tools.build:aapt2:8.13.0-13719691:osx` | Android Gradle Plugin (AGP)   | Same as above |
+| `ReportingExtension.file(String)` deprecated; use `getBaseDirectory().file(String)` | A plugin (e.g. detekt)        | Upgrade the plugin when it uses the new API |
 
 ## What we’re *not* doing
 
@@ -23,7 +23,7 @@ This project shows deprecation warnings when building with Gradle 9.1. These com
 2. **Before Gradle 10**  
    Upgrade when new versions are available:
    - **AGP** – to a version that uses single-string dependency notation for its internal dependencies.
-   - **ktlint / detekt** – to versions that use `reporting.baseDirectory.file(...)` (or equivalent) instead of `ReportingExtension.file(String)`.
+   - **detekt** – to versions that use `reporting.baseDirectory.file(...)` (or equivalent) instead of `ReportingExtension.file(String)`.
 
 ## How to reproduce
 

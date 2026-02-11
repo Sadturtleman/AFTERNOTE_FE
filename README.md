@@ -173,6 +173,18 @@ revert: 누들 사건에 대해 다시는 언급하지 맙시다
 Refs: 676104e, a215868
 ```
 
+## Required checks before merge
+
+Code must pass these checks before a PR is merged:
+
+| Check | What | Verify locally |
+|-------|------|----------------|
+| **Commitlint** | PR title and commit messages (Conventional Commits, ≤100 chars/line) | `echo "type(scope): subject" \| npx commitlint` |
+| **Ktlint** | Kotlin code style | `./gradlew ktlintCheck` |
+| **Build** | Debug build must succeed (same as app distribution) | `./gradlew assembleDebug` |
+
+Optional: run `./scripts/check-pr-commitlint-ktlint.sh` before pushing to verify commitlint + ktlint. See `.cursor/rules/workflow/pr-ci-checks.mdc` for details.
+
 ## 트러블슈팅
 
 ### Gradle Java 보안 파일 로드 문제

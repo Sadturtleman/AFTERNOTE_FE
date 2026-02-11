@@ -28,6 +28,8 @@ interface AuthRepository {
         password: String
     ): Result<LoginResult>
 
+    suspend fun kakaoLogin(accessToken: String): Result<LoginResult>
+
     suspend fun reissue(refreshToken: String): Result<ReissueResult>
 
     suspend fun logout(refreshToken: String): Result<Unit>

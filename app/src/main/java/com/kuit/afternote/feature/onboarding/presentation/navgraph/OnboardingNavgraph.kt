@@ -4,19 +4,22 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kuit.afternote.feature.mainpage.presentation.navgraph.MainPageRoute
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 
-fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
+fun NavGraphBuilder.onboardingNavGraph(
+    navController: NavController,
+    onNavigateToReceiverOnboarding: () -> Unit
+) {
     composable<OnboardingRoute.LoginRoute> {
         LoginScreen(
             onBackClick = { navController.popBackStack() },
             onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) },
             onFindIdClick = {},
-            onLoginSuccess = { navController.navigate(MainPageRoute.MainRoute) }
+            onLoginSuccess = { navController.navigate(AfternoteRoute.AfternoteListRoute) }
         )
     }
 
@@ -37,7 +40,7 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
     composable<OnboardingRoute.SplashRoute> {
         SplashScreen(
             onLoginClick = { navController.navigate(OnboardingRoute.LoginRoute) },
-            onCheckClick = {},
+            onCheckClick = onNavigateToReceiverOnboarding,
             onStartClick = {},
             onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
         )
@@ -49,12 +52,11 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
             email = route.email,
             password = route.password,
             onFinishClick = {
-                android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, MainRoute로 이동 시도")
-                navController.navigate(MainPageRoute.MainRoute)
+                android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, AfternoteListRoute로 이동 시도")
+                navController.navigate(AfternoteRoute.AfternoteListRoute)
                 android.util.Log.d("OnboardingNavGraph", "navigate 호출 완료")
             },
-            onBackClick = { navController.popBackStack() },
-            onAddProfileAvatarClick = { }
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

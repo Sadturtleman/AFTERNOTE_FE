@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.auth.data.api
 
 import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
@@ -40,6 +41,11 @@ interface AuthApiService {
     @POST("auth/login")
     suspend fun login(
         @Body body: LoginRequest
+    ): ApiResponse<LoginData?>
+
+    @POST("auth/kakao")
+    suspend fun kakaoLogin(
+        @Body body: KakaoLoginRequest
     ): ApiResponse<LoginData?>
 
     @POST("auth/reissue")

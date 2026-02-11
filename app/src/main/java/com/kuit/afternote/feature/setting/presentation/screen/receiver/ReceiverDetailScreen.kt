@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.receiver
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,7 +51,7 @@ import com.kuit.afternote.ui.theme.White
 private const val RECEIVER_DETAIL_FIELD_PLACEHOLDER = "Text Field"
 
 /**
- * 프로필 수정 화면 콜백 그룹
+ * 수신자 목록 상세 화면 콜백 그룹
  */
 data class ReceiverDetailEditCallbacks(
     val onBackClick: () -> Unit = {},
@@ -88,6 +89,7 @@ fun ReceiverDetailScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    BackHandler(onBack = callbacks.onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
@@ -185,7 +187,7 @@ private fun ReceiverDetailHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.img_profile),
+            painter = painterResource(R.drawable.img_default_profile),
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .size(134.dp)

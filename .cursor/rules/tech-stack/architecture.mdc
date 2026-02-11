@@ -38,8 +38,8 @@ alwaysApply: false
   * 해당 Feature의 여러 화면(Screen)에서만 공유되고, 다른 Feature에서는 절대 쓰일 일이 없는 경우
   * 특정 Feature의 도메인 데이터(예: `Album`, `Song`)를 파라미터로 받는 경우
 - **마이그레이션 전략**:
-  1. 패키지 이동: `feature/mainpage/.../common/` → `core/`
-  2. 의존성 확인: 이동한 컴포넌트가 `mainpage`만의 리소스나 도메인 모델을 참조하는지 확인
+  1. 패키지 이동: `feature/afternote/.../common/` → `core/`
+  2. 의존성 확인: 이동한 컴포넌트가 `afternote`만의 리소스나 도메인 모델을 참조하는지 확인
   3. Import 경로 수정: 모든 사용처의 import 경로를 `core`로 변경
   4. 빌드 테스트: 앱 전체를 빌드하여 깨지는 곳이 없는지 확인
 - **예시**:

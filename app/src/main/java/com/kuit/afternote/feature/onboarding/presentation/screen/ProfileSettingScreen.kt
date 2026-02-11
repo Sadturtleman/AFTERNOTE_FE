@@ -1,14 +1,14 @@
 package com.kuit.afternote.feature.onboarding.presentation.screen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -19,14 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.SignUpViewModel
@@ -40,7 +39,6 @@ fun ProfileSettingScreen(
     password: String,
     onFinishClick: () -> Unit,
     onBackClick: () -> Unit,
-    onAddProfileAvatarClick: () -> Unit,
     signUpViewModel: SignUpViewModel = hiltViewModel()
 ) {
     val name = rememberTextFieldState()
@@ -63,31 +61,41 @@ fun ProfileSettingScreen(
         }
     }
 
+    val profileImagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            signUpViewModel.setSelectedProfileImageUri(uri)
+        }
+
     ProfileSettingContent(
         modifier = modifier,
         nameState = name,
-        onBackClick = onBackClick,
-        onAddProfileAvatarClick = onAddProfileAvatarClick,
-        snackBarHostState = snackBarHostState,
-        onSignUpClick = {
-            val nameText = name.text.toString().trim()
-            android.util.Log.d("ProfileSettingScreen", "회원 가입 완료 버튼 클릭됨: email=$email, name=$nameText")
-            signUpViewModel.signUp(
-                email = email,
-                password = password,
-                name = nameText,
-                profileUrl = null
+        pickedProfileImageUri = uiState.pickedProfileImageUri,
+        onProfileImageEditClick = {
+            profileImagePickerLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
-        }
-    )
+        },
+        onBackClick = onBackClick,
+        snackBarHostState = snackBarHostState
+    ) {
+        val nameText = name.text.toString().trim()
+        android.util.Log.d("ProfileSettingScreen", "회원 가입 완료 버튼 클릭됨: email=$email, name=$nameText")
+        signUpViewModel.signUp(
+            email = email,
+            password = password,
+            name = nameText,
+            profileUrl = null
+        )
+    }
 }
 
 @Composable
 private fun ProfileSettingContent(
     modifier: Modifier = Modifier,
     nameState: androidx.compose.foundation.text.input.TextFieldState,
+    pickedProfileImageUri: String? = null,
+    onProfileImageEditClick: () -> Unit = {},
     onBackClick: () -> Unit,
-    onAddProfileAvatarClick: () -> Unit,
     snackBarHostState: SnackbarHostState,
     onSignUpClick: () -> Unit
 ) {
@@ -110,12 +118,10 @@ private fun ProfileSettingContent(
         ) {
             Spacer(modifier = Modifier.weight(0.4f))
 
-            Image(
-                painter = painterResource(R.drawable.img_profile),
-                contentDescription = null,
-                modifier = Modifier
-                    .clickable { onAddProfileAvatarClick() }
-                    .size(135.dp)
+            ProfileImage(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                displayImageUri = pickedProfileImageUri,
+                onEditClick = onProfileImageEditClick
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -150,8 +156,9 @@ private fun ProfileSettingScreenPreview() {
 
         ProfileSettingContent(
             nameState = nameState,
+            pickedProfileImageUri = null,
+            onProfileImageEditClick = {},
             onBackClick = {},
-            onAddProfileAvatarClick = {},
             snackBarHostState = snackBarHostState,
             onSignUpClick = {}
         )

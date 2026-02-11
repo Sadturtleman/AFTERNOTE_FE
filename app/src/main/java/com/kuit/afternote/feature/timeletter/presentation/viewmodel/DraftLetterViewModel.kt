@@ -32,17 +32,14 @@ class DraftLetterViewModel
         private val _uiState = MutableStateFlow(DraftLetterUiState())
         val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
 
-        init {
-            loadTemporaryLetters()
-        }
-
         /**
          * 임시저장 목록 로드 (GET /time-letters/temporary)
          */
         fun loadTemporaryLetters() {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
-                getTemporaryTimeLettersUseCase().onSuccess { list ->
+                getTemporaryTimeLettersUseCase()
+                    .onSuccess { list ->
                         val items = list.timeLetters.map { toDraftLetterItem(it) }
                         _uiState.update {
                             it.copy(
@@ -50,8 +47,7 @@ class DraftLetterViewModel
                                 isLoading = false
                             )
                         }
-                    }
-                    .onFailure {
+                    }.onFailure {
                         _uiState.update {
                             it.copy(
                                 draftLetters = emptyList(),

@@ -1,8 +1,15 @@
 package com.kuit.afternote.feature.user.data.mapper
 
+import com.kuit.afternote.feature.user.data.dto.DailyQuestionAnswerItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
+import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.PushSettings
+import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
+import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 
 /**
@@ -23,4 +30,37 @@ object UserMapper {
             mindRecord = dto.mindRecord,
             afterNote = dto.afterNote
         )
+
+    fun toReceiverListItem(dto: ReceiverItemDto): ReceiverListItem =
+        ReceiverListItem(
+            receiverId = dto.receiverId,
+            name = dto.name,
+            relation = dto.relation
+        )
+
+    fun toReceiverDetail(dto: ReceiverDetailResponseDto): ReceiverDetail =
+        ReceiverDetail(
+            receiverId = dto.receiverId,
+            name = dto.name,
+            relation = dto.relation,
+            phone = dto.phone,
+            email = dto.email,
+            dailyQuestionCount = dto.dailyQuestionCount,
+            timeLetterCount = dto.timeLetterCount,
+            afterNoteCount = dto.afterNoteCount
+        )
+
+    fun toDailyQuestionAnswerItem(dto: DailyQuestionAnswerItemDto): DailyQuestionAnswerItem =
+        DailyQuestionAnswerItem(
+            dailyQuestionAnswerId = dto.dailyQuestionAnswerId,
+            question = dto.question,
+            answer = dto.answer,
+            recordDate = dto.recordDate
+        )
+
+    fun toReceiverDailyQuestionsResult(
+        items: List<DailyQuestionAnswerItem>,
+        hasNext: Boolean
+    ): ReceiverDailyQuestionsResult =
+        ReceiverDailyQuestionsResult(items = items, hasNext = hasNext)
 }

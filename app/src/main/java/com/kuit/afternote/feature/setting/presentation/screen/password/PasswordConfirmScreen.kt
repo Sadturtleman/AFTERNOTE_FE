@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ fun PasswordConfirmScreen(
         { action -> keyPadViewModel.handleKeyAction(action) }
     }
 
+    BackHandler(onBack = onBackClick)
     Scaffold(
         topBar = {
             TopBar(
@@ -58,7 +60,7 @@ fun PasswordConfirmScreen(
             Spacer(modifier = Modifier.height(50.dp))
 
             Image(
-                painter = painterResource(R.drawable.lock),
+                painter = painterResource(R.drawable.ic_lock),
                 contentDescription = null,
                 modifier = Modifier.size(56.dp)
             )

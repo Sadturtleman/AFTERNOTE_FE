@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.screen.password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -134,6 +135,7 @@ fun PasswordChangeScreen(
         }
     }
 
+    BackHandler(onBack = onBackClick)
     PasswordChangeContent(
         modifier = modifier,
         fieldStates = fieldStates,

@@ -31,8 +31,12 @@ sealed interface SettingRoute {
 
     @Serializable
     data class ReceiverAfternoteListRoute(
-        val receiverId: String = ""
+        val receiverId: String = "",
+        val receiverName: String = ""
     ) : SettingRoute
+
+    @Serializable
+    data object ProfileEditRoute : SettingRoute
 
     @Serializable
     data object PasswordChangeRoute : SettingRoute
@@ -48,11 +52,16 @@ sealed interface SettingRoute {
 
     @Serializable
     data class DailyAnswerRoute(
-        val receiverId: String = ""
+        val receiverId: String = "",
+        val receiverName: String = ""
     ) : SettingRoute
 
     @Serializable
     data class ReceiverTimeLetterListRoute(
-        val receiverId: String = ""
+        val receiverId: String = "",
+        val receiverName: String = ""
     ) : SettingRoute
+
+    @Serializable
+    data object NoticeRoute : SettingRoute
 }
