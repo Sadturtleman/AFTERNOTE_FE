@@ -45,7 +45,7 @@ class ReceiverTimeLettersListViewModel
                                 items = list.map { item ->
                                     ReceivedTimeLetterListItemUi(
                                         timeLetterId = item.timeLetterId,
-                                        receiverName = item.receiverName.orEmpty(),
+                                        senderName = item.senderName.orEmpty(),
                                         sendAt = item.sendAt.orEmpty(),
                                         title = item.title.orEmpty(),
                                         content = item.content.orEmpty()
