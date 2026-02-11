@@ -76,7 +76,12 @@ class AfternoteRepositoryImpl
         response.requireData().afternoteId
     }.also { result ->
         result.onFailure { e ->
-            Log.e(TAG, "createSocial: FAILED", e)
+            if (e is retrofit2.HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(TAG, "createSocial: FAILED ${e.code()} body=$errorBody", e)
+            } else {
+                Log.e(TAG, "createSocial: FAILED", e)
+            }
         }
     }
 

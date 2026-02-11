@@ -230,6 +230,10 @@ class AfternoteEditViewModel
             if (payload.accountId.isBlank() || payload.password.isBlank()) {
                 return AfternoteValidationError.SOCIAL_CREDENTIALS_REQUIRED
             }
+            val validProcessMethods = setOf("MEMORIAL_ACCOUNT", "PERMANENT_DELETE", "TRANSFER_TO_RECEIVER")
+            if (payload.accountProcessingMethod !in validProcessMethods) {
+                return AfternoteValidationError.SOCIAL_PROCESS_METHOD_REQUIRED
+            }
             if (payload.processingMethods.isEmpty()) {
                 return AfternoteValidationError.SOCIAL_ACTIONS_REQUIRED
             }
