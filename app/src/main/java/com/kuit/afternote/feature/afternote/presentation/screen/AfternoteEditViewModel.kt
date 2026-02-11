@@ -38,6 +38,7 @@ private const val CATEGORY_MEMORIAL = "추모 가이드라인"
  * 기존 항목 수정 시 update UseCase를 호출합니다.
  */
 private const val INFO_METHOD_TRANSFER = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
+private const val INFO_METHOD_ADDITIONAL = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER"
 
 @HiltViewModel
 class AfternoteEditViewModel
@@ -77,6 +78,18 @@ class AfternoteEditViewModel
                 return
             }
 
+            val validationError = validateRequiredFieldsSync(
+                category = category,
+                payload = payload,
+                receivers = receivers,
+                playlistStateHolder = playlistStateHolder
+            )
+            if (validationError != null) {
+                Log.w(TAG, "saveAfternote: validation failed: $validationError")
+                _saveState.update { it.copy(validationError = validationError) }
+                return
+            }
+
             Log.d(
                 TAG,
                 "saveAfternote: editingId=$editingId, category=$category, " +
@@ -90,7 +103,9 @@ class AfternoteEditViewModel
             )
 
             viewModelScope.launch {
-                _saveState.update { it.copy(isSaving = true, error = null) }
+                _saveState.update {
+                    it.copy(isSaving = true, error = null, validationError = null)
+                }
                 val result = if (editingId != null) {
                     performUpdate(
                         afternoteId = editingId,
@@ -116,11 +131,19 @@ class AfternoteEditViewModel
                     }
                     .onFailure { e ->
                         Log.e(TAG, "saveAfternote: FAILURE, category=$category", e)
-                        _saveState.update {
-                            it.copy(
-                                isSaving = false,
-                                error = e.message ?: "저장에 실패했습니다."
-                            )
+                        when (e) {
+                            is AfternoteValidationException -> _saveState.update {
+                                it.copy(
+                                    isSaving = false,
+                                    validationError = e.validationError
+                                )
+                            }
+                            else -> _saveState.update {
+                                it.copy(
+                                    isSaving = false,
+                                    error = e.message ?: "저장에 실패했습니다."
+                                )
+                            }
                         }
                     }
             }
@@ -197,6 +220,67 @@ class AfternoteEditViewModel
             return editReceivers.mapNotNull { it.id.toLongOrNull() }
         }
 
+        /**
+         * Validates required fields for SOCIAL-like categories (소셜네트워크, 비즈니스, 재산 처리).
+         * Returns the first validation error found, or null if valid.
+         */
+        private fun validateSocialLikeRequiredFields(
+            payload: RegisterAfternotePayload
+        ): AfternoteValidationError? {
+            if (payload.accountId.isBlank() || payload.password.isBlank()) {
+                return AfternoteValidationError.SOCIAL_CREDENTIALS_REQUIRED
+            }
+            if (payload.processingMethods.isEmpty()) {
+                return AfternoteValidationError.SOCIAL_ACTIONS_REQUIRED
+            }
+            return null
+        }
+
+        /**
+         * Validates required fields per category before save (create).
+         * Returns the first validation error found, or null if valid.
+         */
+        private fun validateRequiredFieldsSync(
+            category: String,
+            payload: RegisterAfternotePayload,
+            receivers: List<AfternoteEditReceiver>,
+            playlistStateHolder: MemorialPlaylistStateHolder?
+        ): AfternoteValidationError? {
+            if (payload.serviceName.trim().isEmpty()) {
+                return AfternoteValidationError.TITLE_REQUIRED
+            }
+            return when (category) {
+                CATEGORY_SOCIAL, CATEGORY_BUSINESS -> validateSocialLikeRequiredFields(payload)
+                CATEGORY_GALLERY -> validateGalleryRequiredFields(payload, receivers)
+                CATEGORY_MEMORIAL -> validateMemorialRequiredFields(playlistStateHolder)
+                else -> validateSocialLikeRequiredFields(payload)
+            }
+        }
+
+        private fun validateGalleryRequiredFields(
+            payload: RegisterAfternotePayload,
+            receivers: List<AfternoteEditReceiver>
+        ): AfternoteValidationError? {
+            if (payload.galleryProcessingMethods.isEmpty()) {
+                return AfternoteValidationError.GALLERY_ACTIONS_REQUIRED
+            }
+            if (payload.informationProcessingMethod == INFO_METHOD_ADDITIONAL &&
+                receivers.isEmpty()
+            ) {
+                return AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
+            }
+            return null
+        }
+
+        private fun validateMemorialRequiredFields(
+            playlistStateHolder: MemorialPlaylistStateHolder?
+        ): AfternoteValidationError? {
+            if (playlistStateHolder == null || playlistStateHolder.songs.isEmpty()) {
+                return AfternoteValidationError.PLAYLIST_SONGS_REQUIRED
+            }
+            return null
+        }
+
         private suspend fun performCreate(
             category: String,
             payload: RegisterAfternotePayload,
@@ -222,12 +306,19 @@ class AfternoteEditViewModel
                     "leaveMessage=$leaveMessage"
             )
 
-            return when (category) {
+                return when (category) {
                 CATEGORY_GALLERY -> {
                     val receiverIds = resolveGalleryReceiverIds(
                         informationProcessingMethod = payload.informationProcessingMethod,
                         editReceivers = receivers
                     )
+                    if (receiverIds.isEmpty()) {
+                        return Result.failure(
+                            AfternoteValidationException(
+                                AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
+                            )
+                        )
+                    }
                     // API requires non-empty actions for GALLERY; use default when none added
                     val galleryActions =
                         if (actions.isEmpty()) listOf("정보 전달") else actions

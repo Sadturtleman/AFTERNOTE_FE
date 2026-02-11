@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import android.util.Log
 import androidx.compose.runtime.CompositionLocalProvider
@@ -74,6 +76,12 @@ data class AfternoteEditScreenCallbacks(
 )
 
 /**
+ * Message to show when save fails (validation or API error).
+ * When non-null, the screen shows a Snackbar with this text.
+ */
+data class AfternoteEditSaveError(val message: String)
+
+/**
  * 애프터노트 수정/작성 화면
  *
  * 피그마 디자인 기반:
@@ -91,9 +99,20 @@ fun AfternoteEditScreen(
     callbacks: AfternoteEditScreenCallbacks = AfternoteEditScreenCallbacks(),
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null,
-    initialItem: com.kuit.afternote.feature.afternote.domain.model.AfternoteItem? = null
+    initialItem: com.kuit.afternote.feature.afternote.domain.model.AfternoteItem? = null,
+    saveError: AfternoteEditSaveError? = null
 ) {
     val focusManager = LocalFocusManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(saveError) {
+        saveError?.let { err ->
+            snackbarHostState.showSnackbar(
+                message = err.message,
+                withDismissAction = true
+            )
+        }
+    }
 
     LaunchedEffect(initialItem?.id) {
         val item = initialItem ?: run {
@@ -151,6 +170,7 @@ fun AfternoteEditScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopBar(
                 title = "애프터노트 작성하기",

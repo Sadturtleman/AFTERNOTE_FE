@@ -48,6 +48,7 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Af
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreenCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
@@ -406,6 +407,14 @@ private fun AfternoteEditRouteContent(
         }
     }
 
+    val saveError = when {
+        saveState.validationError != null -> AfternoteEditSaveError(
+            stringResource(saveState.validationError!!.messageResId)
+        )
+        saveState.error != null -> AfternoteEditSaveError(saveState.error!!)
+        else -> null
+    }
+
     AfternoteEditScreen(
         callbacks = AfternoteEditScreenCallbacks(
             onBackClick = {
@@ -426,7 +435,8 @@ private fun AfternoteEditRouteContent(
         ),
         playlistStateHolder = playlistStateHolder,
         initialItem = initialItem,
-        state = state
+        state = state,
+        saveError = saveError
     )
 }
 

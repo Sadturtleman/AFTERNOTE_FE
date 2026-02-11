@@ -61,4 +61,12 @@
 
     <!-- Afternote detail: design not yet implemented -->
     <string name="design_pending">디자인 예정</string>
+
+    <!-- Afternote edit: required field validation -->
+    <string name="afternote_validation_title_required">서비스명을 입력해 주세요.</string>
+    <string name="afternote_validation_social_credentials_required">계정 ID와 비밀번호를 입력해 주세요.</string>
+    <string name="afternote_validation_social_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
+    <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
+    <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
+    <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
 </resources>
