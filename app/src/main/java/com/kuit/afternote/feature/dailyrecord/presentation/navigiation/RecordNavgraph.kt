@@ -24,12 +24,14 @@ fun NavGraphBuilder.recordNavGraph(
     navController: NavController,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
     ) {
+
     composable("record_main") {
         RecordMainScreen(
             onDiaryClick = { navController.navigate(RecordRoute.DiaryRoute) },
             onQuestionClick = { navController.navigate(RecordRoute.QuestionRoute) },
             onDeepMindClick = { navController.navigate(RecordRoute.DeepMindRoute) },
-            onWeekendReportClick = { navController.navigate(RecordRoute.WeekendReportRoute) }
+            onWeekendReportClick = { navController.navigate(RecordRoute.WeekendReportRoute) },
+            onBottomNavTabSelected = onBottomNavTabSelected
         )
     }
     composable<RecordRoute.ListRoute> {
