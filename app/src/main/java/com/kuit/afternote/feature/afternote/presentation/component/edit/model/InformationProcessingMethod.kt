@@ -13,6 +13,6 @@ enum class InformationProcessingMethod(
     ),
     TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER(
         "추가 수신자에게 정보 전달",
-        "설정된 수신자 이외의 추가적인 수신자를 지정해여 해당 정보만 전달합니다."
+        "설정된 수신자 이외의 추가적인 수신자를 지정하여 해당 정보만 전달합니다."
     )
 }
