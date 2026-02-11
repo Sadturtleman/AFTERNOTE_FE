@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -90,15 +91,17 @@ fun VerifySelfScreen(
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "수신자 인증",
-                onBackClick = {
-                    step.previous()?.let {
-                        step = it
-                    } ?: onBackClick()
-                },
-                step = step
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "수신자 인증",
+                    onBackClick = {
+                        step.previous()?.let {
+                            step = it
+                        } ?: onBackClick()
+                    },
+                    step = step
+                )
+            }
         }
     ) { paddingValues ->
         Column(

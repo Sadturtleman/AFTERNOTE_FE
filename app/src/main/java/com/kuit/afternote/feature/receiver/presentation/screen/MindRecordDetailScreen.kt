@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,10 +47,12 @@ fun MindRecordDetailScreen(onBackClick: () -> Unit) {
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "마음의 기록",
-                onBackClick = { onBackClick() }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "마음의 기록",
+                    onBackClick = { onBackClick() }
+                )
+            }
         },
         bottomBar = {
             BottomNavigationBar(
