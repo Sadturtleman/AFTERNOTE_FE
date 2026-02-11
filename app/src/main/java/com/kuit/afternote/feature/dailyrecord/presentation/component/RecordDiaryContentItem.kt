@@ -47,10 +47,6 @@ fun RecordDiaryContentItem(
     content: String,
     onContentChange: (String) -> Unit
 ) {
-    var title by remember { mutableStateOf("") } // 제목
-    var content by remember { mutableStateOf("") } // 내용
-    var isEditing by remember { mutableStateOf(false) }
-
     // 오늘 날짜 기준으로 받아오기
     val today = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
@@ -61,7 +57,7 @@ fun RecordDiaryContentItem(
     val showDialog = remember { mutableStateOf(false) }
 
     var s = " "
-    if (standard.equals("일기 기록하기")) {
+    if (standard == "일기 기록하기") {
         s = "작성 날짜"
     } else {
         s = "기록 주제"
@@ -87,13 +83,13 @@ fun RecordDiaryContentItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (s.equals("작성 날짜")) {
+                if (s == "작성 날짜") {
                     Text(
                         text = formattedDate,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                } else if (s.equals("기록 주제")) {
+                } else if (s == "기록 주제") {
                     Text(
                         text = "나의 가치관",
                         fontSize = 12.sp,
@@ -108,29 +104,30 @@ fun RecordDiaryContentItem(
                         .size(24.dp)
                         .clickable { showDialog.value = true }
                 )
-                // 다이얼로그
-                if (showDialog.value) {
-                    LaunchedEffect(Unit) {
-                        android.app
-                            .DatePickerDialog(
-                                context,
-                                R.style.SpinnerDatePickerStyle,
-                                { _, year, month, dayOfMonth ->
-                                    onDateSelected(year, month + 1, dayOfMonth)
-                                    showDialog.value = false
-                                },
-                                today.year,
-                                today.monthValue - 1,
-                                today.dayOfMonth
-                            ).show()
-                    }
-                }
+//                if (sendDate.isNotEmpty()) {
+//                    Text(
+//                        text = sendDate,
+//                        color = Color(0xFF212121),
+//                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
+//                        fontSize = 14.sp,
+//                        fontWeight = FontWeight.Normal,
+//                        modifier = Modifier.padding(top = 10.dp)
+//                    )
+//                }
+//                Image(
+//                    painter = painterResource(R.drawable.ic_down_vector),
+//                    contentDescription = "날짜 선택",
+//                    modifier = Modifier
+//                        .align(Alignment.CenterEnd)
+//                        .padding(top = 15.dp)
+//                        .size(width = 12.dp, height = 6.dp)
+//                )
             }
             Divider(color = Color.LightGray, thickness = 0.8.dp)
         }
         BasicTextField(
             value = title,
-            onValueChange = { title = it },
+            onValueChange = onTitleChange,
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -155,7 +152,7 @@ fun RecordDiaryContentItem(
 
         BasicTextField(
             value = content,
-            onValueChange = { title = it },
+            onValueChange = onContentChange,
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()

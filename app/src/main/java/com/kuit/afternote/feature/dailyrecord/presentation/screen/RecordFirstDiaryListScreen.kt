@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,6 +18,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import java.time.LocalDate
@@ -42,8 +46,11 @@ fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
+    onEditClick: (Long) ->Unit,
+    viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
+    val records by viewModel.records.collectAsState() // UIModel 구독
 
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -68,8 +75,8 @@ fun RecordFirstDiaryListScreen(
                         .background(
                             brush = Brush.linearGradient(
                                 colors = listOf(
-                                    Color(0xFFBDE0FF), // B3
-                                    Color(0xFFFFE1CC) // 주황색 계열
+                                    Color(0xFFBDE0FF),
+                                    Color(0xFFFFE1CC)
                                 )
                             )
                         ),
@@ -93,38 +100,21 @@ fun RecordFirstDiaryListScreen(
             )
             LazyColumn {
                 item {
-                    RecordListSort(
-                        today = today
-                    )
+                    RecordListSort(today = today)
                 }
-                item {
+                items(records) { record ->
                     RecordListItem(
-                        title = "오늘 하루, 누구에게 가장 고마웠나요?",
-                        content = "아무 말 없이 그저 나의 곁을 지켜주는 아내가 너무 고맙다."
-                    )
-                }
-                item {
-                    RecordListItem(
-                        title = "다",
-                        content = "라"
-                    )
-                }
-                item {
-                    RecordListItem(
-                        title = "마",
-                        content = "바"
-                    )
+                        record = record,
+                        onDeleteClick ={
+                            viewModel.deleteRecord(record.id)
+                        },
+                        onEditClick = { recordId ->
+                            onEditClick(recordId)
+                        }
+                        ) // 이제 UIModel을 그대로 넘김
                 }
             }
+
         }
     }
 }
-
-// @Preview(showBackground = true)
-// @Composable
-// private fun RePrev() {
-//    RecordFirstDiaryListScreen(
-//        onLeftClick = {},
-//        onPlusRecordClick = {}
-//    )
-// }

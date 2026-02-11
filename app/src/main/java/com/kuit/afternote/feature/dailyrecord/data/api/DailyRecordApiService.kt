@@ -1,20 +1,41 @@
 package com.kuit.afternote.feature.dailyrecord.data.api
 
-import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordResponse
-import com.kuit.afternote.feature.dailyrecord.data.dto.PostRequestDto
+import com.kuit.afternote.feature.dailyrecord.data.dto.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
- * 마음의 기록 API 서비스 (스웨거 기준)
- *
+ * 마음의 기록 API 서비스 (Swagger 기준)
  */
 interface DailyRecordApiService {
-    @GET("mind-records")
-    suspend fun getMindRecords(): List<MindRecordResponse>
 
-    @POST("posts")
-    suspend fun createPost(@Body postRequestDto: PostRequestDto): Response<Unit>
+    // 전체 기록 목록 조회
+    @GET("mind-records")
+    suspend fun getMindRecords(): MindRecordListResponse
+
+    // 기록 작성
+    @POST("mind-records")
+    suspend fun createMindRecord(
+        @Body request: CreateMindRecordRequest
+    ): PostMindRecordResponse
+
+
+    // 단건 조회
+    @GET("mind-records/{recordId}")
+    suspend fun getMindRecord(
+        @Path("recordId") recordId: Long
+    ): Response<MindRecordDetailResponse>
+
+    // 기록 수정
+    @PATCH("mind-records/{recordId}")
+    suspend fun editMindRecord(
+        @Path("recordId") recordId: Long,
+        @Body request: PostMindRecordRequest
+    ): Response<MindRecordDetailResponse>
+
+    // 기록 삭제
+    @DELETE("mind-records/{recordId}")
+    suspend fun deleteMindRecord(
+        @Path("recordId") recordId: Long
+    ): Response<Unit>
 }

@@ -16,7 +16,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.AfternoteDetailScreen
 import com.kuit.afternote.core.ui.screen.rememberAfternoteDetailState
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
+import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.recordNavGraph
 import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
