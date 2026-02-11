@@ -371,7 +371,17 @@ class AfternoteEditViewModel
                     if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
             )
 
+            val serverCategory =
+                when (category) {
+                    CATEGORY_SOCIAL -> "SOCIAL"
+                    CATEGORY_BUSINESS -> "BUSINESS"
+                    CATEGORY_GALLERY -> "GALLERY"
+                    CATEGORY_MEMORIAL -> "PLAYLIST"
+                    else -> null
+                }
+
             val body = AfternoteUpdateRequestDto(
+                category = serverCategory,
                 title = payload.serviceName,
                 processMethod = processMethod.ifEmpty { null },
                 actions = actions.ifEmpty { null },

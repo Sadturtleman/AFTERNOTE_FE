@@ -150,6 +150,7 @@ data class AfternoteCreatePlaylistRequestDto(
  */
 @Serializable
 data class AfternoteUpdateRequestDto(
+    val category: String? = null,
     val title: String? = null,
     val processMethod: String? = null,
     val actions: List<String>? = null,
