@@ -375,9 +375,16 @@ private fun AfternoteEditRouteContent(
     val saveState by editViewModel.saveState.collectAsStateWithLifecycle()
 
     val newState = rememberAfternoteEditState()
-    val state = editStateHandling.holder.value ?: newState
-    LaunchedEffect(Unit) {
-        if (editStateHandling.holder.value == null) {
+    // Create mode (itemId == null) always starts fresh; edit mode reuses holder
+    // to survive sub-route navigation (e.g. playlist screen).
+    val isCreateMode = route.itemId == null
+    val state = if (isCreateMode) newState else (editStateHandling.holder.value ?: newState)
+    LaunchedEffect(isCreateMode) {
+        if (isCreateMode) {
+            // Clear any stale state from a previous edit session
+            editStateHandling.onClear()
+            editStateHandling.holder.value = newState
+        } else if (editStateHandling.holder.value == null) {
             editStateHandling.holder.value = newState
         }
     }
