@@ -66,10 +66,11 @@ class AuthInterceptor
             val path = url.encodedPath
             val method = originalRequest.method
 
-            Log.d(TAG, "========== REQUEST ==========")
-            Log.d(TAG, "Method: $method")
-            Log.d(TAG, "URL: $url")
-            Log.d(TAG, "Path: $path")
+            // 강제로 눈에 띄도록 INFO 레벨 로그 추가 (필터: tag=AuthInterceptor, level=Info)
+            Log.i(TAG, "========== AUTH REQUEST ==========")
+            Log.i(TAG, "Method: $method")
+            Log.i(TAG, "URL: $url")
+            Log.i(TAG, "Path: $path")
 
             // 인증이 필요 없는 경로는 그대로 진행
             if (NO_AUTH_PATHS.any { path.endsWith(it) }) {
@@ -85,7 +86,7 @@ class AuthInterceptor
 
             // 토큰을 가져와서 헤더에 추가
             val accessToken = runBlocking { tokenManager.getAccessToken() }
-            Log.d(TAG, "Access Token: ${accessToken?.take(n = 20)}...")
+            Log.i(TAG, "Access Token (first 20 chars): ${accessToken?.take(n = 20)}...")
 
             if (accessToken.isNullOrEmpty()) {
                 Log.w(TAG, "Auth: NO TOKEN AVAILABLE")
@@ -121,7 +122,8 @@ class AuthInterceptor
 
             if (refreshToken.isNullOrEmpty()) {
                 Log.e(TAG, "TokenRefresh: No refresh token available")
-                runBlocking { tokenManager.clearTokens() }
+                // 토큰이 전혀 없는 상태에서는 추가 조치를 하지 않고 401을 그대로 반환한다.
+                // (UI 레이어에서 isLoggedInFlow를 보고 로그인 화면으로 유도)
                 return originalResponse
             }
 
@@ -153,13 +155,15 @@ class AuthInterceptor
                     Log.d(TAG, "TokenRefresh: Retrying original request with new token")
                     proceedAndLog(chain, newRequest)
                 } else {
-                    Log.e(TAG, "TokenRefresh: FAILED - Clearing tokens")
-                    runBlocking { tokenManager.clearTokens() }
+                    Log.e(TAG, "TokenRefresh: FAILED - keeping existing tokens")
+                    // 재발급 실패 시 기존 토큰을 삭제하지 않고 401을 그대로 반환한다.
+                    // 이렇게 해야 사용자가 이미 로그인했다고 생각하는 상태에서
+                    // 토큰이 갑자기 null로 사라지는 문제를 방지할 수 있다.
                     originalResponse
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "TokenRefresh: Exception - ${e.message}", e)
-                runBlocking { tokenManager.clearTokens() }
+                // 예외 발생 시에도 토큰을 강제로 삭제하지 않고 401 응답을 그대로 반환한다.
                 originalResponse
             }
         }
