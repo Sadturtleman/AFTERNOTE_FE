@@ -10,8 +10,10 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateGalleryAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternoteUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +40,8 @@ class AfternoteEditViewModel
         private val createSocialUseCase: CreateSocialAfternoteUseCase,
         private val createGalleryUseCase: CreateGalleryAfternoteUseCase,
         private val createPlaylistUseCase: CreatePlaylistAfternoteUseCase,
-        private val updateUseCase: UpdateAfternoteUseCase
+        private val updateUseCase: UpdateAfternoteUseCase,
+        private val getDetailUseCase: GetAfternoteDetailUseCase
     ) : ViewModel() {
 
         private val _saveState = MutableStateFlow(AfternoteSaveState())
@@ -93,6 +96,45 @@ class AfternoteEditViewModel
                                 error = e.message ?: "저장에 실패했습니다."
                             )
                         }
+                    }
+            }
+        }
+
+        /**
+         * 상세 API에서 조회한 데이터를 기반으로 편집 화면 상태를 채웁니다.
+         *
+         * 리스트 아이템에는 계정 정보/처리 방법/메시지가 없기 때문에,
+         * 편집 화면 진입 시 GET /api/afternotes/{id} 결과를 사용해
+         * [AfternoteEditState.loadFromExisting]를 호출합니다.
+         */
+        fun loadForEdit(
+            afternoteId: Long,
+            state: AfternoteEditState
+        ) {
+            viewModelScope.launch {
+                getDetailUseCase(afternoteId = afternoteId)
+                    .onSuccess { detail ->
+                        val processingMethods =
+                            detail.actions.mapIndexed { index, text ->
+                                ProcessingMethodItem(
+                                    id = (index + 1).toString(),
+                                    text = text
+                                )
+                            }
+
+                        val params =
+                            LoadFromExistingParams(
+                                itemId = detail.id.toString(),
+                                serviceName = detail.title,
+                                accountId = detail.credentialsId ?: "",
+                                password = detail.credentialsPassword ?: "",
+                                message = detail.leaveMessage ?: "",
+                                accountProcessingMethodName = detail.processMethod ?: "",
+                                informationProcessingMethodName = "",
+                                processingMethodsList = processingMethods,
+                                galleryProcessingMethodsList = emptyList()
+                            )
+                        state.loadFromExisting(params)
                     }
             }
         }

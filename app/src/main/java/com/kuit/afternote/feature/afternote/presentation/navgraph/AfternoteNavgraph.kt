@@ -379,6 +379,15 @@ private fun AfternoteEditRouteContent(
         }
     }
 
+    // 편집 진입 시 상세 API를 통해 최신 데이터를 불러와 편집 상태를 채운다.
+    LaunchedEffect(route.itemId) {
+        val id = route.itemId?.toLongOrNull() ?: return@LaunchedEffect
+        // 이미 다른 항목을 로드한 상태라면 덮어쓰지 않음
+        if (state.loadedItemId != route.itemId) {
+            editViewModel.loadForEdit(afternoteId = id, state = state)
+        }
+    }
+
     LaunchedEffect(playlistStateHolder, afternoteProvider) {
         if (playlistStateHolder.songs.isEmpty()) {
             playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
@@ -402,7 +411,7 @@ private fun AfternoteEditRouteContent(
         },
         onRegisterClick = { payload: RegisterAfternotePayload ->
             editViewModel.saveAfternote(
-                editingId = initialItem?.id?.toLongOrNull(),
+                editingId = route.itemId?.toLongOrNull() ?: initialItem?.id?.toLongOrNull(),
                 category = state.selectedCategory,
                 payload = payload,
                 receivers = state.afternoteEditReceivers,
