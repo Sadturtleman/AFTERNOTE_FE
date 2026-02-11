@@ -115,7 +115,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onMoreClick = viewModel::showPlusMenu,
             onDismissPlusMenu = viewModel::hidePlusMenu,
             showRegisteredPopUp = uiState.showRegisteredPopUp,
-            showDraftSavePopUp = uiState.showDraftSavePopUp
+            showDraftSavePopUp = uiState.showDraftSavePopUp,
+            showWaitingAgainPopUp = uiState.showWaitingAgainPopUp
         )
     }
 
