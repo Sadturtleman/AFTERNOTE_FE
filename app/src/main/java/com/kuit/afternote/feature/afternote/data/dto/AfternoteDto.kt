@@ -97,11 +97,18 @@ data class AfternoteDetailResponseDto(
     val playlist: AfternotePlaylistDto? = null
 )
 
+/**
+ * Receiver in GET /afternotes/{id} response (GALLERY).
+ * API currently returns only receiverId; name/relation are resolved via GET /users/receivers.
+ * Accepts optional name/relation/phone if API adds them later.
+ */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteDetailReceiverDto(
-    val name: String? = null,
-    val relation: String? = null,
-    val phone: String? = null
+    @SerialName("receiverId") @JsonNames("receiver_id") val receiverId: Long? = null,
+    @JsonNames("receiverName", "receiver_name") val name: String? = null,
+    @JsonNames("receiverRelation", "receiver_relation", "relationship") val relation: String? = null,
+    @JsonNames("receiverPhone", "receiver_phone", "phoneNumber", "phone_number") val phone: String? = null
 )
 
 @Serializable

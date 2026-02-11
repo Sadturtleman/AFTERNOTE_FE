@@ -43,6 +43,7 @@ object AfternoteMapper {
             credentialsPassword = dto.credentials?.password,
             receivers = dto.receivers?.map { r ->
                 AfternoteDetailReceiver(
+                    receiverId = r.receiverId,
                     name = r.name ?: "",
                     relation = r.relation ?: "",
                     phone = r.phone ?: ""

@@ -43,7 +43,9 @@ class AfternoteDetailViewModelTest {
             type = ServiceType.SOCIAL_NETWORK,
             credentialsId = "id",
             credentialsPassword = "pw",
-            receivers = listOf(AfternoteDetailReceiver("수신인", "친구", "010-0000-0000")),
+            receivers = listOf(
+                AfternoteDetailReceiver(name = "수신인", relation = "친구", phone = "010-0000-0000")
+            ),
             processMethod = "MEMORIAL",
             actions = listOf("게시물 내리기"),
             leaveMessage = "감사했습니다",
