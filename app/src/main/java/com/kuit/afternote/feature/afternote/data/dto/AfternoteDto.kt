@@ -1,7 +1,9 @@
 package com.kuit.afternote.feature.afternote.data.dto
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 /**
  * Server response form for GET /afternotes.
@@ -66,10 +68,12 @@ data class AfternoteReceiverRefDto(
 
 /**
  * Server response data for POST /afternotes and PATCH /afternotes/{id}.
+ * Accepts both snake_case (afternote_id) and camelCase (afternoteId) from API.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteIdResponseDto(
-    @SerialName("afternote_id") val afternoteId: Long
+    @SerialName("afternoteId") @JsonNames("afternote_id") val afternoteId: Long
 )
 
 // --- GET /afternotes/{afternoteId} (detail) ---
