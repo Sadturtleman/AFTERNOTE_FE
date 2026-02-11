@@ -329,7 +329,7 @@ fun NavGraph(navHostController: NavHostController) {
                     launchSingleTop = true
                 }
             BottomNavItem.AFTERNOTE ->
-                navHostController.navigate(AfternoteRoute.AfternoteListRoute) {
+                navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
                     launchSingleTop = true
                 }
             BottomNavItem.RECORD ->

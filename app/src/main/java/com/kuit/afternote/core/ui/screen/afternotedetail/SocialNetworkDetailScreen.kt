@@ -272,37 +272,31 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
  */
 @Composable
 private fun AccountProcessingMethodText(accountProcessingMethod: String) {
-    // 서버 processMethod 코드(MEMORIAL / DELETE 등)와
-    // 클라이언트 enum 이름(MEMORIAL_ACCOUNT / PERMANENT_DELETE)을 모두 처리한다.
-    val normalized =
+    // 서버 processMethod 코드(MEMORIAL / DELETE / TRANSFER / ADDITIONAL)와
+    // 클라이언트 enum 이름을 모두 처리한다.
+    val annotatedText =
         when (accountProcessingMethod) {
-            // 사망 후 추모 계정으로 전환
-            "MEMORIAL" -> "MEMORIAL_ACCOUNT"
-            // 사망 후 데이터 보관 요청(삭제/보관 의미)
-            "DELETE" -> "PERMANENT_DELETE"
-            // 사망 후 데이터/계정 관리를 수신자에게 위임
-            "RECEIVER" -> "TRANSFER_TO_RECEIVER"
-            else -> accountProcessingMethod
+            "MEMORIAL" -> buildAnnotatedString {
+                append("사망 후 ")
+                withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
+                append("으로 전환")
+            }
+            "DELETE" -> buildAnnotatedString {
+                append("사망 후 ")
+                withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
+            }
+            "TRANSFER", "RECEIVER" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+                append("에게 정보 전달")
+            }
+            "ADDITIONAL" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+                append("에게 정보 전달")
+            }
+            else -> buildAnnotatedString {
+                append(accountProcessingMethod)
+            }
         }
-
-    val annotatedText = when (normalized) {
-        "MEMORIAL_ACCOUNT" -> buildAnnotatedString {
-            append("사망 후 ")
-            withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
-            append("으로 전환")
-        }
-        "PERMANENT_DELETE" -> buildAnnotatedString {
-            append("사망 후 ")
-            withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
-        }
-        "TRANSFER_TO_RECEIVER" -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-            append("에게 정보 전달")
-        }
-        else -> buildAnnotatedString {
-            append(accountProcessingMethod)
-        }
-    }
     Text(
         text = annotatedText,
         style = TextStyle(

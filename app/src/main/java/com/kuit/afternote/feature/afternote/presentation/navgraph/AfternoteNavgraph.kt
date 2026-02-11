@@ -49,6 +49,7 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreenCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
@@ -351,7 +352,8 @@ private fun AfternoteEditRouteContent(
     afternoteItems: List<AfternoteItem>,
     playlistStateHolder: MemorialPlaylistStateHolder,
     afternoteProvider: AfternoteEditDataProvider,
-    editStateHandling: AfternoteEditStateHandling
+    editStateHandling: AfternoteEditStateHandling,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.EditRoute>()
     val listItems = remember(afternoteItems, afternoteProvider) {
@@ -405,20 +407,23 @@ private fun AfternoteEditRouteContent(
     }
 
     AfternoteEditScreen(
-        onBackClick = {
-            editStateHandling.onClear()
-            navController.popBackStack()
-        },
-        onRegisterClick = { payload: RegisterAfternotePayload ->
-            editViewModel.saveAfternote(
-                editingId = route.itemId?.toLongOrNull() ?: initialItem?.id?.toLongOrNull(),
-                category = state.selectedCategory,
-                payload = payload,
-                receivers = state.afternoteEditReceivers,
-                playlistStateHolder = playlistStateHolder
-            )
-        },
-        onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+        callbacks = AfternoteEditScreenCallbacks(
+            onBackClick = {
+                editStateHandling.onClear()
+                navController.popBackStack()
+            },
+            onRegisterClick = { payload: RegisterAfternotePayload ->
+                editViewModel.saveAfternote(
+                    editingId = route.itemId?.toLongOrNull() ?: initialItem?.id?.toLongOrNull(),
+                    category = state.selectedCategory,
+                    payload = payload,
+                    receivers = state.afternoteEditReceivers,
+                    playlistStateHolder = playlistStateHolder
+                )
+            },
+            onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+            onBottomNavTabSelected = onBottomNavTabSelected
+        ),
         playlistStateHolder = playlistStateHolder,
         initialItem = initialItem,
         state = state
@@ -446,7 +451,12 @@ private fun AfternoteFingerprintLoginContent(navController: NavController) {
                             override fun onAuthenticationSucceeded(
                                 result: BiometricPrompt.AuthenticationResult
                             ) {
-                                navController.popBackStack()
+                                navController.navigate(AfternoteRoute.AfternoteListRoute) {
+                                    popUpTo(AfternoteRoute.FingerprintLoginRoute) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     )
@@ -540,7 +550,8 @@ fun NavGraphBuilder.afternoteNavGraph(
             afternoteItems = currentItems,
             playlistStateHolder = params.playlistStateHolder,
             afternoteProvider = afternoteProvider,
-            editStateHandling = params.editStateHandling
+            editStateHandling = params.editStateHandling,
+            onBottomNavTabSelected = onBottomNavTabSelected
         )
     }
 

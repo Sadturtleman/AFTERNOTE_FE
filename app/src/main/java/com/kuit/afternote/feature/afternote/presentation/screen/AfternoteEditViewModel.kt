@@ -122,6 +122,19 @@ class AfternoteEditViewModel
                                 )
                             }
 
+                        val processMethod = detail.processMethod ?: ""
+                        val categoryUpper = detail.category.uppercase()
+                        val isSocialCategory =
+                            categoryUpper == "SOCIAL" ||
+                                categoryUpper == "BUSINESS" ||
+                                categoryUpper == "OTHER"
+                        val accountProcessingMethodName =
+                            if (isSocialCategory) serverProcessMethodToAccountEnum(processMethod)
+                            else ""
+                        val informationProcessingMethodName =
+                            if (!isSocialCategory) serverProcessMethodToInfoEnum(processMethod)
+                            else ""
+
                         val params =
                             LoadFromExistingParams(
                                 itemId = detail.id.toString(),
@@ -129,8 +142,8 @@ class AfternoteEditViewModel
                                 accountId = detail.credentialsId ?: "",
                                 password = detail.credentialsPassword ?: "",
                                 message = detail.leaveMessage ?: "",
-                                accountProcessingMethodName = detail.processMethod ?: "",
-                                informationProcessingMethodName = "",
+                                accountProcessingMethodName = accountProcessingMethodName,
+                                informationProcessingMethodName = informationProcessingMethodName,
                                 processingMethodsList = processingMethods,
                                 galleryProcessingMethodsList = emptyList()
                             )
@@ -226,23 +239,47 @@ class AfternoteEditViewModel
          *
          * - \"사망 후 추모 계정으로 전환\" 옵션 → MEMORIAL
          * - \"사망 후 데이터 보관 요청\" 옵션 → DELETE
-         * - \"수신자에게 정보 전달\" 옵션 → RECEIVER
+         * - \"수신자에게 정보 전달\" 옵션 → TRANSFER
+         * - \"추가 수신자에게 정보 전달\" 옵션 → ADDITIONAL
          *
          * 서버에서 내려오는 processMethod 의미에 맞춰 매핑합니다.
          */
+        /** 서버 processMethod → 계정 처리 방법 enum 이름 (소셜/비즈니스 편집용). */
+        private fun serverProcessMethodToAccountEnum(processMethod: String): String =
+            when (processMethod.uppercase()) {
+                "MEMORIAL" -> "MEMORIAL_ACCOUNT"
+                "DELETE" -> "PERMANENT_DELETE"
+                "TRANSFER", "RECEIVER" -> "TRANSFER_TO_RECEIVER"
+                else -> processMethod
+            }
+
+        /** 서버 processMethod → 정보 처리 방법 enum 이름 (갤러리 편집용). */
+        private fun serverProcessMethodToInfoEnum(processMethod: String): String =
+            when (processMethod.uppercase()) {
+                "TRANSFER", "RECEIVER" -> "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
+                "ADDITIONAL" -> "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER"
+                else -> processMethod
+            }
+
         private fun toServerProcessMethod(
             accountProcessingMethod: String,
             informationProcessingMethod: String
-        ): String =
-            when (accountProcessingMethod) {
-                // 사망 후 추모 계정으로 전환
-                "MEMORIAL_ACCOUNT" -> "MEMORIAL"
-                // 사망 후 데이터 보관 요청 (계정/데이터 보관)
-                "PERMANENT_DELETE" -> "DELETE"
-                // 수신자(또는 추가 수신자)에게 정보 전달
-                "TRANSFER_TO_RECEIVER" -> "RECEIVER"
-                else -> accountProcessingMethod.ifEmpty { informationProcessingMethod }
+        ): String {
+            val fromAccount =
+                when (accountProcessingMethod) {
+                    "MEMORIAL_ACCOUNT" -> "MEMORIAL"
+                    "PERMANENT_DELETE" -> "DELETE"
+                    "TRANSFER_TO_RECEIVER" -> "TRANSFER"
+                    else -> null
+                }
+            if (fromAccount != null) return fromAccount
+            val fallback = accountProcessingMethod.ifEmpty { informationProcessingMethod }
+            return when (fallback) {
+                "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER" -> "TRANSFER"
+                "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> "ADDITIONAL"
+                else -> fallback
             }
+        }
 
         private fun buildPlaylistDto(
             playlistStateHolder: MemorialPlaylistStateHolder?

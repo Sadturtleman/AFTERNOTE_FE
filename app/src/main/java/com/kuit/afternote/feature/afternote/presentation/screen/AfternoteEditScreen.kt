@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.component.edit.content.GalleryAndFileEditContent
@@ -63,6 +64,16 @@ private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
 /**
+ * 콜백 그룹 (S107: 파라미터 7개 이하 유지).
+ */
+data class AfternoteEditScreenCallbacks(
+    val onBackClick: () -> Unit = {},
+    val onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
+    val onNavigateToAddSong: () -> Unit = {},
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+)
+
+/**
  * 애프터노트 수정/작성 화면
  *
  * 피그마 디자인 기반:
@@ -73,15 +84,11 @@ private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
  * - 계정 처리 방법 선택 (라디오 버튼)
  * - 처리 방법 리스트 (체크박스)
  * - 남기실 말씀 (멀티라인 텍스트 필드)
- *
- * @param onNavigateToAddSong Called when user taps "노래 추가하기" in the MemorialPlaylist card on this edit screen; should navigate to MemorialPlaylistRouteScreen (full playlist screen).
  */
 @Composable
 fun AfternoteEditScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
-    onNavigateToAddSong: () -> Unit = {},
+    callbacks: AfternoteEditScreenCallbacks = AfternoteEditScreenCallbacks(),
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null,
     initialItem: com.kuit.afternote.feature.afternote.domain.model.AfternoteItem? = null
@@ -147,7 +154,7 @@ fun AfternoteEditScreen(
         topBar = {
             TopBar(
                 title = "애프터노트 작성하기",
-                onBackClick = onBackClick,
+                onBackClick = callbacks.onBackClick,
                 onActionClick = {
                     val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                     val date = dateFormat.format(Date())
@@ -157,7 +164,7 @@ fun AfternoteEditScreen(
                     val galleryProcessingMethods = state.galleryProcessingMethods.map {
                         AfternoteProcessingMethod(it.id, it.text)
                     }
-                    onRegisterClick(
+                    callbacks.onRegisterClick(
                         RegisterAfternotePayload(
                             serviceName = state.selectedService,
                             date = date,
@@ -176,7 +183,10 @@ fun AfternoteEditScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = state.selectedBottomNavItem,
-                onItemSelected = state::onBottomNavItemSelected
+                onItemSelected = { item ->
+                    state.onBottomNavItemSelected(item)
+                    callbacks.onBottomNavTabSelected(item)
+                }
             )
         }
     ) { paddingValues ->
@@ -188,7 +198,7 @@ fun AfternoteEditScreen(
         ) {
             EditContent(
                 state = state,
-                onNavigateToAddSong = onNavigateToAddSong,
+                onNavigateToAddSong = callbacks.onNavigateToAddSong,
                 onPhotoAddClick = {
                     memorialPhotoPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -398,7 +408,7 @@ private fun AfternoteEditScreenPreview() {
             DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
         ) {
             AfternoteEditScreen(
-                onBackClick = {}
+                callbacks = AfternoteEditScreenCallbacks(onBackClick = {})
             )
         }
     }
@@ -419,7 +429,7 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
                 onCategorySelected(CATEGORY_GALLERY_AND_FILE)
             }
             AfternoteEditScreen(
-                onBackClick = {},
+                callbacks = AfternoteEditScreenCallbacks(onBackClick = {}),
                 state = state
             )
         }
@@ -441,7 +451,7 @@ private fun AfternoteEditScreenMemorialGuidelinePreview() {
                 onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
             }
             AfternoteEditScreen(
-                onBackClick = {},
+                callbacks = AfternoteEditScreenCallbacks(onBackClick = {}),
                 state = state
             )
         }
