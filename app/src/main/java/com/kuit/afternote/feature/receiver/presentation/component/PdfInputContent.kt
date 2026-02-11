@@ -46,7 +46,7 @@ fun PdfInputContent(
     onFamilyImageAdd: () -> Unit,
     onFamilyFileAdd: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "증빙 서류 업로드",
             fontSize = 24.sp,
