@@ -2,11 +2,11 @@ package com.kuit.afternote.feature.dailyrecord.domain.usecase
 
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetail
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
-import com.kuit.afternote.feature.dailyrecord.data.repository.MindRecordRepository
+import com.kuit.afternote.feature.dailyrecord.data.repository.MindRecordRepositoryImpl
 import javax.inject.Inject
 
 class EditMindRecordUseCase @Inject constructor(
-    private val repository: MindRecordRepository
+    private val repository: MindRecordRepositoryImpl
 ) {
     suspend operator fun invoke(recordId: Long, request: PostMindRecordRequest): Result<MindRecordDetail> {
         return try {

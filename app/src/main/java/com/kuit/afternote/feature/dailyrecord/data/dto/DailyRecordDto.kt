@@ -30,7 +30,7 @@ data class MindRecordListData(
     /** 기록 요약 리스트 */
     val records: List<MindRecordSummary>,
     /** 표시된 날짜들 (달력 하이라이트용) */
-    val markedDates: List<String>
+    val markedDates: List<String>? = emptyList()
 )
 
 /**

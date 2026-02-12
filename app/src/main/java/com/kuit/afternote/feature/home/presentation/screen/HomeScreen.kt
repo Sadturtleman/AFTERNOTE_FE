@@ -1,22 +1,14 @@
 package com.kuit.afternote.feature.home.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
 import com.kuit.afternote.feature.home.presentation.component.DailyQuestionCard
@@ -80,15 +69,22 @@ interface HomeScreenEvent {
 fun HomeScreen(
     modifier: Modifier = Modifier,
     event: HomeScreenEvent = EmptyHomeScreenEvent,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    recordViewModel: MindRecordViewModel = hiltViewModel()
 ) {
     var content by remember { mutableStateOf(HomeScreenContent()) }
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
+    val recordUiState = recordViewModel.calendarDays.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         profileViewModel.loadProfile()
+        recordViewModel.loadRecords()
+
+
         content = content.copy(
             userName = uiState.value.name,
-            dailyQuestionDate = LocalDate.now().format(DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN))
+            dailyQuestionDate = LocalDate.now().format(DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)),
+            calendarDays = recordUiState.value
         )
     }
 
@@ -127,7 +123,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Weekly calendar
-            WeeklyCalendarStrip(days = content.calendarDays)
+            WeeklyCalendarStrip(days = recordUiState.value)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -248,7 +244,7 @@ internal fun defaultCalendarDays(): List<CalendarDay> = listOf(
     CalendarDay("목", 13, CalendarDayStyle.FILLED),
     CalendarDay("금", 14, CalendarDayStyle.FILLED),
     CalendarDay("토", 15, CalendarDayStyle.TODAY),
-    CalendarDay("일", 16, CalendarDayStyle.DEFAULT)
+    CalendarDay("일", 16, CalendarDayStyle.OUTLINED)
 )
 
 @Preview(showBackground = true, showSystemUi = true)

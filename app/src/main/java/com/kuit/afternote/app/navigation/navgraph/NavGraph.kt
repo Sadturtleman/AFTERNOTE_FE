@@ -46,7 +46,7 @@ import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGr
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
-import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.recordNavGraph
+import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
