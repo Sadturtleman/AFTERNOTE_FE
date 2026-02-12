@@ -34,9 +34,16 @@ class AfternoteListViewModel
 
         private var allItems: List<AfternoteItem> = emptyList()
 
+        init {
+            loadAfternotes()
+        }
+
         /**
          * API에서 애프터노트 목록을 로드합니다.
          * category가 null이면 전체, 그 외에는 카테고리별 필터링을 서버에서 수행합니다.
+         *
+         * 최초 로드는 init에서 자동 호출되며,
+         * 편집/저장 후 명시적으로 새로고침이 필요한 경우에만 외부에서 호출합니다.
          */
         fun loadAfternotes(
             category: String? = null,

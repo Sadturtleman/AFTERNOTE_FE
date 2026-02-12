@@ -47,7 +47,6 @@ import com.kuit.afternote.ui.theme.Gray1
  * - 하단 FAB 버튼
  */
 @Composable
-@Suppress("AssignedValueIsNeverRead")
 fun RecordMainScreen(
     modifier: Modifier = Modifier,
     onDiaryClick: () -> Unit,
@@ -63,7 +62,10 @@ fun RecordMainScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { item ->
+                    selectedBottomNavItem = item
+                    onBottomNavTabSelected(item)
+                }
             )
         },
         floatingActionButton = {
@@ -159,4 +161,11 @@ fun RecordMainScreen(
 )
 @Composable
 private fun RecordMainScreenPrev() {
+    RecordMainScreen(
+        onDiaryClick = {},
+        onDeepMindClick = {},
+        onWeekendReportClick = {},
+        onQuestionClick = {},
+        onBottomNavTabSelected = {}
+    )
 }

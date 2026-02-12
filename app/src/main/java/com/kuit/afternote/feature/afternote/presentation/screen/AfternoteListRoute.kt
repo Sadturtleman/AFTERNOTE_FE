@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.screen.AfternoteListScreen
@@ -37,10 +38,11 @@ fun AfternoteListRoute(
     initialItems: List<AfternoteItem> = emptyList(),
     onItemsChanged: (List<AfternoteItem>) -> Unit = {}
 ) {
+    // ViewModel.init에서 loadAfternotes()를 호출하므로 여기서는 더미 데이터만 처리.
+    // LaunchedEffect(Unit)에서 매번 loadAfternotes()를 호출하면, 하위 화면에서
+    // 복귀할 때마다 API 재호출 → 상태 변경 → NavHost recomposition이 발생하여
+    // FAB 등 입력이 몇 초간 먹히지 않는 문제가 생김.
     LaunchedEffect(Unit) {
-        // 항상 서버 데이터를 우선 로드
-        viewModel.loadAfternotes()
-        // Preview·더미 모드에서 initialItems를 명시적으로 넘긴 경우에만 사용
         if (initialItems.isNotEmpty()) {
             viewModel.setItems(initialItems)
         }
@@ -48,9 +50,13 @@ fun AfternoteListRoute(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.items) {
+    // Propagate items to parent only when the list actually changes (by ID set).
+    // Avoids expensive NavHost recomposition on every return from sub-routes
+    // when the API returns the same data.
+    val itemIds = remember(uiState.items) { uiState.items.map { it.id }.toSet() }
+    LaunchedEffect(itemIds) {
         if (uiState.items.isNotEmpty()) {
-            Log.d("AfternoteListRoute", "items loaded: size=${uiState.items.size}")
+            Log.d("AfternoteListRoute", "items changed: size=${uiState.items.size}")
             onItemsChanged(uiState.items)
         }
     }

@@ -16,17 +16,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
-import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
@@ -37,6 +34,7 @@ fun RecordDailyQuestionListScreen(
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
     onEditClick: (Long) -> Unit,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
@@ -52,8 +50,8 @@ fun RecordDailyQuestionListScreen(
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = BottomNavItem.HOME,
-                onItemSelected = { }
+                selectedItem = BottomNavItem.RECORD,
+                onItemSelected = { onBottomNavTabSelected(it) }
             )
         },
         floatingActionButton = {

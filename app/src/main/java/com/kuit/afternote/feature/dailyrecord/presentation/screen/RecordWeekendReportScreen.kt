@@ -42,16 +42,16 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-@Suppress("AssignedValueIsNeverRead")
 fun RecordWeekendReportScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
     val today = LocalDate.now()
 
     val weekFields = WeekFields.of(Locale.KOREA)
-    val weekOfMonth = today.get(weekFields.weekOfMonth())
+    val weekOfMonth = today[weekFields.weekOfMonth()]
 
     // 이번 주의 월요일
     val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
@@ -65,7 +65,10 @@ fun RecordWeekendReportScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { item ->
+                    selectedBottomNavItem = item
+                    onBottomNavTabSelected(item)
+                }
             )
         },
         floatingActionButton = {

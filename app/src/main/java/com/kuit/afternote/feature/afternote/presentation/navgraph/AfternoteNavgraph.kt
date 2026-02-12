@@ -119,7 +119,8 @@ private fun resolveListItems(
 private fun AfternoteListRouteContent(
     navController: NavController,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    onItemsUpdated: (List<AfternoteItem>) -> Unit
+    onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    editStateHandling: AfternoteEditStateHandling
 ) {
     AfternoteListRoute(
         callbacks =
@@ -133,7 +134,13 @@ private fun AfternoteListRouteContent(
                 onNavigateToMemorialGuidelineDetail = { itemId ->
                     navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
                 },
-                onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+                onNavigateToAdd = {
+                    // 새 작성 진입 시 이전 편집 세션 상태를 항상 초기화하여
+                    // 이전 세션의 카테고리/처리 방법이 남지 않도록 한다.
+                    editStateHandling.onClear()
+                    Log.d("AfternoteNav", "FAB onNavigateToAdd → navigate(EditRoute)")
+                    navController.navigate(AfternoteRoute.EditRoute())
+                },
                 onBottomNavTabSelected = onBottomNavTabSelected
             ),
         initialItems = emptyList(),
@@ -373,12 +380,15 @@ private fun AfternoteEditRouteContent(
 
     val editViewModel: AfternoteEditViewModel = hiltViewModel()
     val saveState by editViewModel.saveState.collectAsStateWithLifecycle()
-
     val newState = rememberAfternoteEditState()
-    val state = editStateHandling.holder.value ?: newState
+    // Nav-level holder keeps edit state alive across sub-routes (e.g. playlist, add song).
+    // Both create and edit modes reuse the holder within a single edit session so that
+    // category (e.g. 추모 가이드라인) and other form fields are not reset when returning.
+    val existingState = editStateHandling.holder.value
+    val state = existingState ?: newState
     LaunchedEffect(Unit) {
         if (editStateHandling.holder.value == null) {
-            editStateHandling.holder.value = newState
+            editStateHandling.holder.value = state
         }
     }
 
@@ -391,11 +401,9 @@ private fun AfternoteEditRouteContent(
         }
     }
 
-    LaunchedEffect(playlistStateHolder, afternoteProvider) {
-        if (playlistStateHolder.songs.isEmpty()) {
-            playlistStateHolder.initializeSongs(afternoteProvider.getSongs())
-        }
-    }
+    // 초기 진입 시 더미 곡으로 플레이리스트를 채우지 않는다.
+    // 사용자는 "노래 추가하기" 플로우를 통해 직접 곡을 추가하며,
+    // 실 서비스에서는 RealAfternoteEditDataProvider/실제 API가 곡 목록을 공급한다.
 
     LaunchedEffect(saveState.saveSuccess) {
         if (saveState.saveSuccess) {
@@ -447,7 +455,10 @@ private fun AfternoteEditRouteContent(
 // -- Fingerprint Login --
 
 @Composable
-private fun AfternoteFingerprintLoginContent(navController: NavController) {
+private fun AfternoteFingerprintLoginContent(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val promptTitle = stringResource(R.string.biometric_prompt_title)
@@ -499,7 +510,8 @@ private fun AfternoteFingerprintLoginContent(navController: NavController) {
                         .makeText(context, notAvailableMessage, android.widget.Toast.LENGTH_SHORT)
                         .show()
             }
-        }
+        },
+        onBottomNavTabSelected = onBottomNavTabSelected
     )
 }
 
@@ -536,7 +548,8 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteListRouteContent(
             navController = navController,
             onBottomNavTabSelected = onBottomNavTabSelected,
-            onItemsUpdated = params.onItemsUpdated
+            onItemsUpdated = params.onItemsUpdated,
+            editStateHandling = params.editStateHandling
         )
     }
 
@@ -586,7 +599,10 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.FingerprintLoginRoute> {
-        AfternoteFingerprintLoginContent(navController = navController)
+        AfternoteFingerprintLoginContent(
+            navController = navController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
     }
 
     afternoteComposable<AfternoteRoute.AddSongRoute> {

@@ -163,7 +163,7 @@ class AfternoteEditViewModel
             viewModelScope.launch {
                 getDetailUseCase(afternoteId = afternoteId)
                     .onSuccess { detail ->
-                        val processingMethods =
+                        val actionItems =
                             detail.actions.mapIndexed { index, text ->
                                 ProcessingMethodItem(
                                     id = (index + 1).toString(),
@@ -173,6 +173,7 @@ class AfternoteEditViewModel
 
                         val processMethod = detail.processMethod ?: ""
                         val categoryUpper = detail.category.uppercase()
+                        val isGalleryCategory = categoryUpper == "GALLERY"
                         val isSocialCategory =
                             categoryUpper == "SOCIAL" ||
                                 categoryUpper == "BUSINESS" ||
@@ -181,7 +182,7 @@ class AfternoteEditViewModel
                             if (isSocialCategory) serverProcessMethodToAccountEnum(processMethod)
                             else ""
                         val informationProcessingMethodName =
-                            if (!isSocialCategory) serverProcessMethodToInfoEnum(processMethod)
+                            if (isGalleryCategory) serverProcessMethodToInfoEnum(processMethod)
                             else ""
 
                         val categoryDisplayString = serverCategoryToEditScreenCategory(detail.category)
@@ -196,8 +197,8 @@ class AfternoteEditViewModel
                                 message = detail.leaveMessage ?: "",
                                 accountProcessingMethodName = accountProcessingMethodName,
                                 informationProcessingMethodName = informationProcessingMethodName,
-                                processingMethodsList = processingMethods,
-                                galleryProcessingMethodsList = emptyList()
+                                processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
+                                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList()
                             )
                         state.loadFromExisting(params)
                     }
@@ -328,7 +329,7 @@ class AfternoteEditViewModel
                     }
                     // API requires non-empty actions for GALLERY; use default when none added
                     val galleryActions =
-                        if (actions.isEmpty()) listOf("정보 전달") else actions
+                        actions.ifEmpty { listOf("정보 전달") }
                     Log.d(TAG, "performCreate GALLERY: receiverIds=$receiverIds, actions=$galleryActions")
                     createGalleryUseCase(
                         title = payload.serviceName,

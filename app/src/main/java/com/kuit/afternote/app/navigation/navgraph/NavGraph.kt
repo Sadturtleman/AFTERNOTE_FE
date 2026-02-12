@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -117,7 +119,10 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
 }
 
 @Composable
-private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
+private fun FingerprintLoginRouteContent(
+    navHostController: NavHostController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val promptTitle = stringResource(R.string.biometric_prompt_title)
@@ -169,7 +174,8 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                         )
                         .show()
             }
-        }
+        },
+        onBottomNavTabSelected = onBottomNavTabSelected
     )
 }
 
@@ -350,7 +356,13 @@ fun NavGraph(navHostController: NavHostController) {
 
     NavHost(
         navController = navHostController,
-        startDestination = "dev"
+        startDestination = "dev",
+        // Disable default transition animations to prevent touch events being
+        // blocked by the animation overlay during screen transitions.
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable("mode_selection") {
             ModeSelectionScreen(
@@ -520,7 +532,10 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("fingerprint_login") {
-            FingerprintLoginRouteContent(navHostController = navHostController)
+            FingerprintLoginRouteContent(
+                navHostController = navHostController,
+                onBottomNavTabSelected = onBottomNavTabSelected
+            )
         }
     }
 }
