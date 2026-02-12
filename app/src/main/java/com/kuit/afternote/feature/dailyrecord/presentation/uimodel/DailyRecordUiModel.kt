@@ -7,6 +7,7 @@ data class MindRecordUiModel(
     val draftLabel: String,
     val content: String? = null,
     val type: String? = null,
-    val category: String? = null
+    val category: String? = null,
+    val originalDate: String
 )
 
