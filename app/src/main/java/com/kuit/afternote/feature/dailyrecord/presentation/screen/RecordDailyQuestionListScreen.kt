@@ -9,15 +9,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -26,12 +32,19 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RecordDailyQuestionScreen(
+fun RecordDailyQuestionListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onPlusRecordClick: () -> Unit
+    onPlusRecordClick: () -> Unit,
+    onEditClick: (Long) -> Unit,
+    viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
+    val records by viewModel.records.collectAsState() // UIModel 구독
+
+    LaunchedEffect(Unit) {
+        viewModel.loadRecords()
+    }
 
     Scaffold(
         modifier = modifier
@@ -39,7 +52,7 @@ fun RecordDailyQuestionScreen(
             .background(color = Gray1),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = BottomNavItem.RECORD,
+                selectedItem = BottomNavItem.HOME,
                 onItemSelected = { }
             )
         },
@@ -67,37 +80,22 @@ fun RecordDailyQuestionScreen(
                         today = today
                     )
                 }
-                item {
+                items(records) { record ->
                     RecordListItem(
-                        title = "가",
-                        content = "나"
-                    )
-                }
-                item {
-                    RecordListItem(
-                        title = "다",
-                        content = "라"
-                    )
-                }
-                item {
-                    RecordListItem(
-                        title = "마",
-                        content = "바"
-                    )
+                        record = record,
+                        onDeleteClick = {
+                            viewModel.deleteRecord(record.id){
+                                viewModel.loadRecords()
+                            }
+                        },
+                        onEditClick = { record->
+                            onEditClick(record)
+                        }
+                    ) // 이제 UIModel을 그대로 넘김
                 }
             }
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-private fun RecordDailyQuestionScreenPreview() {
-    AfternoteTheme {
-        RecordDailyQuestionScreen(
-            onBackClick = {},
-            onPlusRecordClick = {}
-        )
-    }
-}
+

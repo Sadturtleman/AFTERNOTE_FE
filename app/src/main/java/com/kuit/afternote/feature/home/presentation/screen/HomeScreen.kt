@@ -1,38 +1,34 @@
 package com.kuit.afternote.feature.home.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
 import com.kuit.afternote.feature.home.presentation.component.DailyQuestionCard
@@ -40,11 +36,15 @@ import com.kuit.afternote.feature.home.presentation.component.HomeHeader
 import com.kuit.afternote.feature.home.presentation.component.HomeInfoCard
 import com.kuit.afternote.feature.home.presentation.component.RecipientBadge
 import com.kuit.afternote.feature.home.presentation.component.WeeklyCalendarStrip
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class HomeScreenContent(
     val userName: String = "박서연",
@@ -60,16 +60,34 @@ interface HomeScreenEvent {
     fun onBottomNavTabSelected(item: BottomNavItem)
     fun onProfileClick()
     fun onSettingsClick()
+    fun onAfterNoteClick()
     fun onDailyQuestionCtaClick()
-    fun onFabClick()
+    fun onTimeLetterClick()
 }
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    content: HomeScreenContent = HomeScreenContent(),
-    event: HomeScreenEvent = EmptyHomeScreenEvent
+    event: HomeScreenEvent = EmptyHomeScreenEvent,
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    recordViewModel: MindRecordViewModel = hiltViewModel()
 ) {
+    var content by remember { mutableStateOf(HomeScreenContent()) }
+    val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
+    val recordUiState = recordViewModel.calendarDays.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+        recordViewModel.loadRecords()
+
+
+        content = content.copy(
+            userName = uiState.value.name,
+            dailyQuestionDate = LocalDate.now().format(DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)),
+            calendarDays = recordUiState.value
+        )
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
@@ -78,39 +96,6 @@ fun HomeScreen(
                 selectedItem = BottomNavItem.HOME,
                 onItemSelected = event::onBottomNavTabSelected
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = event::onFabClick,
-                modifier = Modifier.size(56.dp),
-                containerColor = Color.Transparent,
-                contentColor = Color.White,
-                shape = CircleShape,
-                elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 10.dp
-                )
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFFBDE0FF),
-                                    Color(0xFFFFE1CC)
-                                )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "새 애프터노트 추가",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
         }
     ) { paddingValues ->
         Column(
@@ -126,7 +111,7 @@ fun HomeScreen(
             )
 
             // Greeting section
-            GreetingSection(userName = content.userName)
+            GreetingSection(userName = uiState.value.name)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -138,14 +123,14 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Weekly calendar
-            WeeklyCalendarStrip(days = content.calendarDays)
+            WeeklyCalendarStrip(days = recordUiState.value)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Daily question card
             DailyQuestionCard(
                 question = content.dailyQuestion,
-                dateLabel = content.dailyQuestionDate,
+                dateLabel = LocalDate.now().format(DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)),
                 onCtaClick = event::onDailyQuestionCtaClick
             )
 
@@ -165,7 +150,8 @@ fun HomeScreen(
                 badge = {
                     RecipientBadge(
                         text = stringResource(R.string.home_record_now),
-                        showCheckIcon = false
+                        showCheckIcon = false,
+                        onCLick = event::onAfterNoteClick
                     )
                 }
             )
@@ -187,7 +173,8 @@ fun HomeScreen(
                 badge = {
                     RecipientBadge(
                         text = stringResource(R.string.home_read_past_record),
-                        showCheckIcon = false
+                        showCheckIcon = false,
+                        onCLick = event::onTimeLetterClick
                     )
                 }
             )
@@ -246,7 +233,8 @@ private object EmptyHomeScreenEvent : HomeScreenEvent {
     override fun onProfileClick() = Unit
     override fun onSettingsClick() = Unit
     override fun onDailyQuestionCtaClick() = Unit
-    override fun onFabClick() = Unit
+    override fun onTimeLetterClick() = Unit
+    override fun onAfterNoteClick() = Unit
 }
 
 internal fun defaultCalendarDays(): List<CalendarDay> = listOf(
@@ -256,7 +244,7 @@ internal fun defaultCalendarDays(): List<CalendarDay> = listOf(
     CalendarDay("목", 13, CalendarDayStyle.FILLED),
     CalendarDay("금", 14, CalendarDayStyle.FILLED),
     CalendarDay("토", 15, CalendarDayStyle.TODAY),
-    CalendarDay("일", 16, CalendarDayStyle.DEFAULT)
+    CalendarDay("일", 16, CalendarDayStyle.OUTLINED)
 )
 
 @Preview(showBackground = true, showSystemUi = true)

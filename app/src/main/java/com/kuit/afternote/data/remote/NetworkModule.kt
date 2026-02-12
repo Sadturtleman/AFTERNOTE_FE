@@ -1,6 +1,7 @@
 package com.kuit.afternote.data.remote
 
 import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,6 +51,7 @@ object NetworkModule {
         return builder.build()
     }
 
+
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -62,4 +64,11 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
+
+    @Provides
+    @Singleton
+    fun provideDailyRecordApiService(retrofit: Retrofit): DailyRecordApiService {
+        return retrofit.create(DailyRecordApiService::class.java)
+    }
 }
+

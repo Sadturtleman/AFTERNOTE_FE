@@ -48,7 +48,7 @@ import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGr
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
-import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.recordNavGraph
+import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
 import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
 import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
@@ -278,7 +278,10 @@ private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): Receiv
 @Composable
 private fun HomeScreenContent(
     onBottomNavTabSelected: (BottomNavItem) -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onDailyQuestionCtaClick: () -> Unit,
+    onTImeLetterClick: () -> Unit,
+    onAfternoteClick: () -> Unit
 ) {
     HomeScreen(
         event = object : HomeScreenEvent {
@@ -286,8 +289,9 @@ private fun HomeScreenContent(
                 onBottomNavTabSelected(item)
             override fun onProfileClick() = Unit
             override fun onSettingsClick() = onSettingsClick()
-            override fun onDailyQuestionCtaClick() = Unit
-            override fun onFabClick() = Unit
+            override fun onDailyQuestionCtaClick() = onDailyQuestionCtaClick()
+            override fun onTimeLetterClick() = onTImeLetterClick()
+            override fun onAfterNoteClick() = onAfternoteClick()
         }
     )
 }
@@ -368,6 +372,21 @@ fun NavGraph(navHostController: NavHostController) {
                 onBottomNavTabSelected = onBottomNavTabSelected,
                 onSettingsClick = {
                     navHostController.navigate(SettingRoute.SettingMainRoute) {
+                        launchSingleTop = true
+                    }
+                },
+                onDailyQuestionCtaClick = {
+                    navHostController.navigate("record_main") {
+                        launchSingleTop = true
+                    }
+                },
+                onAfternoteClick = {
+                    navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
+                        launchSingleTop = true
+                    }
+                },
+                onTImeLetterClick = {
+                    navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
                         launchSingleTop = true
                     }
                 }

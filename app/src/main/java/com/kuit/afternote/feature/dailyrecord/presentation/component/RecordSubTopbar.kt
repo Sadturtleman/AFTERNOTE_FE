@@ -70,7 +70,8 @@ fun RecordSubTopbar(
                 .align(Alignment.CenterEnd)
                 .clickable(onClick = onRightClick)
                 .padding(end = 13.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
+            
         ) {
             Text(
                 text = "등록",
