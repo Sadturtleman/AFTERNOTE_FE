@@ -40,11 +40,11 @@ fun NavGraphBuilder.recordNavGraph(
         RecordFirstDiaryListScreen(
             onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute) },
-            viewModel = viewModel,
-            onEditClick = {recordId ->
-                // 수정 화면으로 이동
+            onEditClick = { recordId ->
                 navController.navigate(RecordRoute.EditRoute(recordId))
             },
+            onBottomNavTabSelected = onBottomNavTabSelected,
+            viewModel = viewModel
         )
         LaunchedEffect(Unit) {
             viewModel.loadRecords()
@@ -53,14 +53,13 @@ fun NavGraphBuilder.recordNavGraph(
     }
     composable<RecordRoute.QuestionRouteList> {
         val viewModel: MindRecordViewModel = hiltViewModel()
-
         RecordDailyQuestionListScreen(
             onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.QuestionRoute) },
-            onEditClick = {recordId ->
-                // 수정 화면으로 이동
+            onEditClick = { recordId ->
                 navController.navigate(RecordRoute.EditRoute(recordId))
             },
+            onBottomNavTabSelected = onBottomNavTabSelected,
             viewModel = viewModel
         )
         LaunchedEffect(Unit) {
@@ -94,10 +93,11 @@ fun NavGraphBuilder.recordNavGraph(
 
     composable<RecordRoute.WeekendReportRoute> {
         RecordWeekendReportScreen(
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onBottomNavTabSelected = onBottomNavTabSelected
         )
     }
-    composable<RecordRoute.EditRoute> { backStackEntry ->
+    composable<RecordRoute.EditRoute> { _ ->
         val viewModel: MindRecordViewModel = hiltViewModel()
         val record by viewModel.selectedRecord.collectAsState()
 

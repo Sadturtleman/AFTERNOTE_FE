@@ -119,7 +119,10 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
 }
 
 @Composable
-private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
+private fun FingerprintLoginRouteContent(
+    navHostController: NavHostController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val promptTitle = stringResource(R.string.biometric_prompt_title)
@@ -171,7 +174,8 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                         )
                         .show()
             }
-        }
+        },
+        onBottomNavTabSelected = onBottomNavTabSelected
     )
 }
 
@@ -528,7 +532,10 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("fingerprint_login") {
-            FingerprintLoginRouteContent(navHostController = navHostController)
+            FingerprintLoginRouteContent(
+                navHostController = navHostController,
+                onBottomNavTabSelected = onBottomNavTabSelected
+            )
         }
     }
 }

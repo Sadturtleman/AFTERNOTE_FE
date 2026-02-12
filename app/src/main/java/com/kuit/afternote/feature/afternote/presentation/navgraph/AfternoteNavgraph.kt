@@ -455,7 +455,10 @@ private fun AfternoteEditRouteContent(
 // -- Fingerprint Login --
 
 @Composable
-private fun AfternoteFingerprintLoginContent(navController: NavController) {
+private fun AfternoteFingerprintLoginContent(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
     val promptTitle = stringResource(R.string.biometric_prompt_title)
@@ -507,7 +510,8 @@ private fun AfternoteFingerprintLoginContent(navController: NavController) {
                         .makeText(context, notAvailableMessage, android.widget.Toast.LENGTH_SHORT)
                         .show()
             }
-        }
+        },
+        onBottomNavTabSelected = onBottomNavTabSelected
     )
 }
 
@@ -595,7 +599,10 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.FingerprintLoginRoute> {
-        AfternoteFingerprintLoginContent(navController = navController)
+        AfternoteFingerprintLoginContent(
+            navController = navController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
     }
 
     afternoteComposable<AfternoteRoute.AddSongRoute> {

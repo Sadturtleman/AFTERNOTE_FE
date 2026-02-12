@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import java.time.LocalDate
 
 /**
@@ -46,7 +46,8 @@ fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
-    onEditClick: (Long) ->Unit,
+    onEditClick: (Long) -> Unit,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
@@ -56,8 +57,8 @@ fun RecordFirstDiaryListScreen(
         modifier = modifier.fillMaxWidth(),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = BottomNavItem.HOME,
-                onItemSelected = { }
+                selectedItem = BottomNavItem.RECORD,
+                onItemSelected = { onBottomNavTabSelected(it) }
             )
         },
         floatingActionButton = {
