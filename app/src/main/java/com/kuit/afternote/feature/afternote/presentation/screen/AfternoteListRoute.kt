@@ -12,6 +12,7 @@ import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
@@ -20,7 +21,7 @@ data class AfternoteListRouteCallbacks(
     val onNavigateToDetail: (String) -> Unit = {},
     val onNavigateToGalleryDetail: (String) -> Unit = {},
     val onNavigateToMemorialGuidelineDetail: (String) -> Unit = {},
-    val onNavigateToAdd: () -> Unit = {},
+    val onNavigateToAdd: (AfternoteTab) -> Unit = {},
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 )
 
@@ -79,7 +80,7 @@ fun AfternoteListRoute(
                 callbacks.onBottomNavTabSelected(it)
             },
             showFab = true,
-            onFabClick = callbacks.onNavigateToAdd
+            onFabClick = { callbacks.onNavigateToAdd(uiState.selectedTab) }
         ),
         list = AfternoteListScreenListParams(
             items = displayItems,

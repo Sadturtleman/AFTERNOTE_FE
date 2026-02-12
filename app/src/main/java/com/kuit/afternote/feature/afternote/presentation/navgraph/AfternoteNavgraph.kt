@@ -30,6 +30,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -134,12 +135,17 @@ private fun AfternoteListRouteContent(
                 onNavigateToMemorialGuidelineDetail = { itemId ->
                     navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
                 },
-                onNavigateToAdd = {
+                onNavigateToAdd = { selectedTab ->
                     // 새 작성 진입 시 이전 편집 세션 상태를 항상 초기화하여
                     // 이전 세션의 카테고리/처리 방법이 남지 않도록 한다.
                     editStateHandling.onClear()
-                    Log.d("AfternoteNav", "FAB onNavigateToAdd → navigate(EditRoute)")
-                    navController.navigate(AfternoteRoute.EditRoute())
+                    val initialCategory =
+                        if (selectedTab == AfternoteTab.ALL) null else selectedTab.label
+                    Log.d(
+                        "AfternoteNav",
+                        "FAB onNavigateToAdd → navigate(EditRoute initialCategory=$initialCategory)"
+                    )
+                    navController.navigate(AfternoteRoute.EditRoute(initialCategory = initialCategory))
                 },
                 onBottomNavTabSelected = onBottomNavTabSelected
             ),
@@ -389,6 +395,13 @@ private fun AfternoteEditRouteContent(
     LaunchedEffect(Unit) {
         if (editStateHandling.holder.value == null) {
             editStateHandling.holder.value = state
+        }
+    }
+
+    // 새 작성 시 목록에서 선택한 탭(카테고리)을 반영한다.
+    LaunchedEffect(route.initialCategory, route.itemId) {
+        if (route.itemId == null && route.initialCategory != null) {
+            state.onCategorySelected(route.initialCategory)
         }
     }
 

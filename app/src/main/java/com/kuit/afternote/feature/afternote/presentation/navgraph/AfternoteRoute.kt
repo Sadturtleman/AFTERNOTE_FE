@@ -13,7 +13,10 @@ sealed interface AfternoteRoute {
     data class GalleryDetailRoute(val itemId: String = "") : AfternoteRoute
 
     @Serializable
-    data class EditRoute(val itemId: String? = null) : AfternoteRoute
+    data class EditRoute(
+        val itemId: String? = null,
+        val initialCategory: String? = null
+    ) : AfternoteRoute
 
     @Serializable
     data object FingerprintLoginRoute : AfternoteRoute

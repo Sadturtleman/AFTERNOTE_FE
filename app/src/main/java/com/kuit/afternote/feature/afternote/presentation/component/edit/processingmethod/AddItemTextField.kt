@@ -14,10 +14,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,9 +46,7 @@ fun AddItemTextField(
     visible: Boolean,
     onItemAdded: (String) -> Unit,
     onVisibilityChanged: (Boolean) -> Unit,
-    placeholder: String = "Text Field",
-    previousFocusedState: Boolean = false,
-    onPreviousFocusedStateChange: (Boolean) -> Unit = {}
+    placeholder: String = "Text Field"
 ) {
     val textFieldState = rememberTextFieldState()
     val focusManager = LocalFocusManager.current
@@ -55,6 +55,7 @@ fun AddItemTextField(
 
     val onItemAddedState = rememberUpdatedState(onItemAdded)
     val onVisibilityChangedState = rememberUpdatedState(onVisibilityChanged)
+    var wasFocused by remember { mutableStateOf(false) }
 
     fun addItemIfNotEmpty() {
         val text = textFieldState.text.toString().trim()
@@ -66,12 +67,11 @@ fun AddItemTextField(
         focusManager.clearFocus()
     }
 
-    DisposableEffect(isFocused, visible, previousFocusedState) {
-        if (visible && previousFocusedState && !isFocused) {
+    LaunchedEffect(visible, isFocused) {
+        if (visible && wasFocused && !isFocused) {
             addItemIfNotEmpty()
         }
-        onPreviousFocusedStateChange(isFocused)
-        onDispose { }
+        wasFocused = isFocused
     }
 
     if (visible) {
