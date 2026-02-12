@@ -55,13 +55,13 @@ fun SignUpScreen(
     sendEmailCodeViewModel: SendEmailCodeViewModel = hiltViewModel(),
     verifyEmailViewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
-    val fieldStates = SignUpFieldStates(
-        phone = rememberTextFieldState(),
-        authCode = rememberTextFieldState(),
-        memberCode = rememberTextFieldState(),
-        pw = rememberTextFieldState(),
-        pwRe = rememberTextFieldState()
-    )
+    val fieldStates = remember {SignUpFieldStates(
+        phone = TextFieldState(),
+        authCode = TextFieldState(),
+        memberCode = TextFieldState(),
+        pw = TextFieldState(),
+        pwRe = TextFieldState()
+    ) }
 
     var step by remember { mutableStateOf(SignUpStep.PHONE_AUTH) }
     val sendEmailCodeUiState by sendEmailCodeViewModel.uiState.collectAsStateWithLifecycle()

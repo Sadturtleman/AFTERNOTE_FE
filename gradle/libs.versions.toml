@@ -36,6 +36,7 @@ datastore = "1.2.0"
 kakaoSdk = "2.23.2"
 coil = "3.3.0"
 biometric = "1.1.0"
+workRuntimeKtx = "2.11.1"
 
 
 [libraries]
@@ -84,6 +85,7 @@ kakao-sdk-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kak
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 
 [plugins]
