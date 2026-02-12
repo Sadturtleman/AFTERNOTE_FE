@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.component.button
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,7 +45,10 @@ fun BoxScope.AddFloatingActionButton(
                 spread = 0.dp
             ).background(Color.White, CircleShape)
             .clip(CircleShape)
-            .clickable(onClick = onClick)
+            .clickable {
+                Log.d("AddFAB", "FAB clicked")
+                onClick()
+            }
     ) {
         Image(
             painter = painterResource(R.drawable.ic_add_circle_fab),

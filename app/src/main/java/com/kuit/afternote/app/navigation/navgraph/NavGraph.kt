@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -346,7 +348,13 @@ fun NavGraph(navHostController: NavHostController) {
 
     NavHost(
         navController = navHostController,
-        startDestination = "dev"
+        startDestination = "dev",
+        // Disable default transition animations to prevent touch events being
+        // blocked by the animation overlay during screen transitions.
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable("mode_selection") {
             ModeSelectionScreen(

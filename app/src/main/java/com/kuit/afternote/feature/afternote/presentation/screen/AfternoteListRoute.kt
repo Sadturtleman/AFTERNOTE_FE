@@ -38,10 +38,11 @@ fun AfternoteListRoute(
     initialItems: List<AfternoteItem> = emptyList(),
     onItemsChanged: (List<AfternoteItem>) -> Unit = {}
 ) {
+    // ViewModel.init에서 loadAfternotes()를 호출하므로 여기서는 더미 데이터만 처리.
+    // LaunchedEffect(Unit)에서 매번 loadAfternotes()를 호출하면, 하위 화면에서
+    // 복귀할 때마다 API 재호출 → 상태 변경 → NavHost recomposition이 발생하여
+    // FAB 등 입력이 몇 초간 먹히지 않는 문제가 생김.
     LaunchedEffect(Unit) {
-        // 항상 서버 데이터를 우선 로드
-        viewModel.loadAfternotes()
-        // Preview·더미 모드에서 initialItems를 명시적으로 넘긴 경우에만 사용
         if (initialItems.isNotEmpty()) {
             viewModel.setItems(initialItems)
         }

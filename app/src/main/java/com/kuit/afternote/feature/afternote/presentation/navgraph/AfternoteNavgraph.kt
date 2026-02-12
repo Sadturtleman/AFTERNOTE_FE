@@ -133,7 +133,10 @@ private fun AfternoteListRouteContent(
                 onNavigateToMemorialGuidelineDetail = { itemId ->
                     navController.navigate(AfternoteRoute.MemorialGuidelineDetailRoute(itemId = itemId))
                 },
-                onNavigateToAdd = { navController.navigate(AfternoteRoute.EditRoute()) },
+                onNavigateToAdd = {
+                    Log.d("AfternoteNav", "FAB onNavigateToAdd → navigate(EditRoute)")
+                    navController.navigate(AfternoteRoute.EditRoute())
+                },
                 onBottomNavTabSelected = onBottomNavTabSelected
             ),
         initialItems = emptyList(),
