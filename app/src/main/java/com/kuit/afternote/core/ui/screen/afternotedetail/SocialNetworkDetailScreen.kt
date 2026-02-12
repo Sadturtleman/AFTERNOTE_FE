@@ -272,24 +272,31 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
  */
 @Composable
 private fun AccountProcessingMethodText(accountProcessingMethod: String) {
-    val annotatedText = when (accountProcessingMethod) {
-        "MEMORIAL_ACCOUNT" -> buildAnnotatedString {
-            append("사망 후 ")
-            withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
-            append("으로 전환")
+    // 서버 processMethod 코드(MEMORIAL / DELETE / TRANSFER / ADDITIONAL)와
+    // 클라이언트 enum 이름을 모두 처리한다.
+    val annotatedText =
+        when (accountProcessingMethod) {
+            "MEMORIAL" -> buildAnnotatedString {
+                append("사망 후 ")
+                withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
+                append("으로 전환")
+            }
+            "DELETE" -> buildAnnotatedString {
+                append("사망 후 ")
+                withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
+            }
+            "TRANSFER", "RECEIVER" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+                append("에게 정보 전달")
+            }
+            "ADDITIONAL" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+                append("에게 정보 전달")
+            }
+            else -> buildAnnotatedString {
+                append(accountProcessingMethod)
+            }
         }
-        "PERMANENT_DELETE" -> buildAnnotatedString {
-            append("사망 후 ")
-            withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
-        }
-        "TRANSFER_TO_RECEIVER" -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-            append("에게 정보 전달")
-        }
-        else -> buildAnnotatedString {
-            append(accountProcessingMethod)
-        }
-    }
     Text(
         text = annotatedText,
         style = TextStyle(

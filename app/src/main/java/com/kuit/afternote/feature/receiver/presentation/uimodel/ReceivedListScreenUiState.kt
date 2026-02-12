@@ -5,7 +5,7 @@ package com.kuit.afternote.feature.receiver.presentation.uimodel
  */
 data class ReceivedTimeLetterListItemUi(
     val timeLetterId: Long,
-    val receiverName: String,
+    val senderName: String,
     val sendAt: String,
     val title: String,
     val content: String

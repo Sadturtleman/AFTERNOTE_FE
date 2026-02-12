@@ -65,6 +65,7 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLet
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.VerifySelfScreen
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
@@ -117,25 +118,14 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
 
 @Composable
 private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: composable entered")
     val context = LocalContext.current
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: context=${context::class.java.name}")
     val activity = context as? FragmentActivity
-    Log.d(
-        TAG_FINGERPRINT,
-        "fingerprint_login: activity=${activity?.javaClass?.name ?: "null"}"
-    )
     val promptTitle = stringResource(R.string.biometric_prompt_title)
     val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
     val notAvailableMessage = stringResource(R.string.biometric_not_available)
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: stringResource done")
     val biometricPrompt =
         remember(activity) {
             try {
-                Log.d(
-                    TAG_FINGERPRINT,
-                    "fingerprint_login: building BiometricPrompt, activity=$activity"
-                )
                 activity?.let { fragActivity ->
                     val executor = ContextCompat.getMainExecutor(fragActivity)
                     BiometricPrompt(
@@ -145,38 +135,24 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                             override fun onAuthenticationSucceeded(
                                 result: BiometricPrompt.AuthenticationResult
                             ) {
-                                Log.d(
-                                    TAG_FINGERPRINT,
-                                    "fingerprint_login: auth succeeded, popping"
-                                )
                                 navHostController.popBackStack()
                             }
                         }
-                    ).also {
-                        Log.d(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt created")
-                    }
+                    )
                 }
             } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt failed", e)
+                Log.e(TAG_FINGERPRINT, "BiometricPrompt creation failed", e)
                 null
             }
         }
     val promptInfo =
         remember(promptTitle, promptSubtitle) {
-            try {
-                Log.d(TAG_FINGERPRINT, "fingerprint_login: building PromptInfo")
-                BiometricPrompt.PromptInfo.Builder()
-                    .setTitle(promptTitle)
-                    .setSubtitle(promptSubtitle)
-                    .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-                    .build()
-                    .also { Log.d(TAG_FINGERPRINT, "fingerprint_login: PromptInfo created") }
-            } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: PromptInfo failed", e)
-                throw e
-            }
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(promptTitle)
+                .setSubtitle(promptSubtitle)
+                .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                .build()
         }
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: showing FingerprintLoginScreen")
     FingerprintLoginScreen(
         onFingerprintAuthClick = {
             if (activity == null) return@FingerprintLoginScreen
@@ -300,7 +276,10 @@ private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): Receiv
 @Composable
 private fun HomeScreenContent(
     onBottomNavTabSelected: (BottomNavItem) -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onDailyQuestionCtaClick: () -> Unit,
+    onTImeLetterClick: () -> Unit,
+    onAfternoteClick: () -> Unit
 ) {
     HomeScreen(
         event = object : HomeScreenEvent {
@@ -308,8 +287,9 @@ private fun HomeScreenContent(
                 onBottomNavTabSelected(item)
             override fun onProfileClick() = Unit
             override fun onSettingsClick() = onSettingsClick()
-            override fun onDailyQuestionCtaClick() = Unit
-            override fun onFabClick() = Unit
+            override fun onDailyQuestionCtaClick() = onDailyQuestionCtaClick()
+            override fun onTimeLetterClick() = onTImeLetterClick()
+            override fun onAfterNoteClick() = onAfternoteClick()
         }
     )
 }
@@ -354,7 +334,7 @@ fun NavGraph(navHostController: NavHostController) {
                     launchSingleTop = true
                 }
             BottomNavItem.AFTERNOTE ->
-                navHostController.navigate(AfternoteRoute.AfternoteListRoute) {
+                navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
                     launchSingleTop = true
                 }
             BottomNavItem.RECORD ->
@@ -386,6 +366,21 @@ fun NavGraph(navHostController: NavHostController) {
                     navHostController.navigate(SettingRoute.SettingMainRoute) {
                         launchSingleTop = true
                     }
+                },
+                onDailyQuestionCtaClick = {
+                    navHostController.navigate("record_main") {
+                        launchSingleTop = true
+                    }
+                },
+                onAfternoteClick = {
+                    navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
+                        launchSingleTop = true
+                    }
+                },
+                onTImeLetterClick = {
+                    navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -401,8 +396,10 @@ fun NavGraph(navHostController: NavHostController) {
         afternoteNavGraph(
             navController = navHostController,
             params = AfternoteNavGraphParams(
-                afternoteItems = afternoteItems,
-                onItemsUpdated = { afternoteItems = it },
+                afternoteItemsProvider = { afternoteItems },
+                onItemsUpdated = { newItems ->
+                    afternoteItems = newItems
+                },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
                 userName = receiverProvider.getDefaultReceiverTitleForDev(),
@@ -504,14 +501,21 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverOnboardingScreen(
                 onLoginClick = { navHostController.popBackStack() },
                 onStartClick = { navHostController.navigate("receiver_verify") },
-                onCheckClick = {},
                 onSignUpClick = { navHostController.popBackStack() }
             )
         }
 
         composable("receiver_verify") {
             VerifyReceiverScreen(
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
+                onVerifySuccess = { navHostController.navigate("receiver_verify_self") }
+            )
+        }
+
+        composable("receiver_verify_self") {
+            VerifySelfScreen(
+                onBackClick = { navHostController.popBackStack() },
+                onNextClick = { navHostController.popBackStack() }
             )
         }
 

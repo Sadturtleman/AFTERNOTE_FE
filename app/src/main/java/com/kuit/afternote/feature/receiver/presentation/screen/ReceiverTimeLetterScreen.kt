@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,10 +64,12 @@ fun TimeLetterScreen(
 ) {
     Scaffold(
         topBar = {
-            TopBar(
-                title = "타임 레터",
-                onBackClick = { onBackClick() }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "타임 레터",
+                    onBackClick = { onBackClick() }
+                )
+            }
         },
         bottomBar = {
             if (showBottomBar) {
@@ -243,7 +246,7 @@ fun TodayTimeLetterCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "수신인: ${letter?.receiverName ?: "-"}",
+                        text = "발신인: ${letter?.senderName ?: "-"}",
                         color = Color.White.copy(alpha = 0.9f),
                         fontSize = 12.sp
                     )
@@ -402,10 +405,13 @@ private fun PreviewTimeLetter() {
             timeLetters = listOf(
                 ReceivedTimeLetter(
                     timeLetterId = 1L,
-                    receiverName = "박채연",
-                    sendAt = "2027. 11. 24",
                     title = "채연아 20번째 생일을 축하해",
-                    content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니.."
+                    content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..",
+                    sendAt = "2027. 11. 24",
+                    status = "DRAFT",
+                    senderName = "박채연",
+                    deliveredAt = null,
+                    createdAt = null
                 )
             ),
             totalCount = 1

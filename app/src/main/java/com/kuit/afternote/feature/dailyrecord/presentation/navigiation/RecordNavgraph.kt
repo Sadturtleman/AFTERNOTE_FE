@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.dailyrecord.presentation.navigiation
+package com.kuit.afternote.feature.dailyrecord.presentation.navgraph
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDailyQuestionListScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen

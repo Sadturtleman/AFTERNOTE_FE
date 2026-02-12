@@ -16,6 +16,7 @@ import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWrit
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,12 +47,14 @@ class TimeLetterWriterViewModel
     ) : ViewModel() {
         private companion object {
             private const val TAG = "TimeLetterWriterVM"
+            private const val WAITING_AGAIN_POPUP_DURATION_MS = 2000L
         }
         private val draftIdFromRoute: Long? =
             savedStateHandle.toRoute<TimeLetterRoute.TimeLetterWriterRoute>().draftId
 
         private val _uiState = MutableStateFlow(TimeLetterWriterUiState())
         val uiState: StateFlow<TimeLetterWriterUiState> = _uiState.asStateFlow()
+        private var waitingAgainPopUpJob: Job? = null
 
         init {
             loadDraftCount()
@@ -281,12 +284,7 @@ class TimeLetterWriterViewModel
          * @param onSuccess 저장 성공 시 콜백
          */
         fun registerWithPopUpThenSave(onSuccess: () -> Unit) {
-            viewModelScope.launch {
-                _uiState.update { it.copy(showRegisteredPopUp = true) }
-                delay(2000L)
-                _uiState.update { it.copy(showRegisteredPopUp = false) }
-                saveTimeLetter(showPopUpAfterSuccess = false, onSuccess = onSuccess)
-            }
+            saveTimeLetter(onSuccess = onSuccess)
         }
 
         /**
@@ -305,6 +303,7 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
+                hideWaitingAgainPopUp()
                 val result = if (state.draftId != null) {
                     updateTimeLetterUseCase(
                         timeLetterId = state.draftId,
@@ -326,6 +325,7 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess { _ ->
                     Log.d(TAG, "saveTimeLetter onSuccess")
+                    hideWaitingAgainPopUp()
                     if (showPopUpAfterSuccess) {
                         _uiState.update { it.copy(showRegisteredPopUp = true) }
                         delay(2000L)
@@ -337,6 +337,7 @@ class TimeLetterWriterViewModel
                 }
                 result.onFailure {
                     Log.e(TAG, "saveTimeLetter failed", it)
+                    showWaitingAgainPopUp()
                     // TODO: 에러 메시지 UiState에 반영
                 }
             }
@@ -390,6 +391,22 @@ class TimeLetterWriterViewModel
          * 상태 초기화
          */
         fun resetState() {
+            hideWaitingAgainPopUp()
             _uiState.value = TimeLetterWriterUiState()
+        }
+
+        private fun showWaitingAgainPopUp() {
+            _uiState.update { it.copy(showWaitingAgainPopUp = true) }
+            waitingAgainPopUpJob?.cancel()
+            waitingAgainPopUpJob = viewModelScope.launch {
+                delay(WAITING_AGAIN_POPUP_DURATION_MS)
+                _uiState.update { it.copy(showWaitingAgainPopUp = false) }
+            }
+        }
+
+        private fun hideWaitingAgainPopUp() {
+            waitingAgainPopUpJob?.cancel()
+            waitingAgainPopUpJob = null
+            _uiState.update { it.copy(showWaitingAgainPopUp = false) }
         }
     }

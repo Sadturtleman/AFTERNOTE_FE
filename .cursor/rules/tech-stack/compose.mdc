@@ -68,6 +68,116 @@ fun MyScreen(uiState: MyUiState, onEvent: (MyEvent) -> Unit) {
 - **File Length Limit**: 파일이 400줄을 넘어가면 여러 파일로 분리해야 합니다.
 - **Folder Structure**: 폴더당 파일 수를 **15개 이하**로 유지합니다.
 
+## Navigation & State (NavGraphBuilder) - Critical
+
+### NavGraphBuilder와 Compose State 연결 규칙
+
+`NavHost` 안에서 사용하는 `fun NavGraphBuilder.xxxNavGraph(params: XxxNavGraphParams)` 확장 함수는 **@Composable 이 아니므로 한 번만 실행**되고, 이 안에서 캡처한 값은 **초기값 스냅샷**으로 고정됩니다.
+
+- **절대 금지**: NavGraphBuilder 내부에서 `val items = params.items` 처럼 **값을 한 번 복사해 두고**, 그 값을 route 람다에서 계속 사용하는 패턴  
+  - 이렇게 하면 `items`는 `remember { mutableStateOf(...) }`가 업데이트되어도 새 값을 보지 못하고, 리스트가 비어 있거나 예전 값인 상태로 유지됩니다.
+- **필수 규칙**: 화면에서 관리하는 Compose state는 NavGraphParams에 **값이 아니라 provider**로 넘기고, **route의 @Composable 람다 안에서 호출**해서 읽습니다.
+
+<rule id="navgraphbuilder_state_provider_pattern">
+<description>NavGraphBuilder에서 Compose state를 전달할 때는 값 스냅샷이 아니라 provider/lambda를 사용하여 route 람다 안에서 현재 값을 읽어야 합니다.</description>
+<bad_example>
+// NavGraph.kt
+var afternoteItems by remember { mutableStateOf(listOf&lt;AfternoteItem&gt;()) }
+
+NavHost(navController, startDestination = "afternote") {
+    afternoteNavGraph(
+        params = AfternoteNavGraphParams(
+            afternoteItems = afternoteItems,             // ❌ 값 스냅샷 전달
+            onItemsUpdated = { afternoteItems = it }
+        )
+    )
+}
+
+// AfternoteNavgraph.kt
+data class AfternoteNavGraphParams(
+    val afternoteItems: List&lt;AfternoteItem&gt;,
+    ...
+)
+
+fun NavGraphBuilder.afternoteNavGraph(
+    navController: NavController,
+    params: AfternoteNavGraphParams
+) {
+    val afternoteItems = params.afternoteItems         // ❌ NavGraphBuilder 실행 시점 스냅샷
+
+    afternoteComposable&lt;AfternoteRoute.DetailRoute&gt; { backStackEntry -&gt;
+        // 여기서 읽는 afternoteItems는 항상 초기값 (빈 리스트)일 수 있음
+        AfternoteDetailRouteContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            listItems = afternoteItems
+        )
+    }
+}
+</bad_example>
+<good_example>
+// NavGraph.kt
+var afternoteItems by remember { mutableStateOf(listOf&lt;AfternoteItem&gt;()) }
+
+NavHost(navController, startDestination = "afternote") {
+    afternoteNavGraph(
+        params = AfternoteNavGraphParams(
+            afternoteItemsProvider = { afternoteItems },   // ✅ provider/lambda 전달
+            onItemsUpdated = { afternoteItems = it }
+        )
+    )
+}
+
+// AfternoteNavgraph.kt
+data class AfternoteNavGraphParams(
+    val afternoteItemsProvider: () -&gt; List&lt;AfternoteItem&gt;,
+    ...
+)
+
+fun NavGraphBuilder.afternoteNavGraph(
+    navController: NavController,
+    params: AfternoteNavGraphParams
+) {
+    afternoteComposable&lt;AfternoteRoute.DetailRoute&gt; { backStackEntry -&gt;
+        val currentItems = params.afternoteItemsProvider()   // ✅ 매 recomposition 시 현재 state 읽기
+
+        AfternoteDetailRouteContent(
+            backStackEntry = backStackEntry,
+            navController = navController,
+            listItems = currentItems
+        )
+    }
+}
+</good_example>
+</rule>
+
+### Dev 더미 데이터와 실제 API 데이터 구분 규칙
+
+- **원칙**: 실제 API에서 목록이 성공적으로 로드된 이후에는 **dev/더미 데이터(fallback)** 를 detail 화면에서 사용하지 않습니다.
+- dev·Preview용 더미 데이터는 `if (realItems.isEmpty())` 같은 분기에서 **리스트 화면·편집 화면의 초기 상태에만** 사용하고,  
+  **detail route에서는 NavGraph가 들고 있는 실제 목록(state)만 사용**해야 합니다.
+
+<rule id="afternote_dev_data_fallback">
+<description>Afternote와 같은 목록/상세 구조에서 detail 화면은 항상 NavGraph의 실제 state 리스트를 사용하고, dev 더미 데이터는 리스트가 비어 있을 때의 초기 렌더링에만 사용합니다.</description>
+<bad_example>
+// Detail route에서 dev 더미 fallback 사용 - ❌ 실제 API 데이터와 불일치 가능
+val listItems = resolveListItems(afternoteItems, afternoteProvider) // dev 더미 포함
+val item = listItems.find { it.id == route.itemId } ?: return DesignPendingDetailContent(...)
+</bad_example>
+<good_example>
+// Detail route에서는 NavGraph state만 사용 - ✅ 리스트/상세가 항상 동일 source of truth
+val listItems = params.afternoteItemsProvider()
+val item = listItems.find { it.id == route.itemId }
+
+val showDesignPending = item == null || item.type !in DESIGNED_DETAIL_TYPES
+if (showDesignPending) {
+    DesignPendingDetailContent(onBackClick = { navController.popBackStack() })
+} else {
+    SocialNetworkDetailScreen(...)
+}
+</good_example>
+</rule>
+
 ## Rem-based Responsive Design (rem 기반 반응형 디자인) - Critical
 
 ### REM 구현 시 우선순위 (Implementation preference)

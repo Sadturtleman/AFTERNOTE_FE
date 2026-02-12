@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,15 +42,17 @@ import com.kuit.afternote.ui.theme.Gray9
 
 @Composable
 @Suppress("AssignedValueIsNeverRead")
-fun MindRecordDetailScreen() {
+fun MindRecordDetailScreen(onBackClick: () -> Unit) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "마음의 기록",
-                onBackClick = { }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "마음의 기록",
+                    onBackClick = { onBackClick() }
+                )
+            }
         },
         bottomBar = {
             BottomNavigationBar(
@@ -127,6 +130,6 @@ fun MindRecordDetailScreen() {
 @Composable
 fun PreviewMindRecordDetail() {
     MaterialTheme {
-        MindRecordDetailScreen()
+        MindRecordDetailScreen {}
     }
 }

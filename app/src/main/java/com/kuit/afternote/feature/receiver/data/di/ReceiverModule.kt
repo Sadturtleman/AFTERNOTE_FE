@@ -5,7 +5,9 @@ import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedReposit
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedAfternoteRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryImpl
+import com.kuit.afternote.feature.receiver.data.repository.impl.ReceiverEmailVerifyRepositoryImpl
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedAfternoteRepository
+import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceiverEmailVerifyRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedTimeLetterRepository
 import dagger.Binds
 import dagger.Module
@@ -34,6 +36,12 @@ abstract class ReceiverModule {
     abstract fun bindReceivedAfternoteRepository(
         impl: ReceivedAfternoteRepositoryImpl
     ): ReceivedAfternoteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReceiverEmailVerifyRepository(
+        impl: ReceiverEmailVerifyRepositoryImpl
+    ): ReceiverEmailVerifyRepository
 
     companion object {
         @Provides

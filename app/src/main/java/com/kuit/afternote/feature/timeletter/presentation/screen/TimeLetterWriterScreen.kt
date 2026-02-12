@@ -84,6 +84,7 @@ import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRe
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
 import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
+import com.kuit.afternote.feature.timeletter.presentation.component.WaitingAgainPopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
 import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import java.time.LocalDate
@@ -123,7 +124,8 @@ fun TimeLetterWriterScreen(
     onRecipientDropdownDismiss: () -> Unit = {},
     onReceiverSelected: (TimeLetterReceiver) -> Unit = {},
     showRegisteredPopUp: Boolean = false,
-    showDraftSavePopUp: Boolean = false
+    showDraftSavePopUp: Boolean = false,
+    showWaitingAgainPopUp: Boolean = false
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
@@ -187,6 +189,16 @@ fun TimeLetterWriterScreen(
                 properties = PopupProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
             ) {
                 DraftSavePopUp()
+            }
+        }
+
+        if (showWaitingAgainPopUp) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { },
+                properties = PopupProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            ) {
+                WaitingAgainPopUp()
             }
         }
 

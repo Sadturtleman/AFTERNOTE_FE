@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -34,10 +35,12 @@ fun ReceiverRecordDetailScreen(
 ) {
     Scaffold(
         topBar = {
-            TopBar(
-                title = "받은 기록함",
-                onBackClick = { onBackClick() }
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                TopBar(
+                    title = "받은 기록함",
+                    onBackClick = { onBackClick() }
+                )
+            }
         }
     ) { paddingValues ->
         Column(

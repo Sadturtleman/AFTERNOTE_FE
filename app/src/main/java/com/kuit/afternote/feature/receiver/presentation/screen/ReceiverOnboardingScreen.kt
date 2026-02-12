@@ -30,7 +30,6 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Sansneo
@@ -40,7 +39,6 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ReceiverOnboardingScreen(
     onLoginClick: () -> Unit,
     onStartClick: () -> Unit,
-    onCheckClick: () -> Unit,
     onSignUpClick: () -> Unit = onLoginClick
 ) {
     Scaffold(
@@ -80,7 +78,7 @@ fun ReceiverOnboardingScreen(
                     ) {
                         append("애프터노트")
                     }
-                    append("는 당신의 디지털 세상을\n 미리 정리해 가장 소중한 사람들에게\n 안전하고 따뜻한 다리를 제공합니다.")
+                    append("는 당신의 디지털 세상을 미리 정리해 \n가장 소중한 사람들에게 안전하고 따뜻한\n 다리를 제공합니다.")
                 },
                 fontSize = 16.sp,
                 fontFamily = Sansneo,
@@ -95,15 +93,6 @@ fun ReceiverOnboardingScreen(
                 onButtonClick = onStartClick,
                 title = "본인 확인 및 열람 요청하기"
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ClickButton(
-                color = B3,
-                onButtonClick = onCheckClick,
-                title = "수신자 등록하기"
-            )
-
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -134,12 +123,12 @@ fun ReceiverOnboardingScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(0.3f))
+            Spacer(modifier = Modifier.weight(0.5f))
         }
     }
 }
 @Preview
 @Composable
 private fun ReceiverOnboardingScreenPreview(){
-    ReceiverOnboardingScreen({}, {}, {})
+    ReceiverOnboardingScreen({}, {})
 }

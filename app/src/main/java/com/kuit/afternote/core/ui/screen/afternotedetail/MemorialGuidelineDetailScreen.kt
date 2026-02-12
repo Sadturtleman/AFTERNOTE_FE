@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.screen.afternotedetail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +22,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,6 +33,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
 import com.kuit.afternote.R
 import com.kuit.afternote.core.dummy.album.AlbumDummies
 import com.kuit.afternote.core.ui.component.ProfileImage
@@ -32,12 +44,13 @@ import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.list.AlbumCover
-import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
+import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.B1
+import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
@@ -233,6 +246,13 @@ private fun PhotoCard(
     )
 }
 
+/**
+ * 추모 플레이리스트 카드 — 피그마 node 4160:9168 기준.
+ *
+ * 레이아웃 순서: 제목 → 앨범 커버 행 → 곡 수 텍스트.
+ * InfoCard(Gray2) 안에 직접 렌더링하며, 내부 White 카드 없이 flat 구조.
+ * 앨범 커버: 87dp, 간격 10dp, 오른쪽 45dp 페이드.
+ */
 @Composable
 private fun PlaylistCard(
     albumCovers: List<AlbumCover>,
@@ -241,14 +261,77 @@ private fun PlaylistCard(
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
         content = {
-            MemorialPlaylist(
-                label = "추모 플레이리스트",
-                songCount = songCount,
-                albumCovers = albumCovers,
-                onAddSongClick = null
-            )
+            Column {
+                Text(
+                    text = "추모 플레이리스트",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9
+                    )
+                )
+                Spacer(Modifier.height(7.dp))
+                if (albumCovers.isNotEmpty()) {
+                    PlaylistAlbumRow(albumCovers = albumCovers)
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Black
+                    )
+                )
+            }
         }
     )
+}
+
+@Composable
+private fun PlaylistAlbumRow(albumCovers: List<AlbumCover>) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalFadingEdge(edgeWidth = 45.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        itemsIndexed(albumCovers) { _, album ->
+            AlbumCoverItem(album = album)
+        }
+    }
+}
+
+@Composable
+private fun AlbumCoverItem(album: AlbumCover) {
+    if (!album.imageUrl.isNullOrBlank()) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(album.imageUrl)
+                .httpHeaders(
+                    NetworkHeaders.Builder().apply {
+                        this["User-Agent"] = "Afternote Android App"
+                    }.build()
+                )
+                .build(),
+            contentDescription = album.title,
+            modifier = Modifier.size(87.dp),
+            contentScale = ContentScale.Crop
+        )
+    } else {
+        Box(
+            modifier = Modifier
+                .size(87.dp)
+                .background(
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(8.dp)
+                )
+        )
+    }
 }
 
 @Composable

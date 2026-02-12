@@ -15,11 +15,14 @@ object ReceivedMapper {
      */
     fun toReceivedTimeLetter(dto: ReceivedTimeLetterResponseDto): ReceivedTimeLetter =
         ReceivedTimeLetter(
-            timeLetterId = dto.timeLetterId,
-            receiverName = dto.receiverName,
-            sendAt = dto.sendAt,
+            timeLetterId = dto.id,
             title = dto.title,
-            content = dto.content
+            content = dto.content,
+            sendAt = dto.sendAt,
+            status = dto.status,
+            senderName = dto.senderName,
+            deliveredAt = dto.deliveredAt,
+            createdAt = dto.createdAt
         )
 
     /**
