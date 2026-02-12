@@ -115,6 +115,7 @@ android {
 // 필요시 각 개발자는 ~/.gradle/gradle.properties에 org.gradle.java.home 설정
 
 dependencies {
+    implementation(libs.androidx.work.runtime.ktx)
     // ---------------------------------------------------------------
     // Core Library Desugaring
     // ---------------------------------------------------------------

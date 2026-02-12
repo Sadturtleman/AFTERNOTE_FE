@@ -1,5 +1,11 @@
 package com.kuit.afternote.feature.onboarding.presentation.screen
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,7 +33,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.kuit.afternote.R
+import com.kuit.afternote.core.data.NotificationScheduler
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
@@ -42,6 +52,34 @@ fun SplashScreen(
     onCheckClick: () -> Unit,
     onSignUpClick: () -> Unit = onLoginClick
 ) {
+    val context = LocalContext.current
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // 권한 허용 시: 알림 스케줄링 로직 실행 가능
+            Log.d("Permission", "Notification permission granted")
+        } else {
+            // 권한 거부 시: 사용자 경험을 저해하지 않는 선에서 처리 (예: 스낵바)
+            Log.d("Permission", "Notification permission denied")
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val isPermissionGranted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!isPermissionGranted) {
+                // 권한이 없다면 요청
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        NotificationScheduler.scheduleDailyNotification(context, 9, 0)
+    }
+
     Scaffold(
         modifier = modifier
     ) { paddingValues ->
