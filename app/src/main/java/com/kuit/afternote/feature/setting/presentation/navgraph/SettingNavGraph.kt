@@ -96,8 +96,7 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
-            onBackClick = { navController.popBackStack() },
-            onRegisterClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() }
         )
     }
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
