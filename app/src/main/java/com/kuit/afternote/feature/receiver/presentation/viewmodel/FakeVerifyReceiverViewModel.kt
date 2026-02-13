@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * Preview용 Fake ViewModel.
+ *
+ * @param initialState 초기 UiState (Preview에서 단계별 화면을 보여주기 위해 사용).
  */
-class FakeVerifyReceiverViewModel : VerifyReceiverViewModelContract {
+class FakeVerifyReceiverViewModel(
+    initialState: VerifyReceiverUiState = VerifyReceiverUiState()
+) : VerifyReceiverViewModelContract {
 
-    private val _uiState = MutableStateFlow(VerifyReceiverUiState())
+    private val _uiState = MutableStateFlow(initialState)
     override val uiState: StateFlow<VerifyReceiverUiState> = _uiState.asStateFlow()
 
     override fun setStep(newStep: VerifySelfStep) {
@@ -21,9 +25,15 @@ class FakeVerifyReceiverViewModel : VerifyReceiverViewModelContract {
         _uiState.value = _uiState.value.copy(step = VerifySelfStep.EMAIL_AUTH)
     }
 
-    override fun onSendCode(email: String) {}
+    override fun onSendCode(email: String) {
+        // No-op: Fake for Preview only; no API call.
+    }
 
-    override fun onVerifyCode(email: String, code: String) {}
+    override fun onVerifyCode(email: String, code: String) {
+        // No-op: Fake for Preview only; no API call.
+    }
 
-    override fun clearVerifySuccess() {}
+    override fun clearVerifySuccess() {
+        // No-op: Fake for Preview only.
+    }
 }
