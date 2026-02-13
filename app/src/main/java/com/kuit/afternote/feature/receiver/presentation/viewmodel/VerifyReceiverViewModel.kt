@@ -30,10 +30,10 @@ class VerifyReceiverViewModel
     override val uiState: StateFlow<VerifyReceiverUiState> = _uiState.asStateFlow()
 
     /**
-     * 단계 변경 (뒤로가기 등).
+     * 단계 변경 (뒤로가기 등). 단계 변경 시 이전 단계의 에러 메시지를 초기화합니다.
      */
     override fun setStep(newStep: VerifySelfStep) {
-        _uiState.update { it.copy(step = newStep) }
+        _uiState.update { it.copy(step = newStep, errorMessage = null) }
     }
 
     /**
@@ -44,23 +44,26 @@ class VerifyReceiverViewModel
     }
 
     /**
-     * 다음 (이메일 단계): 발송 UseCase 호출 후 EMAIL_CODE로 전환.
+     * 다음 (이메일 단계): 낙관적 업데이트로 즉시 EMAIL_CODE로 전환한 뒤, 백그라운드에서 발송 API 호출.
+     * 실패 시 이메일 입력 단계로 롤백하고 에러 메시지를 표시합니다.
      *
      * @param email 발송할 이메일 주소
      */
     override fun onSendCode(email: String) {
         if (email.isBlank()) return
+        val previousStep = _uiState.value.step
+        _uiState.update {
+            it.copy(step = VerifySelfStep.EMAIL_CODE, errorMessage = null, isLoading = true)
+        }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             sendReceiverEmailCodeUseCase(email)
                 .onSuccess {
-                    _uiState.update {
-                        it.copy(step = VerifySelfStep.EMAIL_CODE, isLoading = false)
-                    }
+                    _uiState.update { it.copy(isLoading = false) }
                 }
                 .onFailure { e ->
                     _uiState.update {
                         it.copy(
+                            step = previousStep,
                             isLoading = false,
                             errorMessage = e.message ?: "인증번호 발송에 실패했습니다."
                         )

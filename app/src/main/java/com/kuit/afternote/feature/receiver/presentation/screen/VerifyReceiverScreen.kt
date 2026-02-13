@@ -21,24 +21,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.R
 import com.kuit.afternote.feature.receiver.presentation.component.OtpInputField
 import com.kuit.afternote.feature.receiver.presentation.uimodel.VerifySelfStep
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.FakeVerifyReceiverViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.VerifyReceiverUiState
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.VerifyReceiverViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.VerifyReceiverViewModelContract
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Sansneo
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun VerifyReceiverScreen(
@@ -82,7 +83,7 @@ fun VerifyReceiverScreen(
                     VerifySelfStep.EMAIL_AUTH -> Triple(
                         stringResource(R.string.receiver_verify_next_button),
                         { viewModel.onSendCode(emailState.text.toString().trim()) },
-                        emailState.text.length > 0
+                        emailState.text.isNotEmpty()
                     )
                     VerifySelfStep.EMAIL_CODE -> Triple(
                         stringResource(R.string.receiver_verify_confirm_button),
@@ -94,7 +95,7 @@ fun VerifyReceiverScreen(
                 ClickButton(
                     title = title,
                     onButtonClick = action,
-                    isTrue = enabled
+                    isTrue = enabled && !uiState.isLoading
                 )
             }
         ) {
@@ -161,6 +162,15 @@ fun VerifyReceiverScreen(
                     )
                 }
             }
+            uiState.errorMessage?.let { message ->
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = message,
+                    fontSize = 14.sp,
+                    color = Gray6,
+                    fontFamily = Sansneo
+                )
+            }
         }
     }
 }
@@ -191,14 +201,48 @@ private fun AuthBaseScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "START")
 @Composable
-private fun VerifyReceiverScreenPreview() {
+private fun VerifyReceiverScreenStartPreview() {
     AfternoteTheme {
         VerifyReceiverScreen(
             onBackClick = {},
             onVerifySuccess = {},
             viewModel = remember { FakeVerifyReceiverViewModel() }
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "EMAIL_AUTH")
+@Composable
+private fun VerifyReceiverScreenEmailAuthPreview() {
+    AfternoteTheme {
+        VerifyReceiverScreen(
+            onBackClick = {},
+            onVerifySuccess = {},
+            viewModel =
+                remember {
+                    FakeVerifyReceiverViewModel(
+                        VerifyReceiverUiState(step = VerifySelfStep.EMAIL_AUTH)
+                    )
+                }
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "EMAIL_CODE")
+@Composable
+private fun VerifyReceiverScreenEmailCodePreview() {
+    AfternoteTheme {
+        VerifyReceiverScreen(
+            onBackClick = {},
+            onVerifySuccess = {},
+            viewModel =
+                remember {
+                    FakeVerifyReceiverViewModel(
+                        VerifyReceiverUiState(step = VerifySelfStep.EMAIL_CODE)
+                    )
+                }
         )
     }
 }
