@@ -34,7 +34,7 @@ class DailyNotificationWorker(
     private fun showNotification() {
         val notification = NotificationCompat.Builder(applicationContext, "DAILY_CHANNEL_ID")
             .setSmallIcon(R.drawable.img_logo) // 리소스 확인 필수
-            .setContentTitle("afternote")
+            .setContentTitle("AFTERNOTE")
             .setContentText("오늘 하루 누구한테 가장 고마웠나요?")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
