@@ -39,15 +39,18 @@ data class LoginRequest(
     val password: String
 )
 
+/** Request for unified social login (POST /auth/social/login). */
 @Serializable
-data class KakaoLoginRequest(
+data class SocialLoginRequest(
+    val provider: String,
     @SerialName("accessToken") val accessToken: String
 )
 
 @Serializable
 data class LoginData(
     @SerialName("accessToken") val accessToken: String? = null,
-    @SerialName("refreshToken") val refreshToken: String? = null
+    @SerialName("refreshToken") val refreshToken: String? = null,
+    @SerialName("newUser") val newUser: Boolean? = null
 )
 
 @Serializable

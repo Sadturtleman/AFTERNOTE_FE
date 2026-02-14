@@ -41,6 +41,7 @@ class AuthInterceptor
                 "/auth/email/verify",
                 "/auth/sign-up",
                 "/auth/login",
+                "/auth/social/login",
                 "/auth/reissue"
             )
         }

@@ -55,9 +55,6 @@ fun ProcessingMethodList(
                 item = item,
                 expanded = state.expandedStates[item.id] ?: false,
                 isEditing = state.editingItemId == item.id,
-                onClick = {
-                    focusManager.clearFocus()
-                },
                 callbacks = ProcessingMethodCheckboxCallbacks(
                     onMoreClick = {
                         focusManager.clearFocus()

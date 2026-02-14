@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -39,7 +40,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Pr
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
-import androidx.compose.runtime.withFrameNanos
 
 /**
  * Callbacks for processing method checkbox dropdown (more, dismiss, edit, delete).
@@ -76,15 +76,10 @@ fun ProcessingMethodCheckbox(
     item: ProcessingMethodItem,
     expanded: Boolean = false,
     isEditing: Boolean = false,
-    onClick: (() -> Unit)? = null,
     callbacks: ProcessingMethodCheckboxCallbacks = ProcessingMethodCheckboxCallbacks()
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(enabled = onClick != null && !isEditing) {
-                onClick?.invoke()
-            },
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
