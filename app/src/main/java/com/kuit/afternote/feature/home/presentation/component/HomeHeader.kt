@@ -52,7 +52,7 @@ fun HomeHeader(
         }
         IconButton(onClick = onSettingsClick) {
             Icon(
-                painter = painterResource(R.drawable.ic_settings),
+                painter = painterResource(R.drawable.setting),
                 contentDescription = "설정",
                 modifier = Modifier.size(24.dp),
                 tint = Gray9
