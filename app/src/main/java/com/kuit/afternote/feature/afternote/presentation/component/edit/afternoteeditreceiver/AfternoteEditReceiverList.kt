@@ -1,3 +1,4 @@
+
 package com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver
 
 import androidx.compose.foundation.Image
@@ -176,6 +177,7 @@ private fun AfternoteEditReceiverItem(
 
 @Preview(showBackground = true)
 @Composable
+
 private fun AfternoteEditReceiverListPreview() {
     AfternoteTheme {
         CompositionLocalProvider(

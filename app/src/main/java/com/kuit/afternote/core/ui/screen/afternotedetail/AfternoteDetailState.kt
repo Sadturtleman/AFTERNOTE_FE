@@ -1,5 +1,5 @@
-package com.kuit.afternote.core.ui.screen.afternotedetail
 
+package com.kuit.afternote.core.ui.screen.afternotedetail
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 
-/**
+/*
  * Detail screen UI state (dropdown, delete dialog, bottom nav).
  * Used by [SocialNetworkDetailScreen] and
  * [GalleryDetailScreen].

@@ -314,6 +314,47 @@ fun SongPlaylistScreen(
 
 // region ── SearchableSongList (list-level composable) ──
 
+private fun filterSongsByQuery(
+    songs: List<PlaylistSongDisplay>,
+    searchQuery: String
+): List<PlaylistSongDisplay> {
+    val query = searchQuery.trim().lowercase()
+    if (query.isEmpty()) return songs
+    return songs.filter { song ->
+        song.title.lowercase().contains(query) ||
+            song.artist.lowercase().contains(query)
+    }
+}
+
+@Composable
+private fun SearchableSongListHeader(
+    slots: SearchableSongListSlots,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
+) {
+    if (slots.leadingContent != null) {
+        slots.leadingContent()
+    } else {
+        SongSearchSection(
+            searchQuery = searchQuery,
+            onSearchQueryChange = onSearchQueryChange
+        )
+    }
+}
+
+@Composable
+private fun SearchableSongListRow(
+    song: PlaylistSongDisplay,
+    onSongClick: ((PlaylistSongDisplay) -> Unit)?,
+    trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)?
+) {
+    PlaylistSongItem(
+        song = song,
+        onClick = if (onSongClick != null) { { onSongClick(song) } } else null,
+        trailingContent = if (trailingContent != null) { { trailingContent(song) } } else null
+    )
+}
+
 /**
  * 검색창 + 노래 목록 패턴.
  * SongPlaylistScreen 내부에서 사용하거나, 커스텀 Scaffold가 필요한 경우 직접 사용.
@@ -335,34 +376,25 @@ fun SearchableSongList(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     slots: SearchableSongListSlots = SearchableSongListSlots()
 ) {
+    val filteredSongs = remember(songs, searchQuery) {
+        filterSongsByQuery(songs, searchQuery)
+    }
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = contentPadding
     ) {
         item {
-            if (slots.leadingContent != null) {
-                slots.leadingContent()
-            } else {
-                SongSearchSection(
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = onSearchQueryChange
-                )
-            }
+            SearchableSongListHeader(
+                slots = slots,
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange
+            )
         }
-        itemsIndexed(songs) { _, song ->
-            val trailing = slots.trailingContent
-            PlaylistSongItem(
+        itemsIndexed(filteredSongs) { _, song ->
+            SearchableSongListRow(
                 song = song,
-                onClick = if (onSongClick != null) {
-                    { onSongClick(song) }
-                } else {
-                    null
-                },
-                trailingContent = if (trailing != null) {
-                    { trailing(song) }
-                } else {
-                    null
-                }
+                onSongClick = onSongClick,
+                trailingContent = slots.trailingContent
             )
         }
     }

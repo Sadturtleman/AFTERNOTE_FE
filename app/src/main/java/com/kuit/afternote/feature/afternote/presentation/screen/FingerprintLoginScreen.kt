@@ -32,7 +32,8 @@ import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLight
 @Suppress("AssignedValueIsNeverRead")
 fun FingerprintLoginScreen(
     modifier: Modifier = Modifier,
-    onFingerprintAuthClick: () -> Unit = {}
+    onFingerprintAuthClick: () -> Unit = {},
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
 ) {
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
 
@@ -44,7 +45,10 @@ fun FingerprintLoginScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { item ->
+                    selectedBottomNavItem = item
+                    onBottomNavTabSelected(item)
+                }
             )
         }
     ) { paddingValues ->

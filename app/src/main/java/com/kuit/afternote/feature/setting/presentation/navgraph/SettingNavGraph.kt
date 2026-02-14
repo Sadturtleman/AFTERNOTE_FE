@@ -6,6 +6,9 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -15,6 +18,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.ConfirmationPopup
+import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
+import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
@@ -96,8 +102,7 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
-            onBackClick = { navController.popBackStack() },
-            onRegisterClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() }
         )
     }
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
@@ -132,6 +137,32 @@ private const val TAG_SETTING_NAV = "SettingNavGraph"
 private fun SettingMainRouteContent(navController: NavController) {
     val context = LocalContext.current
     val unhandledMessage = stringResource(R.string.setting_menu_not_connected)
+    val logoutConfirmMessage = stringResource(R.string.setting_logout_confirm_message)
+    val logoutTitle = stringResource(R.string.setting_logout)
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    val logoutViewModel: LogoutViewModel = hiltViewModel()
+    val logoutState by logoutViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(logoutState.logoutSuccess) {
+        if (logoutState.logoutSuccess) {
+            logoutViewModel.clearLogoutSuccess()
+            navController.navigate(OnboardingRoute.SplashRoute) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            }
+        }
+    }
+
+    if (showLogoutDialog) {
+        ConfirmationPopup(
+            message = logoutConfirmMessage,
+            onDismiss = { showLogoutDialog = false },
+            onConfirm = {
+                logoutViewModel.logout()
+                showLogoutDialog = false
+            }
+        )
+    }
+
     SettingMainScreen(
         onClick = { title ->
             when (title) {
@@ -139,6 +170,7 @@ private fun SettingMainRouteContent(navController: NavController) {
                 "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
                 "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
                 "알림 설정" -> navController.navigate(SettingRoute.PushToastSettingRoute)
+                logoutTitle -> showLogoutDialog = true
                 "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
                 "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
                 "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)

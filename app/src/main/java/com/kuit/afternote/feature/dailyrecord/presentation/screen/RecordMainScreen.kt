@@ -36,7 +36,6 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordItem
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 
 /**
@@ -48,7 +47,6 @@ import com.kuit.afternote.ui.theme.Gray1
  * - 하단 FAB 버튼
  */
 @Composable
-@Suppress("AssignedValueIsNeverRead")
 fun RecordMainScreen(
     modifier: Modifier = Modifier,
     onDiaryClick: () -> Unit,
@@ -64,9 +62,9 @@ fun RecordMainScreen(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = {
-                    selectedBottomNavItem = it
-                    onBottomNavTabSelected(it)
+                onItemSelected = { item ->
+                    selectedBottomNavItem = item
+                    onBottomNavTabSelected(item)
                 }
             )
         },
@@ -158,16 +156,16 @@ fun RecordMainScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true
+)
 @Composable
-private fun RecordMainScreenPreview() {
-    AfternoteTheme {
-        RecordMainScreen(
-            onDiaryClick = {},
-            onDeepMindClick = {},
-            onWeekendReportClick = {},
-            onQuestionClick = {},
-            onBottomNavTabSelected = {}
-        )
-    }
+private fun RecordMainScreenPrev() {
+    RecordMainScreen(
+        onDiaryClick = {},
+        onDeepMindClick = {},
+        onWeekendReportClick = {},
+        onQuestionClick = {},
+        onBottomNavTabSelected = {}
+    )
 }

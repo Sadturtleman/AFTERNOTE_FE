@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">afternote</string>
+    <string name="app_name">Afternote</string>
 
     <!-- Bottom navigation labels -->
     <string name="nav_home">홈</string>
@@ -69,9 +69,20 @@
 
     <!-- Setting: unhandled menu -->
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
+    <string name="setting_logout">로그아웃</string>
+    <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
 
     <!-- Afternote detail: design not yet implemented -->
     <string name="design_pending">디자인 예정</string>
+
+    <!-- Afternote edit: required field validation -->
+    <string name="afternote_validation_title_required">서비스명을 입력해 주세요.</string>
+    <string name="afternote_validation_social_credentials_required">계정 ID와 비밀번호를 입력해 주세요.</string>
+    <string name="afternote_validation_social_process_method_required">계정 처리 방법을 선택해 주세요.</string>
+    <string name="afternote_validation_social_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
+    <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
+    <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
+    <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
 
     <!-- Time letter detail -->
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>

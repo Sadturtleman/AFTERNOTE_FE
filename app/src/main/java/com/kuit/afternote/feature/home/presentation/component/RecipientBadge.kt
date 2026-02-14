@@ -27,12 +27,14 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun RecipientBadge(
     modifier: Modifier = Modifier,
     text: String = stringResource(R.string.home_recipient_complete),
-    showCheckIcon: Boolean = true
+    showCheckIcon: Boolean = true,
+    onCLick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
-        color = B3
+        color = B3,
+        onClick = onCLick
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

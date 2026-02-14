@@ -1,3 +1,4 @@
+
 package com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod
 
 import androidx.compose.runtime.Composable
@@ -18,9 +19,6 @@ class ProcessingMethodListState(
     initialExpandedItemId: String? = null
 ) {
     var showTextField by mutableStateOf(initialShowTextField)
-        private set
-
-    var previousFocusedState by mutableStateOf(false)
         private set
 
     val expandedStates = mutableStateMapOf<String, Boolean>()
@@ -52,28 +50,16 @@ class ProcessingMethodListState(
     }
 
     /**
-     * 텍스트 필드 표시 상태 변경
-     */
-    fun setTextFieldVisible(visible: Boolean) {
-        showTextField = visible
-    }
-
-    /**
      * 아이템 expanded 상태 토글
      */
     fun toggleItemExpanded(itemId: String) {
         expandedStates[itemId] = !(expandedStates[itemId] ?: false)
     }
-
-    /**
-     * 이전 포커스 상태 업데이트
-     */
-    fun updatePreviousFocusedState(isFocused: Boolean) {
-        previousFocusedState = isFocused
-    }
 }
 
 /**
+ * MainPageEditReceiverListState를 생성하는 Composable 함수
+ *
  * ProcessingMethodListState를 생성하는 Composable 함수
  */
 @Composable
@@ -84,6 +70,5 @@ fun rememberProcessingMethodListState(
     remember {
         ProcessingMethodListState(
             initialShowTextField = initialShowTextField,
-            initialExpandedItemId = initialExpandedItemId
         )
     }

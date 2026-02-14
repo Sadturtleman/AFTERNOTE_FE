@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -62,26 +64,59 @@ fun FuneralVideoUpload(
             )
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .background(color = White, shape = RoundedCornerShape(size = 16.dp))
-                .clickable(onClick = onAddVideoClick)
-        ) {
-            Column(
+        if (!hasVideo) {
+            // 업로드 전 상태: 흰색 카드 + 플러스 아이콘
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(80.dp)
+                    .background(color = White, shape = RoundedCornerShape(size = 16.dp))
+                    .clickable(onClick = onAddVideoClick)
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Image(
+                        painter = painterResource(R.drawable.ic_add_circle),
+                        contentDescription = addContentDescription,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+        } else {
+            // 업로드 후 상태: 피그마 디자인 기반 그라데이션 비디오 카드
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color(0x99757575), // rgba(117,117,117,0.6)
+                                        Color(0x99222222) // rgba(34,34,34,0.6)
+                                    )
+                            ),
+                        shape = RoundedCornerShape(size = 16.dp)
+                    )
+                    .clickable(onClick = onAddVideoClick)
+            ) {
+                // 중앙 재생 아이콘
+                // TODO: 전용 플레이 아이콘 리소스가 추가되면 교체
                 Image(
-                    painter = painterResource(R.drawable.ic_add_circle),
-                    contentDescription = addContentDescription,
-                    modifier = Modifier.size(24.dp)
+                    painter = painterResource(R.drawable.ic_sound),
+                    contentDescription = "영상 재생",
+                    modifier =
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(56.dp)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

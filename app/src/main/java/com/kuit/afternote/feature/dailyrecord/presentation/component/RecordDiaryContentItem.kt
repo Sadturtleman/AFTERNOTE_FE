@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
-import android.app.DatePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -13,33 +12,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Black
-import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-private const val DIARY_STANDARD_TEXT = "일기 기록하기"
-private const val DATE_LABEL_TEXT = "작성 날짜"
-private const val TOPIC_LABEL_TEXT = "기록 주제"
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -61,16 +56,18 @@ fun RecordDiaryContentItem(
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
 
-    val isDiary = standard == DIARY_STANDARD_TEXT
-    val labelText = if (isDiary) DATE_LABEL_TEXT else TOPIC_LABEL_TEXT
-    val displayText = if (isDiary) formattedDate else "나의 가치관"
-
+    var s = " "
+    if (standard == "일기 기록하기") {
+        s = "작성 날짜"
+    } else {
+        s = "기록 주제"
+    }
     Column(
-        modifier = modifier
+        modifier = Modifier
             .padding(top = 24.dp, start = 20.dp, end = 20.dp)
     ) {
         Text(
-            text = labelText,
+            text = s,
             color = Black,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -86,11 +83,19 @@ fun RecordDiaryContentItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = displayText,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                if (s == "작성 날짜") {
+                    Text(
+                        text = formattedDate,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                } else if (s == "기록 주제") {
+                    Text(
+                        text = "나의 가치관",
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
 
                 Image(
                     painter = painterResource(id = R.drawable.ic_under),
@@ -99,30 +104,27 @@ fun RecordDiaryContentItem(
                         .size(24.dp)
                         .clickable { showDialog.value = true }
                 )
-
-                // 다이얼로그
-                if (showDialog.value) {
-                    LaunchedEffect(Unit) {
-                        DatePickerDialog(
-                            context,
-                            R.style.SpinnerDatePickerStyle,
-                            { _, year, month, dayOfMonth ->
-                                onDateSelected(year, month + 1, dayOfMonth)
-                                showDialog.value = false
-                            },
-                            today.year,
-                            today.monthValue - 1,
-                            today.dayOfMonth
-                        ).show()
-                    }
-                }
+//                if (sendDate.isNotEmpty()) {
+//                    Text(
+//                        text = sendDate,
+//                        color = Color(0xFF212121),
+//                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
+//                        fontSize = 14.sp,
+//                        fontWeight = FontWeight.Normal,
+//                        modifier = Modifier.padding(top = 10.dp)
+//                    )
+//                }
+//                Image(
+//                    painter = painterResource(R.drawable.ic_down_vector),
+//                    contentDescription = "날짜 선택",
+//                    modifier = Modifier
+//                        .align(Alignment.CenterEnd)
+//                        .padding(top = 15.dp)
+//                        .size(width = 12.dp, height = 6.dp)
+//                )
             }
-            HorizontalDivider(
-                color = Gray3,
-                thickness = 1.dp
-            )
+            Divider(color = Color.LightGray, thickness = 0.8.dp)
         }
-
         BasicTextField(
             value = title,
             onValueChange = onTitleChange,
@@ -130,7 +132,7 @@ fun RecordDiaryContentItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, top = 16.dp, bottom = 8.dp),
-            textStyle = TextStyle(
+            textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = 18.sp,
                 color = Black
             ),
@@ -146,19 +148,16 @@ fun RecordDiaryContentItem(
             }
         )
 
-        HorizontalDivider(
-            color = Gray3,
-            thickness = 1.dp
-        )
+        Divider(color = Color.LightGray, thickness = 0.8.dp)
 
         BasicTextField(
             value = content,
             onValueChange = onContentChange,
-            singleLine = false,
+            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 40.dp),
-            textStyle = TextStyle(
+            textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = 18.sp,
                 color = Black
             ),
@@ -173,70 +172,6 @@ fun RecordDiaryContentItem(
                 }
                 innerTextField()
             }
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, name = "Diary - empty")
-@Composable
-private fun RecordDiaryContentItemDiaryPreview() {
-    AfternoteTheme {
-        RecordDiaryContentItem(
-            standard = DIARY_STANDARD_TEXT,
-            onDateSelected = { _, _, _ -> },
-            title = "",
-            onTitleChange = {},
-            content = "",
-            onContentChange = {}
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, name = "Diary - filled")
-@Composable
-private fun RecordDiaryContentItemDiaryFilledPreview() {
-    AfternoteTheme {
-        RecordDiaryContentItem(
-            standard = DIARY_STANDARD_TEXT,
-            onDateSelected = { _, _, _ -> },
-            title = "A day worth remembering",
-            onTitleChange = {},
-            content = "I felt grateful today. I want to keep this moment close.",
-            onContentChange = {}
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, name = "Topic - filled")
-@Composable
-private fun RecordDiaryContentItemTopicPreview() {
-    AfternoteTheme {
-        RecordDiaryContentItem(
-            standard = "topic",
-            onDateSelected = { _, _, _ -> },
-            title = "My values",
-            onTitleChange = {},
-            content = "Today I want to remember what truly matters to me.",
-            onContentChange = {}
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true, name = "Topic - empty")
-@Composable
-private fun RecordDiaryContentItemTopicEmptyPreview() {
-    AfternoteTheme {
-        RecordDiaryContentItem(
-            standard = "topic",
-            onDateSelected = { _, _, _ -> },
-            title = "",
-            onTitleChange = {},
-            content = "",
-            onContentChange = {}
         )
     }
 }

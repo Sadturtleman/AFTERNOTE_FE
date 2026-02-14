@@ -1,5 +1,6 @@
 // K2 false positive: state assigned in DatePickerDialog lambdas is read at recomposition (KT-78881).
 @file:Suppress("AssignedValueIsNeverRead")
+
 package com.kuit.afternote.feature.setting.presentation.screen.postdelivery
 
 import androidx.activity.compose.BackHandler
@@ -32,75 +33,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.SelectableRadioCard
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodOption
-import com.kuit.afternote.core.ui.component.SelectableRadioCard
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.feature.setting.presentation.component.DatePickerDialog
 import com.kuit.afternote.feature.setting.presentation.component.SelectedDateText
+import com.kuit.afternote.feature.setting.presentation.model.DeliveryMethodOption
+import com.kuit.afternote.feature.setting.presentation.model.TriggerConditionOption
+import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionState
+import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionViewModel
+import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionViewModelContract
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
-
-/**
- * 정보 전달 방법 옵션 (첫 번째 섹션)
- */
-sealed interface DeliveryMethodOption {
-    val title: String
-    val description: String
-
-    data object AutomaticTransfer : DeliveryMethodOption {
-        override val title: String = "자동 전달"
-        override val description: String = "설정된 조건 충족 시, 별도의 요청 없이 지정한 수신자에게 자동으로 전달됩니다."
-    }
-
-    data object ReceiverApprovalTransfer : DeliveryMethodOption {
-        override val title: String = "수신자 승인 후 전달"
-        override val description: String = "수신자의 요청과 확인 절차를 거친 후, 안전하게 정보가 전달됩니다."
-    }
-}
-
-/**
- * 정보 처리 방법 옵션 (두 번째 섹션 - 트리거 조건)
- */
-sealed interface TriggerConditionOption {
-    val title: String
-    val description: String
-
-    data object AppInactivity : TriggerConditionOption {
-        override val title: String = "일정 기간 앱 미사용 시"
-        override val description: String = "1년 이상의 기간 동안 앱 사용이 없을 경우 전달 조건이 자동으로 충족됩니다."
-    }
-
-    data object SpecificDate : TriggerConditionOption {
-        override val title: String = "특정 날짜에 전달"
-        override val description: String = "미리 정한 날짜에 맞추어 정보가 자동으로 전달됩니다."
-    }
-
-    data object ReceiverRequest : TriggerConditionOption {
-        override val title: String = "수신자 요청 이후"
-        override val description: String = "수신자의 요청이 접수된 후, 확인 절차를 거쳐 전달이 진행됩니다."
-    }
-}
 
 @Composable
 fun PostDeliveryConditionScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onRegisterClick: () -> Unit = {}
+    viewModel: PostDeliveryConditionViewModelContract = hiltViewModel<PostDeliveryConditionViewModel>()
 ) {
-    var selectedDeliveryMethod by remember {
-        mutableStateOf<DeliveryMethodOption>(DeliveryMethodOption.AutomaticTransfer)
-    }
-    var selectedTriggerCondition by remember {
-        mutableStateOf<TriggerConditionOption>(TriggerConditionOption.AppInactivity)
-    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val selectedDeliveryMethod = state.selectedDeliveryMethod
+    val selectedTriggerCondition = state.selectedTriggerCondition
+    val selectedDate = state.selectedDate
     var showDatePickerDialog by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val deliveryMethods = listOf(
         DeliveryMethodOption.AutomaticTransfer,
@@ -119,9 +85,7 @@ fun PostDeliveryConditionScreen(
         topBar = {
             TopBar(
                 title = "사후 전달 조건",
-                onBackClick = onBackClick,
-                onActionClick = onRegisterClick,
-                actionText = "등록"
+                onBackClick = onBackClick
             )
         }
     ) { paddingValues ->
@@ -154,7 +118,7 @@ fun PostDeliveryConditionScreen(
                         val isSelected = selectedDeliveryMethod == method
                         SelectableRadioCard(
                             selected = isSelected,
-                            onClick = { selectedDeliveryMethod = method },
+                            onClick = { viewModel.onDeliveryMethodSelected(method) },
                             modifier = Modifier.fillMaxWidth(),
                             content = {
                                 OptionRadioCardContent(
@@ -181,7 +145,7 @@ fun PostDeliveryConditionScreen(
 
                 // SelectedDateText - 특정 날짜가 선택되었을 때만 표시
                 if (selectedTriggerCondition == TriggerConditionOption.SpecificDate && selectedDate != null) {
-                    SelectedDateText(date = selectedDate!!)
+                    SelectedDateText(date = selectedDate)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -197,7 +161,7 @@ fun PostDeliveryConditionScreen(
                         SelectableRadioCard(
                             selected = isSelected,
                             onClick = {
-                                selectedTriggerCondition = condition
+                                viewModel.onTriggerConditionSelected(condition)
                                 if (condition == TriggerConditionOption.SpecificDate) {
                                     showDatePickerDialog = true
                                 }
@@ -247,7 +211,7 @@ fun PostDeliveryConditionScreen(
                 showDatePickerDialog = false
             },
             onDateChanged = { date ->
-                selectedDate = date
+                viewModel.onDateSelected(date)
                 showDatePickerDialog = false
             },
             initialDate = selectedDate ?: LocalDate.now()
@@ -282,13 +246,36 @@ private fun BulletItem(text: String) {
     }
 }
 
+private class FakePostDeliveryConditionViewModel : PostDeliveryConditionViewModelContract {
+    override val state: StateFlow<PostDeliveryConditionState> =
+        MutableStateFlow(
+            PostDeliveryConditionState(
+                selectedDeliveryMethod = DeliveryMethodOption.AutomaticTransfer,
+                selectedTriggerCondition = TriggerConditionOption.AppInactivity,
+                selectedDate = null
+            )
+        )
+
+    override fun onDeliveryMethodSelected(option: DeliveryMethodOption) {
+        // No-op: Fake for Preview only; no persistence.
+    }
+
+    override fun onTriggerConditionSelected(option: TriggerConditionOption) {
+        // No-op: Fake for Preview only; no persistence.
+    }
+
+    override fun onDateSelected(date: LocalDate?) {
+        // No-op: Fake for Preview only; no persistence.
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PostDeliveryConditionScreenPreview() {
     AfternoteTheme {
         PostDeliveryConditionScreen(
             onBackClick = {},
-            onRegisterClick = {}
+            viewModel = remember { FakePostDeliveryConditionViewModel() }
         )
     }
 }

@@ -321,19 +321,22 @@ private fun DateAndMethodCard(
  */
 @Composable
 private fun InformationProcessingMethodText(informationProcessingMethod: String) {
-    val annotatedText = when (informationProcessingMethod) {
-        "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-            append("에게 정보 전달")
+    val annotatedText =
+        when (informationProcessingMethod) {
+            "TRANSFER",
+            "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+                append("에게 정보 전달")
+            }
+            "ADDITIONAL",
+            "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+                append("에게 정보 전달")
+            }
+            else -> buildAnnotatedString {
+                append(informationProcessingMethod)
+            }
         }
-        "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
-            append("에게 정보 전달")
-        }
-        else -> buildAnnotatedString {
-            append(informationProcessingMethod)
-        }
-    }
     Text(
         text = annotatedText,
         style = TextStyle(

@@ -23,4 +23,8 @@ sealed interface RecordRoute {
 
     @Serializable
     data object WeekendReportRoute : RecordRoute
+
+    @Serializable
+    data class EditRoute(val recordId: Long) : RecordRoute
+
 }

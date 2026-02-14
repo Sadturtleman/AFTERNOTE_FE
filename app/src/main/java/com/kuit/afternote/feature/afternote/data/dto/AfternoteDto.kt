@@ -1,7 +1,9 @@
 package com.kuit.afternote.feature.afternote.data.dto
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 /**
  * Server response form for GET /afternotes.
@@ -66,8 +68,94 @@ data class AfternoteReceiverRefDto(
 
 /**
  * Server response data for POST /afternotes and PATCH /afternotes/{id}.
+ * Accepts both snake_case (afternote_id) and camelCase (afternoteId) from API.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteIdResponseDto(
-    @SerialName("afternote_id") val afternoteId: Long
+    @SerialName("afternoteId") @JsonNames("afternote_id") val afternoteId: Long
+)
+
+// --- GET /afternotes/{afternoteId} (detail) ---
+
+/**
+ * Server response for GET /afternotes/{afternoteId}.
+ * Common fields always present; category-specific fields (credentials, receivers, playlist) are null when not applicable.
+ */
+@Serializable
+data class AfternoteDetailResponseDto(
+    @SerialName("afternoteId") val afternoteId: Long,
+    val category: String,
+    val title: String,
+    @SerialName("createdAt") val createdAt: String = "",
+    @SerialName("updatedAt") val updatedAt: String = "",
+    val credentials: AfternoteCredentialsDto? = null,
+    val receivers: List<AfternoteDetailReceiverDto>? = null,
+    val processMethod: String? = null,
+    val actions: List<String>? = null,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val playlist: AfternotePlaylistDto? = null
+)
+
+/**
+ * Receiver in GET /afternotes/{id} response (GALLERY).
+ * API currently returns only receiverId; name/relation are resolved via GET /users/receivers.
+ * Accepts optional name/relation/phone if API adds them later.
+ */
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+data class AfternoteDetailReceiverDto(
+    @SerialName("receiverId") @JsonNames("receiver_id") val receiverId: Long? = null,
+    @JsonNames("receiverName", "receiver_name") val name: String? = null,
+    @JsonNames("receiverRelation", "receiver_relation", "relationship") val relation: String? = null,
+    @JsonNames("receiverPhone", "receiver_phone", "phoneNumber", "phone_number") val phone: String? = null
+)
+
+@Serializable
+data class AfternotePlaylistDto(
+    val profilePhoto: String? = null,
+    val atmosphere: String? = null,
+    val songs: List<AfternoteSongDto> = emptyList(),
+    @SerialName("memorialVideo") val memorialVideo: AfternoteMemorialVideoDto? = null
+)
+
+@Serializable
+data class AfternoteSongDto(
+    val id: Long? = null,
+    val title: String,
+    val artist: String,
+    @SerialName("coverUrl") val coverUrl: String? = null
+)
+
+@Serializable
+data class AfternoteMemorialVideoDto(
+    @SerialName("videoUrl") val videoUrl: String? = null,
+    @SerialName("thumbnailUrl") val thumbnailUrl: String? = null
+)
+
+// --- POST /afternotes (PLAYLIST category) ---
+
+@Serializable
+data class AfternoteCreatePlaylistRequestDto(
+    val category: String = "PLAYLIST",
+    val title: String,
+    val playlist: AfternotePlaylistDto
+)
+
+// --- PATCH /afternotes/{afternoteId} (partial update) ---
+
+/**
+ * Partial update request. Only include fields to change; category cannot be changed.
+ * Send only fields valid for the afternote's category (SOCIAL: credentials, etc.; GALLERY: receivers; PLAYLIST: playlist).
+ */
+@Serializable
+data class AfternoteUpdateRequestDto(
+    val category: String? = null,
+    val title: String? = null,
+    val processMethod: String? = null,
+    val actions: List<String>? = null,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val credentials: AfternoteCredentialsDto? = null,
+    val receivers: List<AfternoteReceiverRefDto>? = null,
+    val playlist: AfternotePlaylistDto? = null
 )

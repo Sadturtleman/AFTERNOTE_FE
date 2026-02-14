@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,6 +42,7 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetail
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
@@ -117,26 +120,18 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
 }
 
 @Composable
-private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: composable entered")
+private fun FingerprintLoginRouteContent(
+    navHostController: NavHostController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: context=${context::class.java.name}")
     val activity = context as? FragmentActivity
-    Log.d(
-        TAG_FINGERPRINT,
-        "fingerprint_login: activity=${activity?.javaClass?.name ?: "null"}"
-    )
     val promptTitle = stringResource(R.string.biometric_prompt_title)
     val promptSubtitle = stringResource(R.string.biometric_prompt_subtitle)
     val notAvailableMessage = stringResource(R.string.biometric_not_available)
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: stringResource done")
     val biometricPrompt =
         remember(activity) {
             try {
-                Log.d(
-                    TAG_FINGERPRINT,
-                    "fingerprint_login: building BiometricPrompt, activity=$activity"
-                )
                 activity?.let { fragActivity ->
                     val executor = ContextCompat.getMainExecutor(fragActivity)
                     BiometricPrompt(
@@ -146,38 +141,24 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                             override fun onAuthenticationSucceeded(
                                 result: BiometricPrompt.AuthenticationResult
                             ) {
-                                Log.d(
-                                    TAG_FINGERPRINT,
-                                    "fingerprint_login: auth succeeded, popping"
-                                )
                                 navHostController.popBackStack()
                             }
                         }
-                    ).also {
-                        Log.d(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt created")
-                    }
+                    )
                 }
             } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: BiometricPrompt failed", e)
+                Log.e(TAG_FINGERPRINT, "BiometricPrompt creation failed", e)
                 null
             }
         }
     val promptInfo =
         remember(promptTitle, promptSubtitle) {
-            try {
-                Log.d(TAG_FINGERPRINT, "fingerprint_login: building PromptInfo")
-                BiometricPrompt.PromptInfo.Builder()
-                    .setTitle(promptTitle)
-                    .setSubtitle(promptSubtitle)
-                    .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-                    .build()
-                    .also { Log.d(TAG_FINGERPRINT, "fingerprint_login: PromptInfo created") }
-            } catch (e: Throwable) {
-                Log.e(TAG_FINGERPRINT, "fingerprint_login: PromptInfo failed", e)
-                throw e
-            }
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(promptTitle)
+                .setSubtitle(promptSubtitle)
+                .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                .build()
         }
-    Log.d(TAG_FINGERPRINT, "fingerprint_login: showing FingerprintLoginScreen")
     FingerprintLoginScreen(
         onFingerprintAuthClick = {
             if (activity == null) return@FingerprintLoginScreen
@@ -194,7 +175,8 @@ private fun FingerprintLoginRouteContent(navHostController: NavHostController) {
                         )
                         .show()
             }
-        }
+        },
+        onBottomNavTabSelected = onBottomNavTabSelected
     )
 }
 
@@ -301,7 +283,10 @@ private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): Receiv
 @Composable
 private fun HomeScreenContent(
     onBottomNavTabSelected: (BottomNavItem) -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+    onDailyQuestionCtaClick: () -> Unit,
+    onTImeLetterClick: () -> Unit,
+    onAfternoteClick: () -> Unit
 ) {
     HomeScreen(
         event = object : HomeScreenEvent {
@@ -309,8 +294,9 @@ private fun HomeScreenContent(
                 onBottomNavTabSelected(item)
             override fun onProfileClick() = Unit
             override fun onSettingsClick() = onSettingsClick()
-            override fun onDailyQuestionCtaClick() = Unit
-            override fun onFabClick() = Unit
+            override fun onDailyQuestionCtaClick() = onDailyQuestionCtaClick()
+            override fun onTimeLetterClick() = onTImeLetterClick()
+            override fun onAfterNoteClick() = onAfternoteClick()
         }
     )
 }
@@ -346,6 +332,7 @@ fun NavGraph(navHostController: NavHostController) {
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
+    var listRefreshRequested by remember { mutableStateOf(false) }
     val devModeScreens = devModeScreensList
 
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = { item ->
@@ -355,7 +342,7 @@ fun NavGraph(navHostController: NavHostController) {
                     launchSingleTop = true
                 }
             BottomNavItem.AFTERNOTE ->
-                navHostController.navigate(AfternoteRoute.AfternoteListRoute) {
+                navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
                     launchSingleTop = true
                 }
             BottomNavItem.RECORD ->
@@ -371,7 +358,13 @@ fun NavGraph(navHostController: NavHostController) {
 
     NavHost(
         navController = navHostController,
-        startDestination = "dev"
+        startDestination = "dev",
+        // Disable default transition animations to prevent touch events being
+        // blocked by the animation overlay during screen transitions.
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable("mode_selection") {
             ModeSelectionScreen(
@@ -385,6 +378,21 @@ fun NavGraph(navHostController: NavHostController) {
                 onBottomNavTabSelected = onBottomNavTabSelected,
                 onSettingsClick = {
                     navHostController.navigate(SettingRoute.SettingMainRoute) {
+                        launchSingleTop = true
+                    }
+                },
+                onDailyQuestionCtaClick = {
+                    navHostController.navigate("record_main") {
+                        launchSingleTop = true
+                    }
+                },
+                onAfternoteClick = {
+                    navHostController.navigate(AfternoteRoute.FingerprintLoginRoute) {
+                        launchSingleTop = true
+                    }
+                },
+                onTImeLetterClick = {
+                    navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
                         launchSingleTop = true
                     }
                 }
@@ -402,14 +410,21 @@ fun NavGraph(navHostController: NavHostController) {
         afternoteNavGraph(
             navController = navHostController,
             params = AfternoteNavGraphParams(
-                afternoteItems = afternoteItems,
-                onItemsUpdated = { afternoteItems = it },
+                afternoteItemsProvider = { afternoteItems },
+                onItemsUpdated = { newItems ->
+                    afternoteItems = newItems
+                },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
                 userName = receiverProvider.getDefaultReceiverTitleForDev(),
                 editStateHandling = AfternoteEditStateHandling(
                     holder = afternoteEditStateHolder,
                     onClear = { afternoteEditStateHolder.value = null }
+                ),
+                listRefresh = AfternoteListRefreshParams(
+                    listRefreshRequestedProvider = { listRefreshRequested },
+                    onListRefreshConsumed = { listRefreshRequested = false },
+                    onAfternoteDeleted = { listRefreshRequested = true }
                 )
             ),
             onBottomNavTabSelected = onBottomNavTabSelected
@@ -524,7 +539,10 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("fingerprint_login") {
-            FingerprintLoginRouteContent(navHostController = navHostController)
+            FingerprintLoginRouteContent(
+                navHostController = navHostController,
+                onBottomNavTabSelected = onBottomNavTabSelected
+            )
         }
     }
 }
