@@ -223,6 +223,7 @@ class AfternoteRepositoryImplTest {
 
             val body =
                 AfternoteUpdateRequestDto(
+                    category = "SOCIAL",
                     title = "수정된 제목",
                     processMethod = "MEMORIAL",
                     actions = listOf("게시물 유지"),

@@ -69,6 +69,8 @@ class MemorialPlaylistStateHolder {
 private const val TAG = "AfternoteEditState"
 private const val CATEGORY_GALLERY_AND_FILE = "갤러리 및 파일"
 private const val CUSTOM_ADD_OPTION = "직접 추가하기"
+private const val LAST_WISH_DEFAULT_CALM = "차분하고 조용하게 보내주세요."
+private const val LAST_WISH_DEFAULT_BRIGHT = "슬퍼 하지 말고 밝고 따뜻하게 보내주세요."
 
 /**
  * 다이얼로그 타입
@@ -82,11 +84,8 @@ enum class DialogType {
  * AfternoteEditScreen의 상태를 관리하는 State Holder
  *
  * Note: State Holder 패턴으로 인해 많은 함수가 필요합니다.
- * 현재 18개의 public 함수가 있으며, detekt threshold(20)를 초과하지 않지만
- * 향후 확장 시 Manager 클래스로 책임 분리를 고려해야 합니다.
- * (예: AfternoteEditReceiverManager, CategoryManager, ProcessingMethodManager)
- *
- * TODO: 함수가 20개를 초과하면 Manager 클래스로 분리 고려
+ * [ProcessingMethodManager]로 처리 방법 목록 책임을 분리하여 함수 수를 20 이하로 유지합니다.
+ * 추가 확장 시 AfternoteEditReceiverManager, CategoryManager 등 분리 고려.
  */
 @Stable
 class AfternoteEditState(
@@ -130,11 +129,12 @@ class AfternoteEditState(
     var loadedItemId: String? by mutableStateOf(null)
         private set
 
-    // Processing Method Lists (empty until loaded; use dummies only in Previews)
-    var processingMethods by mutableStateOf<List<ProcessingMethodItem>>(emptyList())
-        private set
-    var galleryProcessingMethods by mutableStateOf<List<ProcessingMethodItem>>(emptyList())
-        private set
+    // Processing Method Lists (delegated to manager to keep function count under threshold)
+    private val processingMethodManager = ProcessingMethodManager()
+    val processingMethods: List<ProcessingMethodItem>
+        get() = processingMethodManager.processingMethods
+    val galleryProcessingMethods: List<ProcessingMethodItem>
+        get() = processingMethodManager.galleryProcessingMethods
 
     // Memorial Guideline
     var selectedLastWish by mutableStateOf<String?>(null)
@@ -239,8 +239,8 @@ class AfternoteEditState(
             onItemEditClick = { _ ->
                 // TODO: 처리 방법 수정 로직
             },
-            onItemDeleteClick = ::onGalleryProcessingMethodDelete,
-            onItemAdded = ::onGalleryProcessingMethodAdded,
+            onItemDeleteClick = processingMethodManager::deleteGalleryProcessingMethod,
+            onItemAdded = processingMethodManager::addGalleryProcessingMethod,
             onTextFieldVisibilityChanged = { _ ->
                 // 텍스트 필드 표시 상태 변경 처리
             }
@@ -255,8 +255,8 @@ class AfternoteEditState(
             onItemEditClick = { _ ->
                 // TODO: 처리 방법 수정 로직
             },
-            onItemDeleteClick = ::onProcessingMethodDelete,
-            onItemAdded = ::onProcessingMethodAdded,
+            onItemDeleteClick = processingMethodManager::deleteProcessingMethod,
+            onItemAdded = processingMethodManager::addProcessingMethod,
             onTextFieldVisibilityChanged = { _ ->
                 // 텍스트 필드 표시 상태 변경 처리
             }
@@ -297,6 +297,17 @@ class AfternoteEditState(
     fun onCustomLastWishChanged(text: String) {
         customLastWishText = text
     }
+
+    /**
+     * Resolves the "남기고 싶은 당부" value to send as playlist.atmosphere (Memorial only).
+     */
+    fun getAtmosphereForSave(): String =
+        when (selectedLastWish) {
+            "calm" -> LAST_WISH_DEFAULT_CALM
+            "bright" -> LAST_WISH_DEFAULT_BRIGHT
+            "other" -> customLastWishText.trim()
+            else -> ""
+        }
 
     /**
      * 영정사진 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
@@ -367,30 +378,6 @@ class AfternoteEditState(
         afternoteEditReceivers = afternoteEditReceivers + newAfternoteEditReceiver
     }
 
-    fun onGalleryProcessingMethodDelete(itemId: String) {
-        galleryProcessingMethods = galleryProcessingMethods.filter { it.id != itemId }
-    }
-
-    fun onGalleryProcessingMethodAdded(text: String) {
-        val newItem = ProcessingMethodItem(
-            id = (galleryProcessingMethods.size + 1).toString(),
-            text = text
-        )
-        galleryProcessingMethods = galleryProcessingMethods + newItem
-    }
-
-    fun onProcessingMethodDelete(itemId: String) {
-        processingMethods = processingMethods.filter { it.id != itemId }
-    }
-
-    fun onProcessingMethodAdded(text: String) {
-        val newItem = ProcessingMethodItem(
-            id = (processingMethods.size + 1).toString(),
-            text = text
-        )
-        processingMethods = processingMethods + newItem
-    }
-
     fun onBottomNavItemSelected(item: BottomNavItem) {
         selectedBottomNavItem = item
     }
@@ -429,8 +416,31 @@ class AfternoteEditState(
             }.getOrDefault(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER)
         }
 
-        processingMethods = params.processingMethodsList
-        galleryProcessingMethods = params.galleryProcessingMethodsList
+        processingMethodManager.replaceProcessingMethods(params.processingMethodsList)
+        processingMethodManager.replaceGalleryProcessingMethods(params.galleryProcessingMethodsList)
+
+        // Memorial only: when atmosphere does not match a default option, select "기타(직접 입력)" and show saved text.
+        params.atmosphere?.let { atmosphereValue ->
+            val trimmed = atmosphereValue.trim()
+            when {
+                trimmed.isEmpty() -> {
+                    selectedLastWish = null
+                    customLastWishText = ""
+                }
+                trimmed == LAST_WISH_DEFAULT_CALM -> {
+                    selectedLastWish = "calm"
+                    customLastWishText = ""
+                }
+                trimmed == LAST_WISH_DEFAULT_BRIGHT -> {
+                    selectedLastWish = "bright"
+                    customLastWishText = ""
+                }
+                else -> {
+                    selectedLastWish = "other"
+                    customLastWishText = trimmed
+                }
+            }
+        }
     }
 }
 
@@ -439,6 +449,8 @@ class AfternoteEditState(
  *
  * @param categoryDisplayString Edit-screen category dropdown value (e.g. "갤러리 및 파일").
  *        Must come from API [detail.category], not inferred from title, so Gallery processMethod loads.
+ * @param atmosphere Memorial(PLAYLIST) only: playlist.atmosphere for "남기고 싶은 당부". When non-null and
+ *        not matching a default option, edit screen selects "기타(직접 입력)" and shows this text.
  */
 data class LoadFromExistingParams(
     val itemId: String,
@@ -450,7 +462,8 @@ data class LoadFromExistingParams(
     val accountProcessingMethodName: String,
     val informationProcessingMethodName: String,
     val processingMethodsList: List<ProcessingMethodItem>,
-    val galleryProcessingMethodsList: List<ProcessingMethodItem>
+    val galleryProcessingMethodsList: List<ProcessingMethodItem>,
+    val atmosphere: String? = null
 )
 
 @Composable
