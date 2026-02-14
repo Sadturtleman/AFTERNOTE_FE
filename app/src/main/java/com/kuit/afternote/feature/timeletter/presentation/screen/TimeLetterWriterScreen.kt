@@ -247,7 +247,7 @@ fun TimeLetterWriterScreen(
             bottomBar = {
                 TimeLetterWriterBottomBar(
                     draftCount = draftCount,
-                    onLinkClick = {  },
+                    onLinkClick = { showLinkDialog = true },
                     onAddClick = { isMenuOpen = !isMenuOpen },
                     onSaveDraftClick = onSaveDraftClick,
                     onDraftCountClick = onDraftCountClick,
