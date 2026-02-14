@@ -387,6 +387,39 @@ class AfternoteEditViewModel
             receivers: List<AfternoteEditReceiver>,
             playlistStateHolder: MemorialPlaylistStateHolder?
         ): Result<Long> {
+            val body =
+                if (category == CATEGORY_MEMORIAL) {
+                    buildMemorialUpdateBody(
+                        title = payload.serviceName,
+                        playlistStateHolder = playlistStateHolder
+                    )
+                } else {
+                    buildNonMemorialUpdateBody(
+                        category = category,
+                        payload = payload,
+                        receivers = receivers
+                    )
+                }
+            return updateUseCase(afternoteId = afternoteId, body = body)
+        }
+
+        /**
+         * PLAYLIST category allows only title and playlist to be updated (API spec).
+         */
+        private fun buildMemorialUpdateBody(
+            title: String,
+            playlistStateHolder: MemorialPlaylistStateHolder?
+        ): AfternoteUpdateRequestDto =
+            AfternoteUpdateRequestDto(
+                title = title,
+                playlist = buildPlaylistDto(playlistStateHolder)
+            )
+
+        private suspend fun buildNonMemorialUpdateBody(
+            category: String,
+            payload: RegisterAfternotePayload,
+            receivers: List<AfternoteEditReceiver>
+        ): AfternoteUpdateRequestDto {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
             val isSocialOrBusiness =
@@ -397,17 +430,14 @@ class AfternoteEditViewModel
                 informationProcessingMethod =
                     if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
             )
-
             val serverCategory =
                 when (category) {
                     CATEGORY_SOCIAL -> "SOCIAL"
                     CATEGORY_BUSINESS -> "BUSINESS"
                     CATEGORY_GALLERY -> "GALLERY"
-                    CATEGORY_MEMORIAL -> "PLAYLIST"
                     else -> null
                 }
-
-            val body = AfternoteUpdateRequestDto(
+            return AfternoteUpdateRequestDto(
                 category = serverCategory,
                 title = payload.serviceName,
                 processMethod = processMethod.ifEmpty { null },
@@ -432,12 +462,8 @@ class AfternoteEditViewModel
                     }
                     else -> null
                 },
-                playlist = when (category) {
-                    CATEGORY_MEMORIAL -> buildPlaylistDto(playlistStateHolder)
-                    else -> null
-                }
+                playlist = null
             )
-            return updateUseCase(afternoteId = afternoteId, body = body)
         }
 
         /**

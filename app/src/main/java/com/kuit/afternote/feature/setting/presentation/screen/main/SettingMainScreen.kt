@@ -10,10 +10,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -34,7 +36,8 @@ fun SettingMainScreen(
                 SettingItemData("프로필 수정"),
                 SettingItemData("비밀번호 변경"),
                 SettingItemData("연결된 계정"),
-                SettingItemData("알림 설정")
+                SettingItemData("알림 설정"),
+                SettingItemData(stringResource(R.string.setting_logout))
             )
         ),
         SettingSection(

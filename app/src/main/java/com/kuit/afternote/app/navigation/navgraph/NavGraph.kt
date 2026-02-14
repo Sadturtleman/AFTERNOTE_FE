@@ -422,7 +422,7 @@ fun NavGraph(navHostController: NavHostController) {
                     onClear = { afternoteEditStateHolder.value = null }
                 ),
                 listRefresh = AfternoteListRefreshParams(
-                    listRefreshRequested = listRefreshRequested,
+                    listRefreshRequestedProvider = { listRefreshRequested },
                     onListRefreshConsumed = { listRefreshRequested = false },
                     onAfternoteDeleted = { listRefreshRequested = true }
                 )

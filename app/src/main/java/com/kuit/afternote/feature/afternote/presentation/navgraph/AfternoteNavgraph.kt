@@ -81,7 +81,7 @@ data class AfternoteEditStateHandling(
  * Triggers list refresh when an afternote is deleted so the list reflects the deletion.
  */
 data class AfternoteListRefreshParams(
-    val listRefreshRequested: Boolean,
+    val listRefreshRequestedProvider: () -> Boolean,
     val onListRefreshConsumed: () -> Unit,
     val onAfternoteDeleted: () -> Unit
 )
@@ -137,7 +137,7 @@ private fun AfternoteListRouteContent(
     listRefresh: AfternoteListRefreshParams? = null
 ) {
     AfternoteListRoute(
-        listRefreshRequested = listRefresh?.listRefreshRequested == true,
+        listRefreshRequested = listRefresh?.listRefreshRequestedProvider?.invoke() == true,
         onListRefreshConsumed = listRefresh?.onListRefreshConsumed ?: {},
         callbacks =
             AfternoteListRouteCallbacks(
