@@ -187,7 +187,11 @@ fun AfternoteEditScreen(
                     }
                     callbacks.onRegisterClick(
                         RegisterAfternotePayload(
-                            serviceName = state.selectedService,
+                            serviceName =
+                                if (state.selectedCategory == CATEGORY_MEMORIAL_GUIDELINE)
+                                    CATEGORY_MEMORIAL_GUIDELINE
+                                else
+                                    state.selectedService,
                             date = date,
                             accountId = state.idState.text.toString(),
                             password = state.passwordState.text.toString(),

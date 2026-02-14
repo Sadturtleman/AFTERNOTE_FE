@@ -51,6 +51,7 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteValidationError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreenCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditViewModel
@@ -77,7 +78,16 @@ data class AfternoteEditStateHandling(
 )
 
 /**
- * Parameters for [afternoteNavGraph]. Groups 6 arguments to keep function param count ≤7.
+ * Triggers list refresh when an afternote is deleted so the list reflects the deletion.
+ */
+data class AfternoteListRefreshParams(
+    val listRefreshRequested: Boolean,
+    val onListRefreshConsumed: () -> Unit,
+    val onAfternoteDeleted: () -> Unit
+)
+
+/**
+ * Parameters for [afternoteNavGraph]. Groups arguments to keep function param count ≤7.
  */
 data class AfternoteNavGraphParams(
     val afternoteItemsProvider: () -> List<AfternoteItem>,
@@ -85,7 +95,8 @@ data class AfternoteNavGraphParams(
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
     val userName: String,
-    val editStateHandling: AfternoteEditStateHandling
+    val editStateHandling: AfternoteEditStateHandling,
+    val listRefresh: AfternoteListRefreshParams? = null
 )
 
 /**
@@ -121,9 +132,13 @@ private fun AfternoteListRouteContent(
     navController: NavController,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     onItemsUpdated: (List<AfternoteItem>) -> Unit,
-    editStateHandling: AfternoteEditStateHandling
+    editStateHandling: AfternoteEditStateHandling,
+    playlistStateHolder: MemorialPlaylistStateHolder,
+    listRefresh: AfternoteListRefreshParams? = null
 ) {
     AfternoteListRoute(
+        listRefreshRequested = listRefresh?.listRefreshRequested == true,
+        onListRefreshConsumed = listRefresh?.onListRefreshConsumed ?: {},
         callbacks =
             AfternoteListRouteCallbacks(
                 onNavigateToDetail = { itemId ->
@@ -139,6 +154,8 @@ private fun AfternoteListRouteContent(
                     // 새 작성 진입 시 이전 편집 세션 상태를 항상 초기화하여
                     // 이전 세션의 카테고리/처리 방법이 남지 않도록 한다.
                     editStateHandling.onClear()
+                    // 새 추모 가이드라인 작성 시 플레이리스트도 비워 서로 다른 애프터노트가 곡을 공유하지 않도록 한다.
+                    playlistStateHolder.clearAllSongs()
                     val initialCategory =
                         if (selectedTab == AfternoteTab.ALL) null else selectedTab.label
                     Log.d(
@@ -192,7 +209,8 @@ private fun DesignPendingDetailContent(onBackClick: () -> Unit) {
 private fun AfternoteDetailRouteContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
-    userName: String
+    userName: String,
+    onAfternoteDeleted: () -> Unit = {}
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.DetailRoute>()
     val viewModel: AfternoteDetailViewModel = hiltViewModel()
@@ -204,6 +222,7 @@ private fun AfternoteDetailRouteContent(
 
     LaunchedEffect(uiState.deleteSuccess) {
         if (uiState.deleteSuccess) {
+            onAfternoteDeleted()
             navController.popBackStack()
         }
     }
@@ -248,7 +267,8 @@ private fun AfternoteDetailRouteContent(
 private fun AfternoteGalleryDetailRouteContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
-    userName: String
+    userName: String,
+    onAfternoteDeleted: () -> Unit = {}
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.GalleryDetailRoute>()
     val viewModel: AfternoteDetailViewModel = hiltViewModel()
@@ -260,6 +280,7 @@ private fun AfternoteGalleryDetailRouteContent(
 
     LaunchedEffect(uiState.deleteSuccess) {
         if (uiState.deleteSuccess) {
+            onAfternoteDeleted()
             navController.popBackStack()
         }
     }
@@ -306,7 +327,8 @@ private fun AfternoteGalleryDetailRouteContent(
 private fun AfternoteMemorialGuidelineDetailContent(
     backStackEntry: NavBackStackEntry,
     navController: NavController,
-    userName: String
+    userName: String,
+    onAfternoteDeleted: () -> Unit = {}
 ) {
     val route = backStackEntry.toRoute<AfternoteRoute.MemorialGuidelineDetailRoute>()
     val viewModel: AfternoteDetailViewModel = hiltViewModel()
@@ -318,6 +340,7 @@ private fun AfternoteMemorialGuidelineDetailContent(
 
     LaunchedEffect(uiState.deleteSuccess) {
         if (uiState.deleteSuccess) {
+            onAfternoteDeleted()
             navController.popBackStack()
         }
     }
@@ -406,11 +429,15 @@ private fun AfternoteEditRouteContent(
     }
 
     // 편집 진입 시 상세 API를 통해 최신 데이터를 불러와 편집 상태를 채운다.
+    // 추모 가이드라인인 경우 플레이리스트 홀더에도 상세 곡 목록을 채워 편집/상세 화면 곡 수가 일치하도록 한다.
     LaunchedEffect(route.itemId) {
         val id = route.itemId?.toLongOrNull() ?: return@LaunchedEffect
-        // 이미 다른 항목을 로드한 상태라면 덮어쓰지 않음
         if (state.loadedItemId != route.itemId) {
-            editViewModel.loadForEdit(afternoteId = id, state = state)
+            editViewModel.loadForEdit(
+                afternoteId = id,
+                state = state,
+                playlistStateHolder = playlistStateHolder
+            )
         }
     }
 
@@ -429,6 +456,8 @@ private fun AfternoteEditRouteContent(
     }
 
     val saveError = when {
+        saveState.validationError == AfternoteValidationError.PLAYLIST_SONGS_REQUIRED &&
+            playlistStateHolder.songs.isNotEmpty() -> null
         saveState.validationError != null -> AfternoteEditSaveError(
             stringResource(saveState.validationError!!.messageResId)
         )
@@ -562,15 +591,20 @@ fun NavGraphBuilder.afternoteNavGraph(
             navController = navController,
             onBottomNavTabSelected = onBottomNavTabSelected,
             onItemsUpdated = params.onItemsUpdated,
-            editStateHandling = params.editStateHandling
+            editStateHandling = params.editStateHandling,
+            playlistStateHolder = params.playlistStateHolder,
+            listRefresh = params.listRefresh
         )
     }
+
+    val onAfternoteDeleted = params.listRefresh?.onAfternoteDeleted ?: {}
 
     afternoteComposable<AfternoteRoute.DetailRoute> { backStackEntry ->
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName
+            userName = params.userName,
+            onAfternoteDeleted = onAfternoteDeleted
         )
     }
 
@@ -578,7 +612,8 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName
+            userName = params.userName,
+            onAfternoteDeleted = onAfternoteDeleted
         )
     }
 
@@ -599,7 +634,8 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName
+            userName = params.userName,
+            onAfternoteDeleted = onAfternoteDeleted
         )
     }
 

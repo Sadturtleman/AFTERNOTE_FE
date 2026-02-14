@@ -37,7 +37,9 @@ fun AfternoteListRoute(
     viewModel: AfternoteListViewModel = hiltViewModel(),
     callbacks: AfternoteListRouteCallbacks = AfternoteListRouteCallbacks(),
     initialItems: List<AfternoteItem> = emptyList(),
-    onItemsChanged: (List<AfternoteItem>) -> Unit = {}
+    onItemsChanged: (List<AfternoteItem>) -> Unit = {},
+    listRefreshRequested: Boolean = false,
+    onListRefreshConsumed: () -> Unit = {}
 ) {
     // ViewModel.init에서 loadAfternotes()를 호출하므로 여기서는 더미 데이터만 처리.
     // LaunchedEffect(Unit)에서 매번 loadAfternotes()를 호출하면, 하위 화면에서
@@ -46,6 +48,13 @@ fun AfternoteListRoute(
     LaunchedEffect(Unit) {
         if (initialItems.isNotEmpty()) {
             viewModel.setItems(initialItems)
+        }
+    }
+
+    LaunchedEffect(listRefreshRequested) {
+        if (listRefreshRequested) {
+            viewModel.loadAfternotes()
+            onListRefreshConsumed()
         }
     }
 

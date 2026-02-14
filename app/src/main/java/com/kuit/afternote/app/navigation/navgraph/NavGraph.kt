@@ -42,6 +42,7 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetail
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
+import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
@@ -331,6 +332,7 @@ fun NavGraph(navHostController: NavHostController) {
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
+    var listRefreshRequested by remember { mutableStateOf(false) }
     val devModeScreens = devModeScreensList
 
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = { item ->
@@ -418,6 +420,11 @@ fun NavGraph(navHostController: NavHostController) {
                 editStateHandling = AfternoteEditStateHandling(
                     holder = afternoteEditStateHolder,
                     onClear = { afternoteEditStateHolder.value = null }
+                ),
+                listRefresh = AfternoteListRefreshParams(
+                    listRefreshRequested = listRefreshRequested,
+                    onListRefreshConsumed = { listRefreshRequested = false },
+                    onAfternoteDeleted = { listRefreshRequested = true }
                 )
             ),
             onBottomNavTabSelected = onBottomNavTabSelected
