@@ -33,7 +33,7 @@ fun WaitingAgainPopUp(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "다시 입력해주세요.",
+            text = "다시 입력해주세요.\n(현재보다 나중을 입력하세요)",
             fontSize = 16.sp,
             lineHeight = 22.sp,
             fontFamily = FontFamily(Font(R.font.sansneomedium)),

@@ -61,8 +61,6 @@ fun TimeLetterWriterBottomBar(
             .height(88.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // [핵심 변경] 아이콘을 Box로 감싸서 Anchor(기준점)로 만듦
-        // 기존의 padding(start = 24.dp)를 Box로 옮겨야 레이아웃이 깨지지 않음
         Box(
         ) {
             Image(
@@ -72,8 +70,6 @@ fun TimeLetterWriterBottomBar(
                     .size(24.dp)
                     .clickable { onLinkClick() }
             )
-
-
         }
         Spacer(Modifier.width(16.dp))
         Box(){

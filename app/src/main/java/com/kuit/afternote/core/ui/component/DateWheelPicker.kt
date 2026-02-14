@@ -62,6 +62,7 @@ object DateWheelPickerDefaults {
  * @param modifier Modifier
  * @param currentDate 현재 선택된 날짜 (State Hoisting)
  * @param onDateChanged 날짜 변경 콜백
+ * @param minDate 최소 선택 가능 날짜. null이면 제한 없음(과거·미래 모두 선택 가능).
  * @param selectedTextColor 선택된 텍스트 색상
  * @param unselectedTextColor 선택되지 않은 텍스트 색상
  * @param selectionBorderColor 선택 영역 테두리 색상
@@ -72,6 +73,7 @@ fun DateWheelPicker(
     modifier: Modifier = Modifier,
     currentDate: LocalDate = LocalDate.now(),
     onDateChanged: (LocalDate) -> Unit,
+    minDate: LocalDate? = null,
     selectedTextColor: Color = DateWheelPickerDefaults.SelectedTextColor,
     unselectedTextColor: Color = DateWheelPickerDefaults.UnselectedTextColor,
     selectionBorderColor: Color = DateWheelPickerDefaults.SelectionBorderColor,
@@ -84,7 +86,7 @@ fun DateWheelPicker(
         dividerColor = dividerColor
     )
 
-    val model = rememberDateWheelPickerModel(currentDate = currentDate)
+    val model = rememberDateWheelPickerModel(currentDate = currentDate, minDate = minDate)
     val yearState = rememberFWheelPickerState(initialIndex = model.yearIndex)
     val monthState = rememberFWheelPickerState(initialIndex = model.monthIndex)
 
@@ -96,12 +98,14 @@ fun DateWheelPicker(
         years = model.years,
         currentYearFallback = model.currentYear,
         currentDate = currentDate,
+        minDate = minDate,
         onDateChanged = onDateChanged
     )
     ObserveMonthWheel(
         state = monthState,
         months = model.months,
         currentDate = currentDate,
+        minDate = minDate,
         onDateChanged = onDateChanged
     )
 
@@ -111,6 +115,7 @@ fun DateWheelPicker(
         currentDate = currentDate,
         yearState = yearState,
         monthState = monthState,
+        minDate = minDate,
         onDateChanged = onDateChanged,
         colors = colors
     )
@@ -129,27 +134,44 @@ private data class DateWheelPickerModel(
 )
 
 @Composable
-private fun rememberDateWheelPickerModel(currentDate: LocalDate): DateWheelPickerModel {
+private fun rememberDateWheelPickerModel(
+    currentDate: LocalDate,
+    minDate: LocalDate?
+): DateWheelPickerModel {
     val currentYear = LocalDate.now().year
     val years = remember(currentYear) { (currentYear..currentYear + 10).toList() }
     val months = remember { (1..12).toList() }
 
-    val yearIndex = remember(currentDate.year, years) {
-        years.indexOf(currentDate.year).coerceIn(0, years.lastIndex)
-    }
-    val monthIndex = remember(currentDate.monthValue, months) {
-        (currentDate.monthValue - 1).coerceIn(0, months.lastIndex)
+    val effectiveDate = remember(currentDate, minDate) {
+        if (minDate != null) currentDate.coerceAtLeast(minDate) else currentDate
     }
 
-    val daysInMonth = remember(currentDate.year, currentDate.monthValue) {
-        LocalDate.of(currentDate.year, currentDate.monthValue, 1).lengthOfMonth()
+    val yearIndex = remember(effectiveDate.year, years) {
+        years.indexOf(effectiveDate.year).coerceIn(0, years.lastIndex)
     }
-    val days = remember(daysInMonth) { (1..daysInMonth).toList() }
-    val dayIndex = remember(currentDate.dayOfMonth, daysInMonth) {
-        (currentDate.dayOfMonth - 1).coerceIn(0, days.lastIndex)
+    val monthIndex = remember(effectiveDate.monthValue, months) {
+        (effectiveDate.monthValue - 1).coerceIn(0, months.lastIndex)
     }
 
-    val dateDescription = "${currentDate.year}년 ${currentDate.monthValue}월 ${currentDate.dayOfMonth}일 선택됨"
+    val daysInMonth = remember(effectiveDate.year, effectiveDate.monthValue) {
+        LocalDate.of(effectiveDate.year, effectiveDate.monthValue, 1).lengthOfMonth()
+    }
+    val days = remember(daysInMonth, minDate, effectiveDate.year, effectiveDate.monthValue) {
+        if (minDate != null &&
+            effectiveDate.year == minDate.year &&
+            effectiveDate.monthValue == minDate.monthValue
+        ) {
+            (minDate.dayOfMonth..daysInMonth).toList()
+        } else {
+            (1..daysInMonth).toList()
+        }
+    }
+    val dayIndex = remember(effectiveDate.dayOfMonth, days) {
+        val idx = days.indexOf(effectiveDate.dayOfMonth)
+        idx.coerceIn(0, days.lastIndex)
+    }
+
+    val dateDescription = "${effectiveDate.year}년 ${effectiveDate.monthValue}월 ${effectiveDate.dayOfMonth}일 선택됨"
 
     return DateWheelPickerModel(
         currentYear = currentYear,
@@ -171,6 +193,7 @@ private fun DateWheelPickerContent(
     currentDate: LocalDate,
     yearState: FWheelPickerState,
     monthState: FWheelPickerState,
+    minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit,
     colors: DateWheelPickerColors
 ) {
@@ -242,6 +265,7 @@ private fun DateWheelPickerContent(
                     dayIndex = model.dayIndex
                 ),
                 currentDate = currentDate,
+                minDate = minDate,
                 onDateChanged = onDateChanged,
                 colors = colors
             )
@@ -279,10 +303,11 @@ private fun DayWheel(
     modifier: Modifier,
     model: DateWheelPickerDayModel,
     currentDate: LocalDate,
+    minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit,
     colors: DateWheelPickerColors
 ) {
-    key(model.daysInMonth) {
+    key(model.daysInMonth, model.days.size) {
         val dayState = rememberFWheelPickerState(initialIndex = model.dayIndex)
 
         SyncWheelIndex(state = dayState, targetIndex = model.dayIndex)
@@ -290,6 +315,7 @@ private fun DayWheel(
             state = dayState,
             days = model.days,
             currentDate = currentDate,
+            minDate = minDate,
             onDateChanged = onDateChanged
         )
 
@@ -329,14 +355,16 @@ private fun ObserveYearWheel(
     years: List<Int>,
     currentYearFallback: Int,
     currentDate: LocalDate,
+    minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit
 ) {
-    LaunchedEffect(state, currentDate) {
+    LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
             .distinctUntilChanged()
             .collect { index ->
                 val newYear = years.getOrElse(index) { currentYearFallback }
-                val newDate = currentDate.withYearClamped(newYear)
+                var newDate = currentDate.withYearClamped(newYear)
+                if (minDate != null) newDate = newDate.coerceAtLeast(minDate)
                 newDate.takeIf { it != currentDate }?.let(onDateChanged)
             }
     }
@@ -347,14 +375,16 @@ private fun ObserveMonthWheel(
     state: FWheelPickerState,
     months: List<Int>,
     currentDate: LocalDate,
+    minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit
 ) {
-    LaunchedEffect(state, currentDate) {
+    LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
             .distinctUntilChanged()
             .collect { index ->
                 val newMonth = months.getOrElse(index) { 1 }
-                val newDate = currentDate.withMonthClamped(newMonth)
+                var newDate = currentDate.withMonthClamped(newMonth)
+                if (minDate != null) newDate = newDate.coerceAtLeast(minDate)
                 newDate.takeIf { it != currentDate }?.let(onDateChanged)
             }
     }
@@ -365,14 +395,16 @@ private fun ObserveDayWheel(
     state: FWheelPickerState,
     days: List<Int>,
     currentDate: LocalDate,
+    minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit
 ) {
-    LaunchedEffect(state, currentDate) {
+    LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
             .distinctUntilChanged()
             .collect { index ->
                 val newDay = days.getOrElse(index) { 1 }
-                val newDate = currentDate.withDayClamped(newDay)
+                var newDate = currentDate.withDayClamped(newDay)
+                if (minDate != null) newDate = newDate.coerceAtLeast(minDate)
                 newDate.takeIf { it != currentDate }?.let(onDateChanged)
             }
     }
