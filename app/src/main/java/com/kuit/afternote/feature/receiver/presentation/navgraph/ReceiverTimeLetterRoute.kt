@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.navgraph
+    package com.kuit.afternote.feature.receiver.presentation.navgraph
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +28,8 @@ fun ReceiverTimeLetterRoute(
         onLetterClick = { letter ->
             navController.navigate("$ROUTE_DETAIL/$receiverId/${letter.timeLetterId}")
         },
-        onBottomNavSelected = viewModel::updateSelectedBottomNavItem
+        onBottomNavSelected = viewModel::updateSelectedBottomNavItem,
+        onSortByDate = { viewModel.sortByDateAscending() },
+        onSortByUnread = { viewModel.sortByUnreadFirst() }
     )
 }
