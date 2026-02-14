@@ -8,6 +8,7 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSongDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateGalleryAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternoteUseCase
@@ -15,6 +16,7 @@ import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUse
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -155,54 +157,75 @@ class AfternoteEditViewModel
          * 리스트 아이템에는 계정 정보/처리 방법/메시지가 없기 때문에,
          * 편집 화면 진입 시 GET /api/afternotes/{id} 결과를 사용해
          * [AfternoteEditState.loadFromExisting]를 호출합니다.
+         * 추모 가이드라인(PLAYLIST)인 경우 [playlistStateHolder]에 상세 플레이리스트 곡을 채워
+         * 편집 화면과 상세 화면의 곡 수가 일치하도록 합니다.
          */
         fun loadForEdit(
             afternoteId: Long,
-            state: AfternoteEditState
+            state: AfternoteEditState,
+            playlistStateHolder: MemorialPlaylistStateHolder? = null
         ) {
             viewModelScope.launch {
                 getDetailUseCase(afternoteId = afternoteId)
                     .onSuccess { detail ->
-                        val actionItems =
-                            detail.actions.mapIndexed { index, text ->
-                                ProcessingMethodItem(
-                                    id = (index + 1).toString(),
-                                    text = text
-                                )
-                            }
-
-                        val processMethod = detail.processMethod ?: ""
-                        val categoryUpper = detail.category.uppercase()
-                        val isGalleryCategory = categoryUpper == "GALLERY"
-                        val isSocialCategory =
-                            categoryUpper == "SOCIAL" ||
-                                categoryUpper == "BUSINESS" ||
-                                categoryUpper == "OTHER"
-                        val accountProcessingMethodName =
-                            if (isSocialCategory) serverProcessMethodToAccountEnum(processMethod)
-                            else ""
-                        val informationProcessingMethodName =
-                            if (isGalleryCategory) serverProcessMethodToInfoEnum(processMethod)
-                            else ""
-
-                        val categoryDisplayString = serverCategoryToEditScreenCategory(detail.category)
-
-                        val params =
-                            LoadFromExistingParams(
-                                itemId = detail.id.toString(),
-                                serviceName = detail.title,
-                                categoryDisplayString = categoryDisplayString,
-                                accountId = detail.credentialsId ?: "",
-                                password = detail.credentialsPassword ?: "",
-                                message = detail.leaveMessage ?: "",
-                                accountProcessingMethodName = accountProcessingMethodName,
-                                informationProcessingMethodName = informationProcessingMethodName,
-                                processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
-                                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList()
-                            )
-                        state.loadFromExisting(params)
+                        populatePlaylistFromDetail(detail, playlistStateHolder)
+                        state.loadFromExisting(buildLoadFromExistingParams(detail))
                     }
             }
+        }
+
+        private fun populatePlaylistFromDetail(
+            detail: AfternoteDetail,
+            playlistStateHolder: MemorialPlaylistStateHolder?
+        ) {
+            if (detail.category.uppercase() != "PLAYLIST" ||
+                detail.playlist == null ||
+                playlistStateHolder == null
+            ) return
+            playlistStateHolder.clearAllSongs()
+            detail.playlist.songs.mapIndexed { index, s ->
+                Song(
+                    id = (s.id ?: index.toLong()).toString(),
+                    title = s.title,
+                    artist = s.artist,
+                    albumCoverUrl = s.coverUrl
+                )
+            }.forEach { playlistStateHolder.addSong(it) }
+        }
+
+        private fun buildLoadFromExistingParams(detail: AfternoteDetail): LoadFromExistingParams {
+            val actionItems =
+                detail.actions.mapIndexed { index, text ->
+                    ProcessingMethodItem(
+                        id = (index + 1).toString(),
+                        text = text
+                    )
+                }
+            val processMethod = detail.processMethod ?: ""
+            val categoryUpper = detail.category.uppercase()
+            val isGalleryCategory = categoryUpper == "GALLERY"
+            val isSocialCategory =
+                categoryUpper == "SOCIAL" ||
+                    categoryUpper == "BUSINESS" ||
+                    categoryUpper == "OTHER"
+            val accountProcessingMethodName =
+                if (isSocialCategory) serverProcessMethodToAccountEnum(processMethod)
+                else ""
+            val informationProcessingMethodName =
+                if (isGalleryCategory) serverProcessMethodToInfoEnum(processMethod)
+                else ""
+            return LoadFromExistingParams(
+                itemId = detail.id.toString(),
+                serviceName = detail.title,
+                categoryDisplayString = serverCategoryToEditScreenCategory(detail.category),
+                accountId = detail.credentialsId ?: "",
+                password = detail.credentialsPassword ?: "",
+                message = detail.leaveMessage ?: "",
+                accountProcessingMethodName = accountProcessingMethodName,
+                informationProcessingMethodName = informationProcessingMethodName,
+                processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
+                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList()
+            )
         }
 
         /**
@@ -364,6 +387,39 @@ class AfternoteEditViewModel
             receivers: List<AfternoteEditReceiver>,
             playlistStateHolder: MemorialPlaylistStateHolder?
         ): Result<Long> {
+            val body =
+                if (category == CATEGORY_MEMORIAL) {
+                    buildMemorialUpdateBody(
+                        title = payload.serviceName,
+                        playlistStateHolder = playlistStateHolder
+                    )
+                } else {
+                    buildNonMemorialUpdateBody(
+                        category = category,
+                        payload = payload,
+                        receivers = receivers
+                    )
+                }
+            return updateUseCase(afternoteId = afternoteId, body = body)
+        }
+
+        /**
+         * PLAYLIST category allows only title and playlist to be updated (API spec).
+         */
+        private fun buildMemorialUpdateBody(
+            title: String,
+            playlistStateHolder: MemorialPlaylistStateHolder?
+        ): AfternoteUpdateRequestDto =
+            AfternoteUpdateRequestDto(
+                title = title,
+                playlist = buildPlaylistDto(playlistStateHolder)
+            )
+
+        private suspend fun buildNonMemorialUpdateBody(
+            category: String,
+            payload: RegisterAfternotePayload,
+            receivers: List<AfternoteEditReceiver>
+        ): AfternoteUpdateRequestDto {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
             val isSocialOrBusiness =
@@ -374,17 +430,14 @@ class AfternoteEditViewModel
                 informationProcessingMethod =
                     if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
             )
-
             val serverCategory =
                 when (category) {
                     CATEGORY_SOCIAL -> "SOCIAL"
                     CATEGORY_BUSINESS -> "BUSINESS"
                     CATEGORY_GALLERY -> "GALLERY"
-                    CATEGORY_MEMORIAL -> "PLAYLIST"
                     else -> null
                 }
-
-            val body = AfternoteUpdateRequestDto(
+            return AfternoteUpdateRequestDto(
                 category = serverCategory,
                 title = payload.serviceName,
                 processMethod = processMethod.ifEmpty { null },
@@ -409,12 +462,8 @@ class AfternoteEditViewModel
                     }
                     else -> null
                 },
-                playlist = when (category) {
-                    CATEGORY_MEMORIAL -> buildPlaylistDto(playlistStateHolder)
-                    else -> null
-                }
+                playlist = null
             )
-            return updateUseCase(afternoteId = afternoteId, body = body)
         }
 
         /**
