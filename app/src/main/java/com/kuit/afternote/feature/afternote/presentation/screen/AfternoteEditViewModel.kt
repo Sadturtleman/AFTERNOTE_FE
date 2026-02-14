@@ -59,6 +59,12 @@ class AfternoteEditViewModel
         val saveState: StateFlow<AfternoteSaveState> = _saveState.asStateFlow()
 
         /**
+         * Category from the server when loading for edit. Used for update requests because the API
+         * does not allow changing category; we must send the original category.
+         */
+        private var loadedCategoryForEdit: String? = null
+
+        /**
          * 애프터노트 저장 (생성 또는 수정).
          *
          * @param editingId null이면 신규 생성, non-null이면 수정
@@ -92,9 +98,13 @@ class AfternoteEditViewModel
                 return
             }
 
+            // API does not allow editing category; when updating, use the category from the loaded detail.
+            val categoryForApi =
+                if (editingId != null) (loadedCategoryForEdit ?: category) else category
+
             Log.d(
                 TAG,
-                "saveAfternote: editingId=$editingId, category=$category, " +
+                "saveAfternote: editingId=$editingId, category=$categoryForApi, " +
                     "serviceName=${payload.serviceName}, " +
                     "accountProcessingMethod=${payload.accountProcessingMethod}, " +
                     "informationProcessingMethod=${payload.informationProcessingMethod}, " +
@@ -111,14 +121,14 @@ class AfternoteEditViewModel
                 val result = if (editingId != null) {
                     performUpdate(
                         afternoteId = editingId,
-                        category = category,
+                        category = categoryForApi,
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder
                     )
                 } else {
                     performCreate(
-                        category = category,
+                        category = categoryForApi,
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder
@@ -132,7 +142,7 @@ class AfternoteEditViewModel
                         }
                     }
                     .onFailure { e ->
-                        Log.e(TAG, "saveAfternote: FAILURE, category=$category", e)
+                        Log.e(TAG, "saveAfternote: FAILURE, category=$categoryForApi", e)
                         when (e) {
                             is AfternoteValidationException -> _saveState.update {
                                 it.copy(
@@ -169,7 +179,9 @@ class AfternoteEditViewModel
                 getDetailUseCase(afternoteId = afternoteId)
                     .onSuccess { detail ->
                         populatePlaylistFromDetail(detail, playlistStateHolder)
-                        state.loadFromExisting(buildLoadFromExistingParams(detail))
+                        val params = buildLoadFromExistingParams(detail)
+                        loadedCategoryForEdit = params.categoryDisplayString
+                        state.loadFromExisting(params)
                     }
             }
         }
@@ -224,7 +236,8 @@ class AfternoteEditViewModel
                 accountProcessingMethodName = accountProcessingMethodName,
                 informationProcessingMethodName = informationProcessingMethodName,
                 processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
-                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList()
+                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList(),
+                atmosphere = detail.playlist?.atmosphere
             )
         }
 
@@ -363,7 +376,7 @@ class AfternoteEditViewModel
                     )
                 }
                 CATEGORY_MEMORIAL -> {
-                    val playlistDto = buildPlaylistDto(playlistStateHolder)
+                    val playlistDto = buildPlaylistDto(playlistStateHolder, payload.atmosphere)
                     createPlaylistUseCase(
                         title = payload.serviceName,
                         playlist = playlistDto
@@ -391,6 +404,7 @@ class AfternoteEditViewModel
                 if (category == CATEGORY_MEMORIAL) {
                     buildMemorialUpdateBody(
                         title = payload.serviceName,
+                        atmosphere = payload.atmosphere,
                         playlistStateHolder = playlistStateHolder
                     )
                 } else {
@@ -405,14 +419,18 @@ class AfternoteEditViewModel
 
         /**
          * PLAYLIST category allows only title and playlist to be updated (API spec).
+         * Title and category are mandatory for the edit API.
+         * [atmosphere] is "남기고 싶은 당부" (playlist.atmosphere).
          */
         private fun buildMemorialUpdateBody(
             title: String,
+            atmosphere: String,
             playlistStateHolder: MemorialPlaylistStateHolder?
         ): AfternoteUpdateRequestDto =
             AfternoteUpdateRequestDto(
+                category = "PLAYLIST",
                 title = title,
-                playlist = buildPlaylistDto(playlistStateHolder)
+                playlist = buildPlaylistDto(playlistStateHolder, atmosphere)
             )
 
         private suspend fun buildNonMemorialUpdateBody(
@@ -437,8 +455,9 @@ class AfternoteEditViewModel
                     CATEGORY_GALLERY -> "GALLERY"
                     else -> null
                 }
+            // Title and category are mandatory for the edit API; fallback for unknown display category.
             return AfternoteUpdateRequestDto(
-                category = serverCategory,
+                category = serverCategory ?: "SOCIAL",
                 title = payload.serviceName,
                 processMethod = processMethod.ifEmpty { null },
                 actions = actions.ifEmpty { null },
@@ -524,7 +543,8 @@ class AfternoteEditViewModel
         }
 
         private fun buildPlaylistDto(
-            playlistStateHolder: MemorialPlaylistStateHolder?
+            playlistStateHolder: MemorialPlaylistStateHolder?,
+            atmosphere: String = ""
         ): AfternotePlaylistDto {
             val songs = playlistStateHolder?.songs?.map { song ->
                 AfternoteSongDto(
@@ -534,6 +554,9 @@ class AfternoteEditViewModel
                     coverUrl = song.albumCoverUrl
                 )
             } ?: emptyList()
-            return AfternotePlaylistDto(songs = songs)
+            return AfternotePlaylistDto(
+                atmosphere = atmosphere.ifEmpty { null },
+                songs = songs
+            )
         }
     }

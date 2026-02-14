@@ -124,7 +124,7 @@ Each `.mdc` file uses `globs` pattern so rules are injected only when opening or
 7. **Duplicate Removal**: Before removing duplicate files, check all usages, unify to one, then update all import paths
 
 ### Perplexity Prompt Writing Request Rules - Critical
-**When user explicitly requests "퍼플렉시티 프롬프트 작성해" or "Perplexity 프롬프트 작성해":**
+**When user requests Perplexity Prompt:**
 - **Provide Prompt Content Only**: Provide only content to paste into prompt, nothing else
 - **No Additional Explanation**: Do not include guidance like "paste this prompt into Perplexity" after writing prompt
 - **No Code Modification**: Do not modify code simultaneously with prompt writing

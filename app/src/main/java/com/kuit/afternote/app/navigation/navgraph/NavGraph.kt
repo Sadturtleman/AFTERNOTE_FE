@@ -10,6 +10,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,8 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -94,7 +94,6 @@ private val devModeScreensList =
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
         ScreenInfo("임시저장 화면", "draft_letter"),
         ScreenInfo("수신자 목록 화면", "receive_list"),
-        ScreenInfo("수신자 메인 (4탭)", "receiver_main/1"),
         ScreenInfo("수신자 타임레터 목록", "receiver_time_letter_list/1"),
         ScreenInfo("수신자 온보딩", "receiver_onboarding"),
         //ScreenInfo("타임레터 빈 화면", "letter_empty"),
@@ -112,8 +111,6 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
         "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute())
         "draft_letter" -> nav.navigate(TimeLetterRoute.DraftLetterRoute)
         "receive_list" -> nav.navigate(TimeLetterRoute.ReceiveListRoute)
-        "receiver_afternote_main" -> nav.navigate("receiver_main/1")
-        "receiver_main/1" -> nav.navigate("receiver_main/1")
         "setting_main" -> nav.navigate(SettingRoute.SettingMainRoute)
         else -> nav.navigate(route)
     }
@@ -448,8 +445,7 @@ fun NavGraph(navHostController: NavHostController) {
             SplashScreen(
                 onLoginClick = { navHostController.navigate("dev_login") },
                 onStartClick = { navHostController.navigate("dev_signup") },
-                onCheckClick = { navHostController.navigate("receiver_onboarding") },
-                onSignUpClick = { navHostController.navigate("dev_signup") }
+                onCheckClick = { navHostController.navigate("receiver_onboarding") }
             )
         }
 

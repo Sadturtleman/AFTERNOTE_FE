@@ -365,7 +365,8 @@ private fun AfternoteMemorialGuidelineDetailContent(
                     )
                 } ?: emptyList(),
                 songCount = detail.playlist?.songs?.size ?: 0,
-                lastWish = detail.leaveMessage ?: ""
+                // Memorial only: "남기고 싶은 당부" comes from playlist.atmosphere; other categories use leaveMessage.
+                lastWish = detail.playlist?.atmosphere ?: ""
             ),
             callbacks = MemorialGuidelineDetailCallbacks(
                 onBackClick = { navController.popBackStack() },

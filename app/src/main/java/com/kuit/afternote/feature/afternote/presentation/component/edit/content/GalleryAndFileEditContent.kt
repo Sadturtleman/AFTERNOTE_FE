@@ -137,11 +137,10 @@ private fun GalleryAndFileEditContentBody(
         ProcessingMethodList(
             params = ProcessingMethodListParams(
                 items = params.processingMethodSection.items,
-                onItemMoreClick = params.processingMethodSection.callbacks.onItemMoreClick,
-                onItemEditClick = params.processingMethodSection.callbacks.onItemEditClick,
                 onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
                 onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
-                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged
+                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged,
+                onItemEdited = params.processingMethodSection.callbacks.onItemEdited
             )
         )
 
