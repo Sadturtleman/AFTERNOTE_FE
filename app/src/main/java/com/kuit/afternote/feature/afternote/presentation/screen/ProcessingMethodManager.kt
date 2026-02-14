@@ -26,6 +26,12 @@ class ProcessingMethodManager {
         galleryProcessingMethods = list
     }
 
+    fun editProcessingMethod(itemId: String, newText: String) {
+        processingMethods = processingMethods.map { item ->
+            if (item.id == itemId) item.copy(text = newText) else item
+        }
+    }
+
     fun deleteProcessingMethod(itemId: String) {
         processingMethods = processingMethods.filter { it.id != itemId }
     }
@@ -36,6 +42,12 @@ class ProcessingMethodManager {
             text = text
         )
         processingMethods = processingMethods + newItem
+    }
+
+    fun editGalleryProcessingMethod(itemId: String, newText: String) {
+        galleryProcessingMethods = galleryProcessingMethods.map { item ->
+            if (item.id == itemId) item.copy(text = newText) else item
+        }
     }
 
     fun deleteGalleryProcessingMethod(itemId: String) {

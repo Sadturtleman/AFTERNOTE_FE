@@ -21,6 +21,9 @@ class ProcessingMethodListState(
     var showTextField by mutableStateOf(initialShowTextField)
         private set
 
+    var editingItemId by mutableStateOf<String?>(null)
+        private set
+
     val expandedStates = mutableStateMapOf<String, Boolean>()
 
     /** Stored from constructor for use when [initializeExpandedStates] is called with null. */
@@ -55,6 +58,20 @@ class ProcessingMethodListState(
     fun toggleItemExpanded(itemId: String) {
         expandedStates[itemId] = !(expandedStates[itemId] ?: false)
     }
+
+    /**
+     * 아이템 인라인 편집 모드 시작
+     */
+    fun startEditing(itemId: String) {
+        editingItemId = itemId
+    }
+
+    /**
+     * 아이템 인라인 편집 모드 종료
+     */
+    fun stopEditing() {
+        editingItemId = null
+    }
 }
 
 /**
@@ -64,8 +81,7 @@ class ProcessingMethodListState(
  */
 @Composable
 fun rememberProcessingMethodListState(
-    initialShowTextField: Boolean = false,
-    initialExpandedItemId: String? = null
+    initialShowTextField: Boolean = false
 ): ProcessingMethodListState =
     remember {
         ProcessingMethodListState(

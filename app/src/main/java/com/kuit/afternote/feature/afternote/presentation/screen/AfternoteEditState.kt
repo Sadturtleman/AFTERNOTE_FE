@@ -233,33 +233,23 @@ class AfternoteEditState(
 
     val galleryProcessingCallbacks: ProcessingMethodCallbacks by lazy {
         ProcessingMethodCallbacks(
-            onItemMoreClick = {
-                // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
-            },
-            onItemEditClick = { _ ->
-                // TODO: 처리 방법 수정 로직
-            },
             onItemDeleteClick = processingMethodManager::deleteGalleryProcessingMethod,
             onItemAdded = processingMethodManager::addGalleryProcessingMethod,
             onTextFieldVisibilityChanged = { _ ->
                 // 텍스트 필드 표시 상태 변경 처리
-            }
+            },
+            onItemEdited = processingMethodManager::editGalleryProcessingMethod
         )
     }
 
     val socialProcessingCallbacks: ProcessingMethodCallbacks by lazy {
         ProcessingMethodCallbacks(
-            onItemMoreClick = {
-                // 드롭다운 메뉴는 ProcessingMethodList 내부에서 처리
-            },
-            onItemEditClick = { _ ->
-                // TODO: 처리 방법 수정 로직
-            },
             onItemDeleteClick = processingMethodManager::deleteProcessingMethod,
             onItemAdded = processingMethodManager::addProcessingMethod,
             onTextFieldVisibilityChanged = { _ ->
                 // 텍스트 필드 표시 상태 변경 처리
-            }
+            },
+            onItemEdited = processingMethodManager::editProcessingMethod
         )
     }
 
