@@ -3,11 +3,11 @@ package com.kuit.afternote.feature.receiver.data.di
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedRepository
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedAfternoteRepositoryImpl
+import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedMindRecordRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryImpl
-import com.kuit.afternote.feature.receiver.data.repository.impl.ReceiverEmailVerifyRepositoryImpl
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedAfternoteRepository
-import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceiverEmailVerifyRepository
+import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedMindRecordRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedTimeLetterRepository
 import dagger.Binds
 import dagger.Module
@@ -39,9 +39,9 @@ abstract class ReceiverModule {
 
     @Binds
     @Singleton
-    abstract fun bindReceiverEmailVerifyRepository(
-        impl: ReceiverEmailVerifyRepositoryImpl
-    ): ReceiverEmailVerifyRepository
+    abstract fun bindReceivedMindRecordRepository(
+        impl: ReceivedMindRecordRepositoryImpl
+    ): ReceivedMindRecordRepository
 
     companion object {
         @Provides

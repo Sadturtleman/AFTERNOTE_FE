@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,16 +26,34 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import java.time.LocalDate
+import java.time.YearMonth
 
+private val RECORD_DAY_BORDER_COLOR = Color(0xFF328BFF)
+private val FUTURE_DAY_TEXT_COLOR = Color(0xFFBDBDBD)
+
+/**
+ * 특정 연·월의 일자를 7열 그리드로 표시하는 캘린더.
+ *
+ * @param displayYearMonth 표시할 연·월 (해당 월 일수·첫날 요일 계산에 사용)
+ * @param selectedDay 선택된 일 (1 ~ lengthOfMonth)
+ * @param daysWithRecords 기록이 있는 일의 집합 (1 ~ lengthOfMonth)
+ * @param onDaySelected 일 선택 시 콜백 (1 ~ lengthOfMonth)
+ */
 @Composable
 fun CalendarGrid(
+    displayYearMonth: YearMonth,
     selectedDay: Int,
+    daysWithRecords: Set<Int> = emptySet(),
     onDaySelected: (Int) -> Unit
 ) {
-    val days = (1..30).toList()
-    val paddingDays = 6 // 앞쪽 공백 (일~금)
+    val daysInMonth = displayYearMonth.lengthOfMonth()
+    val days = (1..daysInMonth).toList()
+    val firstDayOfWeek = displayYearMonth.atDay(1).dayOfWeek
+    val paddingDays = firstDayOfWeek.value % 7
     val totalSlots = paddingDays + days.size
     val rows = (totalSlots + 6) / 7
+    val today = LocalDate.now()
+    val isDisplayedMonthCurrent = displayYearMonth.equals(YearMonth.from(today))
 
     Column {
         for (row in 0 until rows) {
@@ -53,23 +72,32 @@ fun CalendarGrid(
                             .padding(2.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (day in 1..30) {
+                        if (day in 1..daysInMonth) {
                             val isSelected = day == selectedDay
+                            val hasRecords = day in daysWithRecords
+                            val isFuture = isDisplayedMonthCurrent && day > today.dayOfMonth
+                            val borderColor = when {
+                                hasRecords -> RECORD_DAY_BORDER_COLOR
+                                isSelected -> B1
+                                else -> Color.White
+                            }
+                            val shape = if (hasRecords) RoundedCornerShape(40.dp) else CircleShape
                             Box(
                                 modifier = Modifier
                                     .size(32.dp)
-                                    .clip(CircleShape)
+                                    .clip(shape)
                                     .border(
                                         width = 1.dp,
-                                        color = if (isSelected) B1 else Color.White,
-                                        shape = CircleShape
-                                    ).background(Color.Transparent)
+                                        color = borderColor,
+                                        shape = shape
+                                    )
+                                    .background(Color.Transparent)
                                     .clickable { onDaySelected(day) },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = day.toString(),
-                                    color = if (day > LocalDate.now().dayOfMonth) Color.LightGray else Gray9,
+                                    color = if (isFuture) FUTURE_DAY_TEXT_COLOR else Gray9,
                                     fontSize = 18.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                     fontFamily = Sansneo

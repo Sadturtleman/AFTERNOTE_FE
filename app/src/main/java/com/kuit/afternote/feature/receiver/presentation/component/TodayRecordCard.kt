@@ -19,13 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
+import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordItemUiModel
 import com.kuit.afternote.ui.theme.Sansneo
 
 @Composable
-fun TodayRecordCard() {
+fun TodayRecordCard(todayRecord: MindRecordItemUiModel? = null) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,17 +37,12 @@ fun TodayRecordCard() {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box {
-            // Placeholder Image (실제 이미지가 없으므로 회색 배경으로 대체하거나 로컬 리소스를 사용하세요)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.DarkGray)
-            ) {
-                // 실제 앱에서는 아래 코드를 사용하세요
-                // Image(painter = painterResource(id = R.drawable.your_image), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-            }
+            )
 
-            // Dark Overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -65,14 +63,14 @@ fun TodayRecordCard() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "#감사 #가족",
+                        text = todayRecord?.tags.orEmpty(),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp,
                         fontFamily = Sansneo,
                         fontWeight = FontWeight.Normal
                     )
                     Text(
-                        text = "2025년 11월 10일",
+                        text = todayRecord?.date.orEmpty(),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 12.sp,
                         fontFamily = Sansneo,
@@ -88,8 +86,13 @@ fun TodayRecordCard() {
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
+                val displayText = when {
+                    todayRecord == null -> stringResource(R.string.receiver_mindrecord_today_empty)
+                    else -> todayRecord.question.ifBlank { todayRecord.content }
+                        .ifBlank { stringResource(R.string.receiver_mindrecord_today_empty) }
+                }
                 Text(
-                    text = "오늘 하루, 누구에게 가장 고마웠나요?",
+                    text = displayText,
                     color = Color.White,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,

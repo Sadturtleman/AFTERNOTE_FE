@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.screen
+package com.kuit.afternote.feature.receiver.presentation.screen.timeletter
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

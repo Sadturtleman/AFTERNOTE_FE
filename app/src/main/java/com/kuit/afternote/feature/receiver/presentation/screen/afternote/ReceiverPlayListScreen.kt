@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.screen
+package com.kuit.afternote.feature.receiver.presentation.screen.afternote
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

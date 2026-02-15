@@ -40,8 +40,8 @@ class ReceiverTimeLetterDetailViewModel
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             getReceivedTimeLettersUseCase(receiverId = receiverId)
-                .onSuccess { list ->
-                    val letter = list.find { it.timeLetterId == timeLetterId }
+                .onSuccess { data ->
+                    val letter = data.items.find { it.timeLetterId == timeLetterId }
                     _uiState.update {
                         it.copy(
                             letter = letter,

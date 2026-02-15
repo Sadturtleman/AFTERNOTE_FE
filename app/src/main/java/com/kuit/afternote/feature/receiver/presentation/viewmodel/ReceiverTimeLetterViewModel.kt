@@ -42,11 +42,11 @@ class ReceiverTimeLetterViewModel
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             getReceivedTimeLettersUseCase(receiverId = receiverId)
-                .onSuccess { list ->
+                .onSuccess { data ->
                     _uiState.update {
                         it.copy(
-                            timeLetters = list,
-                            totalCount = list.size,
+                            timeLetters = data.items,
+                            totalCount = data.totalCount,
                             isLoading = false,
                             errorMessage = null
                         )

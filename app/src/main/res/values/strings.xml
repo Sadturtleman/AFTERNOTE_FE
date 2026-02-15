@@ -40,6 +40,21 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+    <string name="receiver_sender_record_title">故 %1$s님이 남기신 기록</string>
+    <string name="receiver_afternote_section_count">%1$d개의 애프터노트가 있습니다.</string>
+    <string name="receiver_timeletter_section_count">%1$d개 라이프 이벤트 레터가 있습니다.</string>
+    <string name="receiver_download_all_button">모든 기록 내려받기</string>
+    <string name="receiver_download_all_dialog_message">모든 기록을 내려받으시겠습니까?</string>
+    <string name="receiver_mindrecord_date_button_format">%1$d월 %2$d일</string>
+    <string name="receiver_mindrecord_date_picker_confirm">선택하기</string>
+    <string name="receiver_mindrecord_date_picker_content_description">%1$d년 %2$d월 선택</string>
+    <string name="receiver_mindrecord_year_month_format">%1$d년 %2$d월</string>
+    <string name="receiver_mindrecord_title">마음의 기록</string>
+    <string name="receiver_mindrecord_today_section">오늘의 기록</string>
+    <string name="receiver_mindrecord_date_section">날짜별 기록</string>
+    <string name="receiver_mindrecord_confirm">확인하기</string>
+    <string name="receiver_mindrecord_no_record_yet">이 기록은 아직 확인할 수 없어요</string>
+    <string name="receiver_mindrecord_today_empty">오늘의 기록이 없어요</string>
 
     <!-- Receiver verify (email auth) -->
     <string name="receiver_verify_title">수신자 인증</string>

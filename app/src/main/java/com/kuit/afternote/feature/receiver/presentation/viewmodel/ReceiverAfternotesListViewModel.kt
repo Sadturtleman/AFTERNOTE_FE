@@ -39,10 +39,10 @@ class ReceiverAfternotesListViewModel
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 getReceivedAfterNotesUseCase(receiverId = receiverId)
-                    .onSuccess { list ->
+                    .onSuccess { data ->
                         _uiState.update {
                             it.copy(
-                                items = list.map { item ->
+                                items = data.items.map { item ->
                                     ReceivedAfternoteListItemUi(
                                         sourceType = item.sourceType.orEmpty(),
                                         lastUpdatedAt = item.lastUpdatedAt.orEmpty()

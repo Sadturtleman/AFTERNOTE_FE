@@ -36,7 +36,8 @@ fun ContentSection(
     desc: String,
     subDesc: String,
     btnText: String,
-    imageResource: Painter
+    imageResource: Painter,
+    onButtonClick: () -> Unit = {}
 ) {
     Column(modifier = Modifier.padding(bottom = 24.dp)) {
         Text(
@@ -84,7 +85,7 @@ fun ContentSection(
                     )
 
                     Button(
-                        onClick = { },
+                        onClick = onButtonClick,
                         colors = ButtonDefaults.buttonColors(containerColor = B3),
                         shape = RoundedCornerShape(50),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
