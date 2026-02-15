@@ -92,8 +92,7 @@ private val devModeScreensList =
         ScreenInfo("타임레터 화면", "time_letter_main"),
         ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
         ScreenInfo("임시저장 화면", "draft_letter"),
-        ScreenInfo("수신자 목록 화면", "receive_list"),
-        ScreenInfo("수신자 타임레터 목록", "receiver_time_letter_list/1"),
+        ScreenInfo("수신자 홈", "receiver_main/1"),
         ScreenInfo("수신자 온보딩", "receiver_onboarding"),
         //ScreenInfo("타임레터 빈 화면", "letter_empty"),
         ScreenInfo("설정 화면", "setting_main")
@@ -109,7 +108,6 @@ private fun navigateFromDevMode(route: String, nav: NavHostController) {
         "time_letter_main" -> nav.navigate(TimeLetterRoute.TimeLetterMainRoute)
         "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute())
         "draft_letter" -> nav.navigate(TimeLetterRoute.DraftLetterRoute)
-        "receive_list" -> nav.navigate(TimeLetterRoute.ReceiveListRoute)
         "setting_main" -> nav.navigate(SettingRoute.SettingMainRoute)
         else -> nav.navigate(route)
     }
