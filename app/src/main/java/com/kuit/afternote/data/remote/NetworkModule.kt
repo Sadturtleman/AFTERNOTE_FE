@@ -28,6 +28,7 @@ object NetworkModule {
         Json {
             ignoreUnknownKeys = true
             encodeDefaults = true
+            explicitNulls = false
             isLenient = true
             coerceInputValues = true
         }

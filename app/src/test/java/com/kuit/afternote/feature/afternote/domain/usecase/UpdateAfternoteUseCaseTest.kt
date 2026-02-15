@@ -27,6 +27,7 @@ class UpdateAfternoteUseCaseTest {
         runTest {
             val body =
                 AfternoteUpdateRequestDto(
+                    category = "SOCIAL",
                     title = "수정된 제목",
                     processMethod = "MEMORIAL",
                     actions = listOf("게시물 유지"),
@@ -59,6 +60,7 @@ class UpdateAfternoteUseCaseTest {
         runTest {
             val body =
                 AfternoteUpdateRequestDto(
+                    category = "GALLERY",
                     title = "제목",
                     processMethod = null,
                     actions = null,

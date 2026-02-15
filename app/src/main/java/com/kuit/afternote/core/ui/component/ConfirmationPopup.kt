@@ -79,11 +79,8 @@ fun ConfirmationPopupContent(
         textAlign = TextAlign.Center
     )
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-    ) {
+    // Single 20.dp horizontal padding from dialog edge to content (no extra inner horizontal).
+    Box(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,7 +94,7 @@ fun ConfirmationPopupContent(
                 ).clip(containerShape)
                 .background(Color.White)
                 .padding(
-                    horizontal = 24.dp,
+                    horizontal = 20.dp,
                     vertical = 32.dp
                 ),
             horizontalAlignment = Alignment.CenterHorizontally

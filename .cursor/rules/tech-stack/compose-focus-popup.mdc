@@ -1,0 +1,53 @@
+---
+description: Compose DropdownMenu/popup + focus patterns; avoid focus races and dead callbacks
+globs: **/presentation/**/*.kt, **/ui/**/*.kt, **/component/**/*.kt
+alwaysApply: false
+---
+
+# Compose: DropdownMenu / Popup + Inline Edit & Dead Callbacks
+
+## DropdownMenu (or focusable Popup) + revealing a focusable field - Critical
+
+When the user action **closes a DropdownMenu** (or similar focusable popup) and **in the same click handler** you set state that **reveals a focusable composable** (e.g. BasicTextField/OutlinedTextField for inline edit), the popup dismiss and focus cleanup can run in the same frame. That causes:
+
+- The newly shown text field to receive **focus loss** immediately (from the popup’s focus behavior).
+- Any **confirm-on-focus-loss** logic (e.g. commit edit, exit edit mode) to run **before** the user ever sees the field, so the edit mode appears to do nothing or disappear instantly.
+
+### Required: Defer state change by one frame
+
+**Defer the state change** that reveals the editable field until **after** the popup has dismissed and its focus cleanup has run.
+
+- Use `rememberCoroutineScope()` and `scope.launch { withFrameNanos { } ; setState(...) }` (or one frame delay) so the DropdownMenu fully dismisses before the editing state is set.
+- Use **`androidx.compose.runtime.withFrameNanos`** for the one-frame deferral in Compose (not `kotlinx.coroutines`).
+
+Example (conceptual):
+
+```kotlin
+val scope = rememberCoroutineScope()
+DropdownMenuItem(
+    text = { Text("수정") },
+    onClick = {
+        onDismissRequest()
+        scope.launch {
+            withFrameNanos { }
+            state.startEditingItem(item.id)
+        }
+    }
+)
+```
+
+### Required: Guard confirm-on-focus-loss in the inline-edit field
+
+If the inline-edit text field **commits or exits edit mode on focus loss** (`onFocusChanged` or similar):
+
+- **Do not** call confirm/commit on the **first** focus loss that can occur from the opening transition (dropdown dismiss, recomposition).
+- Track that the field **has gained focus at least once** (e.g. `var hasGainedFocus`). Only run confirm/commit when `hasGainedFocus && !isFocused` (or equivalent).
+- Optionally **defer** `FocusRequester.requestFocus()` by one frame (`LaunchedEffect(editingItemId) { withFrameNanos { }; focusRequester.requestFocus() }`) so the field appears and then receives focus after the dismiss cycle.
+
+This prevents the dropdown’s focus turbulence from immediately triggering confirm → exit edit mode.
+
+## Dead callbacks / parameters
+
+- If a **callback or parameter** is **never invoked** by the component that receives it (e.g. passed from parent but the child never calls it), **remove it** from the API.
+- Do not leave “for future use” or “TODO” callbacks that are never called; they confuse call sites and misrepresent the contract.
+- When implementing a feature that is fully handled inside a child (e.g. “edit” triggered and completed inside a list), do not add a parent callback for that action unless the parent actually needs to be notified.

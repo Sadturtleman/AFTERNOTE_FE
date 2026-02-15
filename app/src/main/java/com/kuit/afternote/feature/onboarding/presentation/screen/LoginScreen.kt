@@ -125,7 +125,7 @@ private fun handleKakaoLogin(
         if (BuildConfig.DEBUG) {
             Log.d("KakaoLogin", "Kakao accessToken=$accessToken")
         }
-        Log.d("KakaoLogin", "Kakao SDK login success. Calling /auth/kakao.")
+        Log.d("KakaoLogin", "Kakao SDK login success. Calling /auth/social/login.")
         viewModel.kakaoLogin(accessToken)
     }
 }

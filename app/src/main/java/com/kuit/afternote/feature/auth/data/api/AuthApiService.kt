@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.auth.data.api
 
 import com.kuit.afternote.data.remote.ApiResponse
-import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
+import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
@@ -20,6 +20,7 @@ import retrofit2.http.POST
  * Auth API 서비스. (스웨거 기준)
  *
  * - POST /auth/email/send, /auth/email/verify, /auth/sign-up, /auth/login
+ * - POST /auth/social/login (unified social login: provider + accessToken)
  * - POST /auth/reissue, /auth/logout, /auth/password/change
  */
 interface AuthApiService {
@@ -43,9 +44,9 @@ interface AuthApiService {
         @Body body: LoginRequest
     ): ApiResponse<LoginData?>
 
-    @POST("auth/kakao")
-    suspend fun kakaoLogin(
-        @Body body: KakaoLoginRequest
+    @POST("auth/social/login")
+    suspend fun socialLogin(
+        @Body body: SocialLoginRequest
     ): ApiResponse<LoginData?>
 
     @POST("auth/reissue")

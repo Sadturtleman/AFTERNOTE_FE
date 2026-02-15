@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -18,6 +20,7 @@ import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.White
+import kotlinx.coroutines.launch
 
 /**
  * 처리 방법 리스트 컴포넌트
@@ -27,13 +30,13 @@ fun ProcessingMethodList(
     modifier: Modifier = Modifier,
     params: ProcessingMethodListParams,
     state: ProcessingMethodListState = rememberProcessingMethodListState(
-        initialShowTextField = params.initialShowTextField,
-        initialExpandedItemId = params.initialExpandedItemId
+        initialShowTextField = params.initialShowTextField
     )
 ) {
     val items = params.items
     val onItemAdded = params.onItemAdded
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     // 초기화: 아이템들의 expanded 상태 설정
     LaunchedEffect(items, params.initialExpandedItemId) {
@@ -51,9 +54,7 @@ fun ProcessingMethodList(
             ProcessingMethodCheckbox(
                 item = item,
                 expanded = state.expandedStates[item.id] ?: false,
-                onClick = {
-                    focusManager.clearFocus()
-                },
+                isEditing = state.editingItemId == item.id,
                 callbacks = ProcessingMethodCheckboxCallbacks(
                     onMoreClick = {
                         focusManager.clearFocus()
@@ -62,8 +63,19 @@ fun ProcessingMethodList(
                     onDismissDropdown = {
                         state.expandedStates[item.id] = false
                     },
-                    onEditClick = { params.onItemEditClick(item.id) },
-                    onDeleteClick = { params.onItemDeleteClick(item.id) }
+                    onEditClick = {
+                        state.expandedStates[item.id] = false
+                        // Defer editing to next frame so DropdownMenu dismiss settles first
+                        scope.launch {
+                            withFrameNanos { }
+                            state.startEditing(item.id)
+                        }
+                    },
+                    onDeleteClick = { params.onItemDeleteClick(item.id) },
+                    onEditConfirmed = { newText ->
+                        params.onItemEdited(item.id, newText)
+                        state.stopEditing()
+                    }
                 )
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -98,8 +110,6 @@ private fun ProcessingMethodListPreview() {
                     ProcessingMethodItem("1", "게시물 내리기"),
                     ProcessingMethodItem("2", "댓글 비활성화")
                 ),
-                onItemMoreClick = {},
-                onItemEditClick = {},
                 onItemDeleteClick = {},
                 onItemAdded = {},
                 onTextFieldVisibilityChanged = {},
@@ -120,8 +130,6 @@ private fun ProcessingMethodListWithDropdownPreview() {
                     ProcessingMethodItem("2", "댓글 비활성화"),
                     ProcessingMethodItem("3", "추모 계정으로 전환하기")
                 ),
-                onItemMoreClick = {},
-                onItemEditClick = {},
                 onItemDeleteClick = {},
                 onItemAdded = {},
                 onTextFieldVisibilityChanged = {},

@@ -4,7 +4,7 @@ import android.util.Log
 import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.data.remote.requireSuccess
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
-import com.kuit.afternote.feature.auth.data.dto.KakaoLoginRequest
+import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
 import com.kuit.afternote.feature.auth.data.dto.PasswordChangeRequest
@@ -75,7 +75,7 @@ class AuthRepositoryImpl
 
         override suspend fun kakaoLogin(accessToken: String): Result<LoginResult> =
             runCatching {
-                val response = api.kakaoLogin(KakaoLoginRequest(accessToken))
+                val response = api.socialLogin(SocialLoginRequest(provider = "KAKAO", accessToken = accessToken))
                 Log.d(TAG, "kakaoLogin: response status=${response.status}, message=${response.message}")
                 AuthMapper.toLoginResult(response.requireData())
             }

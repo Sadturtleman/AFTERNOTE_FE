@@ -41,8 +41,7 @@ fun NavGraphBuilder.onboardingNavGraph(
         SplashScreen(
             onLoginClick = { navController.navigate(OnboardingRoute.LoginRoute) },
             onCheckClick = onNavigateToReceiverOnboarding,
-            onStartClick = {},
-            onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
+            onStartClick = { navController.navigate(OnboardingRoute.SignUpRoute) }
         )
     }
 

@@ -145,13 +145,13 @@ data class AfternoteCreatePlaylistRequestDto(
 // --- PATCH /afternotes/{afternoteId} (partial update) ---
 
 /**
- * Partial update request. Only include fields to change; category cannot be changed.
+ * Partial update request. Title and category are mandatory per server API.
  * Send only fields valid for the afternote's category (SOCIAL: credentials, etc.; GALLERY: receivers; PLAYLIST: playlist).
  */
 @Serializable
 data class AfternoteUpdateRequestDto(
-    val category: String? = null,
-    val title: String? = null,
+    val category: String,
+    val title: String,
     val processMethod: String? = null,
     val actions: List<String>? = null,
     @SerialName("leaveMessage") val leaveMessage: String? = null,

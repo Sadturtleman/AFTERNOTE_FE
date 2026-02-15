@@ -38,6 +38,7 @@ Please refer to the following specific rule files:
 - @.cursor/rules/tech-stack/architecture.mdc - *Clean Architecture 및 계층 분리 규칙*
 - @.cursor/rules/tech-stack/coil-image-loading.mdc - *Coil 3 image loading (dependencies, User-Agent, error handling)*
 - @.cursor/rules/tech-stack/compose.mdc - *Jetpack Compose 코딩 규칙 및 패턴*
+- @.cursor/rules/tech-stack/compose-focus-popup.mdc - *DropdownMenu/popup + inline edit focus race; dead callbacks*
 - @.cursor/rules/tech-stack/data-as-data-ioc.mdc - *Data as data / IoC — ViewModels blind to real vs stub; decision at DI*
 - @.cursor/rules/tech-stack/optimistic-updates.mdc - *Optimistic Updates 패턴*
 

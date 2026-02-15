@@ -199,7 +199,8 @@ fun AfternoteEditScreen(
                             accountProcessingMethod = state.selectedProcessingMethod.name,
                             informationProcessingMethod = state.selectedInformationProcessingMethod.name,
                             processingMethods = processingMethods,
-                            galleryProcessingMethods = galleryProcessingMethods
+                            galleryProcessingMethods = galleryProcessingMethods,
+                            atmosphere = state.getAtmosphereForSave()
                         )
                     )
                 }
