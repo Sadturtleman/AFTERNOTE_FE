@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -79,14 +78,11 @@ import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftSavePopUp
-import com.kuit.afternote.feature.timeletter.presentation.component.ReceiverInfoItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRegisteredPopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterWriterBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeWheelPicker
 import com.kuit.afternote.feature.timeletter.presentation.component.WritingPlusMenu
 import com.kuit.afternote.feature.timeletter.presentation.component.WaitingAgainPopUp
-import com.kuit.afternote.feature.timeletter.presentation.component.chosungGroupedItems
-import com.kuit.afternote.feature.timeletter.presentation.component.groupByChosung
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -251,7 +247,7 @@ fun TimeLetterWriterScreen(
             bottomBar = {
                 TimeLetterWriterBottomBar(
                     draftCount = draftCount,
-                    onLinkClick = {  },
+                    onLinkClick = { showLinkDialog = true },
                     onAddClick = { isMenuOpen = !isMenuOpen },
                     onSaveDraftClick = onSaveDraftClick,
                     onDraftCountClick = onDraftCountClick,
@@ -291,6 +287,7 @@ fun TimeLetterWriterScreen(
                     Column(
                         modifier = Modifier
                             .weight(1f)
+                            .height(62.dp)
                             .clickable { onDateClick() }
                     ) {
                         Text(
@@ -307,8 +304,7 @@ fun TimeLetterWriterScreen(
                                     color = Color(0xFF212121),
                                     fontFamily = FontFamily(Font(R.font.sansneoregular)),
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier.padding(top = 10.dp)
+                                    fontWeight = FontWeight.Normal
                                 )
                             }
                             Image(
@@ -333,6 +329,7 @@ fun TimeLetterWriterScreen(
                     Column(
                         modifier = Modifier
                             .width(106.dp)
+                            .height(62.dp)
                             .clickable { onTimeClick() }
                     ) {
                         Text(
@@ -340,8 +337,7 @@ fun TimeLetterWriterScreen(
                             color = Color(0xFF000000),
                             fontFamily = FontFamily(Font(R.font.sansneoregular)),
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            lineHeight = 18.sp
+                            fontWeight = FontWeight.Normal
                         )
                         Box(modifier = Modifier.fillMaxWidth()) {
                             if (sendTime.isNotEmpty()) {
@@ -350,8 +346,7 @@ fun TimeLetterWriterScreen(
                                     color = Color(0xFF212121),
                                     fontFamily = FontFamily(Font(R.font.sansneoregular)),
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier.padding(top = 10.dp)
+                                    fontWeight = FontWeight.Normal
                                 )
                             }
                             Image(
@@ -507,7 +502,10 @@ fun TimeLetterWriterScreen(
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
-                    ) { onDatePickerDismiss() }
+                    ) {
+                        onDateSelected(selectedDate.year, selectedDate.monthValue, selectedDate.dayOfMonth)
+                        onDatePickerDismiss()
+                    }
                     .zIndex(1f)
             )
 
@@ -526,7 +524,8 @@ fun TimeLetterWriterScreen(
                     onDateChanged = { date ->
                         selectedDate = date
                         onDateSelected(date.year, date.monthValue, date.dayOfMonth)
-                    }
+                    },
+                    minDate = LocalDate.now()
                 )
             }
         }

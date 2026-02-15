@@ -84,6 +84,8 @@ fun ReceiverMainRoute(
                             selectedBottomNavItem = it
                             timeLetterViewModel.updateSelectedBottomNavItem(it)
                         },
+                        onSortByDate = { timeLetterViewModel.sortByDateAscending() },
+                        onSortByUnread = { timeLetterViewModel.sortByUnreadFirst() },
                         showBottomBar = false
                     )
                 BottomNavItem.AFTERNOTE ->

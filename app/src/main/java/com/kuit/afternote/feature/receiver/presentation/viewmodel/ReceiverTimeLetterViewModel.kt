@@ -70,4 +70,23 @@ class ReceiverTimeLetterViewModel
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }
+
+    fun sortByDateAscending() {
+        _uiState.update { state ->
+            // sendAt이 "2023. 11. 24" 같은 문자열 형식이므로 문자열 정렬로도 날짜순 정렬이 가능합니다.
+            val sortedList = state.timeLetters.sortedBy { it.sendAt }
+            state.copy(timeLetters = sortedList)
+        }
+    }
+
+    fun sortByUnreadFirst() {
+        _uiState.update { state ->
+            val sortedList = state.timeLetters.sortedBy { letter ->
+                // 예시: status가 "READ"이면 true(뒤로 감), 아니면 false(앞으로 옴)
+                // 실제 사용하는 상태값(Enum 등)에 맞춰 "READ" 부분을 수정해주세요.
+                letter.status == "READ"
+            }
+            state.copy(timeLetters = sortedList)
+        }
+    }
 }

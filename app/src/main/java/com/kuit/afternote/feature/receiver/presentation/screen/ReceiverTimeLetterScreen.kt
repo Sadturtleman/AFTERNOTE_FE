@@ -60,6 +60,8 @@ fun TimeLetterScreen(
     onBackClick: () -> Unit,
     onLetterClick: (ReceivedTimeLetter) -> Unit,
     onBottomNavSelected: (BottomNavItem) -> Unit,
+    onSortByDate: () -> Unit,
+    onSortByUnread: () -> Unit,
     showBottomBar: Boolean = true
 ) {
     Scaffold(
@@ -91,6 +93,7 @@ fun TimeLetterScreen(
                     CircularProgressIndicator()
                 }
             }
+
             uiState.errorMessage != null && uiState.timeLetters.isEmpty() -> {
                 Box(
                     modifier = Modifier
@@ -105,6 +108,7 @@ fun TimeLetterScreen(
                     )
                 }
             }
+
             else -> {
                 LazyColumn(
                     modifier = Modifier
@@ -155,7 +159,8 @@ fun TimeLetterScreen(
                         TimeLetterActionCard(
                             desc = "고인이 작성한 편지를 날짜 순서로 확인합니다.",
                             subDesc = "${uiState.totalCount}개의 레터가 있습니다.",
-                            btnText = "타임 레터 확인하러 가기"
+                            btnText = "타임 레터 확인하러 가기",
+                            onClick = onSortByDate
                         )
                         Spacer(modifier = Modifier.height(32.dp))
                     }
@@ -172,7 +177,8 @@ fun TimeLetterScreen(
                         TimeLetterActionCard(
                             desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
                             subDesc = "0개의 읽지 않은 타임 레터가 있습니다.",
-                            btnText = "타임 레터 확인하러 가기"
+                            btnText = "타임 레터 확인하러 가기",
+                            onClick = onSortByUnread
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
@@ -333,7 +339,8 @@ val CardBgGradientEnd = Color(0xFFF0F7FF)
 fun TimeLetterActionCard(
     desc: String,
     subDesc: String,
-    btnText: String
+    btnText: String,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -377,7 +384,7 @@ fun TimeLetterActionCard(
                 )
 
                 Button(
-                    onClick = { },
+                    onClick = onClick,
                     colors = ButtonDefaults.buttonColors(containerColor = B3),
                     shape = RoundedCornerShape(50),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -420,7 +427,9 @@ private fun PreviewTimeLetter() {
             uiState = sampleState,
             onBackClick = { },
             onLetterClick = { },
-            onBottomNavSelected = { }
+            onBottomNavSelected = { },
+            onSortByDate = {},
+            onSortByUnread = {},
         )
     }
 }
