@@ -7,6 +7,13 @@ import kotlinx.serialization.Serializable
  * User API DTOs. (스웨거 기준)
  */
 
+/**
+ * GET /users/me (and any API returning user profile) response.
+ *
+ * When the profile image bucket is private, [profileImageUrl] must be a **GET pre-signed URL**
+ * (with X-Amz-Signature etc. in query params). If the server returns a raw S3 URL, the app gets
+ * HTTP 403 when loading the image (Coil/ProfileImage).
+ */
 @Serializable
 data class UserResponse(
     @SerialName("name") val name: String,
@@ -85,4 +92,21 @@ data class DailyQuestionAnswerItemDto(
 data class ReceiverDailyQuestionsResponseDto(
     @SerialName("items") val items: List<DailyQuestionAnswerItemDto>,
     @SerialName("hasNext") val hasNext: Boolean
+)
+
+// --- Image API (POST /images/presigned-url) ---
+
+/** Request for S3 presigned URL. directory: profiles | timeletters | afternotes. */
+@Serializable
+data class PresignedUrlRequestDto(
+    @SerialName("directory") val directory: String,
+    @SerialName("extension") val extension: String
+)
+
+/** Response: presignedUrl (PUT target), imageUrl (use in PATCH profile), contentType. */
+@Serializable
+data class PresignedUrlResponseDto(
+    @SerialName("presignedUrl") val presignedUrl: String,
+    @SerialName("imageUrl") val imageUrl: String,
+    @SerialName("contentType") val contentType: String
 )
