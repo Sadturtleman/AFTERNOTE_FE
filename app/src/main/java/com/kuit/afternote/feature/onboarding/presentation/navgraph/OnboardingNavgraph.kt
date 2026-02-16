@@ -19,7 +19,11 @@ fun NavGraphBuilder.onboardingNavGraph(
             onBackClick = { navController.popBackStack() },
             onSignUpClick = { navController.navigate(OnboardingRoute.SignUpRoute) },
             onFindIdClick = {},
-            onLoginSuccess = { navController.navigate(AfternoteRoute.AfternoteListRoute) }
+            onLoginSuccess = {
+                navController.navigate("home") {
+                    launchSingleTop = true
+                }
+            }
         )
     }
 
