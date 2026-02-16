@@ -20,7 +20,7 @@ class FakeAfternoteEditDataProvider @Inject constructor() : AfternoteEditDataPro
     override fun getAfternoteEditReceivers(): List<AfternoteEditReceiver> =
         emptyList()
     override fun getDefaultAfternoteItems(): List<Pair<String, String>> =
-        AfternoteListDummies.defaultAfternoteListForDev()
+        AfternoteListDummies.defaultAfternoteList()
     override fun getAlbumCovers(): List<com.kuit.afternote.core.ui.component.list.AlbumCover> =
         AlbumDummies.list
     override fun getAddSongSearchResults(): List<PlaylistSongDisplay> =

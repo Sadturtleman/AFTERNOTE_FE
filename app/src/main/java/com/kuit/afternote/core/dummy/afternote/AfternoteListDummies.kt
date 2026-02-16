@@ -6,10 +6,10 @@ package com.kuit.afternote.core.dummy.afternote
  */
 object AfternoteListDummies {
     /**
-     * Default afternote list (service name to date) for dev/main screen.
+     * Default afternote list (service name to date) for main list / preview.
      * Covers SOCIAL_NETWORK, GALLERY_AND_FILES, MEMORIAL, BUSINESS, OTHER.
      */
-    fun defaultAfternoteListForDev(): List<Pair<String, String>> =
+    fun defaultAfternoteList(): List<Pair<String, String>> =
         listOf(
             "인스타그램" to "2025.02.01",
             "갤러리" to "2025.01.28",

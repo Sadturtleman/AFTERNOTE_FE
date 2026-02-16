@@ -32,25 +32,25 @@ object AfternoteItemMapper {
 
     /**
      * List<Pair>를 List<AfternoteItem>으로 변환하며 **안정적인 id**를 부여.
-     * 목록/상세/편집에서 동일한 id로 조회할 수 있도록 dev·더미 목록용.
+     * 목록/상세/편집에서 동일한 id로 조회할 수 있도록 더미 목록용.
      */
     fun toAfternoteItemsWithStableIds(pairs: List<Pair<String, String>>): List<AfternoteItem> =
         pairs.mapIndexed { index, pair ->
             val (serviceName, date) = pair
             val serviceType = inferServiceType(serviceName)
-            val devData = devDataForServiceType(serviceType)
+            val dummyData = dummyDataForServiceType(serviceType)
             AfternoteItem(
-                id = "dev_${serviceName}_${date}_$index",
+                id = "dummy_${serviceName}_${date}_$index",
                 serviceName = serviceName,
                 date = date,
                 type = serviceType,
-                accountId = devData.accountId,
-                password = devData.password,
-                message = devData.message,
-                accountProcessingMethod = devData.accountProcessingMethod,
-                informationProcessingMethod = devData.informationProcessingMethod,
-                processingMethods = devData.processingMethods,
-                galleryProcessingMethods = devData.galleryProcessingMethods
+                accountId = dummyData.accountId,
+                password = dummyData.password,
+                message = dummyData.message,
+                accountProcessingMethod = dummyData.accountProcessingMethod,
+                informationProcessingMethod = dummyData.informationProcessingMethod,
+                processingMethods = dummyData.processingMethods,
+                galleryProcessingMethods = dummyData.galleryProcessingMethods
             )
         }
 
@@ -69,7 +69,7 @@ object AfternoteItemMapper {
 
     /**
      * 서비스명으로부터 ServiceType 추론.
-     * Only for dev/legacy data (e.g. toAfternoteItemsWithStableIds pairs). Do not use for
+     * Only for dummy/legacy data (e.g. toAfternoteItemsWithStableIds pairs). Do not use for
      * user-defined titles; category/type must come from API or list item when available.
      */
     private fun inferServiceType(serviceName: String): ServiceType =
@@ -84,7 +84,7 @@ object AfternoteItemMapper {
         }
 
     /**
-     * Dev 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
+     * 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
      *
      * SocialNetworkDetailScreen: id="qwerty123", pw="qwerty123", method=추모 계정,
      *   processing=["게시물 내리기","추모 게시물 올리기","추모 계정으로 전환하기"],
@@ -94,8 +94,8 @@ object AfternoteItemMapper {
      *   galleryProcessing=["'엽사' 폴더 박선호에게 전송","'흑역사' 폴더 삭제"],
      *   message="" (없음)
      */
-    private fun defaultSocialOrBusinessDevFields(): DevItemFields =
-        DevItemFields(
+    private fun defaultSocialOrBusinessDummyFields(): DummyItemFields =
+        DummyItemFields(
             accountId = "qwerty123",
             password = "qwerty123",
             message = "이 계정에는 우리 가족 여행 사진이 많아.\n" +
@@ -108,22 +108,22 @@ object AfternoteItemMapper {
             )
         )
 
-    private fun devDataForServiceType(type: ServiceType): DevItemFields =
+    private fun dummyDataForServiceType(type: ServiceType): DummyItemFields =
         when (type) {
             ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.BUSINESS ->
-                defaultSocialOrBusinessDevFields()
-            ServiceType.GALLERY_AND_FILES -> DevItemFields(
+                defaultSocialOrBusinessDummyFields()
+            ServiceType.GALLERY_AND_FILES -> DummyItemFields(
                 informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
                 galleryProcessingMethods = listOf(
                     AfternoteProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
                     AfternoteProcessingMethod("2", "'흑역사' 폴더 삭제")
                 )
             )
-            ServiceType.MEMORIAL -> DevItemFields()
-            ServiceType.ASSET_MANAGEMENT -> DevItemFields()
+            ServiceType.MEMORIAL -> DummyItemFields()
+            ServiceType.ASSET_MANAGEMENT -> DummyItemFields()
         }
 
-    private data class DevItemFields(
+    private data class DummyItemFields(
         val accountId: String = "",
         val password: String = "",
         val message: String = "",
