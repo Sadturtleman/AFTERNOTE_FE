@@ -203,8 +203,7 @@ import com.kuit.afternote.feature.user.presentation.viewmodel.PushSettingsViewMo
    ```
 
 2. **로그인**
-   - DevMode 화면에서 빠른 로그인 사용
-   - 또는 일반 로그인 화면에서 로그인
+   - 스플래시 후 로그인 화면에서 로그인
 
 3. **프로필 수정 화면 테스트**
    - 설정 → 프로필 수정

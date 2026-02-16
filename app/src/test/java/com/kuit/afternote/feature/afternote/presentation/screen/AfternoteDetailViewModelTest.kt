@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.presentation.screen
 
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.usecase.DeleteAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.util.MainCoroutineRule
@@ -40,7 +40,7 @@ class AfternoteDetailViewModelTest {
             title = "인스타그램",
             createdAt = "2025.11.26",
             updatedAt = "2025.11.26",
-            type = ServiceType.SOCIAL_NETWORK,
+            type = AfternoteServiceType.SOCIAL_NETWORK,
             credentialsId = "id",
             credentialsPassword = "pw",
             receivers = listOf(

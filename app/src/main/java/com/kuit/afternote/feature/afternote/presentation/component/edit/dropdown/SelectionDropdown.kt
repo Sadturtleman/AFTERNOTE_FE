@@ -42,8 +42,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
 private const val CATEGORY_SOCIAL_NETWORK = "소셜네트워크"
-private const val CATEGORY_BUSINESS = "비즈니스"
 private const val CATEGORY_GALLERY_AND_FILE_PREVIEW = "갤러리 및 파일"
+private const val CATEGORY_MEMORIAL_PREVIEW = "추모 가이드라인"
 
 /**
  * Label configuration for [SelectionDropdown].
@@ -203,7 +203,11 @@ private fun SelectionDropdownPreview() {
         SelectionDropdown(
             labelParams = SelectionDropdownLabelParams(label = "종류"),
             selectedValue = CATEGORY_SOCIAL_NETWORK,
-            options = listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW),
+            options = listOf(
+                CATEGORY_SOCIAL_NETWORK,
+                CATEGORY_GALLERY_AND_FILE_PREVIEW,
+                CATEGORY_MEMORIAL_PREVIEW
+            ),
             onValueSelected = {}
         )
     }
@@ -251,7 +255,11 @@ private fun ExpandedDropdownMenuPreview() {
                 tonalElevation = 0.dp,
                 modifier = Modifier.width(200.dp)
             ) {
-                listOf(CATEGORY_SOCIAL_NETWORK, CATEGORY_BUSINESS, CATEGORY_GALLERY_AND_FILE_PREVIEW).forEach { option ->
+                listOf(
+                    CATEGORY_SOCIAL_NETWORK,
+                    CATEGORY_GALLERY_AND_FILE_PREVIEW,
+                    CATEGORY_MEMORIAL_PREVIEW
+                ).forEach { option ->
                     DropdownMenuItem(
                         text = {
                             Text(

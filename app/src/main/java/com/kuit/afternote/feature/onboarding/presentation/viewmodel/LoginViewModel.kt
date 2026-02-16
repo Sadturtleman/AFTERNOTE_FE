@@ -7,7 +7,6 @@ import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
-import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +30,7 @@ class LoginViewModel
     constructor(
         private val loginUseCase: LoginUseCase,
         private val kakaoLoginUseCase: KakaoLoginUseCase,
-        private val tokenManager: TokenManager,
-        private val testAccountManager: TestAccountManager
+        private val tokenManager: TokenManager
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(LoginUiState())
         val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -63,9 +61,6 @@ class LoginViewModel
                                 refreshToken = refreshToken,
                                 email = email
                             )
-                            // Cycle Password strategy: Automatically save password on successful login
-                            // This allows password recovery even if forgotten later
-                            testAccountManager.updateStoredPassword(password)
                         }
                         _uiState.update {
                             it.copy(isLoading = false, errorMessage = null, loginSuccess = true)

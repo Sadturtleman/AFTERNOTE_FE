@@ -1,90 +1,61 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
+import com.kuit.afternote.core.domain.model.AfternoteServiceCatalog
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
-import java.util.UUID
 
 /**
  * Pair<String, String> 및 RegisterAfternotePayload를 AfternoteItem으로 변환하는 매퍼
  * 레거시 데이터 형식과의 호환성을 위한 헬퍼
  */
 object AfternoteItemMapper {
-    /**
-     * 등록 페이로드로부터 AfternoteItem 생성 (처리 방법 포함)
-     */
-    fun fromPayload(payload: RegisterAfternotePayload): AfternoteItem {
-        val serviceType = inferServiceType(payload.serviceName)
-        return AfternoteItem(
-            id = UUID.randomUUID().toString(),
-            serviceName = payload.serviceName,
-            date = payload.date,
-            type = serviceType,
-            accountId = payload.accountId,
-            password = payload.password,
-            message = payload.message,
-            accountProcessingMethod = payload.accountProcessingMethod,
-            informationProcessingMethod = payload.informationProcessingMethod,
-            processingMethods = payload.processingMethods,
-            galleryProcessingMethods = payload.galleryProcessingMethods
-        )
-    }
 
     /**
      * List<Pair>를 List<AfternoteItem>으로 변환하며 **안정적인 id**를 부여.
-     * 목록/상세/편집에서 동일한 id로 조회할 수 있도록 dev·더미 목록용.
+     * 목록/상세/편집에서 동일한 id로 조회할 수 있도록 더미 목록용.
      */
     fun toAfternoteItemsWithStableIds(pairs: List<Pair<String, String>>): List<AfternoteItem> =
         pairs.mapIndexed { index, pair ->
             val (serviceName, date) = pair
             val serviceType = inferServiceType(serviceName)
-            val devData = devDataForServiceType(serviceType)
+            val dummyData = dummyDataForServiceType(serviceType)
             AfternoteItem(
-                id = "dev_${serviceName}_${date}_$index",
+                id = "dummy_${serviceName}_${date}_$index",
                 serviceName = serviceName,
                 date = date,
                 type = serviceType,
-                accountId = devData.accountId,
-                password = devData.password,
-                message = devData.message,
-                accountProcessingMethod = devData.accountProcessingMethod,
-                informationProcessingMethod = devData.informationProcessingMethod,
-                processingMethods = devData.processingMethods,
-                galleryProcessingMethods = devData.galleryProcessingMethods
+                accountId = dummyData.accountId,
+                password = dummyData.password,
+                message = dummyData.message,
+                accountProcessingMethod = dummyData.accountProcessingMethod,
+                informationProcessingMethod = dummyData.informationProcessingMethod,
+                processingMethods = dummyData.processingMethods,
+                galleryProcessingMethods = dummyData.galleryProcessingMethods
             )
         }
 
     /**
-     * Edit screen category dropdown value from [ServiceType].
+     * Edit screen category dropdown value from [AfternoteServiceType].
      * Prefer this when type is known; do not infer category from title (titles are user-defined).
      */
-    fun categoryStringForEditScreen(serviceType: ServiceType): String =
+    fun categoryStringForEditScreen(serviceType: AfternoteServiceType): String =
         when (serviceType) {
-            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER -> "소셜네트워크"
-            ServiceType.BUSINESS -> "비즈니스"
-            ServiceType.GALLERY_AND_FILES -> "갤러리 및 파일"
-            ServiceType.ASSET_MANAGEMENT -> "재산 처리"
-            ServiceType.MEMORIAL -> "추모 가이드라인"
+            AfternoteServiceType.SOCIAL_NETWORK -> "소셜네트워크"
+            AfternoteServiceType.GALLERY_AND_FILES -> "갤러리 및 파일"
+            AfternoteServiceType.MEMORIAL -> "추모 가이드라인"
         }
 
     /**
-     * 서비스명으로부터 ServiceType 추론.
-     * Only for dev/legacy data (e.g. toAfternoteItemsWithStableIds pairs). Do not use for
+     * 서비스명으로부터 AfternoteServiceType 추론.
+     * Only for dummy/legacy data (e.g. toAfternoteItemsWithStableIds pairs). Do not use for
      * user-defined titles; category/type must come from API or list item when available.
      */
-    private fun inferServiceType(serviceName: String): ServiceType =
-        when (serviceName) {
-            "갤러리", "파일" -> ServiceType.GALLERY_AND_FILES
-            "인스타그램", "페이스북", "X", "스레드", "틱톡", "유튜브",
-            "카카오톡", "카카오스토리", "네이버 블로그", "네이버 카페", "네이버 밴드",
-            "네이버", "디스코드" -> ServiceType.SOCIAL_NETWORK
-            "추모 가이드라인" -> ServiceType.MEMORIAL
-            "네이버 메일" -> ServiceType.BUSINESS
-            else -> ServiceType.OTHER
-        }
+    private fun inferServiceType(serviceName: String): AfternoteServiceType =
+        AfternoteServiceCatalog.serviceTypeFor(serviceName)
 
     /**
-     * Dev 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
+     * 더미 데이터: 각 Detail 화면에 하드코딩된 값과 동일하게 맞춤.
      *
      * SocialNetworkDetailScreen: id="qwerty123", pw="qwerty123", method=추모 계정,
      *   processing=["게시물 내리기","추모 게시물 올리기","추모 계정으로 전환하기"],
@@ -94,8 +65,8 @@ object AfternoteItemMapper {
      *   galleryProcessing=["'엽사' 폴더 박선호에게 전송","'흑역사' 폴더 삭제"],
      *   message="" (없음)
      */
-    private fun defaultSocialOrBusinessDevFields(): DevItemFields =
-        DevItemFields(
+    private fun defaultSocialOrBusinessDummyFields(): DummyItemFields =
+        DummyItemFields(
             accountId = "qwerty123",
             password = "qwerty123",
             message = "이 계정에는 우리 가족 여행 사진이 많아.\n" +
@@ -108,22 +79,20 @@ object AfternoteItemMapper {
             )
         )
 
-    private fun devDataForServiceType(type: ServiceType): DevItemFields =
+    private fun dummyDataForServiceType(type: AfternoteServiceType): DummyItemFields =
         when (type) {
-            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.BUSINESS ->
-                defaultSocialOrBusinessDevFields()
-            ServiceType.GALLERY_AND_FILES -> DevItemFields(
+            AfternoteServiceType.SOCIAL_NETWORK -> defaultSocialOrBusinessDummyFields()
+            AfternoteServiceType.GALLERY_AND_FILES -> DummyItemFields(
                 informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
                 galleryProcessingMethods = listOf(
                     AfternoteProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
                     AfternoteProcessingMethod("2", "'흑역사' 폴더 삭제")
                 )
             )
-            ServiceType.MEMORIAL -> DevItemFields()
-            ServiceType.ASSET_MANAGEMENT -> DevItemFields()
+            AfternoteServiceType.MEMORIAL -> DummyItemFields()
         }
 
-    private data class DevItemFields(
+    private data class DummyItemFields(
         val accountId: String = "",
         val password: String = "",
         val message: String = "",

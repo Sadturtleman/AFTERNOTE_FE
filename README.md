@@ -46,11 +46,11 @@ Windows에서 Git Bash를 통해 pre-commit hook을 실행할 때, Android Studi
 
 ## 개발자 모드 테스트 계정 설정
 
-개발자 모드에서 빠른 로그인 기능을 사용하려면 `local.properties`에 테스트 계정 정보를 설정해야 합니다.
+로컬에서 테스트 계정으로 로그인하려면 `local.properties`에 테스트 계정 정보를 설정할 수 있습니다 (선택).
 
-**프로젝트 루트의 `local.properties` 파일에 추가:**
+**프로젝트 루트의 `local.properties` 파일에 추가 (선택):**
 ```properties
-# Test credentials for DevMode quick login
+# Test credentials for local testing
 TEST_EMAIL=your_test_email@example.com
 TEST_PASSWORD=your_test_password
 ```

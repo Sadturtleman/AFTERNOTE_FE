@@ -44,7 +44,7 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverR
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeScreen
-import com.kuit.afternote.feature.setting.presentation.screen.receiver.getAfternoteSourceDisplayResIds
+import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
@@ -307,8 +307,8 @@ private fun ReceiverAfternoteListRouteContent(
     val afterNotesViewModel: ReceiverAfternotesListViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteItems = afterNotesState.items.map { item ->
-        val (stringResId, iconResId) = getAfternoteSourceDisplayResIds(item.sourceType)
-        val serviceName = stringResId?.let { stringResource(it) } ?: item.sourceType
+        val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
+        val serviceName = stringResource(stringResId)
         AfternoteListDisplayItem(
             id = item.sourceType,
             serviceName = serviceName,

@@ -1,5 +1,7 @@
 # Dev Mode Password Reset 개선 계획
 
+> **Obsolete**: Dev mode was removed from the app. This document is kept for reference only.
+
 ## 피드백 요약
 
 Perplexity 피드백에 따라 다음 개선이 필요합니다:

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
-import com.kuit.afternote.feature.dev.domain.LocalPropertiesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +25,7 @@ import javax.inject.Inject
 class PasswordChangeViewModel
     @Inject
     constructor(
-        private val passwordChangeUseCase: PasswordChangeUseCase,
-        private val localPropertiesManager: LocalPropertiesManager
+        private val passwordChangeUseCase: PasswordChangeUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(PasswordChangeUiState())
         val uiState: StateFlow<PasswordChangeUiState> = _uiState.asStateFlow()
@@ -96,9 +94,6 @@ class PasswordChangeViewModel
                         // 최신 요청인지 확인 (레이스 컨디션 방지)
                         if (requestId == currentRequestId) {
                             Log.d(TAG, "Password change SUCCESS - API confirmed")
-                            // local.properties 업데이트 시도 (Debug 빌드에서만 실제 업데이트)
-                            localPropertiesManager.updateTestPassword(newPassword)
-                            // 이미 성공 상태이므로 추가 업데이트 불필요
                         }
                     }.onFailure { e ->
                         // 최신 요청인지 확인 (레이스 컨디션 방지)
