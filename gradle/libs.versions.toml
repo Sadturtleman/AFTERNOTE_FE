@@ -25,7 +25,7 @@ crashlytics = "3.0.6"
 navigationRuntimeKtx = "2.9.7"
 roomCommonJvm = "2.8.4"
 runtime = "1.10.2"
-
+crypto = "1.1.0"
 foundation = "1.10.2"
 desugarJdkLibs = "2.1.5"
 appcompat = "1.7.1"
@@ -73,7 +73,7 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
-
+security-crypto = {group = "androidx.security", name = "security-crypto-ktx", version.ref = "crypto"}
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
