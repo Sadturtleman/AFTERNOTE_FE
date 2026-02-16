@@ -9,7 +9,7 @@ import javax.inject.Inject
  */
 class FakeReceiverDataProvider @Inject constructor() : ReceiverDataProvider {
     override fun getReceiverList() = ReceiverDummies.receiverList
-    override fun getDefaultReceiverTitleForDev(): String = ReceiverDummies.defaultReceiverTitleForDev()
+    override fun getDefaultReceiverTitle(): String = ReceiverDummies.defaultReceiverTitle()
     override fun getAfternoteListSeedsForReceiverList() = ReceiverDummies.defaultAfternoteListSeedsForReceiverList()
     override fun getAfternoteListSeedsForReceiverDetail() = ReceiverDummies.defaultAfternoteListSeedsForReceiverDetail()
     override fun getTimeLetterItemsForPreview() = ReceiverDummies.sampleTimeLetterItemsForPreview

@@ -40,6 +40,7 @@ Please refer to the following specific rule files:
 - @.cursor/rules/tech-stack/compose.mdc - *Jetpack Compose 코딩 규칙 및 패턴*
 - @.cursor/rules/tech-stack/compose-focus-popup.mdc - *DropdownMenu/popup + inline edit focus race; dead callbacks*
 - @.cursor/rules/tech-stack/data-as-data-ioc.mdc - *Data as data / IoC — ViewModels blind to real vs stub; decision at DI*
+- @.cursor/rules/tech-stack/dto-serialization.mdc - *@SerialName only when JSON key differs from property name*
 - @.cursor/rules/tech-stack/optimistic-updates.mdc - *Optimistic Updates 패턴*
 
 ### Quality

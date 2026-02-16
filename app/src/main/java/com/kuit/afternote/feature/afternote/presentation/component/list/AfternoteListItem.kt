@@ -28,8 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.core.ui.util.getIconResForServiceType
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black
@@ -53,7 +54,7 @@ fun AfternoteListItem(
     item: AfternoteItem,
     onClick: () -> Unit = {}
 ) {
-    val imageRes = IconResourceMapper.getIconResForServiceType(item.type)
+    val imageRes = getIconResForServiceType(item.type)
     val shape = RoundedCornerShape(16.dp)
 
     Surface(
@@ -156,7 +157,7 @@ private fun AfternoteListItemPreview() {
                 id = "1",
                 serviceName = "인스타그램",
                 date = "2023.11.24",
-                type = com.kuit.afternote.feature.afternote.domain.model.ServiceType.SOCIAL_NETWORK
+                type = AfternoteServiceType.SOCIAL_NETWORK
             )
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -165,7 +166,7 @@ private fun AfternoteListItemPreview() {
                 id = "2",
                 serviceName = "갤러리",
                 date = "2023.11.25",
-                type = com.kuit.afternote.feature.afternote.domain.model.ServiceType.GALLERY_AND_FILES
+                type = AfternoteServiceType.GALLERY_AND_FILES
             )
         )
     }

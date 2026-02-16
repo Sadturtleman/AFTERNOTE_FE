@@ -81,6 +81,16 @@ data class SongPlaylistScreenManagementContent(
     val selectionBottomBar: @Composable (selectedIds: Set<String>, onClearSelection: () -> Unit) -> Unit
 )
 
+/**
+ * Optional parameters for the selectable [SongPlaylistScreen] (S107: keep param count ≤7).
+ */
+data class SongPlaylistScreenSelectableOptions(
+    val defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
+    val initialSelectedSongIds: Set<String>? = null,
+    val searchQuery: String? = null,
+    val onSearchQueryChange: ((String) -> Unit)? = null
+)
+
 // region ── SongPlaylistScreen (full screen composable) ──
 
 /**
@@ -141,6 +151,7 @@ fun SongPlaylistScreen(
  * @param onSongsSelected 추가하기 버튼 클릭 시 선택된 노래 목록 전달
  * @param defaultBottomNavItem 초기 선택 BottomNavItem
  * @param initialSelectedSongIds Preview용 초기 선택 ID (기본 null)
+ * @param options [SongPlaylistScreenSelectableOptions] for nav item, initial selection, and optional search binding.
  */
 @Composable
 @Suppress("AssignedValueIsNeverRead")
@@ -150,12 +161,20 @@ fun SongPlaylistScreen(
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
     onSongsSelected: (List<PlaylistSongDisplay>) -> Unit,
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
-    initialSelectedSongIds: Set<String>? = null
+    options: SongPlaylistScreenSelectableOptions = SongPlaylistScreenSelectableOptions()
 ) {
-    var selectedSongIds by remember { mutableStateOf(initialSelectedSongIds ?: emptySet<String>()) }
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
+    var selectedSongIds by remember { mutableStateOf(options.initialSelectedSongIds ?: emptySet<String>()) }
+    var internalSearchQuery by remember { mutableStateOf("") }
+    var selectedBottomNavItem by remember { mutableStateOf(options.defaultBottomNavItem) }
+
+    val effectiveQuery = options.searchQuery ?: internalSearchQuery
+    val effectiveOnSearchQueryChange = options.onSearchQueryChange ?: { internalSearchQuery = it }
+    val displaySongs =
+        if (options.searchQuery != null && options.onSearchQueryChange != null) {
+            songs
+        } else {
+            filterSongsByQuery(songs, effectiveQuery)
+        }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -175,9 +194,9 @@ fun SongPlaylistScreen(
         Box(modifier = Modifier.padding(paddingValues)) {
             SearchableSongList(
                 modifier = Modifier.fillMaxSize(),
-                songs = songs,
-                searchQuery = searchQuery,
-                onSearchQueryChange = { searchQuery = it },
+                songs = displaySongs,
+                searchQuery = effectiveQuery,
+                onSearchQueryChange = effectiveOnSearchQueryChange,
                 onSongClick = { song ->
                     selectedSongIds = if (song.id in selectedSongIds) {
                         selectedSongIds - song.id
@@ -211,7 +230,7 @@ fun SongPlaylistScreen(
                     SongAddButton(
                         count = selectedSongIds.size,
                         onClick = {
-                            val selected = songs.filter { it.id in selectedSongIds }
+                            val selected = displaySongs.filter { it.id in selectedSongIds }
                             onSongsSelected(selected)
                         }
                     )
@@ -556,7 +575,7 @@ private fun SongPlaylistScreenSelectablePreview() {
         onBackClick = {},
         songs = songs,
         onSongsSelected = {},
-        initialSelectedSongIds = setOf("1", "3")
+        options = SongPlaylistScreenSelectableOptions(initialSelectedSongIds = setOf("1", "3"))
     )
 }
 

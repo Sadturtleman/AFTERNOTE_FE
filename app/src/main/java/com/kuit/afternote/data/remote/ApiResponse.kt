@@ -1,6 +1,5 @@
 package com.kuit.afternote.data.remote
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -15,7 +14,7 @@ data class ApiResponse<T>(
     val status: Int,
     val code: Int,
     val message: String,
-    @SerialName("data") val data: T? = null
+    val data: T? = null
 )
 
 /**

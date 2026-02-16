@@ -15,6 +15,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -51,17 +52,10 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSta
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
-import com.kuit.afternote.feature.dev.presentation.screen.DevModeScreen
-import com.kuit.afternote.feature.dev.presentation.screen.ModeSelectionScreen
-import com.kuit.afternote.feature.dev.presentation.screen.ScreenInfo
 import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
 import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
-import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
-import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
-import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen
-import com.kuit.afternote.feature.onboarding.presentation.screen.SplashScreen
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
@@ -80,39 +74,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
-
-private val devModeScreensList =
-    listOf(
-        ScreenInfo("애프터노트 목록 화면", "afternote_list"),
-        ScreenInfo("애프터노트 상세 화면", "afternote_detail"),
-        ScreenInfo("애프터노트 수정 화면", "afternote_edit"),
-        ScreenInfo("스플래시 화면", "dev_splash"),
-        ScreenInfo("로그인 화면", "dev_login"),
-        ScreenInfo("마음의기록 메인 화면", "record_main"),
-        ScreenInfo("지문 로그인 화면", "fingerprint_login"),
-        ScreenInfo("타임레터 화면", "time_letter_main"),
-        ScreenInfo("타임레터 작성 화면", "time_letter_writer"),
-        ScreenInfo("임시저장 화면", "draft_letter"),
-        ScreenInfo("수신자 홈", "receiver_main/1"),
-        ScreenInfo("수신자 온보딩", "receiver_onboarding"),
-        //ScreenInfo("타임레터 빈 화면", "letter_empty"),
-        ScreenInfo("설정 화면", "setting_main")
-    )
-
-private fun navigateFromDevMode(route: String, nav: NavHostController) {
-    when (route) {
-        "afternote_list" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
-        "main" -> nav.navigate(AfternoteRoute.AfternoteListRoute)
-        "afternote_detail" -> nav.navigate(AfternoteRoute.DetailRoute(itemId = ""))
-        "afternote_edit" -> nav.navigate(AfternoteRoute.EditRoute())
-        "fingerprint_login" -> nav.navigate(AfternoteRoute.FingerprintLoginRoute)
-        "time_letter_main" -> nav.navigate(TimeLetterRoute.TimeLetterMainRoute)
-        "time_letter_writer" -> nav.navigate(TimeLetterRoute.TimeLetterWriterRoute())
-        "draft_letter" -> nav.navigate(TimeLetterRoute.DraftLetterRoute)
-        "setting_main" -> nav.navigate(SettingRoute.SettingMainRoute)
-        else -> nav.navigate(route)
-    }
-}
 
 @Composable
 private fun FingerprintLoginRouteContent(
@@ -226,7 +187,7 @@ private fun ReceiverAfternoteDetailContent(
         }
     val category = receiverDetailCategoryFromSeed(seed)
     val serviceName = seed?.serviceNameLiteral ?: ""
-    val userName = receiverProvider.getDefaultReceiverTitleForDev()
+    val userName = receiverProvider.getDefaultReceiverTitle()
     val defaultState = rememberAfternoteDetailState(
         defaultBottomNavItem = BottomNavItem.AFTERNOTE
     )
@@ -334,7 +295,6 @@ fun NavGraph(navHostController: NavHostController) {
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     var listRefreshRequested by remember { mutableStateOf(false) }
-    val devModeScreens = devModeScreensList
 
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = { item ->
         when (item) {
@@ -359,7 +319,7 @@ fun NavGraph(navHostController: NavHostController) {
 
     NavHost(
         navController = navHostController,
-        startDestination = "dev",
+        startDestination = "root",
         // Disable default transition animations to prevent touch events being
         // blocked by the animation overlay during screen transitions.
         enterTransition = { EnterTransition.None },
@@ -367,11 +327,19 @@ fun NavGraph(navHostController: NavHostController) {
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None }
     ) {
-        composable("mode_selection") {
-            ModeSelectionScreen(
-                onUserModeClick = navigateToUserMode,
-                onDevModeClick = { navHostController.navigate("dev") }
-            )
+        composable("root") {
+            LaunchedEffect(Unit) {
+                val token = tokenManager.getAccessToken()
+                withContext(Dispatchers.Main.immediate) {
+                    if (!token.isNullOrEmpty()) {
+                        navHostController.navigate("home") {
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navHostController.navigate(OnboardingRoute.SplashRoute)
+                    }
+                }
+            }
         }
 
         composable("home") {
@@ -417,7 +385,7 @@ fun NavGraph(navHostController: NavHostController) {
                 },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
-                userName = receiverProvider.getDefaultReceiverTitleForDev(),
+                userName = receiverProvider.getDefaultReceiverTitle(),
                 editStateHandling = AfternoteEditStateHandling(
                     holder = afternoteEditStateHolder,
                     onClear = { afternoteEditStateHolder.value = null }
@@ -436,61 +404,16 @@ fun NavGraph(navHostController: NavHostController) {
         )
         settingNavGraph(navController = navHostController)
 
-        composable("dev") {
-            DevModeScreen(
-                screens = devModeScreens,
-                onScreenClick = { navigateFromDevMode(it, navHostController) },
-                onUserModeClick = navigateToUserMode
-            )
-        }
-
-        // 개발자 모드용 화면들
-        composable("dev_splash") {
-            SplashScreen(
-                onLoginClick = { navHostController.navigate("dev_login") },
-                onStartClick = { navHostController.navigate("dev_signup") },
-                onCheckClick = { navHostController.navigate("receiver_onboarding") }
-            )
-        }
-
-        composable("dev_login") {
-            LoginScreen(
-                onBackClick = { navHostController.popBackStack() },
-                onSignUpClick = { navHostController.navigate("dev_signup") },
-                onFindIdClick = {},
-                onLoginSuccess = { navHostController.navigate(AfternoteRoute.AfternoteListRoute) }
-            )
-        }
-
-        composable("dev_signup") {
-            SignUpScreen(
-                onBackClick = { navHostController.popBackStack() },
-                onSettingClick = { email, password ->
-                    navHostController.navigate("dev_profile_setting/$email/$password")
-                }
-            )
-        }
-
-        composable("dev_profile_setting/{email}/{password}") { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email") ?: ""
-            val password = backStackEntry.arguments?.getString("password") ?: ""
-            ProfileSettingScreen(
-                email = email,
-                password = password,
-                onFinishClick = { navHostController.navigate(AfternoteRoute.AfternoteListRoute) },
-                onBackClick = { navHostController.popBackStack() }
-            )
-        }
-
         composable("receiver_main/{receiverId}") { backStackEntry ->
             val receiverId = backStackEntry.arguments?.getString("receiverId") ?: "1"
             ReceiverMainRoute(
                 receiverId = receiverId,
                 navController = navHostController,
-                receiverTitle = receiverProvider.getDefaultReceiverTitleForDev(),
+                receiverTitle = receiverProvider.getDefaultReceiverTitle(), // 팀원 의도 반영
                 albumCovers = afternoteProvider.getAlbumCovers(),
-                receiverAuthSessionHolder = receiverAuthSessionHolder
+                receiverAuthSessionHolder = receiverAuthSessionHolder // 경민님 로직 반영
             )
+
         }
 
         composable("receiver_afternote_list") {

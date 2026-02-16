@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
+
 /**
  * 애프터노트 아이템 도메인 모델
  *
@@ -19,7 +21,7 @@ data class AfternoteItem(
     val id: String,
     val serviceName: String,
     val date: String,
-    val type: ServiceType,
+    val type: AfternoteServiceType,
     val accountId: String = "",
     val password: String = "",
     val message: String = "",

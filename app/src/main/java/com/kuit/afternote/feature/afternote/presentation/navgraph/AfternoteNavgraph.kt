@@ -44,10 +44,11 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailCont
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AddSongViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
@@ -124,7 +125,7 @@ private fun resolveListItems(
     afternoteProvider: AfternoteEditDataProvider
 ): List<AfternoteItem> =
     afternoteItems.ifEmpty {
-        AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getDefaultAfternoteItems())
     }
 
 @Composable
@@ -172,7 +173,7 @@ private fun AfternoteListRouteContent(
 }
 
 /** Types with a designed detail screen on the generic DetailRoute (social-style layout). */
-private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
+private val DESIGNED_DETAIL_TYPES = setOf(AfternoteServiceType.SOCIAL_NETWORK)
 
 @Composable
 private fun DetailLoadingContent() {
@@ -564,10 +565,10 @@ private fun AfternoteFingerprintLoginContent(
 private fun AfternoteAddSongRouteContent(
     navController: NavController,
     playlistStateHolder: MemorialPlaylistStateHolder,
-    afternoteProvider: AfternoteEditDataProvider
+    viewModel: AddSongViewModel
 ) {
     AddSongScreen(
-        songs = afternoteProvider.getAddSongSearchResults(),
+        viewModel = viewModel,
         callbacks = AddSongCallbacks(
             onBackClick = { navController.popBackStack() },
             onSongsAdded = { added ->
@@ -656,10 +657,11 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.AddSongRoute> {
+        val addSongViewModel: AddSongViewModel = hiltViewModel()
         AfternoteAddSongRouteContent(
             navController = navController,
             playlistStateHolder = params.playlistStateHolder,
-            afternoteProvider = afternoteProvider
+            viewModel = addSongViewModel
         )
     }
 }

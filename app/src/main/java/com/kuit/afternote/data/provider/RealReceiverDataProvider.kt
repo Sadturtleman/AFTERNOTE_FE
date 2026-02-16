@@ -11,7 +11,7 @@ import javax.inject.Inject
  */
 class RealReceiverDataProvider @Inject constructor() : ReceiverDataProvider {
     override fun getReceiverList(): List<AfternoteEditReceiver> = emptyList()
-    override fun getDefaultReceiverTitleForDev(): String = ""
+    override fun getDefaultReceiverTitle(): String = ""
     override fun getAfternoteListSeedsForReceiverList(): List<AfternoteListItemSeed> = emptyList()
     override fun getAfternoteListSeedsForReceiverDetail(): List<AfternoteListItemSeed> = emptyList()
     override fun getTimeLetterItemsForPreview(): List<TimeLetterItem> = emptyList()

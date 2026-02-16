@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
+
 /**
  * 애프터노트 상세 도메인 모델.
  *
@@ -15,7 +17,7 @@ data class AfternoteDetail(
     val title: String,
     val createdAt: String,
     val updatedAt: String,
-    val type: ServiceType,
+    val type: AfternoteServiceType,
     val credentialsId: String?,
     val credentialsPassword: String?,
     val receivers: List<AfternoteDetailReceiver>,

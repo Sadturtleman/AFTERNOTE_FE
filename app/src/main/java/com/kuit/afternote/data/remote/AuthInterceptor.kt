@@ -3,7 +3,6 @@ package com.kuit.afternote.data.remote
 import android.util.Log
 import com.kuit.afternote.data.local.TokenManager
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -228,7 +227,7 @@ class AuthInterceptor
  */
 @Serializable
 private data class ReissueRequestBody(
-    @SerialName("refreshToken") val refreshToken: String
+    val refreshToken: String
 )
 
 /**
@@ -236,10 +235,10 @@ private data class ReissueRequestBody(
  */
 @Serializable
 private data class ReissueApiResponse(
-    @SerialName("status") val status: Int? = null,
-    @SerialName("code") val code: Int? = null,
-    @SerialName("message") val message: String? = null,
-    @SerialName("data") val data: ReissueResponseData? = null
+    val status: Int? = null,
+    val code: Int? = null,
+    val message: String? = null,
+    val data: ReissueResponseData? = null
 )
 
 /**
@@ -247,6 +246,6 @@ private data class ReissueApiResponse(
  */
 @Serializable
 private data class ReissueResponseData(
-    @SerialName("accessToken") val accessToken: String? = null,
-    @SerialName("refreshToken") val refreshToken: String? = null
+    val accessToken: String? = null,
+    val refreshToken: String? = null
 )

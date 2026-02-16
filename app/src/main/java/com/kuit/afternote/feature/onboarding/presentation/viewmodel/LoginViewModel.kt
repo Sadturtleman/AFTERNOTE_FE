@@ -7,14 +7,12 @@ import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
-import com.kuit.afternote.feature.dev.domain.TestAccountManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
@@ -32,8 +30,7 @@ class LoginViewModel
     constructor(
         private val loginUseCase: LoginUseCase,
         private val kakaoLoginUseCase: KakaoLoginUseCase,
-        private val tokenManager: TokenManager,
-        private val testAccountManager: TestAccountManager
+        private val tokenManager: TokenManager
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(LoginUiState())
         val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -64,9 +61,6 @@ class LoginViewModel
                                 refreshToken = refreshToken,
                                 email = email
                             )
-                            // Cycle Password strategy: Automatically save password on successful login
-                            // This allows password recovery even if forgotten later
-                            testAccountManager.updateStoredPassword(password)
                         }
                         _uiState.update {
                             it.copy(isLoading = false, errorMessage = null, loginSuccess = true)
@@ -190,7 +184,7 @@ class LoginViewModel
 /** Server error response body for login/auth failures. */
 @Serializable
 private data class LoginErrorResponse(
-    @SerialName("status") val status: Int? = null,
-    @SerialName("code") val code: Int? = null,
-    @SerialName("message") val message: String? = null
+    val status: Int? = null,
+    val code: Int? = null,
+    val message: String? = null
 )

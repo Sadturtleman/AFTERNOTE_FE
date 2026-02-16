@@ -98,11 +98,11 @@ object ReceiverDummies {
     fun detailOf(receiverId: String): ReceiverDummyDetail =
         receiverDetails[receiverId] ?: receiverDetails.getValue("receiver_1")
 
-    /** Default receiver name for dev "receiver afternote main" screen. */
-    fun defaultReceiverTitleForDev(): String = "박서연"
+    /** Default receiver name for receiver afternote main / preview. */
+    fun defaultReceiverTitle(): String = "박서연"
 
     /**
-     * Seeds for receiver afternote list (dev mode, NavGraph "receiver_afternote_list").
+     * Seeds for receiver afternote list (NavGraph "receiver_afternote_list").
      * Replace with API load when backend is ready.
      */
     fun defaultAfternoteListSeedsForReceiverList(): List<AfternoteListItemSeed> =
@@ -147,22 +147,22 @@ object ReceiverDummies {
                 id = "gallery",
                 serviceNameResId = R.string.receiver_afternote_item_gallery,
                 serviceNameLiteral = null,
-                date = "2026.2.6",
-                iconResId = R.drawable.ic_gallery
+                date = "2026.2.7",
+                iconResId = R.drawable.ic_gallery_pattern
             ),
             AfternoteListItemSeed(
                 id = "memorial_guideline",
                 serviceNameResId = R.string.receiver_afternote_item_memorial_guideline,
                 serviceNameLiteral = null,
-                date = "2026.2.6",
+                date = "2026.2.8",
                 iconResId = R.drawable.ic_memorial_guideline
             ),
             AfternoteListItemSeed(
                 id = "naver_mail",
                 serviceNameResId = R.string.receiver_afternote_item_naver_mail,
                 serviceNameLiteral = null,
-                date = "2026.2.6",
-                iconResId = R.drawable.img_naver_mail
+                date = "2026.2.9",
+                iconResId = R.drawable.img_naver_mail_pattern
             )
         )
 

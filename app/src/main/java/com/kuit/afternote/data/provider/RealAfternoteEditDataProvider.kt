@@ -13,7 +13,7 @@ import javax.inject.Inject
 class RealAfternoteEditDataProvider @Inject constructor() : AfternoteEditDataProvider {
     override fun getSongs(): List<Song> = emptyList()
     override fun getAfternoteEditReceivers(): List<AfternoteEditReceiver> = emptyList()
-    override fun getAfternoteItemsForDev(): List<Pair<String, String>> = emptyList()
+    override fun getDefaultAfternoteItems(): List<Pair<String, String>> = emptyList()
     override fun getAlbumCovers(): List<AlbumCover> = emptyList()
     override fun getAddSongSearchResults(): List<PlaylistSongDisplay> = emptyList()
 }

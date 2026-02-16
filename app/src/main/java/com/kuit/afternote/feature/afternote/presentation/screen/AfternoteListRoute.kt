@@ -14,8 +14,8 @@ import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
-import com.kuit.afternote.feature.afternote.presentation.common.util.IconResourceMapper
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.core.ui.util.getIconResForServiceType
 
 data class AfternoteListRouteCallbacks(
     val onNavigateToDetail: (String) -> Unit = {},
@@ -76,7 +76,7 @@ fun AfternoteListRoute(
             id = item.id,
             serviceName = item.serviceName,
             date = item.date,
-            iconResId = IconResourceMapper.getIconResForServiceType(item.type)
+            iconResId = getIconResForServiceType(item.type)
         )
     }
 
@@ -99,8 +99,8 @@ fun AfternoteListRoute(
                 val item = uiState.items.find { it.id == itemId } ?: return@AfternoteListScreenListParams
                 // Design has two detail screens only: Social Network, Gallery and Files. Others use Social-style detail.
                 when (item.type) {
-                    ServiceType.GALLERY_AND_FILES -> callbacks.onNavigateToGalleryDetail(itemId)
-                    ServiceType.MEMORIAL -> callbacks.onNavigateToMemorialGuidelineDetail(itemId)
+                    AfternoteServiceType.GALLERY_AND_FILES -> callbacks.onNavigateToGalleryDetail(itemId)
+                    AfternoteServiceType.MEMORIAL -> callbacks.onNavigateToMemorialGuidelineDetail(itemId)
                     else -> callbacks.onNavigateToDetail(itemId)
                 }
             }
