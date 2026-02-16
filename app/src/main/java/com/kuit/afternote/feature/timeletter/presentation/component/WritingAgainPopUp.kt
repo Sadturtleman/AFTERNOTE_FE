@@ -33,13 +33,20 @@ fun WaitingAgainPopUp(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "다시 입력해주세요.\n(현재보다 나중을 입력하세요)",
+            text = "타임레터를 등록할 수 없습니다.",
             fontSize = 16.sp,
-            lineHeight = 22.sp,
             fontFamily = FontFamily(Font(R.font.sansneomedium)),
             fontWeight = FontWeight(500),
             color = Color(0xFF212121),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "발송일자 및 시간을 다시 한번 확인해주세요.",
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.sansneolight)),
+            fontWeight = FontWeight(400),
+            color = Color(0xFF9E9E9E),
+            textAlign = TextAlign.Center
         )
     }
 }

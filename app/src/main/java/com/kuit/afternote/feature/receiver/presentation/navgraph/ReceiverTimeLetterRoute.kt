@@ -5,8 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.kuit.afternote.feature.receiver.presentation.screen.TimeLetterScreen
-import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLetterUiState
+import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.TimeLetterScreen
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLetterViewModel
 
 private const val ROUTE_DETAIL = "receiver_time_letter_detail"
@@ -26,7 +25,7 @@ fun ReceiverTimeLetterRoute(
         uiState = uiState,
         onBackClick = onBackClick,
         onLetterClick = { letter ->
-            navController.navigate("$ROUTE_DETAIL/$receiverId/${letter.timeLetterId}")
+            navController.navigate("$ROUTE_DETAIL/$receiverId/${letter.timeLetterReceiverId}")
         },
         onBottomNavSelected = viewModel::updateSelectedBottomNavItem,
         onSortByDate = { viewModel.sortByDateAscending() },

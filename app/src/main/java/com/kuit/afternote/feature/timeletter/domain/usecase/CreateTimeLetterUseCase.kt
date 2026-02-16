@@ -14,6 +14,8 @@ import javax.inject.Inject
  * @param sendAt 발송 시각 (ISO 등)
  * @param status 상태 (DRAFT / SCHEDULED)
  * @param mediaList 미디어 목록 (타입, URL 쌍)
+ * @param receiverIds 수신자 ID 목록
+ * @param deliveredAt 배달 예정 시간 (미지정 시 서버에서 sendAt 사용)
  * @return [Result] of [TimeLetter]
  */
 class CreateTimeLetterUseCase
@@ -26,13 +28,17 @@ class CreateTimeLetterUseCase
             content: String?,
             sendAt: String?,
             status: TimeLetterStatus,
-            mediaList: List<Pair<TimeLetterMediaType, String>>?
+            mediaList: List<Pair<TimeLetterMediaType, String>>?,
+            receiverIds: List<Long>,
+            deliveredAt: String?
         ): Result<TimeLetter> =
             timeLetterRepository.createTimeLetter(
                 title,
                 content,
                 sendAt,
                 status,
-                mediaList
+                mediaList,
+                receiverIds,
+                deliveredAt
             )
     }

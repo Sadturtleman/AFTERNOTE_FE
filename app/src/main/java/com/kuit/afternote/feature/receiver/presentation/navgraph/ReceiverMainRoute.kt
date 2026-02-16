@@ -2,28 +2,29 @@ package com.kuit.afternote.feature.receiver.presentation.navgraph
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.feature.receiver.presentation.screen.MindRecordScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteMainScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.TimeLetterScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfterNoteMainScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordDetailScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.TimeLetterScreen
+import java.time.LocalDate
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLetterViewModel
 
 /**
@@ -31,7 +32,7 @@ import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLe
  *
  * BottomNavigationBar로 4개 탭(홈, 기록, 타임레터, 애프터노트) 간 화면 전환.
  * - HOME → ReceiverAfternoteScreen
- * - RECORD → MindRecordScreen (마음의 기록)
+ * - RECORD → MindRecordScreen (캘린더) → MindRecordDetailScreen (선택 날짜 API 목록)
  * - TIME_LETTER → TimeLetterScreen (타임레터 목록)
  * - AFTERNOTE → ReceiverAfterNoteMainScreen
  */
@@ -40,9 +41,15 @@ fun ReceiverMainRoute(
     receiverId: String,
     navController: NavHostController,
     receiverTitle: String,
-    albumCovers: List<com.kuit.afternote.core.ui.component.list.AlbumCover>
+    albumCovers: List<AlbumCover>,
+    receiverAuthSessionHolder: ReceiverAuthSessionHolder
 ) {
+    DisposableEffect(receiverAuthSessionHolder) {
+        onDispose { receiverAuthSessionHolder.clearAuthCode() }
+    }
     var selectedBottomNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
+    var showMindRecordDetail by remember { mutableStateOf(false) }
+    var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
     val timeLetterViewModel: ReceiverTimeLetterViewModel = hiltViewModel()
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -50,11 +57,11 @@ fun ReceiverMainRoute(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
                 onItemSelected = {
+                    if (it != BottomNavItem.RECORD) showMindRecordDetail = false
                     selectedBottomNavItem = it
                     timeLetterViewModel.updateSelectedBottomNavItem(it)
                 }
@@ -68,16 +75,39 @@ fun ReceiverMainRoute(
         ) {
             when (selectedBottomNavItem) {
                 BottomNavItem.HOME ->
-                    ReceiverAfterNoteScreen(showBottomBar = false)
+                    ReceiverAfterNoteScreen(
+                        showBottomBar = false,
+                        receiverId = receiverId,
+                        onNavigateToRecord = { selectedBottomNavItem = BottomNavItem.RECORD },
+                        onNavigateToTimeLetter = { selectedBottomNavItem = BottomNavItem.TIME_LETTER },
+                        onNavigateToAfternote = { selectedBottomNavItem = BottomNavItem.AFTERNOTE }
+                    )
                 BottomNavItem.RECORD ->
-                    MindRecordScreen(showBottomBar = false)
+                    if (showMindRecordDetail) {
+                        MindRecordDetailScreen(
+                            receiverId = receiverId,
+                            initialSelectedDate = mindRecordSelectedDate,
+                            onBackClick = { showMindRecordDetail = false }
+                        )
+                    } else {
+                        MindRecordScreen(
+                            showBottomBar = false,
+                            receiverId = receiverId,
+                            onBackClick = { navController.popBackStack() },
+                            onNavigateToDetail = { date ->
+                                mindRecordSelectedDate = date
+                                showMindRecordDetail = true
+                            }
+                        )
+                    }
                 BottomNavItem.TIME_LETTER ->
                     TimeLetterScreen(
                         uiState = timeLetterUiState,
-                        onBackClick = { /* 탭 내에서는 무시 */ },
+                        onBackClick = { navController.popBackStack() },
                         onLetterClick = { letter ->
+                            receiverAuthSessionHolder.setSelectedTimeLetter(letter)
                             navController.navigate(
-                                "receiver_time_letter_detail/$receiverId/${letter.timeLetterId}"
+                                "receiver_time_letter_detail/$receiverId/${letter.timeLetterReceiverId}"
                             )
                         },
                         onBottomNavSelected = {
@@ -95,7 +125,7 @@ fun ReceiverMainRoute(
                         onNavigateToFullList = {
                             navController.navigate("receiver_afternote_list")
                         },
-                        onBackClick = { /* 탭 내에서는 무시 */ },
+                        onBackClick = { navController.popBackStack() },
                         showBottomBar = false
                     )
             }

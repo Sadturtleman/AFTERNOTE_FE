@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.feature.receiver.presentation.screen.TimeLetterDetailScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.TimeLetterDetailScreen
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLetterDetailViewModel
 
 /**

@@ -7,6 +7,7 @@ import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequ
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedAfternoteListResponseDto
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedMindRecordListResponseDto
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedTimeLetterListResponseDto
+import com.kuit.afternote.feature.receiver.data.dto.ReceivedTimeLetterResponseDto
 import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedRepository
 import javax.inject.Inject
 
@@ -54,6 +55,17 @@ class ReceivedRepositoryImpl
     override suspend fun getReceivedTimeLetters(receiverId: Long): Result<ReceivedTimeLetterListResponseDto> =
         runCatching {
             api.getReceivedTimeLetters(receiverId = receiverId).requireData()
+        }
+
+    override suspend fun getReceivedTimeLetterDetail(
+        receiverId: Long,
+        timeLetterReceiverId: Long
+    ): Result<ReceivedTimeLetterResponseDto> =
+        runCatching {
+            api.getReceivedTimeLetterDetail(
+                receiverId = receiverId,
+                timeLetterReceiverId = timeLetterReceiverId
+            ).requireData()
         }
 
     override suspend fun getReceivedMindRecords(receiverId: Long): Result<ReceivedMindRecordListResponseDto> =

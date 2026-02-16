@@ -145,12 +145,12 @@ class TimeLetterWriterViewModel
         }
 
         /**
-         * 수신자 이름 업데이트
+         * 선택된 수신자 ID 목록 업데이트 (TimeLetterCreateRequest.receiverIds와 동일 소스)
          *
-         * @param name 수신자 이름
+         * @param ids 선택된 수신자 ID 목록
          */
-        fun updateRecipientName(name: String) {
-            _uiState.update { it.copy(recipientName = name) }
+        fun updateSelectedReceiverIds(ids: List<Long>) {
+            _uiState.update { it.copy(receiverIds = ids) }
             validateSaveEnabled()
         }
 
@@ -258,7 +258,7 @@ class TimeLetterWriterViewModel
          */
         private fun validateSaveEnabled() {
             val state = _uiState.value
-            val isEnabled = state.recipientName.isNotBlank() &&
+            val isEnabled = state.receiverIds.isNotEmpty() &&
                 state.title.isNotBlank() &&
                 state.content.isNotBlank() &&
                 state.sendDate.isNotBlank() &&
@@ -319,7 +319,9 @@ class TimeLetterWriterViewModel
                         content = state.content.ifBlank { null },
                         sendAt = sendAt,
                         status = TimeLetterStatus.SCHEDULED,
-                        mediaList = null
+                        mediaList = null,
+                        receiverIds = state.receiverIds,
+                        deliveredAt = sendAt
                     )
                 }
                 _uiState.update { it.copy(isLoading = false) }
@@ -370,7 +372,9 @@ class TimeLetterWriterViewModel
                         content = state.content.ifBlank { null },
                         sendAt = sendAt,
                         status = TimeLetterStatus.DRAFT,
-                        mediaList = null
+                        mediaList = null,
+                        receiverIds = state.receiverIds,
+                        deliveredAt = sendAt
                     )
                 }
                 _uiState.update { it.copy(isLoading = false) }

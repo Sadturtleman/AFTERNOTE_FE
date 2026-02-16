@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.receiver.domain.repository.iface
 
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedListWithCount
 
 /**
  * 수신자에게 전달된 애프터노트 목록을 조회하는 도메인 Repository 인터페이스.
@@ -10,10 +11,10 @@ import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
 interface ReceivedAfternoteRepository {
 
     /**
-     * 수신자에게 전달된 애프터노트 목록을 조회합니다.
+     * 수신자에게 전달된 애프터노트 목록과 전체 개수를 조회합니다.
      *
      * @param receiverId 수신자 ID
-     * @return 성공 시 [ReceivedAfternote] 목록, 실패 시 [Result.failure]
+     * @return 성공 시 [ReceivedListWithCount], 실패 시 [Result.failure]
      */
-    suspend fun getReceivedAfterNotes(receiverId: Long): Result<List<ReceivedAfternote>>
+    suspend fun getReceivedAfterNotes(receiverId: Long): Result<ReceivedListWithCount<ReceivedAfternote>>
 }
