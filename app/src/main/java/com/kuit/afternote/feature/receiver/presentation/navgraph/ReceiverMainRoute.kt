@@ -25,6 +25,7 @@ import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRe
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.TimeLetterScreen
 import java.time.LocalDate
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternoteTriggerViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLetterViewModel
 
 /**
@@ -52,8 +53,15 @@ fun ReceiverMainRoute(
     var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
     val timeLetterViewModel: ReceiverTimeLetterViewModel = hiltViewModel()
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
+    val afternoteTriggerViewModel: ReceiverAfternoteTriggerViewModel = hiltViewModel()
 
-    BackHandler { navController.popBackStack() }
+    BackHandler {
+        if (selectedBottomNavItem == BottomNavItem.HOME) {
+            navController.popBackStack()
+        } else {
+            selectedBottomNavItem = BottomNavItem.HOME
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -79,21 +87,32 @@ fun ReceiverMainRoute(
                         showBottomBar = false,
                         receiverId = receiverId,
                         onNavigateToRecord = { selectedBottomNavItem = BottomNavItem.RECORD },
-                        onNavigateToTimeLetter = { selectedBottomNavItem = BottomNavItem.TIME_LETTER },
-                        onNavigateToAfternote = { selectedBottomNavItem = BottomNavItem.AFTERNOTE }
+                        onNavigateToTimeLetter = {
+                            receiverAuthSessionHolder.getAuthCode()
+                                ?.let { timeLetterViewModel.loadTimeLetters(it) }
+                            selectedBottomNavItem = BottomNavItem.TIME_LETTER
+                        },
+                        onNavigateToAfternote = {
+                            receiverAuthSessionHolder.getAuthCode()
+                                ?.let { afternoteTriggerViewModel.loadAfterNotes(it) }
+                            selectedBottomNavItem = BottomNavItem.AFTERNOTE
+                        }
                     )
                 BottomNavItem.RECORD ->
                     if (showMindRecordDetail) {
                         MindRecordDetailScreen(
                             receiverId = receiverId,
                             initialSelectedDate = mindRecordSelectedDate,
-                            onBackClick = { showMindRecordDetail = false }
+                            onBackClick = {
+                                showMindRecordDetail = false
+                                selectedBottomNavItem = BottomNavItem.HOME
+                            }
                         )
                     } else {
                         MindRecordScreen(
                             showBottomBar = false,
                             receiverId = receiverId,
-                            onBackClick = { navController.popBackStack() },
+                            onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
                             onNavigateToDetail = { date ->
                                 mindRecordSelectedDate = date
                                 showMindRecordDetail = true
@@ -103,7 +122,7 @@ fun ReceiverMainRoute(
                 BottomNavItem.TIME_LETTER ->
                     TimeLetterScreen(
                         uiState = timeLetterUiState,
-                        onBackClick = { navController.popBackStack() },
+                        onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
                         onLetterClick = { letter ->
                             receiverAuthSessionHolder.setSelectedTimeLetter(letter)
                             navController.navigate(
@@ -125,7 +144,7 @@ fun ReceiverMainRoute(
                         onNavigateToFullList = {
                             navController.navigate("receiver_afternote_list")
                         },
-                        onBackClick = { navController.popBackStack() },
+                        onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
                         showBottomBar = false
                     )
             }
