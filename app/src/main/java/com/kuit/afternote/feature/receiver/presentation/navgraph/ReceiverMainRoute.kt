@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -39,8 +41,12 @@ fun ReceiverMainRoute(
     receiverId: String,
     navController: NavHostController,
     receiverTitle: String,
-    albumCovers: List<AlbumCover>
+    albumCovers: List<AlbumCover>,
+    receiverAuthSessionHolder: ReceiverAuthSessionHolder
 ) {
+    DisposableEffect(receiverAuthSessionHolder) {
+        onDispose { receiverAuthSessionHolder.clearAuthCode() }
+    }
     var selectedBottomNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
     var showMindRecordDetail by remember { mutableStateOf(false) }
     var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -99,6 +105,7 @@ fun ReceiverMainRoute(
                         uiState = timeLetterUiState,
                         onBackClick = { navController.popBackStack() },
                         onLetterClick = { letter ->
+                            receiverAuthSessionHolder.setSelectedTimeLetter(letter)
                             navController.navigate(
                                 "receiver_time_letter_detail/$receiverId/${letter.timeLetterReceiverId}"
                             )

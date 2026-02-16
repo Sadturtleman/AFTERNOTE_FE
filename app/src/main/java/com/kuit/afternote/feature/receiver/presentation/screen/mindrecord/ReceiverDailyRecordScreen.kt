@@ -75,8 +75,8 @@ fun MindRecordScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
 
-    LaunchedEffect(receiverId) {
-        receiverId.toLongOrNull()?.let { viewModel.loadMindRecords(it) }
+    LaunchedEffect(Unit) {
+        viewModel.loadMindRecords()
     }
 
     if (uiState.showDatePicker) {
@@ -306,7 +306,7 @@ private class FakeMindRecordViewModel : MindRecordViewModelContract {
     )
     override val uiState: StateFlow<MindRecordListUiState> = _uiState.asStateFlow()
 
-    override fun loadMindRecords(receiverId: Long) {}
+    override fun loadMindRecords() {}
     override fun setSelectedDate(date: LocalDate) {}
     override fun setShowDatePicker(show: Boolean) {}
     override fun clearError() {}

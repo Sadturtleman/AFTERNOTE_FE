@@ -66,8 +66,8 @@ fun MindRecordDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedDate = uiState.selectedDate
 
-    LaunchedEffect(receiverId) {
-        receiverId.toLongOrNull()?.let { viewModel.loadMindRecords(it) }
+    LaunchedEffect(Unit) {
+        viewModel.loadMindRecords()
     }
     LaunchedEffect(initialSelectedDate) {
         initialSelectedDate?.let { viewModel.setSelectedDate(it) }
@@ -195,7 +195,7 @@ private class FakeMindRecordDetailViewModel : MindRecordDetailViewModelContract 
     private val _uiState = MutableStateFlow(MindRecordDetailUiState())
     override val uiState: StateFlow<MindRecordDetailUiState> = _uiState.asStateFlow()
 
-    override fun loadMindRecords(receiverId: Long) {}
+    override fun loadMindRecords() {}
     override fun setSelectedDate(date: LocalDate) {}
     override fun clearError() {}
 }

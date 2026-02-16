@@ -10,7 +10,7 @@ import java.time.LocalDate
  */
 interface MindRecordDetailViewModelContract {
     val uiState: StateFlow<MindRecordDetailUiState>
-    fun loadMindRecords(receiverId: Long)
+    fun loadMindRecords()
     fun setSelectedDate(date: LocalDate)
     fun clearError()
 }

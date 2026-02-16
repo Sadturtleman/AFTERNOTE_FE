@@ -8,24 +8,28 @@ import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteListAut
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedMindRecordListAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterListAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.repository.iface.ReceiverAuthRepository
+import com.kuit.afternote.feature.receiverauth.domain.entity.ReceiverAuthVerifyResult
+import com.kuit.afternote.feature.receiverauth.domain.repository.iface.ReceiverAuthRepository as DomainReceiverAuthRepository
 import javax.inject.Inject
 
 /**
- * [ReceiverAuthRepository] 구현체. (스웨거 기준)
+ * 수신자 인증 Domain/Data Repository 구현체.
  *
- * ReceiverAuthApiService를 통해 인증번호 검증 및 수신 콘텐츠 조회를 수행합니다.
+ * - [DomainReceiverAuthRepository]: 인증번호 검증(verify)
+ * - [ReceiverAuthRepository]: 타임레터/마인드레코드/애프터노트 목록 조회
  */
 class ReceiverAuthRepositoryImpl
     @Inject
     constructor(
         private val api: ReceiverAuthApiService
-    ) : ReceiverAuthRepository {
+    ) : DomainReceiverAuthRepository, ReceiverAuthRepository {
 
-    override suspend fun verify(authCode: String): Result<ReceiverAuthVerifyResponseDto> =
+    override suspend fun verify(authCode: String): Result<ReceiverAuthVerifyResult> =
         runCatching {
-            api.verify(
+            val dto = api.verify(
                 ReceiverAuthVerifyRequestDto(authCode = authCode)
             ).requireData()
+            dto.toDomain()
         }
 
     override suspend fun getTimeLetters(authCode: String): Result<ReceivedTimeLetterListAuthResponseDto> =
@@ -43,3 +47,11 @@ class ReceiverAuthRepositoryImpl
             api.getAfterNotes(authCode = authCode).requireData()
         }
 }
+
+private fun ReceiverAuthVerifyResponseDto.toDomain(): ReceiverAuthVerifyResult =
+    ReceiverAuthVerifyResult(
+        receiverId = receiverId,
+        receiverName = receiverName,
+        senderName = senderName,
+        relation = relation
+    )

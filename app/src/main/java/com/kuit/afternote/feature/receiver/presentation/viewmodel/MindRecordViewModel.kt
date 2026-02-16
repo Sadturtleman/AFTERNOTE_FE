@@ -3,7 +3,8 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
-import com.kuit.afternote.feature.receiver.domain.usecase.GetReceivedMindRecordsUseCase
+import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
+import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordItemUiModel
 import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,14 +22,15 @@ import javax.inject.Inject
 /**
  * 마음의 기록 캘린더(목록) 화면 ViewModel.
  *
- * GET /api/received/{receiverId}/mind-records 목록을 받아
+ * GET /api/receiver-auth/mind-records (X-Auth-Code) 목록을 받아
  * 오늘의 기록, 날짜별 기록, 캘린더 표시에 활용합니다.
  */
 @HiltViewModel
 class MindRecordViewModel
     @Inject
     constructor(
-        private val getReceivedMindRecordsUseCase: GetReceivedMindRecordsUseCase
+        private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase
     ) : ViewModel(), MindRecordViewModelContract {
 
     private val _uiState = MutableStateFlow(MindRecordListUiState())
@@ -36,20 +38,21 @@ class MindRecordViewModel
 
     private var allMindRecords: List<ReceivedMindRecord> = emptyList()
 
-    override fun loadMindRecords(receiverId: Long) {
+    override fun loadMindRecords() {
+        val authCode = receiverAuthSessionHolder.getAuthCode() ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getReceivedMindRecordsUseCase(receiverId = receiverId)
-                .onSuccess { list ->
-                    allMindRecords = list
+            getMindRecordsByAuthCodeUseCase(authCode)
+                .onSuccess { data ->
+                    allMindRecords = data.items
                     _uiState.update { state ->
                         state.copy(
                             daysWithRecords = computeDaysWithRecords(
-                                list,
+                                data.items,
                                 YearMonth.from(state.selectedDate)
                             ),
-                            selectedDateRecords = filterAndMapToUiModels(list, state.selectedDate),
-                            todayRecord = findTodayRecord(list),
+                            selectedDateRecords = filterAndMapToUiModels(data.items, state.selectedDate),
+                            todayRecord = findTodayRecord(data.items),
                             isLoading = false,
                             errorMessage = null
                         )

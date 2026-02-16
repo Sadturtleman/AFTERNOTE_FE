@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
 import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -305,6 +306,12 @@ fun NavGraph(navHostController: NavHostController) {
             TokenManagerEntryPoint::class.java
         ).tokenManager()
     }
+    val receiverAuthSessionHolder = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            ReceiverAuthSessionEntryPoint::class.java
+        ).receiverAuthSessionHolder()
+    }
     val scope = rememberCoroutineScope()
     val navigateToUserMode: () -> Unit = {
         scope.launch {
@@ -481,7 +488,8 @@ fun NavGraph(navHostController: NavHostController) {
                 receiverId = receiverId,
                 navController = navHostController,
                 receiverTitle = receiverProvider.getDefaultReceiverTitleForDev(),
-                albumCovers = afternoteProvider.getAlbumCovers()
+                albumCovers = afternoteProvider.getAlbumCovers(),
+                receiverAuthSessionHolder = receiverAuthSessionHolder
             )
         }
 
@@ -520,7 +528,14 @@ fun NavGraph(navHostController: NavHostController) {
         composable("receiver_verify_self") {
             VerifySelfScreen(
                 onBackClick = { navHostController.popBackStack() },
-                onNextClick = { navHostController.popBackStack() }
+                onNextClick = { navHostController.popBackStack() },
+                onCompleteClick = { receiverId, authCode ->
+                    receiverAuthSessionHolder.setAuthCode(authCode)
+                    navHostController.navigate("receiver_main/$receiverId") {
+                        launchSingleTop = true
+                        popUpTo("receiver_onboarding") { inclusive = true }
+                    }
+                }
             )
         }
 

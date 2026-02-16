@@ -3,7 +3,8 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
-import com.kuit.afternote.feature.receiver.domain.usecase.GetReceivedMindRecordsUseCase
+import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
+import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordDetailUiState
 import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,13 +21,14 @@ import javax.inject.Inject
 /**
  * 마음의 기록 상세(날짜별) 화면 ViewModel.
  *
- * GET /api/received/{receiverId}/mind-records 목록을 받아 선택한 날짜로 필터 후 표시합니다.
+ * GET /api/receiver-auth/mind-records (X-Auth-Code) 목록을 받아 선택한 날짜로 필터 후 표시합니다.
  */
 @HiltViewModel
 class MindRecordDetailViewModel
     @Inject
     constructor(
-        private val getReceivedMindRecordsUseCase: GetReceivedMindRecordsUseCase
+        private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase
     ) : ViewModel(), MindRecordDetailViewModelContract {
 
     private val _uiState = MutableStateFlow(MindRecordDetailUiState())
@@ -35,19 +37,20 @@ class MindRecordDetailViewModel
     private var allMindRecords: List<ReceivedMindRecord> = emptyList()
 
     /**
-     * 수신자 ID로 마인드레코드 목록을 로드합니다.
+     * 인증번호로 마인드레코드 목록을 로드합니다.
      * 로드 후 현재 선택된 날짜로 필터해 [mindRecordItems]를 갱신합니다.
      */
-    override fun loadMindRecords(receiverId: Long) {
+    override fun loadMindRecords() {
+        val authCode = receiverAuthSessionHolder.getAuthCode() ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getReceivedMindRecordsUseCase(receiverId = receiverId)
-                .onSuccess { list ->
-                    allMindRecords = list
+            getMindRecordsByAuthCodeUseCase(authCode)
+                .onSuccess { data ->
+                    allMindRecords = data.items
                     _uiState.update { state ->
                         state.copy(
                             mindRecordItems = filterAndMapToUiModels(
-                                list,
+                                data.items,
                                 state.selectedDate
                             ),
                             isLoading = false,
