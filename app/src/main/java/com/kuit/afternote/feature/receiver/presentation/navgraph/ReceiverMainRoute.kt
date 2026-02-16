@@ -12,21 +12,46 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfterNoteMainScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordDetailScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.TimeLetterScreen
-import java.time.LocalDate
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceivedTimeLetterListItemUi
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLettersListUiState
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternoteTriggerViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLetterViewModel
+import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
+import java.time.LocalDate
+
+/**
+ * 타임레터 목록 화면 표시 모드.
+ * - SortByDate: 날짜 순 (과거 위, 미래 아래)
+ * - UnreadOnly: 읽지 않은 것만
+ */
+private enum class TimeLetterListMode {
+    SortByDate,
+    UnreadOnly
+}
+
+private fun ReceivedTimeLetter.toListItemUi(): ReceivedTimeLetterListItemUi =
+    ReceivedTimeLetterListItemUi(
+        timeLetterId = timeLetterId,
+        timeLetterReceiverId = timeLetterReceiverId,
+        senderName = senderName.orEmpty(),
+        sendAt = sendAt.orEmpty(),
+        title = title.orEmpty(),
+        content = content.orEmpty(),
+        isRead = isRead
+    )
 
 /**
  * 수신자 모드 메인 라우트.
@@ -51,15 +76,23 @@ fun ReceiverMainRoute(
     var selectedBottomNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
     var showMindRecordDetail by remember { mutableStateOf(false) }
     var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var showTimeLetterList by remember { mutableStateOf(false) }
+    var timeLetterListMode by remember { mutableStateOf(TimeLetterListMode.SortByDate) }
     val timeLetterViewModel: ReceiverTimeLetterViewModel = hiltViewModel()
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteTriggerViewModel: ReceiverAfternoteTriggerViewModel = hiltViewModel()
 
     BackHandler {
-        if (selectedBottomNavItem == BottomNavItem.HOME) {
-            navController.popBackStack()
-        } else {
-            selectedBottomNavItem = BottomNavItem.HOME
+        when {
+            selectedBottomNavItem == BottomNavItem.TIME_LETTER && showTimeLetterList -> {
+                showTimeLetterList = false
+            }
+            selectedBottomNavItem == BottomNavItem.HOME -> {
+                navController.popBackStack()
+            }
+            else -> {
+                selectedBottomNavItem = BottomNavItem.HOME
+            }
         }
     }
 
@@ -120,23 +153,66 @@ fun ReceiverMainRoute(
                         )
                     }
                 BottomNavItem.TIME_LETTER ->
-                    TimeLetterScreen(
-                        uiState = timeLetterUiState,
-                        onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
-                        onLetterClick = { letter ->
-                            receiverAuthSessionHolder.setSelectedTimeLetter(letter)
-                            navController.navigate(
-                                "receiver_time_letter_detail/$receiverId/${letter.timeLetterReceiverId}"
-                            )
-                        },
-                        onBottomNavSelected = {
-                            selectedBottomNavItem = it
-                            timeLetterViewModel.updateSelectedBottomNavItem(it)
-                        },
-                        onSortByDate = { timeLetterViewModel.sortByDateAscending() },
-                        onSortByUnread = { timeLetterViewModel.sortByUnreadFirst() },
-                        showBottomBar = false
-                    )
+                    if (showTimeLetterList) {
+                        val listItems = when (timeLetterListMode) {
+                            TimeLetterListMode.SortByDate ->
+                                timeLetterUiState.timeLetters
+                                    .map(ReceivedTimeLetter::toListItemUi)
+                                    .sortedBy { it.sendAt }
+                            TimeLetterListMode.UnreadOnly ->
+                                timeLetterUiState.timeLetters
+                                    .map(ReceivedTimeLetter::toListItemUi)
+                                    .filter { !it.isRead }
+                        }
+                        ReceiverTimeLetterListScreen(
+                            uiState = ReceiverTimeLettersListUiState(
+                                items = listItems,
+                                isLoading = timeLetterUiState.isLoading,
+                                errorMessage = timeLetterUiState.errorMessage
+                            ),
+                            selectedBottomNavItem = selectedBottomNavItem,
+                            onBackClick = { showTimeLetterList = false },
+                            onBottomNavSelected = {
+                                selectedBottomNavItem = it
+                                timeLetterViewModel.updateSelectedBottomNavItem(it)
+                            },
+                            onLetterClick = { item ->
+                                val letter = timeLetterUiState.timeLetters.find {
+                                    it.timeLetterReceiverId == item.timeLetterReceiverId
+                                }
+                                if (letter != null) {
+                                    receiverAuthSessionHolder.setSelectedTimeLetter(letter)
+                                    navController.navigate(
+                                        "receiver_time_letter_detail/$receiverId/${item.timeLetterReceiverId}"
+                                    )
+                                }
+                            }
+                        )
+                    } else {
+                        TimeLetterScreen(
+                            uiState = timeLetterUiState,
+                            onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
+                            onLetterClick = { letter ->
+                                receiverAuthSessionHolder.setSelectedTimeLetter(letter)
+                                navController.navigate(
+                                    "receiver_time_letter_detail/$receiverId/${letter.timeLetterReceiverId}"
+                                )
+                            },
+                            onBottomNavSelected = {
+                                selectedBottomNavItem = it
+                                timeLetterViewModel.updateSelectedBottomNavItem(it)
+                            },
+                            onSortByDate = {
+                                timeLetterListMode = TimeLetterListMode.SortByDate
+                                showTimeLetterList = true
+                            },
+                            onSortByUnread = {
+                                timeLetterListMode = TimeLetterListMode.UnreadOnly
+                                showTimeLetterList = true
+                            },
+                            showBottomBar = false
+                        )
+                    }
                 BottomNavItem.AFTERNOTE ->
                     ReceiverAfterNoteMainScreen(
                         title = receiverTitle,

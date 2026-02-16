@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -176,7 +177,10 @@ fun TimeLetterScreen(
                         )
                         TimeLetterActionCard(
                             desc = "고인이 남긴 편지 중 아직 읽지 못한 편지입니다.",
-                            subDesc = "0개의 읽지 않은 타임 레터가 있습니다.",
+                            subDesc = stringResource(
+                                R.string.receiver_timeletter_unread_count,
+                                uiState.timeLetters.count { !it.isRead }
+                            ),
                             btnText = "타임 레터 확인하러 가기",
                             onClick = onSortByUnread
                         )

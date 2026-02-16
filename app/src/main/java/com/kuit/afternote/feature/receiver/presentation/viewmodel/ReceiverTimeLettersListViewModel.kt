@@ -49,7 +49,8 @@ class ReceiverTimeLettersListViewModel
                                         senderName = item.senderName.orEmpty(),
                                         sendAt = item.sendAt.orEmpty(),
                                         title = item.title.orEmpty(),
-                                        content = item.content.orEmpty()
+                                        content = item.content.orEmpty(),
+                                        isRead = item.isRead
                                     )
                                 },
                                 isLoading = false,
