@@ -15,7 +15,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
-import com.kuit.afternote.core.ui.util.getIconResForServiceType
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 
 data class AfternoteListRouteCallbacks(
     val onNavigateToDetail: (String) -> Unit = {},
@@ -76,7 +76,7 @@ fun AfternoteListRoute(
             id = item.id,
             serviceName = item.serviceName,
             date = item.date,
-            iconResId = getIconResForServiceType(item.type)
+            iconResId = getIconResForServiceName(item.serviceName)
         )
     }
 
