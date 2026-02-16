@@ -12,7 +12,7 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.So
 interface AfternoteEditDataProvider {
     fun getSongs(): List<Song>
     fun getAfternoteEditReceivers(): List<AfternoteEditReceiver>
-    fun getAfternoteItemsForDev(): List<Pair<String, String>>
+    fun getDefaultAfternoteItems(): List<Pair<String, String>>
     fun getAlbumCovers(): List<AlbumCover>
 
     /**

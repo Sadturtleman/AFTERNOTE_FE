@@ -52,9 +52,6 @@
     <string name="receiver_verify_email_label">이메일 주소</string>
     <string name="receiver_verify_code_description">입력하신 이메일로 인증번호를 보냈습니다.\n수신된 메일에서 인증번호를 확인하고 입력해주세요.</string>
 
-    <!-- Dev mode: data source toggle -->
-    <string name="dev_use_mock_data">목(mock) 데이터 사용</string>
-
     <!-- Onboarding / Login -->
     <string name="login_kakao_button">카카오로 로그인</string>
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>

@@ -125,7 +125,7 @@ private fun resolveListItems(
     afternoteProvider: AfternoteEditDataProvider
 ): List<AfternoteItem> =
     afternoteItems.ifEmpty {
-        AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getAfternoteItemsForDev())
+        AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getDefaultAfternoteItems())
     }
 
 @Composable

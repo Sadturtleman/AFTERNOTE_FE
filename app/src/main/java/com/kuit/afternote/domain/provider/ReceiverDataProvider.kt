@@ -10,7 +10,7 @@ import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
  */
 interface ReceiverDataProvider {
     fun getReceiverList(): List<AfternoteEditReceiver>
-    fun getDefaultReceiverTitleForDev(): String
+    fun getDefaultReceiverTitle(): String
     fun getAfternoteListSeedsForReceiverList(): List<AfternoteListItemSeed>
     fun getAfternoteListSeedsForReceiverDetail(): List<AfternoteListItemSeed>
     fun getTimeLetterItemsForPreview(): List<TimeLetterItem>
