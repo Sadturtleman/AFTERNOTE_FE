@@ -9,7 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 interface ProfileEditViewModelContract {
     val uiState: StateFlow<ProfileUiState>
     fun loadProfile()
-    fun updateProfile(name: String?, phone: String?, profileImageUrl: String?)
+    fun updateProfile(
+        name: String?,
+        phone: String?,
+        profileImageUrl: String?,
+        pickedProfileImageUri: String? = null
+    )
     fun setSelectedProfileImageUri(uri: android.net.Uri?)
     fun clearUpdateSuccess()
 }

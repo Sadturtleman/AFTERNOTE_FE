@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.user.domain.usecase.GetMyProfileUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.feature.user.domain.usecase.UpdateMyProfileUseCase
+import com.kuit.afternote.feature.user.domain.usecase.UploadProfileImageUseCase
 import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,8 @@ class ProfileViewModel
     constructor(
         private val getMyProfileUseCase: GetMyProfileUseCase,
         private val updateMyProfileUseCase: UpdateMyProfileUseCase,
-        private val getUserIdUseCase: GetUserIdUseCase
+        private val getUserIdUseCase: GetUserIdUseCase,
+        private val uploadProfileImageUseCase: UploadProfileImageUseCase
     ) : ViewModel(), ProfileEditViewModelContract {
         private val _uiState = MutableStateFlow(ProfileUiState())
         override val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -77,12 +79,13 @@ class ProfileViewModel
 
         /**
          * 프로필 수정.
-         * JWT 토큰에서 userId를 자동으로 추출합니다.
+         * [pickedProfileImageUri]가 있으면 먼저 업로드한 뒤 해당 URL로 프로필을 수정합니다.
          */
         override fun updateProfile(
             name: String?,
             phone: String?,
-            profileImageUrl: String?
+            profileImageUrl: String?,
+            pickedProfileImageUri: String?
         ) {
             viewModelScope.launch {
                 val userId = getUserIdUseCase()
@@ -98,11 +101,28 @@ class ProfileViewModel
                 }
 
                 _uiState.update { it.copy(isLoading = true, errorMessage = null, updateSuccess = false) }
+
+                val imageUrlToUse =
+                    if (!pickedProfileImageUri.isNullOrBlank()) {
+                        uploadProfileImageUseCase(pickedProfileImageUri).getOrElse { e ->
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = e.message ?: "프로필 이미지 업로드에 실패했습니다.",
+                                    updateSuccess = false
+                                )
+                            }
+                            return@launch
+                        }
+                    } else {
+                        profileImageUrl
+                    }
+
                 updateMyProfileUseCase(
                     userId = userId,
                     name = name,
                     phone = phone,
-                    profileImageUrl = profileImageUrl  // API param name unchanged
+                    profileImageUrl = imageUrlToUse
                 ).onSuccess { profile ->
                     _uiState.update {
                         it.copy(
@@ -111,6 +131,7 @@ class ProfileViewModel
                             email = profile.email,
                             phone = profile.phone,
                             savedProfileImageUrl = profile.profileImageUrl,
+                            pickedProfileImageUri = null,
                             errorMessage = null,
                             updateSuccess = true
                         )

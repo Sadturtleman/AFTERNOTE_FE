@@ -143,12 +143,21 @@ fun ProfileEditScreen(
         viewModel.loadProfile()
     }
 
+    val performSave: () -> Unit = {
+        viewModel.updateProfile(
+            name = nameState.text.toString().ifBlank { null },
+            phone = contactState.text.toString().ifBlank { null },
+            profileImageUrl = uiState.savedProfileImageUrl,
+            pickedProfileImageUri = uiState.pickedProfileImageUri
+        )
+    }
+
     Scaffold(
         topBar = {
             TopBar(
                 title = "프로필 수정",
                 onBackClick = callbacks.onBackClick,
-                onActionClick = callbacks.onRegisterClick,
+                onActionClick = performSave,
                 actionText = "등록"
             )
         }
@@ -173,13 +182,7 @@ fun ProfileEditScreen(
                     )
                 }
             ),
-            onEditClick = {
-                viewModel.updateProfile(
-                    name = nameState.text.toString().ifBlank { null },
-                    phone = contactState.text.toString().ifBlank { null },
-                    profileImageUrl = uiState.savedProfileImageUrl
-                )
-            }
+            onEditClick = performSave
         )
     }
 }
@@ -445,7 +448,8 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
     override fun updateProfile(
         name: String?,
         phone: String?,
-        profileImageUrl: String?
+        profileImageUrl: String?,
+        pickedProfileImageUri: String?
     ) {
         // No-op: Fake for Preview only; no state update.
     }

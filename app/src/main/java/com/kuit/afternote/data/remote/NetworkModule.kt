@@ -13,6 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 private const val BASE_URL = "https://afternote.kro.kr/"
@@ -51,6 +52,23 @@ object NetworkModule {
 
         return builder.build()
     }
+
+    /**
+     * OkHttpClient for S3 presigned URL uploads. No AuthInterceptor — the presigned URL
+     * already contains signature; adding Bearer causes S3 "Only one auth mechanism allowed".
+     */
+    @Provides
+    @Singleton
+    @Named("S3Upload")
+    fun provideS3UploadOkHttpClient(): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
+            .addInterceptor(
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            )
+            .build()
 
 
     @Provides
