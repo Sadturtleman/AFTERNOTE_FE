@@ -16,9 +16,6 @@ sealed interface SettingRoute {
     data object PushToastSettingRoute : SettingRoute
 
     @Serializable
-    data object PassKeyAddRoute : SettingRoute
-
-    @Serializable
     data object AppLockPasswordConfirmRoute : SettingRoute
 
     @Serializable

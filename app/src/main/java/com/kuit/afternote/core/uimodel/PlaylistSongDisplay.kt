@@ -10,10 +10,12 @@ import androidx.compose.runtime.Immutable
  * @param id 클릭·선택 시 구분용 (afternote: String, receiver: Int.toString() 등)
  * @param title 노래 제목
  * @param artist 가수명
+ * @param albumImageUrl 앨범 이미지 URL (선택, 음악 검색 API 등에서 사용)
  */
 @Immutable
 data class PlaylistSongDisplay(
     val id: String,
     val title: String,
-    val artist: String
+    val artist: String,
+    val albumImageUrl: String? = null
 )

@@ -51,7 +51,6 @@ fun SettingMainScreen(
         SettingSection(
             "보안",
             listOf(
-                SettingItemData("패스키 관리"),
                 SettingItemData("앱 잠금 설정", status = "켬")
             )
         ),

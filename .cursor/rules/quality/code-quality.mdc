@@ -187,7 +187,6 @@ import retrofit2.Response
   * `ReissueViewModel` ✅
   * `SendEmailCodeViewModel` ✅
   * `VerifyEmailViewModel` ✅
-  * `DevModeViewModel` ✅
 
 #### 검증 항목
 각 HTTP 에러 테스트에서 반드시 검증해야 할 항목:

@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.dto
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
@@ -14,7 +13,7 @@ data class AfternoteListResponseDto(
     val content: List<AfternoteListItemDto> = emptyList(),
     val page: Int = 0,
     val size: Int = 10,
-    @SerialName("hasNext") val hasNext: Boolean = false
+    val hasNext: Boolean = false
 )
 
 /**
@@ -22,10 +21,10 @@ data class AfternoteListResponseDto(
  */
 @Serializable
 data class AfternoteListItemDto(
-    @SerialName("afternoteId") val afternoteId: Long,
+    val afternoteId: Long,
     val title: String,
     val category: String,
-    @SerialName("createdAt") val createdAt: String
+    val createdAt: String
 )
 
 /**
@@ -38,7 +37,7 @@ data class AfternoteCreateSocialRequestDto(
     val title: String,
     val processMethod: String,
     val actions: List<String>,
-    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val leaveMessage: String? = null,
     val credentials: AfternoteCredentialsDto? = null
 )
 
@@ -51,7 +50,7 @@ data class AfternoteCreateGalleryRequestDto(
     val title: String,
     val processMethod: String,
     val actions: List<String>,
-    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val leaveMessage: String? = null,
     val receivers: List<AfternoteReceiverRefDto>
 )
 
@@ -63,7 +62,7 @@ data class AfternoteCredentialsDto(
 
 @Serializable
 data class AfternoteReceiverRefDto(
-    @SerialName("receiverId") val receiverId: Long
+    val receiverId: Long
 )
 
 /**
@@ -73,7 +72,7 @@ data class AfternoteReceiverRefDto(
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteIdResponseDto(
-    @SerialName("afternoteId") @JsonNames("afternote_id") val afternoteId: Long
+    @JsonNames("afternote_id") val afternoteId: Long
 )
 
 // --- GET /afternotes/{afternoteId} (detail) ---
@@ -84,16 +83,16 @@ data class AfternoteIdResponseDto(
  */
 @Serializable
 data class AfternoteDetailResponseDto(
-    @SerialName("afternoteId") val afternoteId: Long,
+    val afternoteId: Long,
     val category: String,
     val title: String,
-    @SerialName("createdAt") val createdAt: String = "",
-    @SerialName("updatedAt") val updatedAt: String = "",
+    val createdAt: String = "",
+    val updatedAt: String = "",
     val credentials: AfternoteCredentialsDto? = null,
     val receivers: List<AfternoteDetailReceiverDto>? = null,
     val processMethod: String? = null,
     val actions: List<String>? = null,
-    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val leaveMessage: String? = null,
     val playlist: AfternotePlaylistDto? = null
 )
 
@@ -105,7 +104,7 @@ data class AfternoteDetailResponseDto(
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteDetailReceiverDto(
-    @SerialName("receiverId") @JsonNames("receiver_id") val receiverId: Long? = null,
+    @JsonNames("receiver_id") val receiverId: Long? = null,
     @JsonNames("receiverName", "receiver_name") val name: String? = null,
     @JsonNames("receiverRelation", "receiver_relation", "relationship") val relation: String? = null,
     @JsonNames("receiverPhone", "receiver_phone", "phoneNumber", "phone_number") val phone: String? = null
@@ -116,7 +115,7 @@ data class AfternotePlaylistDto(
     val profilePhoto: String? = null,
     val atmosphere: String? = null,
     val songs: List<AfternoteSongDto> = emptyList(),
-    @SerialName("memorialVideo") val memorialVideo: AfternoteMemorialVideoDto? = null
+    val memorialVideo: AfternoteMemorialVideoDto? = null
 )
 
 @Serializable
@@ -124,13 +123,13 @@ data class AfternoteSongDto(
     val id: Long? = null,
     val title: String,
     val artist: String,
-    @SerialName("coverUrl") val coverUrl: String? = null
+    val coverUrl: String? = null
 )
 
 @Serializable
 data class AfternoteMemorialVideoDto(
-    @SerialName("videoUrl") val videoUrl: String? = null,
-    @SerialName("thumbnailUrl") val thumbnailUrl: String? = null
+    val videoUrl: String? = null,
+    val thumbnailUrl: String? = null
 )
 
 // --- POST /afternotes (PLAYLIST category) ---
@@ -154,7 +153,7 @@ data class AfternoteUpdateRequestDto(
     val title: String,
     val processMethod: String? = null,
     val actions: List<String>? = null,
-    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    val leaveMessage: String? = null,
     val credentials: AfternoteCredentialsDto? = null,
     val receivers: List<AfternoteReceiverRefDto>? = null,
     val playlist: AfternotePlaylistDto? = null
