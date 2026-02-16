@@ -412,13 +412,16 @@ private fun PreviewTimeLetter() {
             timeLetters = listOf(
                 ReceivedTimeLetter(
                     timeLetterId = 1L,
+                    timeLetterReceiverId = 100L,
                     title = "채연아 20번째 생일을 축하해",
                     content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..",
                     sendAt = "2027. 11. 24",
                     status = "DRAFT",
                     senderName = "박채연",
                     deliveredAt = null,
-                    createdAt = null
+                    createdAt = null,
+                    mediaList = emptyList(),
+                    isRead = false
                 )
             ),
             totalCount = 1

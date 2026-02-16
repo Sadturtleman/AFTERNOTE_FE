@@ -33,7 +33,9 @@ data class TimeLetterCreateRequest(
     @SerialName("content") val content: String? = null,
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: TimeLetterStatus,
-    @SerialName("mediaList") val mediaList: List<TimeLetterMediaRequest>? = null
+    @SerialName("mediaList") val mediaList: List<TimeLetterMediaRequest>? = null,
+    @SerialName("receiverIds") val receiverIds: List<Long> = emptyList(),
+    @SerialName("deliveredAt") val deliveredAt: String? = null
 )
 
 @Serializable

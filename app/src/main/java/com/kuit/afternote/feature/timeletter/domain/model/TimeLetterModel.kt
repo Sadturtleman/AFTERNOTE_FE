@@ -30,7 +30,8 @@ data class TimeLetter(
     val status: TimeLetterStatus,
     val mediaList: List<TimeLetterMedia>,
     val createdAt: String?,
-    val updatedAt: String?
+    val updatedAt: String?,
+    val receiverIds: List<Long> = emptyList()
 )
 
 data class TimeLetterList(

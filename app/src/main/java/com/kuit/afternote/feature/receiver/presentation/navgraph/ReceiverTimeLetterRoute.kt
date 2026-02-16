@@ -25,7 +25,7 @@ fun ReceiverTimeLetterRoute(
         uiState = uiState,
         onBackClick = onBackClick,
         onLetterClick = { letter ->
-            navController.navigate("$ROUTE_DETAIL/$receiverId/${letter.timeLetterId}")
+            navController.navigate("$ROUTE_DETAIL/$receiverId/${letter.timeLetterReceiverId}")
         },
         onBottomNavSelected = viewModel::updateSelectedBottomNavItem,
         onSortByDate = { viewModel.sortByDateAscending() },

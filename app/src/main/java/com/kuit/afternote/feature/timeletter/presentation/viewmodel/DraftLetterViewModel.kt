@@ -7,6 +7,9 @@ import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteAllTemporaryUs
 import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
+import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,20 +30,24 @@ class DraftLetterViewModel
     constructor(
         private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
         private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
-        private val deleteAllTemporaryUseCase: DeleteAllTemporaryUseCase
+        private val deleteAllTemporaryUseCase: DeleteAllTemporaryUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase,
+        private val getReceiversUseCase: GetReceiversUseCase
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(DraftLetterUiState())
         val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
 
         /**
          * 임시저장 목록 로드 (GET /time-letters/temporary)
+         * 수신자 목록(GET /users/receivers)으로 receiverIds → 이름 매핑 후 표시
          */
         fun loadTemporaryLetters() {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
+                val receivers = loadReceiversOrEmpty()
                 getTemporaryTimeLettersUseCase()
                     .onSuccess { list ->
-                        val items = list.timeLetters.map { toDraftLetterItem(it) }
+                        val items = list.timeLetters.map { toDraftLetterItem(it, receivers) }
                         _uiState.update {
                             it.copy(
                                 draftLetters = items,
@@ -57,6 +64,23 @@ class DraftLetterViewModel
                     }
             }
         }
+
+        private suspend fun loadReceiversOrEmpty(): List<ReceiverListItem> {
+            val userId = getUserIdUseCase() ?: return emptyList()
+            return getReceiversUseCase(userId).getOrNull() ?: emptyList()
+        }
+
+        private fun resolveReceiverDisplayText(
+            receiverIds: List<Long>,
+            receivers: List<ReceiverListItem>
+        ): String =
+            when {
+                receiverIds.isEmpty() -> "-"
+                receiverIds.size == 1 -> {
+                    receivers.find { it.receiverId == receiverIds[0] }?.name?.let { name -> "${name}님께" } ?: "-"
+                }
+                else -> "${receiverIds.size}명에게"
+            }
 
         /**
          * 편집 모드 진입
@@ -130,10 +154,13 @@ class DraftLetterViewModel
             }
         }
 
-        private fun toDraftLetterItem(t: TimeLetter): DraftLetterItem =
+        private fun toDraftLetterItem(
+            t: TimeLetter,
+            receivers: List<ReceiverListItem>
+        ): DraftLetterItem =
             DraftLetterItem(
                 id = t.id.toString(),
-                receiverName = "", // API에 수신자 필드 없음
+                receiverName = resolveReceiverDisplayText(t.receiverIds, receivers),
                 sendDate = formatSendAtForDisplay(t.sendAt),
                 title = t.title ?: ""
             )

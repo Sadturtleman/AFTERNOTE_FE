@@ -6,6 +6,7 @@ import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequ
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedAfternoteListResponseDto
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedMindRecordListResponseDto
 import com.kuit.afternote.feature.receiver.data.dto.ReceivedTimeLetterListResponseDto
+import com.kuit.afternote.feature.receiver.data.dto.ReceivedTimeLetterResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,6 +18,7 @@ import retrofit2.http.Path
  * - POST /api/received/time-letters: 타임레터 수신자 등록
  * - POST /api/received/mind-records: 마인드레코드 수신자 등록
  * - GET /api/received/{receiverId}/time-letters: 수신한 타임레터 목록 조회
+ * - GET /api/received/{receiverId}/time-letters/{timeLetterReceiverId}: 수신 타임레터 상세 조회 + 읽음 처리
  * - GET /api/received/{receiverId}/mind-records: 수신한 마인드레코드 목록 조회
  * - GET /api/received/{receiverId}/after-notes: 수신한 애프터노트 목록 조회
  */
@@ -52,6 +54,19 @@ interface ReceivedApiService {
     suspend fun getReceivedTimeLetters(
         @Path("receiverId") receiverId: Long
     ): ApiResponse<ReceivedTimeLetterListResponseDto?>
+
+    /**
+     * 수신한 타임레터 상세를 조회하고 읽음 처리합니다.
+     *
+     * @param receiverId 수신자 ID (path)
+     * @param timeLetterReceiverId 상세 조회용 수신 타임레터 ID (path)
+     * @return data: 타임레터 상세
+     */
+    @GET("api/received/{receiverId}/time-letters/{timeLetterReceiverId}")
+    suspend fun getReceivedTimeLetterDetail(
+        @Path("receiverId") receiverId: Long,
+        @Path("timeLetterReceiverId") timeLetterReceiverId: Long
+    ): ApiResponse<ReceivedTimeLetterResponseDto?>
 
     /**
      * 수신자에게 공유된 마인드레코드(일기, 질문답변, 깊은생각) 목록을 조회합니다.

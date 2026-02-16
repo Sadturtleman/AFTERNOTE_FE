@@ -156,6 +156,7 @@ private fun PreviewTimeLetterDetail() {
     MaterialTheme {
         val sampleLetter = ReceivedTimeLetter(
             timeLetterId = 1L,
+            timeLetterReceiverId = 100L,
             title = "채연아 20번째 생일을 축하해",
             content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..\n" +
                 "엄마가 없어도 씩씩하게 컸을 채연이를 상상하면\n" +
@@ -165,7 +166,9 @@ private fun PreviewTimeLetterDetail() {
             status = "DRAFT",
             senderName = "박채연",
             deliveredAt = null,
-            createdAt = null
+            createdAt = null,
+            mediaList = emptyList(),
+            isRead = false
         )
         TimeLetterDetailScreen(
             uiState = ReceiverTimeLetterDetailUiState(letter = sampleLetter),

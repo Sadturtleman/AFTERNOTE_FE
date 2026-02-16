@@ -45,7 +45,8 @@ object TimeLetterMapper {
             status = toDomainStatus(dto.status),
             mediaList = dto.mediaList?.map { toDomainMedia(it) } ?: emptyList(),
             createdAt = dto.createdAt,
-            updatedAt = dto.updatedAt
+            updatedAt = dto.updatedAt,
+            receiverIds = emptyList()
         )
 
     fun toTimeLetterList(dto: TimeLetterListResponse): TimeLetterList =

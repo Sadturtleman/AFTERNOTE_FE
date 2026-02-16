@@ -9,6 +9,9 @@ import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterUiState
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.ViewMode
+import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
+import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
+import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +30,9 @@ class TimeLetterViewModel
     @Inject
     constructor(
         private val getTimeLettersUseCase: GetTimeLettersUseCase,
-        private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase
+        private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
+        private val getUserIdUseCase: GetUserIdUseCase,
+        private val getReceiversUseCase: GetReceiversUseCase
     ) : ViewModel() {
         private val _viewMode = MutableStateFlow(ViewMode.LIST)
         val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
@@ -44,14 +49,16 @@ class TimeLetterViewModel
 
         /**
          * 타임레터 목록 로드 (GET /time-letters)
+         * 수신자 목록(GET /users/receivers)으로 receiverIds → 이름 매핑 후 표시
          */
         private fun loadLetters() {
             viewModelScope.launch {
                 _uiState.value = TimeLetterUiState.Loading
+                val receivers = loadReceiversOrEmpty()
                 getTimeLettersUseCase()
                     .onSuccess { list ->
                         val items = list.timeLetters.mapIndexed { index, timeLetter ->
-                            toTimeLetterItem(timeLetter, index)
+                            toTimeLetterItem(timeLetter, index, receivers)
                         }
                         _uiState.value = if (items.isEmpty()) {
                             TimeLetterUiState.Empty
@@ -63,6 +70,23 @@ class TimeLetterViewModel
                     }
             }
         }
+
+        private suspend fun loadReceiversOrEmpty(): List<ReceiverListItem> {
+            val userId = getUserIdUseCase() ?: return emptyList()
+            return getReceiversUseCase(userId).getOrNull() ?: emptyList()
+        }
+
+        private fun resolveReceiverDisplayText(
+            receiverIds: List<Long>,
+            receivers: List<ReceiverListItem>
+        ): String =
+            when {
+                receiverIds.isEmpty() -> "-"
+                receiverIds.size == 1 -> {
+                    receivers.find { it.receiverId == receiverIds[0] }?.name?.let { name -> "${name}님께" } ?: "-"
+                }
+                else -> "${receiverIds.size}명에게"
+            }
 
         /**
          * 데이터 새로고침
@@ -86,15 +110,17 @@ class TimeLetterViewModel
 
         /**
          * Domain TimeLetter → UI TimeLetterItem 변환
+         * receivername은 receiverIds + 수신자 목록으로 해석
          */
         private fun toTimeLetterItem(
             t: TimeLetter,
-            index: Int
+            index: Int,
+            receivers: List<ReceiverListItem>
         ): TimeLetterItem {
             val themes = listOf(LetterTheme.PEACH, LetterTheme.BLUE, LetterTheme.YELLOW)
             return TimeLetterItem(
                 id = t.id.toString(),
-                receivername = "", // API에 수신자 필드 없음
+                receivername = resolveReceiverDisplayText(t.receiverIds, receivers),
                 sendDate = formatSendAtForDisplay(t.sendAt),
                 title = t.title ?: "",
                 content = t.content ?: "",

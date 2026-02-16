@@ -16,7 +16,9 @@ interface TimeLetterRepository {
         content: String?,
         sendAt: String?,
         status: TimeLetterStatus,
-        mediaList: List<Pair<TimeLetterMediaType, String>>?
+        mediaList: List<Pair<TimeLetterMediaType, String>>?,
+        receiverIds: List<Long>,
+        deliveredAt: String?
     ): Result<TimeLetter>
 
     suspend fun getTimeLetter(timeLetterId: Long): Result<TimeLetter>

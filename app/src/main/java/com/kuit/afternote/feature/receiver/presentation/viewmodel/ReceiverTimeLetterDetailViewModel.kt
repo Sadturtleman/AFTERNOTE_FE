@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.feature.receiver.domain.usecase.GetReceivedTimeLettersUseCase
+import com.kuit.afternote.feature.receiver.domain.usecase.GetReceivedTimeLetterDetailUseCase
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLetterDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +17,14 @@ import javax.inject.Inject
 /**
  * 수신자 앱 타임레터 상세 화면 ViewModel.
  *
- * 목록 API로 조회한 결과에서 [timeLetterId]에 해당하는 타임레터를 표시합니다.
+ * GET /api/received/{receiverId}/time-letters/{timeLetterReceiverId} API로 상세 조회 및 읽음 처리합니다.
  */
 @HiltViewModel
 class ReceiverTimeLetterDetailViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
-        private val getReceivedTimeLettersUseCase: GetReceivedTimeLettersUseCase
+        private val getReceivedTimeLetterDetailUseCase: GetReceivedTimeLetterDetailUseCase
     ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReceiverTimeLetterDetailUiState())
@@ -32,21 +32,25 @@ class ReceiverTimeLetterDetailViewModel
 
     init {
         val receiverId = savedStateHandle.get<String>("receiverId")?.toLongOrNull()
-        val timeLetterId = savedStateHandle.get<String>("timeLetterId")?.toLongOrNull()
-        if (receiverId != null && timeLetterId != null) loadLetter(receiverId, timeLetterId)
+        val timeLetterReceiverId = savedStateHandle.get<String>("timeLetterReceiverId")?.toLongOrNull()
+        if (receiverId != null && timeLetterReceiverId != null) {
+            loadLetter(receiverId, timeLetterReceiverId)
+        }
     }
 
-    private fun loadLetter(receiverId: Long, timeLetterId: Long) {
+    private fun loadLetter(receiverId: Long, timeLetterReceiverId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getReceivedTimeLettersUseCase(receiverId = receiverId)
-                .onSuccess { data ->
-                    val letter = data.items.find { it.timeLetterId == timeLetterId }
+            getReceivedTimeLetterDetailUseCase(
+                receiverId = receiverId,
+                timeLetterReceiverId = timeLetterReceiverId
+            )
+                .onSuccess { letter ->
                     _uiState.update {
                         it.copy(
                             letter = letter,
                             isLoading = false,
-                            errorMessage = if (letter == null) "해당 타임레터를 찾을 수 없습니다." else null
+                            errorMessage = null
                         )
                     }
                 }

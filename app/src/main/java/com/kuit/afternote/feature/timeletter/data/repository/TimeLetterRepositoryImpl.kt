@@ -38,7 +38,9 @@ class TimeLetterRepositoryImpl
             content: String?,
             sendAt: String?,
             status: DomainStatus,
-            mediaList: List<Pair<DomainMediaType, String>>?
+            mediaList: List<Pair<DomainMediaType, String>>?,
+            receiverIds: List<Long>,
+            deliveredAt: String?
         ): Result<TimeLetter> =
             runCatching {
                 Log.d(TAG, "createTimeLetter: title=$title, status=$status")
@@ -61,7 +63,9 @@ class TimeLetterRepositoryImpl
                         content = content,
                         sendAt = sendAt,
                         status = dtoStatus,
-                        mediaList = dtoMediaList
+                        mediaList = dtoMediaList,
+                        receiverIds = receiverIds,
+                        deliveredAt = deliveredAt
                     )
                 )
                 Log.d(TAG, "createTimeLetter: response=$response")

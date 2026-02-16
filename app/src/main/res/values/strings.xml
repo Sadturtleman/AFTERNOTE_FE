@@ -102,5 +102,6 @@
     <!-- Time letter detail -->
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
+    <string name="time_letter_recipients_count">%d명에게</string>
     <string name="content_description_expand_down">아래로</string>
 </resources>

@@ -29,4 +29,13 @@ class ReceivedTimeLetterRepositoryImpl
                     totalCount = response.totalCount
                 )
             }
+
+    override suspend fun getReceivedTimeLetterDetail(
+        receiverId: Long,
+        timeLetterReceiverId: Long
+    ): Result<ReceivedTimeLetter> =
+        receivedRepository.getReceivedTimeLetterDetail(
+            receiverId = receiverId,
+            timeLetterReceiverId = timeLetterReceiverId
+        ).map(ReceivedMapper::toReceivedTimeLetter)
 }

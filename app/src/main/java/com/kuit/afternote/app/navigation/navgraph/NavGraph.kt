@@ -503,7 +503,7 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-        composable("receiver_time_letter_detail/{receiverId}/{timeLetterId}") {
+        composable("receiver_time_letter_detail/{receiverId}/{timeLetterReceiverId}") {
             ReceiverTimeLetterDetailRoute(
                 onBackClick = { navHostController.popBackStack() }
             )

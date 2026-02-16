@@ -100,7 +100,7 @@ fun ReceiverMainRoute(
                         onBackClick = { navController.popBackStack() },
                         onLetterClick = { letter ->
                             navController.navigate(
-                                "receiver_time_letter_detail/$receiverId/${letter.timeLetterId}"
+                                "receiver_time_letter_detail/$receiverId/${letter.timeLetterReceiverId}"
                             )
                         },
                         onBottomNavSelected = {

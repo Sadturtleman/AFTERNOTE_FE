@@ -17,7 +17,7 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWrite
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
-private const val SELECTED_RECEIVER_NAME_KEY = "selected_receiver_name"
+private const val SELECTED_RECEIVER_ID_KEY = "selected_receiver_id"
 
 /**
  * 타임레터 기능의 네비게이션 그래프
@@ -59,16 +59,16 @@ fun NavGraphBuilder.timeLetterNavGraph(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
-            val name = navController.currentBackStackEntry
+            val receiverId = navController.currentBackStackEntry
                 ?.savedStateHandle
-                ?.get<String>(SELECTED_RECEIVER_NAME_KEY)
-            if (name != null) {
-                viewModel.updateRecipientName(name)
+                ?.get<Long>(SELECTED_RECEIVER_ID_KEY)
+            if (receiverId != null) {
+                viewModel.updateSelectedReceiverIds(listOf(receiverId))
             }
         }
 
         TimeLetterWriterScreen(
-            recipientName = uiState.recipientName.ifEmpty { "수신자 선택" },
+            receiverIds = uiState.receiverIds,
             title = uiState.title,
             content = uiState.content,
             sendDate = uiState.sendDate,
@@ -84,7 +84,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             showRecipientDropdown = uiState.showRecipientDropdown,
             onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
             onReceiverSelected = { receiver ->
-                viewModel.updateRecipientName(receiver.receiver_name)
+                viewModel.updateSelectedReceiverIds(listOf(receiver.id))
                 viewModel.hideRecipientDropdown()
             },
             onRegisterClick = {
@@ -142,7 +142,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onReceiverClick = { receiver ->
                 navController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set(SELECTED_RECEIVER_NAME_KEY, receiver.receiver_name)
+                    ?.set(SELECTED_RECEIVER_ID_KEY, receiver.id)
                 navController.popBackStack()
             }
         )
