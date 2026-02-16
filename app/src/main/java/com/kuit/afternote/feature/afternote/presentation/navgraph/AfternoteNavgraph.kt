@@ -48,6 +48,7 @@ import com.kuit.afternote.feature.afternote.domain.model.ServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AddSongViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
@@ -564,10 +565,10 @@ private fun AfternoteFingerprintLoginContent(
 private fun AfternoteAddSongRouteContent(
     navController: NavController,
     playlistStateHolder: MemorialPlaylistStateHolder,
-    afternoteProvider: AfternoteEditDataProvider
+    viewModel: AddSongViewModel
 ) {
     AddSongScreen(
-        songs = afternoteProvider.getAddSongSearchResults(),
+        viewModel = viewModel,
         callbacks = AddSongCallbacks(
             onBackClick = { navController.popBackStack() },
             onSongsAdded = { added ->
@@ -656,10 +657,11 @@ fun NavGraphBuilder.afternoteNavGraph(
     }
 
     afternoteComposable<AfternoteRoute.AddSongRoute> {
+        val addSongViewModel: AddSongViewModel = hiltViewModel()
         AfternoteAddSongRouteContent(
             navController = navController,
             playlistStateHolder = params.playlistStateHolder,
-            afternoteProvider = afternoteProvider
+            viewModel = addSongViewModel
         )
     }
 }
