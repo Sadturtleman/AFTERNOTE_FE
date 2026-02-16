@@ -38,4 +38,12 @@ interface DailyRecordApiService {
     suspend fun deleteMindRecord(
         @Path("recordId") recordId: Long
     ): Response<Unit>
+
+    @PATCH("mind-records/{recordId}/receivers/{receiverId}")
+    suspend fun setMindRecordReceiverEnabled(
+        @Path("recordId") recordId: Long,
+        @Path("receiverId") receiverId: Long,
+        @Body request: ReceiverEnabledRequest
+    ): Response<Unit>
+
 }

@@ -28,14 +28,18 @@ import java.time.LocalDate
 fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
-    viewModel: MindRecordViewModel,
+    //viewModel: MindRecordViewModel,
     recordId: Long?,
+    onDateClick: () -> Unit,
+    sendDate: String,
+    showDatePicker: Boolean,
+    onDatePickerDismiss: () -> Unit
 
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
 
-    val uiState by viewModel.uiState.collectAsState()
+   // val uiState by viewModel.uiState.collectAsState()
 
     Scaffold { paddingValues ->
         LazyColumn(
@@ -48,16 +52,16 @@ fun RecordDeepMindScreen(
                     text = "깊은 생각 기록하기",
                     onLeftClock = onLeftClick,
                     onRightClick = {
-                        viewModel.onCreateRecord(
-                            type = "DIARY",
-                            title = title,
-                            content = content,
-                            date = LocalDate.now().toString(),
-                            isDraft = false
-                        ) {
-                            viewModel.loadRecords() // 등록 성공 후 조회 실행
-                            onLeftClick() // 성공 시 화면 닫기
-                        }
+//                        viewModel.onCreateRecord(
+//                            type = "DIARY",
+//                            title = title,
+//                            content = content,
+//                            date = LocalDate.now().toString(),
+//                            isDraft = false
+//                        ) {
+//                            viewModel.loadRecords() // 등록 성공 후 조회 실행
+//                            onLeftClick() // 성공 시 화면 닫기
+//                        }
                     }
 
                 )
@@ -70,7 +74,11 @@ fun RecordDeepMindScreen(
                     title = title,
                     onTitleChange = { title = it },
                     content = content,
-                    onContentChange = { content = it }
+                    onContentChange = { content = it },
+                    onDateClick = {},
+                    sendDate = sendDate,
+                    showDatePicker = showDatePicker,
+                    onDatePickerDismiss = onDatePickerDismiss,
                 )
             }
         }

@@ -118,13 +118,14 @@ data class PostMindRecordData(
 @Serializable
 data class CreateMindRecordRequest(
     val type: String,
-    val title: String,
-    val content: String,
-    val date: String,
+    val title: String?,   // nullable 허용
+    val content: String?, // nullable 허용
+    val date: String?,    // nullable 허용
     val isDraft: Boolean,
     val questionId: Long? = null,
     val category: String? = null
 )
+
 
 @Serializable
 data class UpdateMindRecordRequest(
@@ -142,5 +143,10 @@ data class UpdateMindRecordResponse(
     val code: Int,
     val message: String,
     val data: MindRecordDetail? // 수정된 기록 반환
+)
+
+@Serializable
+data class ReceiverEnabledRequest(
+    val enabled: Boolean
 )
 

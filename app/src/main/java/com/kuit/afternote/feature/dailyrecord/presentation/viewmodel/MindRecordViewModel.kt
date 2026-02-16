@@ -12,6 +12,7 @@ import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCa
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordsUseCase
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
+import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiState
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -129,11 +130,11 @@ class MindRecordViewModel @Inject constructor(
                     questionId = questionId,
                     category = category
                 )
-                _uiState.update { it.copy(isCreated = true, newRecord = result) }
+                //_uiState.update { it.copy(isCreated = true, newRecord = result) }
                 loadRecords()
                 onSuccess() // 성공 시 콜백 실행
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
+               // _uiState.update { it.copy(errorMessage = e.message) }
             }
         }
     }
@@ -207,11 +208,7 @@ class MindRecordViewModel @Inject constructor(
 
 }
 
-data class MindRecordUiState(
-    val isCreated: Boolean = false,
-    val newRecord: PostMindRecordResponse? = null,
-    val errorMessage: String? = null
-)
+
 
 
 

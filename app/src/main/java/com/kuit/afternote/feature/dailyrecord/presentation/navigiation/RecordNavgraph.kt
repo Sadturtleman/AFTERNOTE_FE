@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -19,11 +20,14 @@ import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScre
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordQuestionScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordWriterViewModel
+import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.recordNavGraph(
     navController: NavController,
-    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
+
     ) {
 
     composable("record_main") {
@@ -68,8 +72,27 @@ fun NavGraphBuilder.recordNavGraph(
 
     }
     composable<RecordRoute.DiaryRoute> {
+        val viewModel: MindRecordWriterViewModel = hiltViewModel()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
         RecordDiaryScreen(
-            onLeftClick = { navController.popBackStack() }
+            onLeftClick = { navController.popBackStack() },
+            title = uiState.title,
+            content = uiState.content,
+            onTitleChange = viewModel::updateTitle,
+            onContentChange = viewModel::updateContent,
+
+            sendDate = uiState.sendDate,
+            showDatePicker = uiState.showDatePicker,
+            onDateClick = viewModel::showDatePicker,
+            onDatePickerDismiss = viewModel::hideDatePicker,
+
+            onRegisterClick = {
+                viewModel.registerWithPopUpThenSave {
+                    navController.popBackStack()
+                }
+            },
+
         )
     }
     composable<RecordRoute.QuestionRoute> {
@@ -83,11 +106,17 @@ fun NavGraphBuilder.recordNavGraph(
         )
     }
     composable<RecordRoute.DeepMindRoute> {
-        val viewModel: MindRecordViewModel = hiltViewModel()
+        val viewModel: MindRecordWriterViewModel = hiltViewModel()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
         RecordDeepMindScreen(
             onLeftClick = { navController.popBackStack() },
-            viewModel = viewModel,
-            recordId = null
+            recordId = null,
+            sendDate = uiState.sendDate,
+            showDatePicker = uiState.showDatePicker,
+            onDateClick = viewModel::showDatePicker,
+            onDatePickerDismiss = viewModel::hideDatePicker
+
         )
     }
 

@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
-import com.kuit.afternote.core.ui.util.getIconResForServiceType
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
@@ -54,7 +54,7 @@ fun AfternoteListItem(
     item: AfternoteItem,
     onClick: () -> Unit = {}
 ) {
-    val imageRes = getIconResForServiceType(item.type)
+    val imageRes = getIconResForServiceName(item.serviceName)
     val shape = RoundedCornerShape(16.dp)
 
     Surface(

@@ -3,14 +3,19 @@ package com.kuit.afternote.feature.dailyrecord.presentation.component
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
@@ -23,13 +28,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.DateWheelPicker
+import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
@@ -45,16 +57,20 @@ fun RecordDiaryContentItem(
     title: String,
     onTitleChange: (String) -> Unit,
     content: String,
-    onContentChange: (String) -> Unit
-) {
+    onContentChange: (String) -> Unit,
+
+    //작성 날짜
+    onDateClick: () -> Unit,
+    sendDate: String,
+    showDatePicker: Boolean = false,
+    onDatePickerDismiss: () -> Unit,
+
+
+    ) {
     // 오늘 날짜 기준으로 받아오기
     val today = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     val formattedDate = today.format(formatter)
-
-    // 아래로 화살표 누르면 날짜 선택 가능하도록
-    val context = LocalContext.current
-    val showDialog = remember { mutableStateOf(false) }
 
     var s = " "
     if (standard == "일기 기록하기") {
@@ -85,7 +101,7 @@ fun RecordDiaryContentItem(
             ) {
                 if (s == "작성 날짜") {
                     Text(
-                        text = formattedDate,
+                        text = if (sendDate.isNotEmpty()) sendDate else formattedDate,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -102,26 +118,11 @@ fun RecordDiaryContentItem(
                     contentDescription = "밑 화살표",
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable { showDialog.value = true }
+                        .clickable { onDateClick() }
                 )
-//                if (sendDate.isNotEmpty()) {
-//                    Text(
-//                        text = sendDate,
-//                        color = Color(0xFF212121),
-//                        fontFamily = FontFamily(Font(R.font.sansneoregular)),
-//                        fontSize = 14.sp,
-//                        fontWeight = FontWeight.Normal,
-//                        modifier = Modifier.padding(top = 10.dp)
-//                    )
-//                }
-//                Image(
-//                    painter = painterResource(R.drawable.ic_down_vector),
-//                    contentDescription = "날짜 선택",
-//                    modifier = Modifier
-//                        .align(Alignment.CenterEnd)
-//                        .padding(top = 15.dp)
-//                        .size(width = 12.dp, height = 6.dp)
-//                )
+                if (sendDate.isNotEmpty()) {
+                    val sendDate = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+                }
             }
             Divider(color = Color.LightGray, thickness = 0.8.dp)
         }
@@ -147,7 +148,42 @@ fun RecordDiaryContentItem(
                 innerTextField()
             }
         )
+        if (showDatePicker) {
+            var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f))
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        onDateSelected(selectedDate.year, selectedDate.monthValue, selectedDate.dayOfMonth)
+                        onDatePickerDismiss()
+                    }
+                    .zIndex(1f)
+            )
 
+            Box(
+                modifier = Modifier
+                    .zIndex(2f)
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White)
+                    .padding(vertical = 16.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                DateWheelPicker(
+                    modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
+                    currentDate = selectedDate,
+                    onDateChanged = { date ->
+                        selectedDate = date
+                        onDateSelected(date.year, date.monthValue, date.dayOfMonth)
+                    },
+                    minDate = LocalDate.now()
+                )
+            }
+        }
         Divider(color = Color.LightGray, thickness = 0.8.dp)
 
         BasicTextField(
