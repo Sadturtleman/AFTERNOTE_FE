@@ -1,0 +1,54 @@
+---
+description: kotlinx.serialization DTO rules — when to use @SerialName and @JsonNames
+globs: **/*Dto.kt,**/dto/*.kt,**/remote/*.kt
+alwaysApply: false
+---
+
+# DTO Serialization (kotlinx.serialization)
+
+## @SerialName — Use Only When JSON Key Differs
+
+- **Omit `@SerialName` when the JSON key and the Kotlin property name are identical.**  
+  kotlinx.serialization uses the property name as the serial name by default; adding `@SerialName("sameName")` is redundant and inconsistent.
+
+- **Use `@SerialName` only when the JSON key differs from the property name** (e.g. API uses different casing or spelling).  
+  Examples: `@SerialName("timeLetterID") val timeLetterId` (API uses capital `ID`), `@SerialName("profileUrl") val profileUrl` only if the API key were different.
+
+### Good
+
+```kotlin
+@Serializable
+data class MusicTrackDto(
+    val artist: String,
+    val title: String,
+    val albumImageUrl: String? = null
+)
+```
+
+```kotlin
+@Serializable
+data class CreateTimeLetterReceiverRequestDto(
+    @SerialName("timeLetterID") val timeLetterId: Long,  // JSON key differs (ID vs Id)
+    val receiverIds: List<Long>,
+    val deliveredAt: String? = null
+)
+```
+
+### Avoid
+
+```kotlin
+@SerialName("name") val name: String
+@SerialName("albumImageUrl") val albumImageUrl: String? = null
+```
+
+## @JsonNames — Alternate Keys
+
+- Use **`@JsonNames("snake_case", "other_key")`** when the API can return more than one key for the same field (e.g. camelCase and snake_case).  
+  Keep the Kotlin property name as the primary serial name; do not add a redundant `@SerialName` that matches the property.
+
+Example: `@JsonNames("afternote_id") val afternoteId: Long`
+
+## Consistency
+
+- Do not add `@SerialName` "for consistency" when the key and property already match.  
+  Consistency in this project means: **no `@SerialName` when key and property are the same**.

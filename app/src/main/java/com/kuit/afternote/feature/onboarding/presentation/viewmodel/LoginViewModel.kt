@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
@@ -190,7 +189,7 @@ class LoginViewModel
 /** Server error response body for login/auth failures. */
 @Serializable
 private data class LoginErrorResponse(
-    @SerialName("status") val status: Int? = null,
-    @SerialName("code") val code: Int? = null,
-    @SerialName("message") val message: String? = null
+    val status: Int? = null,
+    val code: Int? = null,
+    val message: String? = null
 )

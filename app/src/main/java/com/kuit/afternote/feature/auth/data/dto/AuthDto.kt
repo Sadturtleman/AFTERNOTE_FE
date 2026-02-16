@@ -16,7 +16,7 @@ data class VerifyEmailRequest(
 
 @Serializable
 data class VerifyEmailData(
-    @SerialName("isVerified") val isVerified: Boolean? = null
+    val isVerified: Boolean? = null
 )
 
 @Serializable
@@ -48,29 +48,29 @@ data class SocialLoginRequest(
 
 @Serializable
 data class LoginData(
-    @SerialName("accessToken") val accessToken: String? = null,
-    @SerialName("refreshToken") val refreshToken: String? = null,
-    @SerialName("newUser") val newUser: Boolean? = null
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val newUser: Boolean? = null
 )
 
 @Serializable
 data class ReissueRequest(
-    @SerialName("refreshToken") val refreshToken: String
+    val refreshToken: String
 )
 
 @Serializable
 data class ReissueData(
-    @SerialName("accessToken") val accessToken: String? = null,
-    @SerialName("refreshToken") val refreshToken: String? = null
+    val accessToken: String? = null,
+    val refreshToken: String? = null
 )
 
 @Serializable
 data class LogoutRequest(
-    @SerialName("refreshToken") val refreshToken: String
+    val refreshToken: String
 )
 
 @Serializable
 data class PasswordChangeRequest(
-    @SerialName("currentPassword") val currentPassword: String,
-    @SerialName("newPassword") val newPassword: String
+    val currentPassword: String,
+    val newPassword: String
 )
