@@ -18,6 +18,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,6 +54,9 @@ fun RecordFirstDiaryListScreen(
     val today = LocalDate.now()
     val records by viewModel.records.collectAsState() // UIModel 구독
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadRecords()
+    }
     Scaffold(
         modifier = modifier.fillMaxWidth(),
         bottomBar = {
