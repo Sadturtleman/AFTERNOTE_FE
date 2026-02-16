@@ -1,8 +1,14 @@
-package com.kuit.afternote.feature.receiver.presentation.component
+package com.kuit.afternote.feature.receiverauth.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,12 +36,10 @@ fun SenderListItem(
             .height(74.dp)
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
-            // 발신자 클릭 시 상세 페이지 이동 등을 위해 clickable 추가
             .clickable(enabled = onClick != null) { onClick?.invoke() },
-        verticalAlignment = Alignment.CenterVertically // 아이템들을 세로 중앙으로 정렬
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            // 발신자용 아이콘이 있다면 R.drawable.ic_default_profile_sender 등으로 교체하세요!
             painter = painterResource(id = R.drawable.ic_default_profile_receiver),
             contentDescription = "sender_profile",
             modifier = Modifier
@@ -56,12 +60,11 @@ fun SenderListItem(
         Image(
             painterResource(R.drawable.ic_arrow_forward_b2),
             contentDescription = "발신자 상세로",
-            modifier= Modifier.width(6.dp).height(12.dp),
+            modifier = Modifier.width(6.dp).height(12.dp),
             colorFilter = ColorFilter.tint(Color(0xFF89C2FF))
         )
     }
 }
-
 
 @Preview(
     showBackground = true,
@@ -69,7 +72,6 @@ fun SenderListItem(
 )
 @Composable
 private fun SenderListItemPreview() {
-    // 발신자 이름으로 예시 데이터 주입
     SenderListItem(
         senderName = "발신자 박경민"
     )

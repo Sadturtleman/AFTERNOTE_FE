@@ -66,8 +66,8 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRou
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.VerifySelfScreen
+import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
+import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph

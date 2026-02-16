@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.component
+package com.kuit.afternote.feature.receiverauth.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -162,11 +162,9 @@ private fun SinglePdfInputRow(
 @Preview(showBackground = true)
 @Composable
 private fun PdfInputContentPreview() {
-    // 1. Preview용 상태 생성
     val deadState = rememberTextFieldState()
     val familyState = rememberTextFieldState()
 
-    // 2. 배경 깔고 패딩 좀 주어서 실제 화면처럼 보이게 설정
     Surface(
         color = Color.White,
         modifier = Modifier.fillMaxSize()

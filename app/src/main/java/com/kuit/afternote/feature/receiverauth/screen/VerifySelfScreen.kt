@@ -1,5 +1,6 @@
-package com.kuit.afternote.feature.receiver.presentation.screen
+package com.kuit.afternote.feature.receiverauth.screen
 
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,17 +20,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.button.SignUpContentButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.receiver.presentation.component.MasterKeyInputContent
-import com.kuit.afternote.feature.receiver.presentation.component.PdfInputContent
-import com.kuit.afternote.feature.receiver.presentation.component.ReceiveEndContent
-import com.kuit.afternote.feature.receiver.presentation.uimodel.VerifyStep
+import com.kuit.afternote.feature.receiverauth.component.MasterKeyInputContent
+import com.kuit.afternote.feature.receiverauth.component.PdfInputContent
+import com.kuit.afternote.feature.receiverauth.component.ReceiveEndContent
+import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 
 private enum class PendingDocumentTarget {
     DEATH_CERT,
@@ -172,7 +172,7 @@ fun VerifySelfScreen(
     }
 }
 
-private fun getDisplayName(context: android.content.Context, uri: Uri): String {
+private fun getDisplayName(context: Context, uri: Uri): String {
     context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
         ?.use { cursor ->
             if (cursor.moveToFirst()) {

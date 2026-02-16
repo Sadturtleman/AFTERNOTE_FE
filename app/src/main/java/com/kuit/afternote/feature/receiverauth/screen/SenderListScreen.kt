@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.screen
+package com.kuit.afternote.feature.receiverauth.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,9 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.receiver.presentation.component.SenderListItem
+import com.kuit.afternote.feature.receiverauth.component.SenderListItem
 
 @Composable
 fun SenderListScreen(

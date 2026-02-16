@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.screen
+package com.kuit.afternote.feature.receiverauth.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.receiver.presentation.uimodel.Receiver
+import com.kuit.afternote.feature.receiverauth.uimodel.Receiver
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Sansneo

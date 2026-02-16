@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.uimodel
+package com.kuit.afternote.feature.receiverauth.uimodel
 
 import com.kuit.afternote.core.uimodel.Step
 

@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.receiver.presentation.component
+package com.kuit.afternote.feature.receiverauth.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
