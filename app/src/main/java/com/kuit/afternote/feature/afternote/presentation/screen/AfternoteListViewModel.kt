@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -109,9 +109,9 @@ class AfternoteListViewModel
         private fun updateFilteredItems(tab: AfternoteTab) {
             val filtered = when (tab) {
                 AfternoteTab.ALL -> allItems
-                AfternoteTab.SOCIAL_NETWORK -> allItems.filter { it.type == ServiceType.SOCIAL_NETWORK }
-                AfternoteTab.GALLERY_AND_FILES -> allItems.filter { it.type == ServiceType.GALLERY_AND_FILES }
-                AfternoteTab.MEMORIAL -> allItems.filter { it.type == ServiceType.MEMORIAL }
+                AfternoteTab.SOCIAL_NETWORK -> allItems.filter { it.type == AfternoteServiceType.SOCIAL_NETWORK }
+                AfternoteTab.GALLERY_AND_FILES -> allItems.filter { it.type == AfternoteServiceType.GALLERY_AND_FILES }
+                AfternoteTab.MEMORIAL -> allItems.filter { it.type == AfternoteServiceType.MEMORIAL }
             }
 
             _uiState.update { it.copy(items = filtered) }

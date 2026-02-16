@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.domain.usecase
 
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
@@ -45,7 +45,7 @@ class GetAfternoteDetailUseCaseTest {
                     title = "갤러리",
                     createdAt = "2025.11.26",
                     updatedAt = "2025.11.26",
-                    type = ServiceType.GALLERY_AND_FILES,
+                    type = AfternoteServiceType.GALLERY_AND_FILES,
                     credentialsId = null,
                     credentialsPassword = null,
                     receivers = listOf(
@@ -102,7 +102,7 @@ class GetAfternoteDetailUseCaseTest {
                     title = "갤러리",
                     createdAt = "2025.11.26",
                     updatedAt = "2025.11.26",
-                    type = ServiceType.GALLERY_AND_FILES,
+                    type = AfternoteServiceType.GALLERY_AND_FILES,
                     credentialsId = null,
                     credentialsPassword = null,
                     receivers = listOf(

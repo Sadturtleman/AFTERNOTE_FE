@@ -44,7 +44,7 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailCont
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
@@ -173,7 +173,7 @@ private fun AfternoteListRouteContent(
 }
 
 /** Types with a designed detail screen on the generic DetailRoute (social-style layout). */
-private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK)
+private val DESIGNED_DETAIL_TYPES = setOf(AfternoteServiceType.SOCIAL_NETWORK)
 
 @Composable
 private fun DetailLoadingContent() {

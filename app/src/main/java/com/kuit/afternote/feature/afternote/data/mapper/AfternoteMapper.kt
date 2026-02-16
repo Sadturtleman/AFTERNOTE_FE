@@ -7,7 +7,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailSong
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternotePlaylistDetail
-import com.kuit.afternote.feature.afternote.domain.model.ServiceType
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 
 /**
  * Maps server DTOs to domain models at the boundary only.
@@ -82,11 +82,11 @@ object AfternoteMapper {
         }
     }
 
-    internal fun categoryToServiceType(category: String): ServiceType =
+    internal fun categoryToServiceType(category: String): AfternoteServiceType =
         when (category.uppercase()) {
-            "SOCIAL" -> ServiceType.SOCIAL_NETWORK
-            "GALLERY" -> ServiceType.GALLERY_AND_FILES
-            "MUSIC", "PLAYLIST" -> ServiceType.MEMORIAL
-            else -> ServiceType.SOCIAL_NETWORK
+            "SOCIAL" -> AfternoteServiceType.SOCIAL_NETWORK
+            "GALLERY" -> AfternoteServiceType.GALLERY_AND_FILES
+            "MUSIC", "PLAYLIST" -> AfternoteServiceType.MEMORIAL
+            else -> AfternoteServiceType.SOCIAL_NETWORK
         }
 }

@@ -40,6 +40,7 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+    <string name="afternote_category_social_network">소셜 네트워크</string>
 
     <!-- Receiver verify (email auth) -->
     <string name="receiver_verify_title">수신자 인증</string>
@@ -73,7 +74,8 @@
     <string name="design_pending">디자인 예정</string>
 
     <!-- Afternote edit: required field validation -->
-    <string name="afternote_validation_title_required">서비스명을 입력해 주세요.</string>
+    <string name="afternote_validation_title_required">등록할 서비스(플랫폼)명을 입력해 주세요.</string>
+    <string name="afternote_edit_service_label">등록할 서비스</string>
     <string name="afternote_validation_social_credentials_required">계정 ID와 비밀번호를 입력해 주세요.</string>
     <string name="afternote_validation_social_process_method_required">계정 처리 방법을 선택해 주세요.</string>
     <string name="afternote_validation_social_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>

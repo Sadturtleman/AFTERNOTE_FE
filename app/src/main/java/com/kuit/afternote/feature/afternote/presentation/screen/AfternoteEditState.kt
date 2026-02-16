@@ -23,6 +23,7 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Af
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodCallbacks
+import com.kuit.afternote.core.domain.model.AfternoteServiceCatalog
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
 
@@ -106,7 +107,7 @@ class AfternoteEditState(
     // Category & Service
     var selectedCategory by mutableStateOf("소셜네트워크")
         private set
-    var selectedService by mutableStateOf("인스타그램")
+    var selectedService by mutableStateOf(AfternoteServiceCatalog.defaultSocialService)
         private set
 
     // Processing Methods
@@ -185,10 +186,12 @@ class AfternoteEditState(
     )
         private set
 
-    // Constants
+    // Constants (service names from single source: AfternoteServiceCatalog)
     val categories = listOf("소셜네트워크", CATEGORY_GALLERY_AND_FILE, "추모 가이드라인")
-    val services = listOf("인스타그램", "페이스북")
-    val galleryServices = listOf("갤러리", "파일")
+    val services: List<String>
+        get() = AfternoteServiceCatalog.socialServices
+    val galleryServices: List<String>
+        get() = AfternoteServiceCatalog.galleryServices
     val relationshipOptions = listOf("친구", "가족", "연인")
     val lastWishOptions = listOf(
         LastWishOption(
@@ -258,9 +261,9 @@ class AfternoteEditState(
         selectedCategory = category
         // 카테고리 변경 시 서비스를 해당 카테고리의 기본값으로 초기화
         selectedService = if (category == CATEGORY_GALLERY_AND_FILE) {
-            "갤러리"
+            AfternoteServiceCatalog.defaultGalleryService
         } else {
-            "인스타그램"
+            AfternoteServiceCatalog.defaultSocialService
         }
     }
 

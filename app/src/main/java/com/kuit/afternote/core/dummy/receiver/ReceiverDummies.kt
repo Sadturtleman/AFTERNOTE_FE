@@ -148,7 +148,7 @@ object ReceiverDummies {
                 serviceNameResId = R.string.receiver_afternote_item_gallery,
                 serviceNameLiteral = null,
                 date = "2026.2.7",
-                iconResId = R.drawable.ic_gallery
+                iconResId = R.drawable.ic_gallery_pattern
             ),
             AfternoteListItemSeed(
                 id = "memorial_guideline",
@@ -162,7 +162,7 @@ object ReceiverDummies {
                 serviceNameResId = R.string.receiver_afternote_item_naver_mail,
                 serviceNameLiteral = null,
                 date = "2026.2.9",
-                iconResId = R.drawable.img_naver_mail
+                iconResId = R.drawable.img_naver_mail_pattern
             )
         )
 
