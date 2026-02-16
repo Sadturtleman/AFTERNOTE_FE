@@ -6,9 +6,6 @@ package com.kuit.afternote.feature.afternote.domain.model
  */
 enum class ServiceType {
     SOCIAL_NETWORK,
-    BUSINESS,
     GALLERY_AND_FILES,
-    ASSET_MANAGEMENT,
-    MEMORIAL,
-    OTHER
+    MEMORIAL
 }

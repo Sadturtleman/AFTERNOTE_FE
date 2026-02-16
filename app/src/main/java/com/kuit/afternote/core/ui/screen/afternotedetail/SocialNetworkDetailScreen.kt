@@ -42,7 +42,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 /**
  * Display data for [SocialNetworkDetailScreen].
  *
- * Used for 소셜 네트워크 (and OTHER) category afternote detail.
+ * Used for 소셜 네트워크 category afternote detail.
  */
 data class SocialNetworkDetailContent(
     val serviceName: String = "인스타그램",

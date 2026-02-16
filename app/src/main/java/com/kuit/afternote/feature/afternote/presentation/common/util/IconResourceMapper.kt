@@ -16,9 +16,6 @@ object IconResourceMapper {
             ServiceType.SOCIAL_NETWORK -> R.drawable.img_insta_pattern
             ServiceType.GALLERY_AND_FILES -> R.drawable.ic_gallery
             ServiceType.MEMORIAL -> R.drawable.ic_memorial_guideline
-            ServiceType.BUSINESS -> R.drawable.img_naver_mail
-            ServiceType.ASSET_MANAGEMENT -> R.drawable.img_logo
-            ServiceType.OTHER -> R.drawable.img_logo
         }
 
 }

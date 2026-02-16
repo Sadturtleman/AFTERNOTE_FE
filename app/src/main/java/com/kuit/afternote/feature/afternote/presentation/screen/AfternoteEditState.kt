@@ -186,7 +186,7 @@ class AfternoteEditState(
         private set
 
     // Constants
-    val categories = listOf("소셜네트워크", "비즈니스", CATEGORY_GALLERY_AND_FILE, "재산 처리", "추모 가이드라인")
+    val categories = listOf("소셜네트워크", CATEGORY_GALLERY_AND_FILE, "추모 가이드라인")
     val services = listOf("인스타그램", "페이스북")
     val galleryServices = listOf("갤러리", "파일")
     val relationshipOptions = listOf("친구", "가족", "연인")

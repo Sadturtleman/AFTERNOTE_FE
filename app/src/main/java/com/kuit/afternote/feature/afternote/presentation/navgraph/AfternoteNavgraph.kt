@@ -173,7 +173,7 @@ private fun AfternoteListRouteContent(
 }
 
 /** Types with a designed detail screen on the generic DetailRoute (social-style layout). */
-private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK, ServiceType.OTHER)
+private val DESIGNED_DETAIL_TYPES = setOf(ServiceType.SOCIAL_NETWORK)
 
 @Composable
 private fun DetailLoadingContent() {

@@ -87,7 +87,6 @@ object AfternoteMapper {
             "SOCIAL" -> ServiceType.SOCIAL_NETWORK
             "GALLERY" -> ServiceType.GALLERY_AND_FILES
             "MUSIC", "PLAYLIST" -> ServiceType.MEMORIAL
-            "BUSINESS" -> ServiceType.BUSINESS
-            else -> ServiceType.OTHER
+            else -> ServiceType.SOCIAL_NETWORK
         }
 }

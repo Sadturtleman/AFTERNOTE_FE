@@ -29,7 +29,6 @@ import javax.inject.Inject
 
 private const val TAG = "AfternoteEditVM"
 private const val CATEGORY_SOCIAL = "소셜네트워크"
-private const val CATEGORY_BUSINESS = "비즈니스"
 private const val CATEGORY_GALLERY = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL = "추모 가이드라인"
 
@@ -216,10 +215,7 @@ class AfternoteEditViewModel
             val processMethod = detail.processMethod ?: ""
             val categoryUpper = detail.category.uppercase()
             val isGalleryCategory = categoryUpper == "GALLERY"
-            val isSocialCategory =
-                categoryUpper == "SOCIAL" ||
-                    categoryUpper == "BUSINESS" ||
-                    categoryUpper == "OTHER"
+            val isSocialCategory = categoryUpper == "SOCIAL"
             val accountProcessingMethodName =
                 if (isSocialCategory) serverProcessMethodToAccountEnum(processMethod)
                 else ""
@@ -261,7 +257,7 @@ class AfternoteEditViewModel
         }
 
         /**
-         * Validates required fields for SOCIAL-like categories (소셜네트워크, 비즈니스, 재산 처리).
+         * Validates required fields for SOCIAL category (소셜네트워크).
          * Returns the first validation error found, or null if valid.
          */
         private fun validateSocialLikeRequiredFields(
@@ -294,7 +290,7 @@ class AfternoteEditViewModel
                 return AfternoteValidationError.TITLE_REQUIRED
             }
             return when (category) {
-                CATEGORY_SOCIAL, CATEGORY_BUSINESS -> validateSocialLikeRequiredFields(payload)
+                CATEGORY_SOCIAL -> validateSocialLikeRequiredFields(payload)
                 CATEGORY_GALLERY -> validateGalleryRequiredFields(payload, receivers)
                 CATEGORY_MEMORIAL -> validateMemorialRequiredFields(playlistStateHolder)
                 else -> validateSocialLikeRequiredFields(payload)
@@ -333,13 +329,12 @@ class AfternoteEditViewModel
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
-            val isSocialOrBusiness =
-                category == CATEGORY_SOCIAL || category == CATEGORY_BUSINESS
+            val isSocial = category == CATEGORY_SOCIAL
             val processMethod = toServerProcessMethod(
                 accountProcessingMethod =
-                    if (isSocialOrBusiness) payload.accountProcessingMethod else "",
+                    if (isSocial) payload.accountProcessingMethod else "",
                 informationProcessingMethod =
-                    if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
+                    if (!isSocial) payload.informationProcessingMethod else ""
             )
             val leaveMessage = payload.message.ifEmpty { null }
 
@@ -440,18 +435,17 @@ class AfternoteEditViewModel
         ): AfternoteUpdateRequestDto {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
-            val isSocialOrBusiness =
-                category == CATEGORY_SOCIAL || category == CATEGORY_BUSINESS
+            val isSocial =
+                category == CATEGORY_SOCIAL
             val processMethod = toServerProcessMethod(
                 accountProcessingMethod =
-                    if (isSocialOrBusiness) payload.accountProcessingMethod else "",
+                    if (isSocial) payload.accountProcessingMethod else "",
                 informationProcessingMethod =
-                    if (!isSocialOrBusiness) payload.informationProcessingMethod else ""
+                    if (!isSocial) payload.informationProcessingMethod else ""
             )
             val serverCategory =
                 when (category) {
                     CATEGORY_SOCIAL -> "SOCIAL"
-                    CATEGORY_BUSINESS -> "BUSINESS"
                     CATEGORY_GALLERY -> "GALLERY"
                     else -> null
                 }
@@ -463,7 +457,7 @@ class AfternoteEditViewModel
                 actions = actions.ifEmpty { null },
                 leaveMessage = payload.message.ifEmpty { null },
                 credentials = when (category) {
-                    CATEGORY_SOCIAL, CATEGORY_BUSINESS -> {
+                    CATEGORY_SOCIAL -> {
                         val id = payload.accountId.takeIf { it.isNotEmpty() }
                         val pw = payload.password.takeIf { it.isNotEmpty() }
                         if (id != null || pw != null) AfternoteCredentialsDto(id = id, password = pw)
@@ -516,7 +510,6 @@ class AfternoteEditViewModel
         private fun serverCategoryToEditScreenCategory(serverCategory: String): String =
             when (serverCategory.uppercase()) {
                 "SOCIAL" -> CATEGORY_SOCIAL
-                "BUSINESS" -> CATEGORY_BUSINESS
                 "GALLERY" -> CATEGORY_GALLERY
                 "PLAYLIST", "MUSIC" -> CATEGORY_MEMORIAL
                 else -> CATEGORY_SOCIAL

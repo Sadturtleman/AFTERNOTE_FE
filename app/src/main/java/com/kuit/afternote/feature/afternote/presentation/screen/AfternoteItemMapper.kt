@@ -60,10 +60,8 @@ object AfternoteItemMapper {
      */
     fun categoryStringForEditScreen(serviceType: ServiceType): String =
         when (serviceType) {
-            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER -> "소셜네트워크"
-            ServiceType.BUSINESS -> "비즈니스"
+            ServiceType.SOCIAL_NETWORK -> "소셜네트워크"
             ServiceType.GALLERY_AND_FILES -> "갤러리 및 파일"
-            ServiceType.ASSET_MANAGEMENT -> "재산 처리"
             ServiceType.MEMORIAL -> "추모 가이드라인"
         }
 
@@ -77,10 +75,9 @@ object AfternoteItemMapper {
             "갤러리", "파일" -> ServiceType.GALLERY_AND_FILES
             "인스타그램", "페이스북", "X", "스레드", "틱톡", "유튜브",
             "카카오톡", "카카오스토리", "네이버 블로그", "네이버 카페", "네이버 밴드",
-            "네이버", "디스코드" -> ServiceType.SOCIAL_NETWORK
+            "네이버", "디스코드", "네이버 메일" -> ServiceType.SOCIAL_NETWORK
             "추모 가이드라인" -> ServiceType.MEMORIAL
-            "네이버 메일" -> ServiceType.BUSINESS
-            else -> ServiceType.OTHER
+            else -> ServiceType.SOCIAL_NETWORK
         }
 
     /**
@@ -110,8 +107,7 @@ object AfternoteItemMapper {
 
     private fun dummyDataForServiceType(type: ServiceType): DummyItemFields =
         when (type) {
-            ServiceType.SOCIAL_NETWORK, ServiceType.OTHER, ServiceType.BUSINESS ->
-                defaultSocialOrBusinessDummyFields()
+            ServiceType.SOCIAL_NETWORK -> defaultSocialOrBusinessDummyFields()
             ServiceType.GALLERY_AND_FILES -> DummyItemFields(
                 informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
                 galleryProcessingMethods = listOf(
@@ -120,7 +116,6 @@ object AfternoteItemMapper {
                 )
             )
             ServiceType.MEMORIAL -> DummyItemFields()
-            ServiceType.ASSET_MANAGEMENT -> DummyItemFields()
         }
 
     private data class DummyItemFields(

@@ -110,9 +110,7 @@ class AfternoteListViewModel
             val filtered = when (tab) {
                 AfternoteTab.ALL -> allItems
                 AfternoteTab.SOCIAL_NETWORK -> allItems.filter { it.type == ServiceType.SOCIAL_NETWORK }
-                AfternoteTab.BUSINESS -> allItems.filter { it.type == ServiceType.BUSINESS }
                 AfternoteTab.GALLERY_AND_FILES -> allItems.filter { it.type == ServiceType.GALLERY_AND_FILES }
-                AfternoteTab.ASSET_MANAGEMENT -> allItems.filter { it.type == ServiceType.ASSET_MANAGEMENT }
                 AfternoteTab.MEMORIAL -> allItems.filter { it.type == ServiceType.MEMORIAL }
             }
 
