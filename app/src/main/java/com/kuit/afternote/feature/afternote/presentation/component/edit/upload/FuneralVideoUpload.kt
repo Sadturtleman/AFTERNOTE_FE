@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.component.edit.upload
 
+import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +44,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
+import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -62,6 +64,7 @@ fun FuneralVideoUpload(
     label: String = "장례식에 남길 영상",
     videoUrl: String? = null,
     onAddVideoClick: () -> Unit,
+    onThumbnailBytesReady: (ByteArray?) -> Unit = {},
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     val hasVideo = !videoUrl.isNullOrBlank()
@@ -72,10 +75,11 @@ fun FuneralVideoUpload(
     LaunchedEffect(videoUrl) {
         if (videoUrl.isNullOrBlank()) {
             thumbnailBitmap = null
+            onThumbnailBytesReady(null)
             return@LaunchedEffect
         }
-        val bitmap = withContext(ioDispatcher) {
-            runCatching {
+        val (bitmap, jpegBytes) = withContext(ioDispatcher) {
+            val bmp = runCatching {
                 val retriever = MediaMetadataRetriever()
                 try {
                     retriever.setDataSource(context, videoUrl.toUri())
@@ -84,8 +88,16 @@ fun FuneralVideoUpload(
                     retriever.release()
                 }
             }.getOrNull()
+            val bytes = bmp?.let { frame ->
+                ByteArrayOutputStream().use { out ->
+                    frame.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                    out.toByteArray()
+                }
+            }
+            Pair(bmp, bytes)
         }
         thumbnailBitmap = bitmap?.asImageBitmap()
+        onThumbnailBytesReady(jpegBytes)
     }
 
     Column(

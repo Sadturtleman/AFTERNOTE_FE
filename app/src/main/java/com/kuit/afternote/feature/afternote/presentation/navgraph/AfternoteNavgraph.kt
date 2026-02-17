@@ -464,11 +464,16 @@ private fun buildEditScreenCallbacks(params: EditScreenCallbacksParams): Afterno
                 category = params.state.selectedCategory,
                 payload = payload,
                 receivers = params.state.afternoteEditReceivers,
-                playlistStateHolder = params.playlistStateHolder
+                playlistStateHolder = params.playlistStateHolder,
+                funeralVideoUrl = params.state.funeralVideoUrl,
+                funeralThumbnailUrl = params.state.funeralThumbnailUrl
             )
         },
         onNavigateToAddSong = { params.navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
-        onBottomNavTabSelected = params.onBottomNavTabSelected
+        onBottomNavTabSelected = params.onBottomNavTabSelected,
+        onThumbnailBytesReady = { bytes ->
+            if (bytes != null) params.editViewModel.uploadMemorialThumbnail(bytes)
+        }
     )
 
 @Composable
@@ -542,6 +547,14 @@ private fun AfternoteEditRouteContent(
                 popUpTo(AfternoteRoute.AfternoteListRoute) { inclusive = true }
                 launchSingleTop = true
             }
+        }
+    }
+
+    val uploadedThumbnailUrl by editViewModel.uploadedThumbnailUrl.collectAsStateWithLifecycle(initialValue = null)
+    LaunchedEffect(uploadedThumbnailUrl) {
+        if (uploadedThumbnailUrl != null) {
+            state.onFuneralThumbnailDataUrlReady(uploadedThumbnailUrl)
+            editViewModel.clearUploadedThumbnailUrl()
         }
     }
 

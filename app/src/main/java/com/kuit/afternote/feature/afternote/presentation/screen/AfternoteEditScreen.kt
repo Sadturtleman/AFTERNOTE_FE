@@ -72,7 +72,8 @@ data class AfternoteEditScreenCallbacks(
     val onBackClick: () -> Unit = {},
     val onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
     val onNavigateToAddSong: () -> Unit = {},
-    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
+    val onThumbnailBytesReady: (ByteArray?) -> Unit = {}
 )
 
 /**
@@ -235,6 +236,7 @@ fun AfternoteEditScreen(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                     )
                 },
+                onThumbnailBytesReady = callbacks.onThumbnailBytesReady,
                 bottomPadding = paddingValues
             )
 
@@ -283,6 +285,7 @@ private fun EditContent(
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
+    onThumbnailBytesReady: (ByteArray?) -> Unit,
     bottomPadding: PaddingValues
 ) {
     Column(
@@ -336,6 +339,7 @@ private fun EditContent(
                 onNavigateToAddSong = onNavigateToAddSong,
                 onPhotoAddClick = onPhotoAddClick,
                 onVideoAddClick = onVideoAddClick,
+                onThumbnailBytesReady = onThumbnailBytesReady,
                 bottomPadding = bottomPadding
             )
         }
@@ -348,6 +352,7 @@ private fun CategoryContent(
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
+    onThumbnailBytesReady: (ByteArray?) -> Unit,
     bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
@@ -369,7 +374,8 @@ private fun CategoryContent(
                     onLastWishSelected = state::onLastWishSelected,
                     onCustomLastWishChanged = state::onCustomLastWishChanged,
                     onPhotoAddClick = onPhotoAddClick,
-                    onVideoAddClick = onVideoAddClick
+                    onVideoAddClick = onVideoAddClick,
+                    onThumbnailBytesReady = onThumbnailBytesReady
                 )
             )
         }
