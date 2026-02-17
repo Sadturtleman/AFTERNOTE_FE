@@ -49,6 +49,7 @@ fun ReceiverAfterNoteScreen(
     showBottomBar: Boolean = true,
     receiverId: String = "1",
     senderName: String = "",
+    leaveMessage: String? = null,
     timeLetterTotalCount: Int = 0,
     afternoteTotalCount: Int = 0,
     onNavigateToRecord: () -> Unit = {},
@@ -122,7 +123,11 @@ fun ReceiverAfterNoteScreen(
             }
 
             item {
-                HeroCard()
+                HeroCard(
+                    leaveMessage =
+                        leaveMessage?.takeIf { it.isNotBlank() }
+                            ?: "가족들에게...\n내가 없어도 너무 슬퍼하지마."
+                )
             }
 
             item {

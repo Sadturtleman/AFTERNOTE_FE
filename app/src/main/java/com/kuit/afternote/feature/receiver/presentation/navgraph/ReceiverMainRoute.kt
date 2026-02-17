@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,6 +83,12 @@ fun ReceiverMainRoute(
     val timeLetterViewModel: ReceiverTimeLetterViewModel = hiltViewModel()
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteTriggerViewModel: ReceiverAfternoteTriggerViewModel = hiltViewModel()
+    val leaveMessage by afternoteTriggerViewModel.leaveMessage.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        receiverAuthSessionHolder.getAuthCode()
+            ?.let { afternoteTriggerViewModel.loadAfterNotes(it) }
+    }
 
     BackHandler {
         when {
@@ -121,6 +128,7 @@ fun ReceiverMainRoute(
                         showBottomBar = false,
                         receiverId = receiverId,
                         senderName = receiverAuthSessionHolder.getSenderName().orEmpty(),
+                        leaveMessage = leaveMessage,
                         onNavigateToRecord = { selectedBottomNavItem = BottomNavItem.RECORD },
                         onNavigateToTimeLetter = {
                             receiverAuthSessionHolder.getAuthCode()

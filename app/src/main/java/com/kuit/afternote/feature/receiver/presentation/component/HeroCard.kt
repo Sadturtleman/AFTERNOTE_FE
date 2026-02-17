@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
@@ -27,8 +28,12 @@ import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Sansneo
 
+private const val HERO_CARD_DEFAULT_MESSAGE = "가족들에게...\n내가 없어도 너무 슬퍼하지마."
+
 @Composable
-fun HeroCard() {
+fun HeroCard(
+    leaveMessage: String = HERO_CARD_DEFAULT_MESSAGE
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +62,7 @@ fun HeroCard() {
                 .align(Alignment.CenterStart)
         ) {
             Text(
-                text = "가족들에게...\n내가 없어도 너무 슬퍼하지마.",
+                text = leaveMessage,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Bold,
                 color = Gray8,
@@ -72,4 +77,10 @@ fun HeroCard() {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewHeroCard() {
+    HeroCard(leaveMessage = "가족들에게...\n내가 없어도 너무 슬퍼하지마.")
 }
