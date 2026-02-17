@@ -358,7 +358,13 @@ private fun CategoryContent(
     when (state.selectedCategory) {
         CATEGORY_MEMORIAL_GUIDELINE -> {
             val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
-                (1..songs.size).map { AlbumCover(id = "$it") }
+                songs.mapIndexed { _, s ->
+                    AlbumCover(
+                        id = s.id,
+                        imageUrl = s.albumCoverUrl,
+                        title = s.title
+                    )
+                }
             } ?: state.playlistAlbumCovers
             val livePlaylistSongCount =
                 state.playlistStateHolder?.songs?.size ?: state.playlistSongCount

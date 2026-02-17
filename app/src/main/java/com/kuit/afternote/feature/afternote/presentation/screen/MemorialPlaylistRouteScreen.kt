@@ -57,7 +57,12 @@ fun MemorialPlaylistRouteScreen(
     initialSelectedSongIds: Set<String>? = null
 ) {
     val songs = playlistStateHolder.songs.map { s ->
-        PlaylistSongDisplay(id = s.id, title = s.title, artist = s.artist)
+        PlaylistSongDisplay(
+            id = s.id,
+            title = s.title,
+            artist = s.artist,
+            albumImageUrl = s.albumCoverUrl
+        )
     }
     SongPlaylistScreen(
         modifier = modifier,
