@@ -33,48 +33,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceivedTimeLetterListItemUi
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLettersListUiState
 
 @Composable
 fun ReceiverTimeLetterListScreen(
     uiState: ReceiverTimeLettersListUiState,
-    selectedBottomNavItem: BottomNavItem,
     onBackClick: () -> Unit,
-    onBottomNavSelected: (BottomNavItem) -> Unit,
     onLetterClick: (ReceivedTimeLetterListItemUi) -> Unit,
     onSortByDate: () -> Unit = {},
+    sortModeLabelResId: Int = R.string.receiver_timeletter_sort_by_date,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-                    .statusBarsPadding()
-            ) {
+            Column(modifier = Modifier.statusBarsPadding()) {
                 TopBar(
                     title = stringResource(R.string.nav_timeletter),
                     onBackClick = onBackClick
                 )
             }
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedItem = selectedBottomNavItem,
-                onItemSelected = onBottomNavSelected
-            )
         }
     ) { innerPadding ->
         ReceiverTimeLetterContent(
             uiState = uiState,
             onLetterClick = onLetterClick,
             onSortByDate = onSortByDate,
+            sortModeLabelResId = sortModeLabelResId,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -85,8 +73,11 @@ fun ReceiverTimeLetterContent(
     uiState: ReceiverTimeLettersListUiState,
     onLetterClick: (ReceivedTimeLetterListItemUi) -> Unit,
     onSortByDate: () -> Unit,
+    sortModeLabelResId: Int = R.string.receiver_timeletter_sort_by_date,
     modifier: Modifier = Modifier
 ) {
+    Spacer(modifier = Modifier.height(20.dp))
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -109,7 +100,7 @@ fun ReceiverTimeLetterContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "날짜순",
+                text = stringResource(sortModeLabelResId),
                 fontSize = 12.sp,
                 color = Color(0xFF328BFF)
             )
@@ -132,6 +123,7 @@ fun ReceiverTimeLetterContent(
                     CircularProgressIndicator()
                 }
             }
+
             uiState.errorMessage != null -> {
                 Box(
                     modifier = Modifier
@@ -146,6 +138,7 @@ fun ReceiverTimeLetterContent(
                     )
                 }
             }
+
             else -> {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(
@@ -168,7 +161,7 @@ fun TimeLetterRow(
     letter: ReceivedTimeLetterListItemUi,
     onClick: () -> Unit
 ) {
-    val contentColor = if (letter.isRead) Color.Black else Color(0xFFBCBCBC)
+    val contentColor = if (letter.isRead) Color.Black else Color(0xFF9E9E9E)
 
     Column(
         modifier = Modifier
@@ -179,9 +172,9 @@ fun TimeLetterRow(
         Text(
             text = letter.sendAt,
             fontSize = 13.sp,
-            color = Color(0xFFBCBCBC)
+            color = Color(0xFFBDBDBD)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = letter.title,
             fontSize = 16.sp,
@@ -219,9 +212,7 @@ private fun ReceiverTimeLetterListScreenPreview() {
                 )
             )
         ),
-        selectedBottomNavItem = BottomNavItem.TIME_LETTER,
         onBackClick = {},
-        onBottomNavSelected = {},
         onLetterClick = {}
     )
 }

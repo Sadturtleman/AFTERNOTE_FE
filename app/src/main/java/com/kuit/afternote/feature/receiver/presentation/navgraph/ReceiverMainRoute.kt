@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
@@ -170,11 +171,10 @@ fun ReceiverMainRoute(
                                 isLoading = timeLetterUiState.isLoading,
                                 errorMessage = timeLetterUiState.errorMessage
                             ),
-                            selectedBottomNavItem = selectedBottomNavItem,
                             onBackClick = { showTimeLetterList = false },
-                            onBottomNavSelected = {
-                                selectedBottomNavItem = it
-                                timeLetterViewModel.updateSelectedBottomNavItem(it)
+                            sortModeLabelResId = when (timeLetterListMode) {
+                                TimeLetterListMode.SortByDate -> R.string.receiver_timeletter_sort_by_date
+                                TimeLetterListMode.UnreadOnly -> R.string.receiver_timeletter_sort_unread_first
                             },
                             onLetterClick = { item ->
                                 val letter = timeLetterUiState.timeLetters.find {
