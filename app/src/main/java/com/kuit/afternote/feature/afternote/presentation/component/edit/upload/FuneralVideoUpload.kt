@@ -97,7 +97,7 @@ fun FuneralVideoUpload(
             Pair(bmp, bytes)
         }
         thumbnailBitmap = bitmap?.asImageBitmap()
-        onThumbnailBytesReady(jpegBytes)
+        runCatching { onThumbnailBytesReady(jpegBytes) }.onFailure { /* avoid throwing from LaunchedEffect */ }
     }
 
     Column(

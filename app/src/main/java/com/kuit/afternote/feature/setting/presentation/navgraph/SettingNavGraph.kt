@@ -35,6 +35,8 @@ import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordM
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreenCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
@@ -83,7 +85,8 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         ProfileEditScreen(
             callbacks = ProfileEditCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onUpdateSuccess = { navController.popBackStack() }
+                onUpdateSuccess = { navController.popBackStack() },
+                onWithdrawClick = { navController.navigate(SettingRoute.WithdrawalRoute) }
             )
         )
     }
@@ -115,6 +118,19 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
             items = sampleNoticeItems(),
             onBackClick = { navController.popBackStack() },
             onItemClick = { }
+        )
+    }
+    composable<SettingRoute.WithdrawalRoute> {
+        WithdrawalScreen(
+            accountDisplay = "박서연(example@mail.com)",
+            callbacks = WithdrawalScreenCallbacks(
+                onBackClick = { navController.popBackStack() },
+                onWithdrawClick = {
+                    // TODO: API 연동 후 실제 탈퇴 처리 구현
+                    Log.d(TAG_SETTING_NAV, "Withdraw confirmed")
+                },
+                onCancelClick = { navController.popBackStack() }
+            )
         )
     }
 }

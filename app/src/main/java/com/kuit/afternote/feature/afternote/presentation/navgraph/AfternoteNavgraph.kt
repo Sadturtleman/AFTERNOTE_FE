@@ -553,7 +553,9 @@ private fun AfternoteEditRouteContent(
     val uploadedThumbnailUrl by editViewModel.uploadedThumbnailUrl.collectAsStateWithLifecycle(initialValue = null)
     LaunchedEffect(uploadedThumbnailUrl) {
         if (uploadedThumbnailUrl != null) {
-            state.onFuneralThumbnailDataUrlReady(uploadedThumbnailUrl)
+            runCatching {
+                state.onFuneralThumbnailDataUrlReady(uploadedThumbnailUrl)
+            }.onFailure { e -> Log.e(TAG_AFTERNOTE_EDIT, "apply uploadedThumbnailUrl failed", e) }
             editViewModel.clearUploadedThumbnailUrl()
         }
     }
