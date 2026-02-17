@@ -71,8 +71,6 @@ private const val TAG_AFTERNOTE_EDIT = "AfternoteEdit"
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 private const val TAG_AFTERNOTE_DETAIL = "AfternoteDetail"
 
-private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
-
 /**
  * Holder and clear callback for hoisted edit state (keeps param count ≤7).
  */

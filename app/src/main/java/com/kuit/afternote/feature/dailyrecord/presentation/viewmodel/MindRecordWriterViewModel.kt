@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.viewmodel
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -19,6 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val TAG = "MindRecordWriterViewModel"
+
 @HiltViewModel
 class MindRecordWriterViewModel
 @Inject
@@ -105,7 +107,7 @@ constructor(
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, saveErrorMessage = null) }
             val state = _uiState.value
             val sendAt = buildSendAt(state.sendDate)
             val result = createMindRecordUseCase(
@@ -118,8 +120,8 @@ constructor(
 
             _uiState.update { it.copy(isLoading = false) }
             result.onSuccess { _ ->
-                Log.d(TAG, "saveTimeLetter onSuccess")
-                //hideWaitingAgainPopUp()
+                Log.d(TAG, "saveMindRecord onSuccess")
+                _uiState.update { it.copy(saveErrorMessage = null) }
                 if (showPopUpAfterSuccess) {
                     _uiState.update { it.copy(showRegisteredPopUp = true) }
                     delay(2000L)
@@ -129,9 +131,11 @@ constructor(
                     onSuccess()
                 }
             }
-            result.onFailure {
-                Log.e(TAG, "mindRecord failed", it)
-                // TODO: 에러 메시지 UiState에 반영
+            result.onFailure { e ->
+                Log.e(TAG, "saveMindRecord failed", e)
+                _uiState.update {
+                    it.copy(saveErrorMessage = e.message ?: "저장에 실패했습니다.")
+                }
             }
         }
     }

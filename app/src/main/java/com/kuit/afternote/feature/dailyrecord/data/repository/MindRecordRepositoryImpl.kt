@@ -6,6 +6,8 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
+import com.kuit.afternote.feature.dailyrecord.data.dto.ReceiverEnabledRequest
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class MindRecordRepositoryImpl @Inject constructor(
@@ -25,18 +27,40 @@ class MindRecordRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMindRecord(recordId: Long) {
-        apiService.deleteMindRecord(recordId)
+        val response = apiService.deleteMindRecord(recordId)
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
     }
     override suspend fun getMindRecord(recordId: Long): MindRecordDetailResponse {
         val response = apiService.getMindRecord(recordId)
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
         return response.body() ?: throw IllegalStateException("Response body is null")
     }
 
     override suspend fun editMindRecord(recordId: Long, request: PostMindRecordRequest): MindRecordDetailResponse {
         val response = apiService.editMindRecord(recordId, request)
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
         return response.body() ?: throw IllegalStateException("Response body is null")
     }
 
-
+    override suspend fun setMindRecordReceiverEnabled(
+        recordId: Long,
+        receiverId: Long,
+        enabled: Boolean
+    ) {
+        val response = apiService.setMindRecordReceiverEnabled(
+            recordId,
+            receiverId,
+            ReceiverEnabledRequest(enabled = enabled)
+        )
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
+    }
 }
 

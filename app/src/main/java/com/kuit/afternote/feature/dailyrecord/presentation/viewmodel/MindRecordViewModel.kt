@@ -28,6 +28,30 @@ import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import javax.inject.Inject
 
+private const val TAG = "MindRecordViewModel"
+
+/** Params for [MindRecordViewModel.onCreateRecord] to satisfy S107 (max 7 params). */
+data class CreateRecordParams(
+    val type: String,
+    val title: String,
+    val content: String,
+    val date: String,
+    val isDraft: Boolean,
+    val questionId: Long? = null,
+    val category: String? = null
+)
+
+/** Params for [MindRecordViewModel.editRecord] to satisfy S107 (max 7 params). */
+data class EditRecordParams(
+    val recordId: Long,
+    val title: String,
+    val content: String,
+    val date: String,
+    val type: String,
+    val category: String?,
+    val isDraft: Boolean
+)
+
 @HiltViewModel
 class MindRecordViewModel @Inject constructor(
     private val getMindRecordsUseCase: GetMindRecordsUseCase,
@@ -102,8 +126,7 @@ class MindRecordViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                // 예외 로그 찍기
-                Log.e("MindRecordViewModel", "loadRecords 실패", e)
+                Log.e(TAG, "loadRecords failed type=$type view=$view", e)
                 _records.value = emptyList()
             }
         }
@@ -113,33 +136,23 @@ class MindRecordViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MindRecordUiState())
     val uiState: StateFlow<MindRecordUiState> = _uiState
 
-    fun onCreateRecord(
-        type: String,
-        title: String,
-        content: String,
-        date: String,
-        isDraft: Boolean,
-        questionId: Long? = null,
-        category: String? = null,
-        onSuccess: () -> Unit = {}
-    ) {
+    fun onCreateRecord(params: CreateRecordParams, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
-            val result = createMindRecordUseCase(
-                type = type,
-                title = title.ifBlank { null },
-                content = content,
-                date = date,
-                isDraft = isDraft,
-                questionId = questionId,
-                category = category
-            )
-            result.fold(
+            createMindRecordUseCase(
+                type = params.type,
+                title = params.title.ifBlank { null },
+                content = params.content,
+                date = params.date,
+                isDraft = params.isDraft,
+                questionId = params.questionId,
+                category = params.category
+            ).fold(
                 onSuccess = {
-                    loadRecords(type)
+                    loadRecords(params.type)
                     onSuccess()
                 },
                 onFailure = { e ->
-                    Log.e("MindRecordViewModel", "onCreateRecord 실패", e)
+                    Log.e(TAG, "onCreateRecord failed type=${params.type}", e)
                 }
             )
         }
@@ -152,7 +165,7 @@ class MindRecordViewModel @Inject constructor(
                 loadRecords(recordType)
                 onSuccess()
             } catch (e: Exception) {
-                Log.e("MindRecordViewModel", "deleteRecord 실패", e)
+                Log.e(TAG, "deleteRecord failed recordId=$recordId", e)
             }
         }
     }
@@ -183,30 +196,29 @@ class MindRecordViewModel @Inject constructor(
                     _selectedRecord.value = null
                 }
             } catch (e: Exception) {
-                Log.e("MindRecordViewModel", "loadRecord 실패", e)
+                Log.e(TAG, "loadRecord failed recordId=$recordId", e)
                 _selectedRecord.value = null
             }
         }
     }
 
-    fun editRecord(
-        recordId: Long,
-        title: String,
-        content: String,
-        date: String,
-        type: String,
-        category: String?,
-        isDraft: Boolean,
-        onSuccess: () -> Unit = {}
-    ) {
+    fun editRecord(params: EditRecordParams, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             try {
-                val request = PostMindRecordRequest(title, content, date, type, isDraft, questionId = null,category)
-                val result = editMindRecordUseCase(recordId, request).getOrThrow()
-                loadRecords(type)
+                val request = PostMindRecordRequest(
+                    params.title,
+                    params.content,
+                    params.date,
+                    params.type,
+                    params.isDraft,
+                    questionId = null,
+                    params.category
+                )
+                editMindRecordUseCase(params.recordId, request).getOrThrow()
+                loadRecords(params.type)
                 onSuccess()
             } catch (e: Exception) {
-                Log.e("MindRecordViewModel", "editRecord 실패", e)
+                Log.e(TAG, "editRecord failed recordId=${params.recordId}", e)
             }
         }
     }
