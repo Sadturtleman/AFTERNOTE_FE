@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
-import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.DeleteMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCase
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -81,10 +79,15 @@ class MindRecordViewModel @Inject constructor(
         val parts = date.split("-")
         return "${parts[1].toInt()}월 ${parts[2].toInt()}일"
     }
-    fun loadRecords() {
+    fun loadRecords(
+        type: String,
+        view: String = "LIST",
+        year: Int? = null,
+        month: Int? = null
+    ) {
         viewModelScope.launch {
             try {
-                val response = getMindRecordsUseCase()
+                val response = getMindRecordsUseCase(type, view, year, month)
                 val domainRecords = response ?: emptyList() // null 방어
 
                 _records.value = domainRecords.map { summary ->
@@ -94,7 +97,8 @@ class MindRecordViewModel @Inject constructor(
                         formattedDate = runCatching { formatDate(summary.date) }
                             .getOrElse { summary.date }, // 포맷 실패 시 원본 날짜 사용
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
-                        originalDate = summary.date
+                        originalDate = summary.date,
+                        type = summary.type
                     )
                 }
             } catch (e: Exception) {
@@ -120,30 +124,32 @@ class MindRecordViewModel @Inject constructor(
         onSuccess: () -> Unit = {}
     ) {
         viewModelScope.launch {
-            try {
-                val result = createMindRecordUseCase(
-                    type = type,
-                    title = title,
-                    content = content,
-                    date = date,
-                    isDraft = isDraft,
-                    questionId = questionId,
-                    category = category
-                )
-                //_uiState.update { it.copy(isCreated = true, newRecord = result) }
-                loadRecords()
-                onSuccess() // 성공 시 콜백 실행
-            } catch (e: Exception) {
-               // _uiState.update { it.copy(errorMessage = e.message) }
-            }
+            val result = createMindRecordUseCase(
+                type = type,
+                title = title.ifBlank { null },
+                content = content,
+                date = date,
+                isDraft = isDraft,
+                questionId = questionId,
+                category = category
+            )
+            result.fold(
+                onSuccess = {
+                    loadRecords(type)
+                    onSuccess()
+                },
+                onFailure = { e ->
+                    Log.e("MindRecordViewModel", "onCreateRecord 실패", e)
+                }
+            )
         }
     }
 
-    fun deleteRecord(recordId: Long, onSuccess: () -> Unit = {}) {
+    fun deleteRecord(recordId: Long, recordType: String, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             try {
                 deleteMindRecordUseCase(recordId)
-                loadRecords()
+                loadRecords(recordType)
                 onSuccess()
             } catch (e: Exception) {
                 Log.e("MindRecordViewModel", "deleteRecord 실패", e)
@@ -197,7 +203,7 @@ class MindRecordViewModel @Inject constructor(
             try {
                 val request = PostMindRecordRequest(title, content, date, type, isDraft, questionId = null,category)
                 val result = editMindRecordUseCase(recordId, request).getOrThrow()
-                loadRecords()
+                loadRecords(type)
                 onSuccess()
             } catch (e: Exception) {
                 Log.e("MindRecordViewModel", "editRecord 실패", e)

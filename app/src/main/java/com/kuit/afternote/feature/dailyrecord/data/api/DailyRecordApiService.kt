@@ -1,17 +1,42 @@
 package com.kuit.afternote.feature.dailyrecord.data.api
 
-import com.kuit.afternote.feature.dailyrecord.data.dto.*
+import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
+import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
+import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
+import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
+import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
+import com.kuit.afternote.feature.dailyrecord.data.dto.ReceiverEnabledRequest
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * 마음의 기록 API 서비스 (Swagger 기준)
+ *
+ *
  */
 interface DailyRecordApiService {
 
-    // 전체 기록 목록 조회
+    /**
+     * 마음의 기록 목록 조회 (GET /mind-records)
+     *
+     * @param type 기록 유형 (DAILY_QUESTION, DIARY, DEEP_THOUGHT)
+     * @param view 조회 화면 타입 (LIST, CALENDAR)
+     * @param year 연도 (view=CALENDAR일 때)
+     * @param month 월 1~12 (view=CALENDAR일 때)
+     */
     @GET("mind-records")
-    suspend fun getMindRecords(): MindRecordListResponse
+    suspend fun getMindRecords(
+        @Query("type") type: String,
+        @Query("view") view: String = "LIST",
+        @Query("year") year: Int? = null,
+        @Query("month") month: Int? = null
+    ): MindRecordListResponse
 
     // 기록 작성
     @POST("mind-records")

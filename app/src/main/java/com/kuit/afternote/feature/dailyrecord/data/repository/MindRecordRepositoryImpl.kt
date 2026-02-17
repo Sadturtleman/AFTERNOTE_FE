@@ -11,8 +11,13 @@ import javax.inject.Inject
 class MindRecordRepositoryImpl @Inject constructor(
     private val apiService: DailyRecordApiService
 ) : MindRecordRepository{
-    override suspend fun getMindRecords(): MindRecordListResponse {
-        return apiService.getMindRecords()
+    override suspend fun getMindRecords(
+        type: String,
+        view: String,
+        year: Int?,
+        month: Int?
+    ): MindRecordListResponse {
+        return apiService.getMindRecords(type = type, view = view, year = year, month = month)
     }
 
     override suspend fun createMindRecord(request: CreateMindRecordRequest): PostMindRecordResponse {

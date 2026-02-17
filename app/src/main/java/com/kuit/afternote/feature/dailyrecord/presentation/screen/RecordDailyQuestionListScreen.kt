@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -38,10 +38,10 @@ fun RecordDailyQuestionListScreen(
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
-    val records by viewModel.records.collectAsState() // UIModel 구독
+    val records by viewModel.records.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadRecords()
+        viewModel.loadRecords("DAILY_QUESTION")
     }
 
     Scaffold(
@@ -82,13 +82,12 @@ fun RecordDailyQuestionListScreen(
                     RecordListItem(
                         record = record,
                         onDeleteClick = {
-                            viewModel.deleteRecord(record.id){
-                                viewModel.loadRecords()
-                            }
+                            viewModel.deleteRecord(
+                                recordId = record.id,
+                                recordType = record.type ?: "DAILY_QUESTION"
+                            )
                         },
-                        onEditClick = { record->
-                            onEditClick(record)
-                        }
+                        onEditClick = { recordId -> onEditClick(recordId) }
                     ) // 이제 UIModel을 그대로 넘김
                 }
             }

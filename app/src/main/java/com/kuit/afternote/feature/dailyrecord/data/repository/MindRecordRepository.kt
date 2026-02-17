@@ -7,7 +7,12 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
 
 interface MindRecordRepository {
-    suspend fun getMindRecords(): MindRecordListResponse
+    suspend fun getMindRecords(
+        type: String,
+        view: String = "LIST",
+        year: Int? = null,
+        month: Int? = null
+    ): MindRecordListResponse
 
     suspend fun createMindRecord(request: CreateMindRecordRequest): PostMindRecordResponse
 

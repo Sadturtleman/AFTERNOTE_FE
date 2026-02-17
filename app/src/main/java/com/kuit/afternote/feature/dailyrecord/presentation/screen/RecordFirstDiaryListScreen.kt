@@ -19,7 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,10 +52,10 @@ fun RecordFirstDiaryListScreen(
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
-    val records by viewModel.records.collectAsState() // UIModel 구독
+    val records by viewModel.records.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadRecords()
+        viewModel.loadRecords("DIARY")
     }
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -110,8 +110,11 @@ fun RecordFirstDiaryListScreen(
                 items(records) { record ->
                     RecordListItem(
                         record = record,
-                        onDeleteClick ={
-                            viewModel.deleteRecord(record.id)
+                        onDeleteClick = {
+                            viewModel.deleteRecord(
+                                recordId = record.id,
+                                recordType = record.type ?: "DIARY"
+                            )
                         },
                         onEditClick = { recordId ->
                             onEditClick(recordId)

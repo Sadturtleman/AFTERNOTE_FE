@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.toRoute
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,8 +33,8 @@ fun NavGraphBuilder.recordNavGraph(
 
     composable("record_main") {
         RecordMainScreen(
-            onDiaryClick = { navController.navigate(RecordRoute.DiaryRoute) },
-            onQuestionClick = { navController.navigate(RecordRoute.QuestionRoute) },
+            onDiaryClick = { navController.navigate(RecordRoute.ListRoute) },
+            onQuestionClick = { navController.navigate(RecordRoute.QuestionRouteList) },
             onDeepMindClick = { navController.navigate(RecordRoute.DeepMindRoute) },
             onWeekendReportClick = { navController.navigate(RecordRoute.WeekendReportRoute) },
             onBottomNavTabSelected = onBottomNavTabSelected
@@ -50,10 +51,6 @@ fun NavGraphBuilder.recordNavGraph(
             onBottomNavTabSelected = onBottomNavTabSelected,
             viewModel = viewModel
         )
-        LaunchedEffect(Unit) {
-            viewModel.loadRecords()
-        }
-
     }
     composable<RecordRoute.QuestionRouteList> {
         val viewModel: MindRecordViewModel = hiltViewModel()
@@ -66,10 +63,6 @@ fun NavGraphBuilder.recordNavGraph(
             onBottomNavTabSelected = onBottomNavTabSelected,
             viewModel = viewModel
         )
-        LaunchedEffect(Unit) {
-            viewModel.loadRecords()
-        }
-
     }
     composable<RecordRoute.DiaryRoute> {
         val viewModel: MindRecordWriterViewModel = hiltViewModel()
@@ -101,6 +94,7 @@ fun NavGraphBuilder.recordNavGraph(
 
         RecordQuestionScreen(
             onLeftClick = { navController.popBackStack() },
+            onRegisterSuccess = { navController.popBackStack() },
             record = record,
             viewModel = viewModel
         )
@@ -126,13 +120,19 @@ fun NavGraphBuilder.recordNavGraph(
             onBottomNavTabSelected = onBottomNavTabSelected
         )
     }
-    composable<RecordRoute.EditRoute> { _ ->
+    composable<RecordRoute.EditRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<RecordRoute.EditRoute>()
         val viewModel: MindRecordViewModel = hiltViewModel()
         val record by viewModel.selectedRecord.collectAsState()
 
+        LaunchedEffect(route.recordId) {
+            viewModel.loadRecord(route.recordId)
+        }
+
         RecordQuestionScreen(
-            record = record, // 수정 시 기존 데이터 전달
+            record = record,
             onLeftClick = { navController.popBackStack() },
+            onRegisterSuccess = { navController.popBackStack() },
             viewModel = viewModel
         )
 
