@@ -2,6 +2,8 @@ package com.kuit.afternote.feature.dailyrecord.presentation.uimodel
 
 data class MindRecordUiState(
     val createErrorMessage: String? = null,
+    /** 오늘의 데일리 질문 텍스트 (GET /daily-question content). null이면 로딩 중 또는 실패. */
+    val dailyQuestionText: String? = null,
     val title: String = "",
     val content: String = "",
     val sendDate: String = "",

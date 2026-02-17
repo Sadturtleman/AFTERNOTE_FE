@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.kuit.afternote.R
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryQuestionContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
@@ -42,6 +44,9 @@ fun RecordQuestionScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(record) {
+        if (record == null) {
+            viewModel.loadDailyQuestion()
+        }
         record?.let {
             title = it.title
             content = it.content ?: ""
@@ -98,6 +103,8 @@ fun RecordQuestionScreen(
 
             item {
                 RecordDiaryQuestionContentItem(
+                    questionText = uiState.dailyQuestionText
+                        ?: stringResource(R.string.daily_answer_sample_question),
                     title = title,
                     onTitleChange = { title = it },
                     content = content,

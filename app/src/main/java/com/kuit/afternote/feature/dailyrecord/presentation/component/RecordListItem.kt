@@ -37,13 +37,13 @@ import java.time.LocalDate
 fun RecordListItem(
     record: MindRecordUiModel,
     onDeleteClick: (Long) -> Unit,
-    onEditClick: (Long) -> Unit
+    onEditClick: (Long, String?) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     RecordQnAListItem(
         question = record.title,
-        answer = record.draftLabel,
+        answer = (record.content ?: record.title).ifBlank { "-" },
         dateText = record.formattedDate,
         trailing = {
             Row(
@@ -72,7 +72,7 @@ fun RecordListItem(
                         text = { Text("수정하기", fontFamily = Sansneo) },
                         onClick = {
                             expanded = false
-                            onEditClick(record.id) // 수정 클릭 시 recordId 전달
+                            onEditClick(record.id, record.type)
                         }
                     )
                     DropdownMenuItem(

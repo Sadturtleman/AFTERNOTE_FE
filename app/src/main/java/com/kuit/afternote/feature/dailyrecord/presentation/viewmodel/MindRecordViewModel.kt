@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -121,15 +122,46 @@ class MindRecordViewModel @Inject constructor(
                         id = summary.recordId,
                         title = summary.title,
                         formattedDate = runCatching { formatDate(summary.date) }
-                            .getOrElse { summary.date }, // 포맷 실패 시 원본 날짜 사용
+                            .getOrElse { summary.date },
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
+                        content = summary.content,
                         originalDate = summary.date,
                         type = summary.type
                     )
                 }
             } catch (e: Exception) {
-                // 예외 로그 찍기
                 Log.e("MindRecordViewModel", "loadRecords 실패", e)
+                _records.value = emptyList()
+            }
+        }
+    }
+
+    /**
+     * 일기(DIARY)와 깊은 생각(DEEP_THOUGHT)을 모두 조회하여 합칩니다.
+     * RecordFirstDiaryListScreen에서 사용합니다.
+     */
+    fun loadRecordsForDiaryList() {
+        viewModelScope.launch {
+            try {
+                val diaryList = getMindRecordsUseCase("DIARY", "LIST", null, null)
+                val deepThoughtList = getMindRecordsUseCase("DEEP_THOUGHT", "LIST", null, null)
+                val combined = (diaryList ?: emptyList()) + (deepThoughtList ?: emptyList())
+                val sorted = combined.sortedByDescending { it.date }
+
+                _records.value = sorted.map { summary ->
+                    MindRecordUiModel(
+                        id = summary.recordId,
+                        title = summary.title,
+                        formattedDate = runCatching { formatDate(summary.date) }
+                            .getOrElse { summary.date },
+                        draftLabel = if (summary.isDraft) "임시저장" else "완료",
+                        content = summary.content,
+                        originalDate = summary.date,
+                        type = summary.type
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("MindRecordViewModel", "loadRecordsForDiaryList 실패", e)
                 _records.value = emptyList()
             }
         }
@@ -139,23 +171,57 @@ class MindRecordViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MindRecordUiState())
     val uiState: StateFlow<MindRecordUiState> = _uiState
 
+    /**
+     * 오늘의 데일리 질문을 조회하여 UI에 표시합니다.
+     * RecordQuestionScreen 진입 시(record == null) 호출합니다.
+     */
+    fun loadDailyQuestion() {
+        viewModelScope.launch {
+            val data = getDailyQuestionUseCase()
+            _uiState.update { it.copy(dailyQuestionText = data?.content) }
+        }
+    }
+
     fun onCreateRecord(params: CreateRecordParams, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
+            val resolvedQuestionId = when {
+                params.type == "DAILY_QUESTION" && params.questionId == null -> {
+                    val data = getDailyQuestionUseCase()
+                    if (data == null) {
+                        _uiState.update {
+                            it.copy(createErrorMessage = "오늘의 질문을 불러올 수 없습니다.")
+                        }
+                        return@launch
+                    }
+                    data.questionId
+                }
+                else -> params.questionId
+            }
+
             createMindRecordUseCase(
                 type = params.type,
                 title = params.title.ifBlank { null },
                 content = params.content,
                 date = params.date,
                 isDraft = params.isDraft,
-                questionId = params.questionId,
+                questionId = resolvedQuestionId,
                 category = params.category
             ).fold(
                 onSuccess = {
+                    _uiState.update { it.copy(createErrorMessage = null) }
                     loadRecords(params.type)
                     onSuccess()
                 },
                 onFailure = { e ->
                     Log.e("MindRecordViewModel", "onCreateRecord 실패", e)
+                    val message = when (e) {
+                        is HttpException -> when (e.code()) {
+                            401 -> "인증이 만료되었습니다. 다시 로그인해 주세요."
+                            else -> e.message() ?: "등록에 실패했습니다."
+                        }
+                        else -> e.message ?: "등록에 실패했습니다."
+                    }
+                    _uiState.update { it.copy(createErrorMessage = message) }
                 }
             )
         }
@@ -165,15 +231,35 @@ class MindRecordViewModel @Inject constructor(
         _uiState.update { it.copy(createErrorMessage = null) }
     }
 
-    fun deleteRecord(recordId: Long, recordType: String, onSuccess: () -> Unit = {}) {
+    /**
+     * 기록을 삭제하고 목록을 갱신합니다.
+     *
+     * @param recordId 삭제할 기록 ID
+     * @param recordType 기록 유형 (갱신 시 loadRecords에 사용)
+     * @param onReload 삭제 성공 후 목록 갱신 콜백. null이면 loadRecords(recordType) 호출.
+     *                 일기 목록(DIARY+DEEP_THOUGHT 통합)에서는 loadRecordsForDiaryList 전달.
+     * @param onSuccess 삭제 성공 시 콜백
+     */
+    fun deleteRecord(
+        recordId: Long,
+        recordType: String,
+        onReload: (() -> Unit)? = null,
+        onSuccess: () -> Unit = {}
+    ) {
         viewModelScope.launch {
-            try {
-                deleteMindRecordUseCase(recordId)
-                loadRecords(recordType)
-                onSuccess()
-            } catch (e: Exception) {
-                Log.e(TAG, "deleteRecord failed recordId=$recordId", e)
-            }
+            deleteMindRecordUseCase(recordId).fold(
+                onSuccess = {
+                    if (onReload != null) {
+                        onReload()
+                    } else {
+                        loadRecords(recordType)
+                    }
+                    onSuccess()
+                },
+                onFailure = { e ->
+                    Log.e(TAG, "deleteRecord failed recordId=$recordId", e)
+                }
+            )
         }
     }
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordWriterViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,25 +34,17 @@ import java.time.format.DateTimeFormatter
 fun RecordDiaryScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
-
+    viewModel: MindRecordWriterViewModel,
     title: String,
     content: String,
     onTitleChange: (String) -> Unit,
     onContentChange: (String) -> Unit,
-
-    //발송시간
     onDateClick: () -> Unit,
     sendDate: String,
     showDatePicker: Boolean,
     onDatePickerDismiss: () -> Unit,
-
-    //등록 버튼
     onRegisterClick: () -> Unit,
 ) {
-//    var title by remember { mutableStateOf("") }
-//    var content by remember { mutableStateOf("") }
-    var sendDate by remember { mutableStateOf("") }
-    var showDatePicker by remember { mutableStateOf(false) }
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     Scaffold { paddingValues ->
         LazyColumn(
@@ -72,14 +65,15 @@ fun RecordDiaryScreen(
                     standard = "일기 기록하기",
                     onDateSelected = { year, month, day ->
                         val selectedDate = LocalDate.of(year, month, day)
-                        sendDate = selectedDate.format(formatter)   // 원하는 형식으로 변환
-                        showDatePicker = false
-                    } ,
+                        viewModel.updateSendDate(selectedDate.format(formatter))
+                        viewModel.hideDatePicker()
+                    },
                     title = title,
                     onTitleChange = onTitleChange,
                     content = content,
                     onContentChange = onContentChange,
-                    onDateClick = { showDatePicker = true },                    sendDate = sendDate,
+                    onDateClick = onDateClick,
+                    sendDate = sendDate,
                     showDatePicker = showDatePicker,
                     onDatePickerDismiss = onDatePickerDismiss,
                 )

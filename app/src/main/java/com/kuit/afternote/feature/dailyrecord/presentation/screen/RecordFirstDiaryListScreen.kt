@@ -47,7 +47,7 @@ fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
-    onEditClick: (Long) -> Unit,
+    onEditClick: (Long, String?) -> Unit,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
@@ -55,7 +55,7 @@ fun RecordFirstDiaryListScreen(
     val records by viewModel.records.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadRecords("DIARY")
+        viewModel.loadRecordsForDiaryList()
     }
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -113,11 +113,12 @@ fun RecordFirstDiaryListScreen(
                         onDeleteClick = {
                             viewModel.deleteRecord(
                                 recordId = record.id,
-                                recordType = record.type ?: "DIARY"
+                                recordType = record.type ?: "DIARY",
+                                onReload = { viewModel.loadRecordsForDiaryList() }
                             )
                         },
-                        onEditClick = { recordId ->
-                            onEditClick(recordId)
+                        onEditClick = { recordId, recordType ->
+                            onEditClick(recordId, recordType)
                         }
                         ) // 이제 UIModel을 그대로 넘김
                 }

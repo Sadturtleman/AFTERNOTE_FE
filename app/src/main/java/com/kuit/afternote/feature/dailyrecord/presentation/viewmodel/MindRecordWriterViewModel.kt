@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.DeleteMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordsUseCase
+import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -30,11 +32,67 @@ constructor(
     private val deleteMindRecordUseCase: DeleteMindRecordUseCase,
     private val editMindRecordUseCase: EditMindRecordUseCase,
     private val getMindRecordsUseCase: GetMindRecordsUseCase,
-    private val getMindRecordUseCase: EditMindRecordUseCase,
-) : ViewModel(){
+    private val getMindRecordUseCase: GetMindRecordUseCase,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(MindRecordUiState())
     val uiState: StateFlow<MindRecordUiState> = _uiState.asStateFlow()
     private var waitingAgainPopUpJob: Job? = null
+
+    /** 수정 모드일 때의 기록 ID. null이면 신규 작성. */
+    private var recordIdForEdit: Long? = null
+
+    /** 수정 모드일 때의 기록 유형 (DIARY, DEEP_THOUGHT). 저장 시 사용. */
+    private var recordTypeForEdit: String? = null
+
+    init {
+        val today = java.time.LocalDate.now()
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+        _uiState.update { it.copy(sendDate = today.format(formatter)) }
+    }
+
+    /**
+     * 수정 모드: 기존 기록을 불러와 UI 상태를 채웁니다.
+     * EditDiaryRoute/EditDeepMindRoute 진입 시 호출됩니다.
+     */
+    fun loadRecordForEdit(recordId: Long) {
+        viewModelScope.launch {
+            getMindRecordUseCase(recordId).fold(
+                onSuccess = { response ->
+                    val detail = response.data
+                    if (detail != null) {
+                        recordIdForEdit = recordId
+                        recordTypeForEdit = detail.type
+                        val sendDateFormatted = formatApiDateToDisplay(detail.date)
+                        _uiState.update {
+                            it.copy(
+                                title = detail.title,
+                                content = detail.content,
+                                sendDate = sendDateFormatted.ifBlank { it.sendDate }
+                            )
+                        }
+                        validateSaveEnabled()
+                    }
+                },
+                onFailure = { e ->
+                    Log.e(TAG, "loadRecordForEdit failed recordId=$recordId", e)
+                }
+            )
+        }
+    }
+
+    /** "yyyy-MM-dd" → "yyyy년 MM월 dd일" 변환 */
+    private fun formatApiDateToDisplay(apiDate: String): String {
+        if (apiDate.isBlank()) return ""
+        return try {
+            val formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val parsed = java.time.LocalDate.parse(apiDate, formatter)
+            val displayFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+            parsed.format(displayFormatter)
+        } catch (e: Exception) {
+            Log.e(TAG, "formatApiDateToDisplay failed: $apiDate", e)
+            ""
+        }
+    }
 
     /**
      * 제목 업데이트
@@ -94,33 +152,54 @@ constructor(
     }
 
     /**
-     * 등록 버튼 클릭 시: 등록 완료 팝업을 잠깐 보여준 뒤 실제 타임레터 정식등록을 수행합니다.
+     * 등록 버튼 클릭 시: 등록 완료 팝업을 잠깐 보여준 뒤 실제 등록을 수행합니다.
      *
+     * @param type 기록 유형 (DIARY, DEEP_THOUGHT)
      * @param onSuccess 저장 성공 시 콜백
      */
-    fun registerWithPopUpThenSave(onSuccess: () -> Unit) {
-        saveMindRecord(onSuccess = onSuccess)
+    fun registerWithPopUpThenSave(type: String, onSuccess: () -> Unit) {
+        saveMindRecord(type = type, onSuccess = onSuccess)
     }
 
     fun saveMindRecord(
+        type: String,
         showPopUpAfterSuccess: Boolean = true,
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, saveErrorMessage = null) }
             val state = _uiState.value
-            val sendAt = buildSendAt(state.sendDate)
-            val result = createMindRecordUseCase(
-                type = "DIARY", // 혹은 "MIND_RECORD" 등 서버에서 요구하는 타입
-                title = state.title.ifBlank { null },
-                content = state.content.ifBlank { null },
-                date = sendAt,
-                isDraft = false
-            )
+            val dateStr = parseSendDateToApiFormat(state.sendDate) ?: return@launch.also {
+                _uiState.update { it.copy(isLoading = false, saveErrorMessage = "날짜 형식이 올바르지 않습니다.") }
+            }
+
+            val effectiveType = recordTypeForEdit ?: type
+            val result = if (recordIdForEdit != null) {
+                val request = PostMindRecordRequest(
+                    type = effectiveType,
+                    title = state.title.ifBlank { "" },
+                    content = state.content.ifBlank { "" },
+                    date = dateStr,
+                    isDraft = false,
+                    questionId = null,
+                    category = null
+                )
+                editMindRecordUseCase(recordIdForEdit!!, request)
+            } else {
+                createMindRecordUseCase(
+                    type = type,
+                    title = state.title.ifBlank { null },
+                    content = state.content.ifBlank { null },
+                    date = dateStr,
+                    isDraft = false,
+                    questionId = null,
+                    category = null
+                )
+            }
 
             _uiState.update { it.copy(isLoading = false) }
             result.onSuccess { _ ->
-                Log.d(TAG, "saveMindRecord onSuccess")
+                Log.d(TAG, "saveMindRecord onSuccess type=$effectiveType edit=${recordIdForEdit != null}")
                 _uiState.update { it.copy(saveErrorMessage = null) }
                 if (showPopUpAfterSuccess) {
                     _uiState.update { it.copy(showRegisteredPopUp = true) }
@@ -139,14 +218,19 @@ constructor(
             }
         }
     }
+
     /**
-     * sendAt 문자열 생성 (yyyy. MM. dd + HH:mm -> yyyy-MM-ddTHH:mm:00)
+     * "yyyy년 MM월 dd일" 형식을 API 요구 형식 "yyyy-MM-dd"로 변환합니다.
      */
-    private fun buildSendAt(
-        sendDate: String,
-    ): String? {
+    private fun parseSendDateToApiFormat(sendDate: String): String? {
         if (sendDate.isBlank()) return null
-        val normalizedDate = sendDate.replace(". ", "-").trim()
-        return "$normalizedDate"
+        return try {
+            val formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+            val parsed = java.time.LocalDate.parse(sendDate, formatter)
+            parsed.toString()
+        } catch (e: Exception) {
+            Log.e(TAG, "parseSendDateToApiFormat failed: $sendDate", e)
+            null
+        }
     }
 }

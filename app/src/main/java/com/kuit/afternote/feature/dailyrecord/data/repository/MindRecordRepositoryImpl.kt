@@ -7,14 +7,16 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.ReceiverEnabledRequest
+import com.kuit.afternote.feature.dailyrecord.domain.model.DailyQuestionData
 import retrofit2.HttpException
 import javax.inject.Inject
 
 class MindRecordRepositoryImpl @Inject constructor(
     private val apiService: DailyRecordApiService
 ) : MindRecordRepository {
-    override suspend fun getDailyQuestion(): Long? = try {
-        apiService.getDailyQuestion().questionId
+    override suspend fun getDailyQuestion(): DailyQuestionData? = try {
+        val response = apiService.getDailyQuestion()
+        DailyQuestionData(questionId = response.questionId, content = response.content)
     } catch (e: Exception) {
         null
     }

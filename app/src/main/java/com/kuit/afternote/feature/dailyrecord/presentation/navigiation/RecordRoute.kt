@@ -27,4 +27,11 @@ sealed interface RecordRoute {
     @Serializable
     data class EditRoute(val recordId: Long) : RecordRoute
 
+    /** 일기(DIARY) 수정 화면. RecordDiaryScreen을 기존 내용으로 재구성합니다. */
+    @Serializable
+    data class EditDiaryRoute(val recordId: Long) : RecordRoute
+
+    /** 깊은 생각(DEEP_THOUGHT) 수정 화면. RecordDeepMindScreen을 기존 내용으로 재구성합니다. */
+    @Serializable
+    data class EditDeepMindRoute(val recordId: Long) : RecordRoute
 }

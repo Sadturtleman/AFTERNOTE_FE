@@ -47,7 +47,9 @@ data class MindRecordSummary(
     /** 기록 날짜 (yyyy-MM-dd) */
     val date: String,
     /** 임시 저장 여부 */
-    val isDraft: Boolean
+    val isDraft: Boolean,
+    /** 기록 내용 (목록 API에서 제공 시). 없으면 null */
+    val content: String? = null
 )
 
 /**

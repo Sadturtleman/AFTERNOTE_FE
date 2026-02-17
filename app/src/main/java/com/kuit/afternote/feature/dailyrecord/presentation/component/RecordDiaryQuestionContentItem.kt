@@ -20,6 +20,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun RecordDiaryQuestionContentItem(
     modifier: Modifier = Modifier,
+    questionText: String,
     title: String,
     onTitleChange: (String) -> Unit,
     content: String,
@@ -33,7 +34,7 @@ fun RecordDiaryQuestionContentItem(
                 .padding(start = 8.dp, bottom = 8.dp)
         ) {
             Text(
-                text = "오늘 하루, 누구에게 가장 고마웠나요?",
+                text = questionText,
                 color = Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Normal,

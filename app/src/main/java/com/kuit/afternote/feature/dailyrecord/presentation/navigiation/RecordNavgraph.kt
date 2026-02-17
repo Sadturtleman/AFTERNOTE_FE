@@ -45,8 +45,12 @@ fun NavGraphBuilder.recordNavGraph(
         RecordFirstDiaryListScreen(
             onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute) },
-            onEditClick = { recordId ->
-                navController.navigate(RecordRoute.EditRoute(recordId))
+            onEditClick = { recordId, recordType ->
+                when (recordType) {
+                    "DIARY" -> navController.navigate(RecordRoute.EditDiaryRoute(recordId))
+                    "DEEP_THOUGHT" -> navController.navigate(RecordRoute.EditDeepMindRoute(recordId))
+                    else -> navController.navigate(RecordRoute.EditRoute(recordId))
+                }
             },
             onBottomNavTabSelected = onBottomNavTabSelected,
             viewModel = viewModel
@@ -57,11 +61,38 @@ fun NavGraphBuilder.recordNavGraph(
         RecordDailyQuestionListScreen(
             onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.QuestionRoute) },
-            onEditClick = { recordId ->
+            onEditClick = { recordId, _ ->
                 navController.navigate(RecordRoute.EditRoute(recordId))
             },
             onBottomNavTabSelected = onBottomNavTabSelected,
             viewModel = viewModel
+        )
+    }
+    composable<RecordRoute.EditDiaryRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<RecordRoute.EditDiaryRoute>()
+        val viewModel: MindRecordWriterViewModel = hiltViewModel()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(route.recordId) {
+            viewModel.loadRecordForEdit(route.recordId)
+        }
+
+        RecordDiaryScreen(
+            onLeftClick = { navController.popBackStack() },
+            viewModel = viewModel,
+            title = uiState.title,
+            content = uiState.content,
+            onTitleChange = viewModel::updateTitle,
+            onContentChange = viewModel::updateContent,
+            onDateClick = viewModel::showDatePicker,
+            sendDate = uiState.sendDate,
+            showDatePicker = uiState.showDatePicker,
+            onDatePickerDismiss = viewModel::hideDatePicker,
+            onRegisterClick = {
+                viewModel.registerWithPopUpThenSave(type = "DIARY") {
+                    navController.popBackStack()
+                }
+            }
         )
     }
     composable<RecordRoute.DiaryRoute> {
@@ -70,22 +101,20 @@ fun NavGraphBuilder.recordNavGraph(
 
         RecordDiaryScreen(
             onLeftClick = { navController.popBackStack() },
+            viewModel = viewModel,
             title = uiState.title,
             content = uiState.content,
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
-
+            onDateClick = viewModel::showDatePicker,
             sendDate = uiState.sendDate,
             showDatePicker = uiState.showDatePicker,
-            onDateClick = viewModel::showDatePicker,
             onDatePickerDismiss = viewModel::hideDatePicker,
-
             onRegisterClick = {
-                viewModel.registerWithPopUpThenSave {
+                viewModel.registerWithPopUpThenSave(type = "DIARY") {
                     navController.popBackStack()
                 }
-            },
-
+            }
         )
     }
     composable<RecordRoute.QuestionRoute> {
@@ -99,18 +128,43 @@ fun NavGraphBuilder.recordNavGraph(
             viewModel = viewModel
         )
     }
+    composable<RecordRoute.EditDeepMindRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<RecordRoute.EditDeepMindRoute>()
+        val viewModel: MindRecordWriterViewModel = hiltViewModel()
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(route.recordId) {
+            viewModel.loadRecordForEdit(route.recordId)
+        }
+
+        RecordDeepMindScreen(
+            onLeftClick = { navController.popBackStack() },
+            onRegisterSuccess = { navController.popBackStack() },
+            viewModel = viewModel,
+            recordId = null,
+            onDateClick = viewModel::showDatePicker,
+            sendDate = uiState.sendDate,
+            showDatePicker = uiState.showDatePicker,
+            onDatePickerDismiss = viewModel::hideDatePicker
+        )
+    }
     composable<RecordRoute.DeepMindRoute> {
         val viewModel: MindRecordWriterViewModel = hiltViewModel()
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         RecordDeepMindScreen(
             onLeftClick = { navController.popBackStack() },
+            onRegisterSuccess = {
+                navController.navigate(RecordRoute.ListRoute) {
+                    popUpTo(RecordRoute.DeepMindRoute) { inclusive = true }
+                }
+            },
+            viewModel = viewModel,
             recordId = null,
+            onDateClick = viewModel::showDatePicker,
             sendDate = uiState.sendDate,
             showDatePicker = uiState.showDatePicker,
-            onDateClick = viewModel::showDatePicker,
             onDatePickerDismiss = viewModel::hideDatePicker
-
         )
     }
 

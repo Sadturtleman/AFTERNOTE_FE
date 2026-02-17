@@ -33,7 +33,7 @@ fun RecordDailyQuestionListScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
-    onEditClick: (Long) -> Unit,
+    onEditClick: (Long, String?) -> Unit,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
@@ -87,7 +87,9 @@ fun RecordDailyQuestionListScreen(
                                 recordType = record.type ?: "DAILY_QUESTION"
                             )
                         },
-                        onEditClick = { recordId -> onEditClick(recordId) }
+                        onEditClick = { recordId, recordType ->
+                            onEditClick(recordId, recordType)
+                        }
                     ) // 이제 UIModel을 그대로 넘김
                 }
             }
