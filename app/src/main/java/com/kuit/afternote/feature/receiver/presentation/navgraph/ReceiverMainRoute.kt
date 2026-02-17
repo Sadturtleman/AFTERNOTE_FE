@@ -131,6 +131,7 @@ fun ReceiverMainRoute(
                     ReceiverAfterNoteScreen(
                         showBottomBar = false,
                         receiverId = receiverId,
+                        authCode = receiverAuthSessionHolder.getAuthCode().orEmpty(),
                         senderName = receiverAuthSessionHolder.getSenderName().orEmpty(),
                         leaveMessage = leaveMessage,
                         mindRecordTotalCount = mindRecordTotalCount,

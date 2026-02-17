@@ -16,7 +16,7 @@ import javax.inject.Inject
 /**
  * 모든 기록 내려받기 다이얼로그 확인 시 타임레터·마인드레코드·애프터노트를 조회한 뒤 JSON 파일로 저장하는 ViewModel.
  *
- * @param downloadAllReceivedUseCase receiverId로 세 목록을 순차 조회하는 UseCase
+ * @param downloadAllReceivedUseCase 인증번호(authCode)로 세 목록을 순차 조회하는 UseCase
  * @param exportReceivedRepository 조회 결과를 JSON 파일로 저장하는 Repository
  */
 @HiltViewModel
@@ -31,16 +31,16 @@ class ReceiverDownloadAllViewModel
     override val uiState: StateFlow<ReceiverDownloadAllUiState> = _uiState.asStateFlow()
 
     /**
-     * 다이얼로그 "예" 선택 시 호출. receiverId로 세 API를 순차 호출합니다.
+     * 다이얼로그 "예" 선택 시 호출. 인증번호(마스터키)로 세 API를 순차 호출합니다.
      *
-     * @param receiverId 수신자 ID
+     * @param authCode 수신자 인증번호 (마스터키)
      */
-    override fun confirmDownloadAll(receiverId: Long) {
+    override fun confirmDownloadAll(authCode: String) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true, errorMessage = null, downloadSuccess = false)
             }
-            downloadAllReceivedUseCase(receiverId)
+            downloadAllReceivedUseCase(authCode)
                 .onSuccess { result ->
                     exportReceivedRepository.saveToFile(result)
                         .onSuccess {
