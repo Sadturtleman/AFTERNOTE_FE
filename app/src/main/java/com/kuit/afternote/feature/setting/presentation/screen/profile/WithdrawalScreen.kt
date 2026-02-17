@@ -35,8 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
+import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.ErrorRed
+import com.kuit.afternote.ui.theme.Red
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray4
@@ -129,6 +130,7 @@ fun WithdrawalScreen(
                 onButtonClick = callbacks.onWithdrawClick,
                 title = "탈퇴하기",
                 isTrue = isAgreed,
+                activeColor = B2
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -185,7 +187,7 @@ private fun DeletionInfoCard() {
                 withStyle(SpanStyle(color = Gray9)) {
                     append("삭제된 데이터는 ")
                 }
-                withStyle(SpanStyle(color = ErrorRed)) {
+                withStyle(SpanStyle(color = Red)) {
                     append("어떠한 경우에도 복구할 수 없습니다.")
                 }
             },

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,7 +44,7 @@ import com.kuit.afternote.feature.receiverauth.presentation.viewmodel.VerifySelf
 import com.kuit.afternote.feature.receiverauth.presentation.viewmodel.VerifySelfViewModelContract
 import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.ErrorRed
+import com.kuit.afternote.ui.theme.Red
 
 private enum class PendingDocumentTarget {
     DEATH_CERT,
@@ -60,28 +63,28 @@ fun VerifySelfScreen(
     val step = uiState.currentStep
     val deathCertificate = rememberTextFieldState()
     val familyRelationCertificate = rememberTextFieldState()
-    var pendingDocumentTarget by remember { mutableStateOf<PendingDocumentTarget?>(null) }
-    var deathCertificateUri by remember { mutableStateOf<Uri?>(null) }
-    var familyCertificateUri by remember { mutableStateOf<Uri?>(null) }
+    val pendingDocumentTargetState = remember { mutableStateOf<PendingDocumentTarget?>(null) }
+    val deathCertificateUriState = remember { mutableStateOf<Uri?>(null) }
+    val familyCertificateUriState = remember { mutableStateOf<Uri?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         uri?.let { selectedUri ->
             val displayName = getDisplayName(context, selectedUri)
-            when (pendingDocumentTarget) {
+            when (pendingDocumentTargetState.value) {
                 PendingDocumentTarget.DEATH_CERT -> {
                     deathCertificate.setTextAndPlaceCursorAtEnd(displayName)
-                    deathCertificateUri = selectedUri
+                    deathCertificateUriState.value = selectedUri
                 }
                 PendingDocumentTarget.FAMILY_CERT -> {
                     familyRelationCertificate.setTextAndPlaceCursorAtEnd(displayName)
-                    familyCertificateUri = selectedUri
+                    familyCertificateUriState.value = selectedUri
                 }
-                null -> { }
+                null -> { /* No-op when target was cleared. */ }
             }
         }
-        pendingDocumentTarget = null
+        pendingDocumentTargetState.value = null
     }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -89,19 +92,19 @@ fun VerifySelfScreen(
     ) { uri: Uri? ->
         uri?.let { selectedUri ->
             val displayName = getDisplayName(context, selectedUri)
-            when (pendingDocumentTarget) {
+            when (pendingDocumentTargetState.value) {
                 PendingDocumentTarget.DEATH_CERT -> {
                     deathCertificate.setTextAndPlaceCursorAtEnd(displayName)
-                    deathCertificateUri = selectedUri
+                    deathCertificateUriState.value = selectedUri
                 }
                 PendingDocumentTarget.FAMILY_CERT -> {
                     familyRelationCertificate.setTextAndPlaceCursorAtEnd(displayName)
-                    familyCertificateUri = selectedUri
+                    familyCertificateUriState.value = selectedUri
                 }
-                null -> { }
+                null -> { /* No-op when target was cleared. */ }
             }
         }
-        pendingDocumentTarget = null
+        pendingDocumentTargetState.value = null
     }
 
     Scaffold(
@@ -126,92 +129,125 @@ fun VerifySelfScreen(
             Spacer(modifier = Modifier.height(44.dp))
 
             when (step) {
-                VerifyStep.MASTER_KEY_AUTH -> {
-                    SignUpContentButton(
-                        onNextClick = { viewModel.verifyMasterKey() }
-                    ) {
-                        MasterKeyInputContent(
-                            value = uiState.masterKeyInput,
-                            onValueChange = viewModel::updateMasterKey,
-                            isError = uiState.verifyError != null
-                        )
-                        if (uiState.verifyError != null) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = when (val err = uiState.verifyError) {
-                                    is VerifyErrorType.Required ->
-                                        stringResource(R.string.receiver_verify_master_key_required)
-                                    is VerifyErrorType.Network ->
-                                        stringResource(R.string.receiver_verify_error_network)
-                                    is VerifyErrorType.Server -> err.message
-                                    VerifyErrorType.Unknown ->
-                                        stringResource(R.string.receiver_verify_error_unknown)
-                                    null -> ""
-                                },
-                                color = ErrorRed
-                            )
-                        }
-                        if (uiState.isLoading) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            CircularProgressIndicator(
-                                modifier = Modifier.padding(16.dp),
-                                color = B3
-                            )
-                        }
-                    }
-                }
-
-                VerifyStep.UPLOAD_PDF_AUTH -> {
-                    SignUpContentButton(
-                        onNextClick = { viewModel.goToNextStep() },
-                        contentSpacing = 64.dp
-                    ) {
-                        PdfInputContent(
-                            deadPdf = deathCertificate,
-                            familyPdf = familyRelationCertificate,
-                            onDeadImageAdd = {
-                                pendingDocumentTarget = PendingDocumentTarget.DEATH_CERT
-                                imagePickerLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
-                            },
-                            onDeadFileAdd = {
-                                pendingDocumentTarget = PendingDocumentTarget.DEATH_CERT
-                                filePickerLauncher.launch("*/*")
-                            },
-                            onFamilyImageAdd = {
-                                pendingDocumentTarget = PendingDocumentTarget.FAMILY_CERT
-                                imagePickerLauncher.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
-                            },
-                            onFamilyFileAdd = {
-                                pendingDocumentTarget = PendingDocumentTarget.FAMILY_CERT
-                                filePickerLauncher.launch("*/*")
-                            }
-                        )
-                    }
-                }
-
-                VerifyStep.END -> {
-                    SignUpContentButton(
-                        onNextClick = {
-                            val rid = uiState.verifiedReceiverId
-                            if (rid != null) {
-                                onCompleteClick(rid, uiState.masterKeyInput, uiState.verifiedSenderName)
-                            }
-                        },
-                        buttonTitle = stringResource(R.string.receiver_verify_complete_confirm)
-                    ) {
-                        ReceiveEndContent()
-                    }
-                }
+                VerifyStep.MASTER_KEY_AUTH -> VerifySelfMasterKeyStep(
+                    uiState = uiState,
+                    viewModel = viewModel
+                )
+                VerifyStep.UPLOAD_PDF_AUTH -> VerifySelfPdfStep(
+                    deathCertificate = deathCertificate,
+                    familyRelationCertificate = familyRelationCertificate,
+                    pendingDocumentTargetState = pendingDocumentTargetState,
+                    imagePickerLauncher = imagePickerLauncher,
+                    filePickerLauncher = filePickerLauncher,
+                    viewModel = viewModel
+                )
+                VerifyStep.END -> VerifySelfEndStep(
+                    uiState = uiState,
+                    onCompleteClick = onCompleteClick
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun VerifySelfMasterKeyStep(
+    uiState: VerifySelfUiState,
+    viewModel: VerifySelfViewModelContract
+) {
+    SignUpContentButton(
+        onNextClick = { viewModel.verifyMasterKey() }
+    ) {
+        MasterKeyInputContent(
+            value = uiState.masterKeyInput,
+            onValueChange = viewModel::updateMasterKey,
+            isError = uiState.verifyError != null
+        )
+        if (uiState.verifyError != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = when (val err = uiState.verifyError) {
+                    is VerifyErrorType.Required ->
+                        stringResource(R.string.receiver_verify_master_key_required)
+                    is VerifyErrorType.Network ->
+                        stringResource(R.string.receiver_verify_error_network)
+                    is VerifyErrorType.Server -> err.message
+                    VerifyErrorType.Unknown ->
+                        stringResource(R.string.receiver_verify_error_unknown)
+                    null -> ""
+                },
+                color = Red
+            )
+        }
+        if (uiState.isLoading) {
+            Spacer(modifier = Modifier.height(16.dp))
+            CircularProgressIndicator(
+                modifier = Modifier.padding(16.dp),
+                color = B3
+            )
+        }
+    }
+}
+
+@Composable
+private fun VerifySelfPdfStep(
+    deathCertificate: TextFieldState,
+    familyRelationCertificate: TextFieldState,
+    pendingDocumentTargetState: MutableState<PendingDocumentTarget?>,
+    imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>,
+    filePickerLauncher: ActivityResultLauncher<String>,
+    viewModel: VerifySelfViewModelContract
+) {
+    SignUpContentButton(
+        onNextClick = { viewModel.goToNextStep() },
+        contentSpacing = 64.dp
+    ) {
+        PdfInputContent(
+            deadPdf = deathCertificate,
+            familyPdf = familyRelationCertificate,
+            onDeadImageAdd = {
+                pendingDocumentTargetState.value = PendingDocumentTarget.DEATH_CERT
+                imagePickerLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            },
+            onDeadFileAdd = {
+                pendingDocumentTargetState.value = PendingDocumentTarget.DEATH_CERT
+                filePickerLauncher.launch("*/*")
+            },
+            onFamilyImageAdd = {
+                pendingDocumentTargetState.value = PendingDocumentTarget.FAMILY_CERT
+                imagePickerLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            },
+            onFamilyFileAdd = {
+                pendingDocumentTargetState.value = PendingDocumentTarget.FAMILY_CERT
+                filePickerLauncher.launch("*/*")
+            }
+        )
+    }
+}
+
+@Composable
+private fun VerifySelfEndStep(
+    uiState: VerifySelfUiState,
+    onCompleteClick: (receiverId: Long, authCode: String, senderName: String?) -> Unit
+) {
+    SignUpContentButton(
+        onNextClick = {
+            val rid = uiState.verifiedReceiverId
+            if (rid != null) {
+                onCompleteClick(rid, uiState.masterKeyInput, uiState.verifiedSenderName)
+            }
+        },
+        buttonTitle = stringResource(R.string.receiver_verify_complete_confirm)
+    ) {
+        ReceiveEndContent()
     }
 }
 
@@ -232,11 +268,19 @@ private class FakeVerifySelfViewModel : VerifySelfViewModelContract {
     private val _uiState = kotlinx.coroutines.flow.MutableStateFlow(VerifySelfUiState())
     override val uiState: kotlinx.coroutines.flow.StateFlow<VerifySelfUiState>
         get() = _uiState
-    override fun updateMasterKey(text: String) {}
-    override fun verifyMasterKey() {}
-    override fun goToNextStep() {}
+    override fun updateMasterKey(text: String) {
+        // Fake: no-op for Preview.
+    }
+    override fun verifyMasterKey() {
+        // Fake: no-op for Preview.
+    }
+    override fun goToNextStep() {
+        // Fake: no-op for Preview.
+    }
     override fun goToPreviousStep(): VerifyStep? = null
-    override fun clearVerifyError() {}
+    override fun clearVerifyError() {
+        // Fake: no-op for Preview.
+    }
 }
 
 @Preview(showBackground = true)
