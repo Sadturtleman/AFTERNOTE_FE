@@ -120,6 +120,7 @@ fun ReceiverMainRoute(
                     ReceiverAfterNoteScreen(
                         showBottomBar = false,
                         receiverId = receiverId,
+                        senderName = receiverAuthSessionHolder.getSenderName().orEmpty(),
                         onNavigateToRecord = { selectedBottomNavItem = BottomNavItem.RECORD },
                         onNavigateToTimeLetter = {
                             receiverAuthSessionHolder.getAuthCode()
