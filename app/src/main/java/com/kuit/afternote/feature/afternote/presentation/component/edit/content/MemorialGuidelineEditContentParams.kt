@@ -20,5 +20,6 @@ data class MemorialGuidelineEditContentParams(
     val onLastWishSelected: (String) -> Unit,
     val onCustomLastWishChanged: (String) -> Unit,
     val onPhotoAddClick: () -> Unit,
-    val onVideoAddClick: () -> Unit
+    val onVideoAddClick: () -> Unit,
+    val onThumbnailBytesReady: (ByteArray?) -> Unit = {}
 )

@@ -72,7 +72,8 @@ data class AfternoteEditScreenCallbacks(
     val onBackClick: () -> Unit = {},
     val onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
     val onNavigateToAddSong: () -> Unit = {},
-    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
+    val onThumbnailBytesReady: (ByteArray?) -> Unit = {}
 )
 
 /**
@@ -235,6 +236,7 @@ fun AfternoteEditScreen(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                     )
                 },
+                onThumbnailBytesReady = callbacks.onThumbnailBytesReady,
                 bottomPadding = paddingValues
             )
 
@@ -283,6 +285,7 @@ private fun EditContent(
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
+    onThumbnailBytesReady: (ByteArray?) -> Unit,
     bottomPadding: PaddingValues
 ) {
     Column(
@@ -336,6 +339,7 @@ private fun EditContent(
                 onNavigateToAddSong = onNavigateToAddSong,
                 onPhotoAddClick = onPhotoAddClick,
                 onVideoAddClick = onVideoAddClick,
+                onThumbnailBytesReady = onThumbnailBytesReady,
                 bottomPadding = bottomPadding
             )
         }
@@ -348,18 +352,27 @@ private fun CategoryContent(
     onNavigateToAddSong: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
+    onThumbnailBytesReady: (ByteArray?) -> Unit,
     bottomPadding: PaddingValues
 ) {
     when (state.selectedCategory) {
         CATEGORY_MEMORIAL_GUIDELINE -> {
             val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
-                (1..songs.size).map { AlbumCover(id = "$it") }
+                songs.mapIndexed { _, s ->
+                    AlbumCover(
+                        id = s.id,
+                        imageUrl = s.albumCoverUrl,
+                        title = s.title
+                    )
+                }
             } ?: state.playlistAlbumCovers
+            val livePlaylistSongCount =
+                state.playlistStateHolder?.songs?.size ?: state.playlistSongCount
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
                     displayMemorialPhotoUri = state.pickedMemorialPhotoUri,
-                    playlistSongCount = state.playlistSongCount,
+                    playlistSongCount = livePlaylistSongCount,
                     playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
@@ -369,7 +382,8 @@ private fun CategoryContent(
                     onLastWishSelected = state::onLastWishSelected,
                     onCustomLastWishChanged = state::onCustomLastWishChanged,
                     onPhotoAddClick = onPhotoAddClick,
-                    onVideoAddClick = onVideoAddClick
+                    onVideoAddClick = onVideoAddClick,
+                    onThumbnailBytesReady = onThumbnailBytesReady
                 )
             )
         }

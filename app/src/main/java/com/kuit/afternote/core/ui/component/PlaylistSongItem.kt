@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +21,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import com.kuit.afternote.R
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.ui.theme.Gray3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+
+private const val TAG = "PlaylistSongItem"
 
 /**
  * 추모 플레이리스트·노래 추가 등에서 공통으로 쓰는 노래 한 줄 아이템.
@@ -65,12 +78,7 @@ fun PlaylistSongItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color.DarkGray)
-            )
+            AlbumCoverBox(albumImageUrl = song.albumImageUrl)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = song.title,
@@ -103,6 +111,40 @@ fun PlaylistSongItem(
             thickness = 1.dp,
             color = Gray3,
 //            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+private fun AlbumCoverBox(albumImageUrl: String?) {
+    val modifier = Modifier
+        .size(48.dp)
+        .clip(RoundedCornerShape(4.dp))
+    if (!albumImageUrl.isNullOrBlank()) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(albumImageUrl)
+                .httpHeaders(
+                    NetworkHeaders.Builder().apply {
+                        this["User-Agent"] = "Afternote Android App"
+                    }.build()
+                )
+                .build(),
+            contentDescription = stringResource(R.string.content_description_album_cover),
+            modifier = modifier,
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.img_placeholder_1),
+            onError = { state: AsyncImagePainter.State.Error ->
+                Log.e(
+                    TAG,
+                    "Coil load failed: albumImageUrl=$albumImageUrl",
+                    state.result.throwable
+                )
+            }
+        )
+    } else {
+        Box(
+            modifier = modifier.background(Color.DarkGray)
         )
     }
 }

@@ -111,6 +111,15 @@ android {
     }
 }
 
+// Ensure KSP (Hilt) runs before Java compile so GeneratedInjector and other
+// generated classes are compiled and included in the APK.
+tasks.configureEach {
+    if (name.startsWith("compile") && name.endsWith("JavaWithJavac")) {
+        val kspTaskName = name.replace("compile", "ksp").replace("JavaWithJavac", "Kotlin")
+        tasks.findByName(kspTaskName)?.let { dependsOn(it) }
+    }
+}
+
 // compileOptions에서 Java 11을 명시적으로 설정하여 동일한 효과 달성
 // 필요시 각 개발자는 ~/.gradle/gradle.properties에 org.gradle.java.home 설정
 
@@ -130,6 +139,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.security.crypto)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

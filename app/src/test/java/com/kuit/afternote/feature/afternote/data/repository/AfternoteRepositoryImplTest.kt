@@ -66,9 +66,10 @@ class AfternoteRepositoryImplTest {
             val result = repository.getAfternotes(category = null, page = 0, size = 10)
 
             assertTrue(result.isSuccess)
-            val items = result.getOrNull()
-            assertEquals(1, items?.size)
-            assertEquals("인스타그램", items?.first()?.serviceName)
+            val paged = result.getOrNull()
+            assertEquals(1, paged?.items?.size)
+            assertEquals("인스타그램", paged?.items?.first()?.serviceName)
+            assertTrue(paged?.hasNext == false)
             coVerify(exactly = 1) { api.getAfternotes(category = null, page = 0, size = 10) }
         }
 

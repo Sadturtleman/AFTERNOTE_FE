@@ -7,5 +7,6 @@ package com.kuit.afternote.feature.receiver.domain.entity
  */
 data class ReceivedAfternote(
     val sourceType: String?,
-    val lastUpdatedAt: String?
+    val lastUpdatedAt: String?,
+    val leaveMessage: String? = null
 )

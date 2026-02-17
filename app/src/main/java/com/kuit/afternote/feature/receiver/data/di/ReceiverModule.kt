@@ -2,12 +2,10 @@ package com.kuit.afternote.feature.receiver.data.di
 
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedRepository
-import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedAfternoteRepositoryImpl
-import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedMindRecordRepositoryImpl
+import com.kuit.afternote.feature.receiver.data.repository.impl.ExportReceivedRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedRepositoryImpl
-import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryImpl
-import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedAfternoteRepository
-import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedMindRecordRepository
+import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryStub
+import com.kuit.afternote.feature.receiver.domain.repository.iface.ExportReceivedRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedTimeLetterRepository
 import dagger.Binds
 import dagger.Module
@@ -28,20 +26,14 @@ abstract class ReceiverModule {
     @Binds
     @Singleton
     abstract fun bindReceivedTimeLetterRepository(
-        impl: ReceivedTimeLetterRepositoryImpl
+        impl: ReceivedTimeLetterRepositoryStub
     ): ReceivedTimeLetterRepository
 
     @Binds
     @Singleton
-    abstract fun bindReceivedAfternoteRepository(
-        impl: ReceivedAfternoteRepositoryImpl
-    ): ReceivedAfternoteRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindReceivedMindRecordRepository(
-        impl: ReceivedMindRecordRepositoryImpl
-    ): ReceivedMindRecordRepository
+    abstract fun bindExportReceivedRepository(
+        impl: ExportReceivedRepositoryImpl
+    ): ExportReceivedRepository
 
     companion object {
         @Provides

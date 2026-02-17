@@ -23,6 +23,7 @@
     <string name="content_description_select_receiver">수신자 선택</string>
     <string name="content_description_profile_image">프로필 이미지</string>
     <string name="content_description_profile_edit_button">프로필 수정 버튼</string>
+    <string name="content_description_album_cover">앨범 커버</string>
 
     <string name="daily_answer_title">나의 모든 기록</string>
     <string name="daily_answer_intro_line1_suffix">님에게 전달 될</string>
@@ -42,12 +43,16 @@
     <string name="receiver_sender_record_title">故 %1$s님이 남기신 기록</string>
     <string name="receiver_afternote_section_count">%1$d개의 애프터노트가 있습니다.</string>
     <string name="receiver_timeletter_section_count">%1$d개 라이프 이벤트 레터가 있습니다.</string>
+    <string name="receiver_timeletter_unread_count">%1$d개의 읽지 않은 타임 레터가 있습니다.</string>
+    <string name="receiver_timeletter_sort_by_date">날짜순</string>
+    <string name="receiver_timeletter_sort_unread_first">읽지 않은 순</string>
     <string name="receiver_download_all_button">모든 기록 내려받기</string>
     <string name="receiver_download_all_dialog_message">모든 기록을 내려받으시겠습니까?</string>
     <string name="receiver_mindrecord_date_button_format">%1$d월 %2$d일</string>
     <string name="receiver_mindrecord_date_picker_confirm">선택하기</string>
     <string name="receiver_mindrecord_date_picker_content_description">%1$d년 %2$d월 선택</string>
     <string name="receiver_mindrecord_year_month_format">%1$d년 %2$d월</string>
+    <string name="receiver_mindrecord_section_count">%1$d개 마음의 기록이 있습니다.</string>
     <string name="receiver_mindrecord_title">마음의 기록</string>
     <string name="receiver_mindrecord_today_section">오늘의 기록</string>
     <string name="receiver_mindrecord_date_section">날짜별 기록</string>
@@ -83,8 +88,15 @@
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
+    <string name="withdrawal_password_error">비밀번호가 맞지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_complete_line1">회원 탈퇴가 완료되었습니다.</string>
+    <string name="withdrawal_complete_line2">애프터노트를 이용해 주셔서 감사합니다.</string>
+    <string name="withdrawal_complete_confirm">확인하기</string>
 
     <string name="design_pending">디자인 예정</string>
+    <string name="afternote_detail_invalid_id">잘못된 항목 ID입니다.</string>
+    <string name="afternote_detail_load_error">상세 정보를 불러오지 못했습니다.</string>
+    <string name="afternote_edit_item_not_found">항목을 찾을 수 없습니다.</string>
 
     <string name="afternote_validation_title_required">등록할 서비스(플랫폼)명을 입력해 주세요.</string>
     <string name="afternote_edit_service_label">등록할 서비스</string>
@@ -94,9 +106,14 @@
     <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
     <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
     <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
+    <string name="afternote_default_playlist_song_title">추모 플레이리스트 곡</string>
 
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
+    <string name="time_letter_detail_delivery_date">발송 일자: %1$s</string>
+    <string name="time_letter_detail_created_at">작성 일자: %1$s</string>
+    <string name="time_letter_detail_recipient_label">수신인:</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
     <string name="time_letter_recipients_count">%d명에게</string>
     <string name="content_description_expand_down">아래로</string>
+    <string name="content_description_video_play">영상 재생</string>
 </resources>

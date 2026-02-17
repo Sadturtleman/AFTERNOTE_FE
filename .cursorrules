@@ -125,6 +125,7 @@ Each `.mdc` file uses `globs` pattern so rules are injected only when opening or
 
 ### Perplexity Prompt Writing Request Rules - Critical
 **When user requests Perplexity Prompt:**
+- **Context limitation**: External tools (e.g. Perplexity) cannot see the project repository, open files, or Cursor rules. The prompt must either be self-contained with all information needed for the task, or explicitly instruct the user to paste the necessary context (e.g. code, rule excerpts) in the same or a follow-up message so the tool can perform the task.
 - **Provide Prompt Content Only**: Provide only content to paste into prompt, nothing else
 - **No Additional Explanation**: Do not include guidance like "paste this prompt into Perplexity" after writing prompt
 - **No Code Modification**: Do not modify code simultaneously with prompt writing

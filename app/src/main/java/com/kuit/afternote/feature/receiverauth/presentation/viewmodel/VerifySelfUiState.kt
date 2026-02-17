@@ -10,13 +10,15 @@ import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
  * @param isLoading verify API 호출 중 여부
  * @param verifyError 검증 실패 시 에러 타입 (화면에서 stringResource로 메시지 표시)
  * @param verifiedReceiverId 마스터키 검증 성공 시 수신받은 receiverId (열람요청 완료에서 수신자 홈 이동 시 사용)
+ * @param verifiedSenderName 마스터키 검증 성공 시 수신받은 발신자 이름 (수신자 홈 상단 "故 OO님이 남기신 기록" 표시용)
  */
 data class VerifySelfUiState(
     val currentStep: VerifyStep = VerifyStep.MASTER_KEY_AUTH,
     val masterKeyInput: String = "",
     val isLoading: Boolean = false,
     val verifyError: VerifyErrorType? = null,
-    val verifiedReceiverId: Long? = null
+    val verifiedReceiverId: Long? = null,
+    val verifiedSenderName: String? = null
 )
 
 /**

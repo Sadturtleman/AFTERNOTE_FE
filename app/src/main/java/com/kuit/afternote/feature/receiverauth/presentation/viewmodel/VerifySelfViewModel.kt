@@ -61,7 +61,8 @@ class VerifySelfViewModel
                             currentStep = VerifyStep.UPLOAD_PDF_AUTH,
                             isLoading = false,
                             verifyError = null,
-                            verifiedReceiverId = result.receiverId
+                            verifiedReceiverId = result.receiverId,
+                            verifiedSenderName = result.senderName
                         )
                     }
                 }
