@@ -43,13 +43,16 @@ data class ReceiverMessageResponseDto(
 @Serializable
 data class ReceivedTimeLetterAuthResponseDto(
     @SerialName("id") val id: Long,
+    @SerialName("timeLetterReceiverId") val timeLetterReceiverId: Long,
     @SerialName("title") val title: String? = null,
     @SerialName("content") val content: String? = null,
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: String? = null,
     @SerialName("senderName") val senderName: String? = null,
     @SerialName("deliveredAt") val deliveredAt: String? = null,
-    @SerialName("createdAt") val createdAt: String? = null
+    @SerialName("createdAt") val createdAt: String? = null,
+    val mediaList: List<TimeLetterMediaAuthResponseDto> = emptyList(),
+    val isRead: Boolean = false
 )
 
 @Serializable
