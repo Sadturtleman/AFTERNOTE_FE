@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import javax.inject.Inject
 
@@ -18,6 +18,6 @@ class GetAfternotesUseCase
             category: String? = null,
             page: Int = 0,
             size: Int = 10
-        ): Result<List<AfternoteItem>> = repository.getAfternotes(category = category, page = page, size = size)
+        ): Result<PagedAfternotes> = repository.getAfternotes(category = category, page = page, size = size)
     }
 

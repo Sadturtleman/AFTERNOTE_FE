@@ -13,7 +13,7 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import javax.inject.Inject
 
@@ -34,10 +34,12 @@ class AfternoteRepositoryImpl
         category: String?,
         page: Int,
         size: Int
-    ): Result<List<AfternoteItem>> = runCatching {
+    ): Result<PagedAfternotes> = runCatching {
         val response = api.getAfternotes(category = category, page = page, size = size)
         val data = response.requireData()
-        AfternoteMapper.toDomainList(data.content)
+        val content = data?.content.orEmpty()
+        val hasNext = data?.hasNext ?: false
+        PagedAfternotes(items = AfternoteMapper.toDomainList(content), hasNext = hasNext)
     }
 
     override suspend fun createSocial(
