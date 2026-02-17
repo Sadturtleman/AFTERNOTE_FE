@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
-import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.ErrorRed
 import com.kuit.afternote.ui.theme.Gray1
@@ -125,11 +124,11 @@ fun WithdrawalScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 탈퇴하기 버튼
+            // 탈퇴하기 버튼 (동의 체크 시에만 활성)
             ClickButton(
-                color = B2,
                 onButtonClick = callbacks.onWithdrawClick,
                 title = "탈퇴하기",
+                isTrue = isAgreed,
             )
 
             Spacer(modifier = Modifier.height(8.dp))

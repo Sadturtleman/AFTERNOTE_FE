@@ -35,6 +35,8 @@ import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordM
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalPasswordCallbacks
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalPasswordScreen
 import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreen
 import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreenCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
@@ -51,6 +53,7 @@ import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
@@ -121,18 +124,60 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         )
     }
     composable<SettingRoute.WithdrawalRoute> {
-        WithdrawalScreen(
-            accountDisplay = "박서연(example@mail.com)",
-            callbacks = WithdrawalScreenCallbacks(
-                onBackClick = { navController.popBackStack() },
-                onWithdrawClick = {
-                    // TODO: API 연동 후 실제 탈퇴 처리 구현
-                    Log.d(TAG_SETTING_NAV, "Withdraw confirmed")
-                },
-                onCancelClick = { navController.popBackStack() }
-            )
-        )
+        WithdrawalRouteContent(navController = navController)
     }
+    composable<SettingRoute.WithdrawalPasswordRoute> {
+        WithdrawalPasswordRouteContent(navController = navController)
+    }
+}
+
+@Composable
+private fun WithdrawalRouteContent(navController: NavController) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    val profileState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+    }
+    val accountDisplay = if (profileState.name.isNotEmpty() || profileState.email.isNotEmpty()) {
+        "${profileState.name}(${profileState.email})"
+    } else {
+        ""
+    }
+    WithdrawalScreen(
+        accountDisplay = accountDisplay,
+        callbacks = WithdrawalScreenCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onWithdrawClick = {
+                navController.navigate(SettingRoute.WithdrawalPasswordRoute)
+            },
+            onCancelClick = { navController.popBackStack() }
+        )
+    )
+}
+
+@Composable
+private fun WithdrawalPasswordRouteContent(navController: NavController) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    val profileState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+    }
+    val accountDisplay = if (profileState.name.isNotEmpty() || profileState.email.isNotEmpty()) {
+        "${profileState.name}(${profileState.email})"
+    } else {
+        ""
+    }
+    WithdrawalPasswordScreen(
+        accountDisplay = accountDisplay,
+        callbacks = WithdrawalPasswordCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onWithdrawClick = {
+                // TODO: API 연동 후 실제 탈퇴 처리 구현
+                Log.d(TAG_SETTING_NAV, "Withdrawal password confirmed")
+            },
+            onGoBackClick = { navController.popBackStack() }
+        )
+    )
 }
 
 private fun sampleNoticeItems(): List<NoticeItemUiModel> = List(10) { index ->

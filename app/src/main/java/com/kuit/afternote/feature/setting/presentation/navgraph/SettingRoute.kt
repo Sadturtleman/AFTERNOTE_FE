@@ -64,4 +64,7 @@ sealed interface SettingRoute {
 
     @Serializable
     data object WithdrawalRoute : SettingRoute
+
+    @Serializable
+    data object WithdrawalPasswordRoute : SettingRoute
 }
