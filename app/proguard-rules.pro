@@ -5,6 +5,13 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# ---------------------------------------------------------------
+# Dagger Hilt (keep generated injectors so NoClassDefFoundError is avoided)
+# ---------------------------------------------------------------
+-keep class * extends dagger.hilt.internal.GeneratedEntryPoint { *; }
+-keep class com.kuit.afternote.Hilt_* { *; }
+-keep class com.kuit.afternote.*_GeneratedInjector { *; }
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
