@@ -53,6 +53,7 @@ data class TimeLetterResponse(
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: TimeLetterStatus,
     @SerialName("mediaList") val mediaList: List<TimeLetterMediaResponse>? = null,
+    val receiverIds: List<Long> = emptyList(),
     @SerialName("createdAt") val createdAt: String? = null,
     @SerialName("updatedAt") val updatedAt: String? = null
 )
