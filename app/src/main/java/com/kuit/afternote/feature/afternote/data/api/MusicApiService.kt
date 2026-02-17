@@ -7,12 +7,12 @@ import retrofit2.http.Query
 
 /**
  * Music search API.
- * GET /api/music/search?keyword= — 검색할 가수명 또는 노래 제목.
+ * GET /music/search?keyword= — 검색할 가수명 또는 노래 제목.
  * 200: 검색 성공. 400: keyword가 없는 경우.
  */
 fun interface MusicApiService {
 
-    @GET("api/music/search")
+    @GET("music/search")
     suspend fun search(
         @Query("keyword") keyword: String
     ): ApiResponse<MusicSearchResponseDto?>
