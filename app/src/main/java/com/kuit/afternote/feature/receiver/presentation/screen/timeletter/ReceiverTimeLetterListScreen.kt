@@ -161,7 +161,7 @@ fun TimeLetterRow(
     letter: ReceivedTimeLetterListItemUi,
     onClick: () -> Unit
 ) {
-    val contentColor = if (letter.isRead) Color.Black else Color(0xFF9E9E9E)
+    val contentColor = if (letter.isRead) Color(0xFF9E9E9E) else Color.Black
 
     Column(
         modifier = Modifier

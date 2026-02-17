@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.feature.receiver.domain.repository.iface.ExportReceivedRepository
 import com.kuit.afternote.feature.receiver.domain.usecase.DownloadAllReceivedUseCase
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverDownloadAllUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,15 +14,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * 모든 기록 내려받기 다이얼로그 확인 시 타임레터·마인드레코드·애프터노트 세 API를 호출하는 ViewModel.
+ * 모든 기록 내려받기 다이얼로그 확인 시 타임레터·마인드레코드·애프터노트를 조회한 뒤 JSON 파일로 저장하는 ViewModel.
  *
  * @param downloadAllReceivedUseCase receiverId로 세 목록을 순차 조회하는 UseCase
+ * @param exportReceivedRepository 조회 결과를 JSON 파일로 저장하는 Repository
  */
 @HiltViewModel
 class ReceiverDownloadAllViewModel
     @Inject
     constructor(
-        private val downloadAllReceivedUseCase: DownloadAllReceivedUseCase
+        private val downloadAllReceivedUseCase: DownloadAllReceivedUseCase,
+        private val exportReceivedRepository: ExportReceivedRepository
     ) : ViewModel(), ReceiverDownloadAllViewModelContract {
 
     private val _uiState = MutableStateFlow(ReceiverDownloadAllUiState())
@@ -38,10 +41,21 @@ class ReceiverDownloadAllViewModel
                 it.copy(isLoading = true, errorMessage = null, downloadSuccess = false)
             }
             downloadAllReceivedUseCase(receiverId)
-                .onSuccess {
-                    _uiState.update {
-                        it.copy(isLoading = false, downloadSuccess = true)
-                    }
+                .onSuccess { result ->
+                    exportReceivedRepository.saveToFile(result)
+                        .onSuccess {
+                            _uiState.update {
+                                it.copy(isLoading = false, downloadSuccess = true)
+                            }
+                        }
+                        .onFailure { e ->
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = e.message ?: "파일 저장에 실패했습니다."
+                                )
+                            }
+                        }
                 }
                 .onFailure { e ->
                     _uiState.update {
