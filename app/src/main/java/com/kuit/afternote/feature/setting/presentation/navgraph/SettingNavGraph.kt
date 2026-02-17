@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -19,14 +18,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ConfirmationPopup
-import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
-import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel
+import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
+import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
+import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeItemUiModel
+import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notification.NotificationSettingsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notification.PushToastSettingScreen
 import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordChangeScreen
@@ -35,6 +39,11 @@ import com.kuit.afternote.feature.setting.presentation.screen.password.PasswordM
 import com.kuit.afternote.feature.setting.presentation.screen.postdelivery.PostDeliveryConditionScreen
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.profile.ProfileEditScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalCompleteDialog
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalPasswordCallbacks
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalPasswordScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreen
+import com.kuit.afternote.feature.setting.presentation.screen.profile.WithdrawalScreenCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverAfternoteListScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailEditCallbacks
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
@@ -42,13 +51,10 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
-import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeItemUiModel
-import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeScreen
-import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
+import com.kuit.afternote.feature.setting.presentation.viewmodel.WithdrawalPasswordViewModel
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
-import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
-import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
@@ -83,7 +89,8 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         ProfileEditScreen(
             callbacks = ProfileEditCallbacks(
                 onBackClick = { navController.popBackStack() },
-                onUpdateSuccess = { navController.popBackStack() }
+                onUpdateSuccess = { navController.popBackStack() },
+                onWithdrawClick = { navController.navigate(SettingRoute.WithdrawalRoute) }
             )
         )
     }
@@ -117,6 +124,81 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
             onItemClick = { }
         )
     }
+    composable<SettingRoute.WithdrawalRoute> {
+        WithdrawalRouteContent(navController = navController)
+    }
+    composable<SettingRoute.WithdrawalPasswordRoute> {
+        WithdrawalPasswordRouteContent(navController = navController)
+    }
+}
+
+@Composable
+private fun WithdrawalRouteContent(navController: NavController) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    val profileState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+    }
+    val accountDisplay = if (profileState.name.isNotEmpty() || profileState.email.isNotEmpty()) {
+        "${profileState.name}(${profileState.email})"
+    } else {
+        ""
+    }
+    WithdrawalScreen(
+        accountDisplay = accountDisplay,
+        callbacks = WithdrawalScreenCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onWithdrawClick = {
+                navController.navigate(SettingRoute.WithdrawalPasswordRoute)
+            },
+            onCancelClick = { navController.popBackStack() }
+        )
+    )
+}
+
+@Composable
+private fun WithdrawalPasswordRouteContent(navController: NavController) {
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+    val profileState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    val withdrawalPasswordViewModel: WithdrawalPasswordViewModel = hiltViewModel()
+    val withdrawalPasswordState by withdrawalPasswordViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        profileViewModel.loadProfile()
+    }
+    val accountDisplay = if (profileState.name.isNotEmpty() || profileState.email.isNotEmpty()) {
+        "${profileState.name}(${profileState.email})"
+    } else {
+        ""
+    }
+    val passwordError = if (withdrawalPasswordState.showPasswordError) {
+        stringResource(R.string.withdrawal_password_error)
+    } else {
+        null
+    }
+    if (withdrawalPasswordState.withdrawalComplete) {
+        WithdrawalCompleteDialog(
+            onConfirm = {
+                withdrawalPasswordViewModel.clearWithdrawalComplete()
+                navController.navigate(OnboardingRoute.SplashRoute) {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                }
+            }
+        )
+    }
+    WithdrawalPasswordScreen(
+        accountDisplay = accountDisplay,
+        passwordError = passwordError,
+        callbacks = WithdrawalPasswordCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onWithdrawClick = { password ->
+                withdrawalPasswordViewModel.submitWithdrawal(password)
+                // TODO: API 연동 후 실제 탈퇴 처리; 성공 시 withdrawalComplete = true로 설정
+                Log.d(TAG_SETTING_NAV, "Withdrawal password confirmed")
+            },
+            onGoBackClick = { navController.popBackStack() },
+            onPasswordChanged = { withdrawalPasswordViewModel.clearPasswordError() }
+        )
+    )
 }
 
 private fun sampleNoticeItems(): List<NoticeItemUiModel> = List(10) { index ->
@@ -135,7 +217,7 @@ private fun SettingMainRouteContent(navController: NavController) {
     val unhandledMessage = stringResource(R.string.setting_menu_not_connected)
     val logoutConfirmMessage = stringResource(R.string.setting_logout_confirm_message)
     val logoutTitle = stringResource(R.string.setting_logout)
-    var showLogoutDialog by remember { mutableStateOf(false) }
+    val showLogoutDialogState = remember { mutableStateOf(false) }
     val logoutViewModel: LogoutViewModel = hiltViewModel()
     val logoutState by logoutViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -148,13 +230,13 @@ private fun SettingMainRouteContent(navController: NavController) {
         }
     }
 
-    if (showLogoutDialog) {
+    if (showLogoutDialogState.value) {
         ConfirmationPopup(
             message = logoutConfirmMessage,
-            onDismiss = { showLogoutDialog = false },
+            onDismiss = { showLogoutDialogState.value = false },
             onConfirm = {
                 logoutViewModel.logout()
-                showLogoutDialog = false
+                showLogoutDialogState.value = false
             }
         )
     }
@@ -166,7 +248,7 @@ private fun SettingMainRouteContent(navController: NavController) {
                 "비밀번호 변경" -> navController.navigate(SettingRoute.PasswordChangeRoute)
                 "연결된 계정" -> navController.navigate(SettingRoute.ConnectedAccountsRoute)
                 "알림 설정" -> navController.navigate(SettingRoute.PushToastSettingRoute)
-                logoutTitle -> showLogoutDialog = true
+                logoutTitle -> showLogoutDialogState.value = true
                 "수신자 목록" -> navController.navigate(SettingRoute.ReceiverListRoute)
                 "수신자 등록" -> navController.navigate(SettingRoute.ReceiverRegisterRoute)
                 "사후 전달 조건" -> navController.navigate(SettingRoute.PostDeliveryConditionRoute)

@@ -25,7 +25,7 @@ data class AddSongCallbacks(
 
 /**
  * 노래 추가하기 화면 (API 검색 연동).
- * [viewModel]의 검색어로 GET /api/music/search 호출 결과를 표시.
+ * [viewModel]의 검색어로 GET /music/search 호출 결과를 표시.
  */
 @Composable
 fun AddSongScreen(

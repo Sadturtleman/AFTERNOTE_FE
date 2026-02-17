@@ -72,6 +72,11 @@ interface DailyRecordApiService {
         @Path("recordId") recordId: Long
     ): Response<Unit>
 
+    /**
+     * 마음의기록 수신인 설정. 특정 마음의 기록을 특정 수신인에게 전달(on) 또는 전달 중단(off) 설정.
+     * PATCH /mind-records/{recordId}/receivers/{receiverId}
+     * 200 성공, 403 권한 없음.
+     */
     @PATCH("mind-records/{recordId}/receivers/{receiverId}")
     suspend fun setMindRecordReceiverEnabled(
         @Path("recordId") recordId: Long,

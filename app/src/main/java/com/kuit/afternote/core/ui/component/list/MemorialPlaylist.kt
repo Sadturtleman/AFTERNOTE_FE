@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.component.list
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +19,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
@@ -35,6 +46,8 @@ import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
+
+private const val TAG = "MemorialPlaylist"
 
 /**
  * 앨범 커버 데이터 (edit·view 공통).
@@ -183,16 +196,46 @@ private fun MemorialPlaylistAlbumRow(
             if (albumItemContent != null) {
                 albumItemContent(album, index)
             } else {
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .background(
-                            color = Color.LightGray,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                )
+                MemorialPlaylistAlbumCoverBox(album = album)
             }
         }
+    }
+}
+
+@Composable
+private fun MemorialPlaylistAlbumCoverBox(album: AlbumCover) {
+    val modifier = Modifier
+        .size(80.dp)
+        .clip(RoundedCornerShape(8.dp))
+    if (!album.imageUrl.isNullOrBlank()) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(album.imageUrl)
+                .httpHeaders(
+                    NetworkHeaders.Builder().apply {
+                        this["User-Agent"] = "Afternote Android App"
+                    }.build()
+                )
+                .build(),
+            contentDescription = stringResource(R.string.content_description_album_cover),
+            modifier = modifier,
+            contentScale = ContentScale.Crop,
+            error = painterResource(R.drawable.img_placeholder_1),
+            onError = { state: AsyncImagePainter.State.Error ->
+                Log.e(
+                    TAG,
+                    "Coil load failed: album.imageUrl=${album.imageUrl}",
+                    state.result.throwable
+                )
+            }
+        )
+    } else {
+        Box(
+            modifier = modifier.background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(8.dp)
+            )
+        )
     }
 }
 

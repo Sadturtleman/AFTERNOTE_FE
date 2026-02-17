@@ -30,6 +30,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -44,7 +45,6 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailCont
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
@@ -52,13 +52,14 @@ import com.kuit.afternote.feature.afternote.presentation.screen.AddSongViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteValidationError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreenCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRouteCallbacks
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteSaveState
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteValidationError
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
@@ -384,6 +385,63 @@ private fun AfternoteMemorialGuidelineDetailContent(
 
 // -- Edit Route --
 
+/** Result of save error resolution: either a validation string resource id or a raw message. */
+private sealed class EditSaveErrorResult {
+    data class Validation(val messageResId: Int) : EditSaveErrorResult()
+    data class Raw(val message: String) : EditSaveErrorResult()
+}
+
+/**
+ * Returns the save error to show, or null. Suppresses PLAYLIST_SONGS_REQUIRED when playlist has songs.
+ * Returns Validation(resId) or Raw(message) so the Composable can call stringResource(resId) in Composable context.
+ */
+private fun editSaveErrorFromState(
+    saveState: AfternoteSaveState,
+    playlistSongCount: Int
+): EditSaveErrorResult? {
+    if (saveState.validationError == AfternoteValidationError.PLAYLIST_SONGS_REQUIRED &&
+        playlistSongCount > 0
+    ) return null
+    saveState.validationError?.let { return EditSaveErrorResult.Validation(it.messageResId) }
+    saveState.error?.let { return EditSaveErrorResult.Raw(it) }
+    return null
+}
+
+private data class EditScreenCallbacksParams(
+    val navController: NavController,
+    val editViewModel: AfternoteEditViewModel,
+    val editStateHandling: AfternoteEditStateHandling,
+    val state: AfternoteEditState,
+    val route: AfternoteRoute.EditRoute,
+    val initialItem: AfternoteItem?,
+    val playlistStateHolder: MemorialPlaylistStateHolder,
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit
+)
+
+private fun buildEditScreenCallbacks(params: EditScreenCallbacksParams): AfternoteEditScreenCallbacks =
+    AfternoteEditScreenCallbacks(
+        onBackClick = {
+            params.editStateHandling.onClear()
+            params.navController.popBackStack()
+        },
+        onRegisterClick = { payload: RegisterAfternotePayload ->
+            params.editViewModel.saveAfternote(
+                editingId = params.route.itemId?.toLongOrNull() ?: params.initialItem?.id?.toLongOrNull(),
+                category = params.state.selectedCategory,
+                payload = payload,
+                receivers = params.state.afternoteEditReceivers,
+                playlistStateHolder = params.playlistStateHolder,
+                funeralVideoUrl = params.state.funeralVideoUrl,
+                funeralThumbnailUrl = params.state.funeralThumbnailUrl
+            )
+        },
+        onNavigateToAddSong = { params.navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+        onBottomNavTabSelected = params.onBottomNavTabSelected,
+        onThumbnailBytesReady = { bytes ->
+            if (bytes != null) params.editViewModel.uploadMemorialThumbnail(bytes)
+        }
+    )
+
 @Composable
 private fun AfternoteEditRouteContent(
     backStackEntry: NavBackStackEntry,
@@ -443,10 +501,6 @@ private fun AfternoteEditRouteContent(
         }
     }
 
-    // 초기 진입 시 더미 곡으로 플레이리스트를 채우지 않는다.
-    // 사용자는 "노래 추가하기" 플로우를 통해 직접 곡을 추가하며,
-    // 실 서비스에서는 RealAfternoteEditDataProvider/실제 API가 곡 목록을 공급한다.
-
     LaunchedEffect(saveState.saveSuccess) {
         if (saveState.saveSuccess) {
             editStateHandling.onClear()
@@ -457,33 +511,41 @@ private fun AfternoteEditRouteContent(
         }
     }
 
-    val saveError = when {
-        saveState.validationError == AfternoteValidationError.PLAYLIST_SONGS_REQUIRED &&
-            playlistStateHolder.songs.isNotEmpty() -> null
-        saveState.validationError != null -> AfternoteEditSaveError(
-            stringResource(saveState.validationError!!.messageResId)
-        )
-        saveState.error != null -> AfternoteEditSaveError(saveState.error!!)
-        else -> null
+    val uploadedThumbnailUrl by editViewModel.uploadedThumbnailUrl.collectAsStateWithLifecycle(initialValue = null)
+    LaunchedEffect(uploadedThumbnailUrl) {
+        if (uploadedThumbnailUrl != null) {
+            runCatching {
+                state.onFuneralThumbnailDataUrlReady(uploadedThumbnailUrl)
+            }.onFailure { e -> Log.e(TAG_AFTERNOTE_EDIT, "apply uploadedThumbnailUrl failed", e) }
+            editViewModel.clearUploadedThumbnailUrl()
+        }
+    }
+
+    val errorResult = remember(
+        saveState.validationError,
+        saveState.error,
+        playlistStateHolder.songs.size
+    ) {
+        editSaveErrorFromState(saveState, playlistStateHolder.songs.size)
+    }
+    val saveError = when (errorResult) {
+        is EditSaveErrorResult.Validation -> AfternoteEditSaveError(stringResource(errorResult.messageResId))
+        is EditSaveErrorResult.Raw -> AfternoteEditSaveError(errorResult.message)
+        null -> null
     }
 
     AfternoteEditScreen(
-        callbacks = AfternoteEditScreenCallbacks(
-            onBackClick = {
-                editStateHandling.onClear()
-                navController.popBackStack()
-            },
-            onRegisterClick = { payload: RegisterAfternotePayload ->
-                editViewModel.saveAfternote(
-                    editingId = route.itemId?.toLongOrNull() ?: initialItem?.id?.toLongOrNull(),
-                    category = state.selectedCategory,
-                    payload = payload,
-                    receivers = state.afternoteEditReceivers,
-                    playlistStateHolder = playlistStateHolder
-                )
-            },
-            onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
-            onBottomNavTabSelected = onBottomNavTabSelected
+        callbacks = buildEditScreenCallbacks(
+            EditScreenCallbacksParams(
+                navController = navController,
+                editViewModel = editViewModel,
+                editStateHandling = editStateHandling,
+                state = state,
+                route = route,
+                initialItem = initialItem,
+                playlistStateHolder = playlistStateHolder,
+                onBottomNavTabSelected = onBottomNavTabSelected
+            )
         ),
         playlistStateHolder = playlistStateHolder,
         // Don't pass initialItem when loadForEdit is used (route.itemId != null).

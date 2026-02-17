@@ -103,7 +103,10 @@ fun AfternoteListRoute(
                     AfternoteServiceType.MEMORIAL -> callbacks.onNavigateToMemorialGuidelineDetail(itemId)
                     else -> callbacks.onNavigateToDetail(itemId)
                 }
-            }
+            },
+            hasNext = uiState.hasNext,
+            isLoadingMore = uiState.isLoadingMore,
+            onLoadMore = { viewModel.loadNextPage() }
         )
     )
 }

@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryQuestionContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.CreateRecordParams
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.EditRecordParams
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import java.time.LocalDate
 
@@ -66,23 +68,27 @@ fun RecordQuestionScreen(
                     onRightClick = {
                         if (record == null) {
                             viewModel.onCreateRecord(
-                                type = "DAILY_QUESTION",
-                                title = title.ifBlank { "" },
-                                content = content,
-                                date = LocalDate.now().toString(),
-                                isDraft = false,
-                                questionId = null,
+                                params = CreateRecordParams(
+                                    type = "DAILY_QUESTION",
+                                    title = title.ifBlank { "" },
+                                    content = content,
+                                    date = LocalDate.now().toString(),
+                                    isDraft = false,
+                                    questionId = null
+                                ),
                                 onSuccess = onRegisterSuccess
                             )
                         } else {
                             viewModel.editRecord(
-                                recordId = record.id,
-                                title = title,
-                                content = content,
-                                date = record.originalDate,
-                                type = record.type ?: "DAILY_QUESTION",
-                                category = record.category,
-                                isDraft = false,
+                                params = EditRecordParams(
+                                    recordId = record.id,
+                                    title = title,
+                                    content = content,
+                                    date = record.originalDate,
+                                    type = record.type ?: "DAILY_QUESTION",
+                                    category = record.category,
+                                    isDraft = false
+                                ),
                                 onSuccess = onRegisterSuccess
                             )
                         }

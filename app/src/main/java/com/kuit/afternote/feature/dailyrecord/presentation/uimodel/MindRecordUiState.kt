@@ -15,5 +15,7 @@ data class MindRecordUiState(
     val showRegisteredPopUp: Boolean = false,
     val showDraftSavePopUp: Boolean = false,
     val showWaitingAgainPopUp: Boolean = false,
-    val draftId: Long? = null
+    val draftId: Long? = null,
+    /** Error message when save fails (e.g. network). Cleared on next save attempt or success. */
+    val saveErrorMessage: String? = null
 )

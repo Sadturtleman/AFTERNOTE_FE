@@ -7,7 +7,7 @@ import javax.inject.Inject
 /**
  * 음악 검색 UseCase.
  *
- * GET /api/music/search?keyword= — keyword가 비어 있으면 빈 목록 반환 (API 400 방지).
+ * GET /music/search?keyword= — keyword가 비어 있으면 빈 목록 반환 (API 400 방지).
  */
 class SearchMusicUseCase
 @Inject

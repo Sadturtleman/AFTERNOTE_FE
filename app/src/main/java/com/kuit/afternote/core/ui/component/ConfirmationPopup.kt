@@ -3,6 +3,7 @@ package com.kuit.afternote.core.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,13 +41,14 @@ fun ConfirmationPopup(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     dismissText: String = "아니요",
-    confirmText: String = "예"
+    confirmText: String = "예",
+    isLoading: Boolean = false
 ) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
+            dismissOnBackPress = !isLoading,
+            dismissOnClickOutside = !isLoading
         )
     ) {
         ConfirmationPopupContent(
@@ -54,7 +57,8 @@ fun ConfirmationPopup(
             onConfirm = onConfirm,
             modifier = modifier,
             dismissText = dismissText,
-            confirmText = confirmText
+            confirmText = confirmText,
+            isLoading = isLoading
         )
     }
 }
@@ -66,7 +70,8 @@ fun ConfirmationPopupContent(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     dismissText: String = "아니요",
-    confirmText: String = "예"
+    confirmText: String = "예",
+    isLoading: Boolean = false
 ) {
     val containerShape = RoundedCornerShape(16.dp)
     val buttonShape = RoundedCornerShape(8.dp)
@@ -132,16 +137,14 @@ fun ConfirmationPopupContent(
                             spread = 0.dp
                         ).clip(buttonShape)
                         .background(Gray3)
-                        .clickable(onClick = onDismiss)
+                        .clickable(enabled = !isLoading, onClick = onDismiss)
                         .padding(
                             horizontal = 24.dp,
                             vertical = 16.dp
                         )
                 )
 
-                Text(
-                    text = confirmText,
-                    style = buttonTextStyle,
+                Box(
                     modifier = Modifier
                         .weight(1f)
                         .dropShadow(
@@ -153,12 +156,25 @@ fun ConfirmationPopupContent(
                             spread = 0.dp
                         ).clip(buttonShape)
                         .background(B3)
-                        .clickable(onClick = onConfirm)
+                        .clickable(enabled = !isLoading, onClick = onConfirm)
                         .padding(
                             horizontal = 24.dp,
                             vertical = 16.dp
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White
                         )
-                )
+                    } else {
+                        Text(
+                            text = confirmText,
+                            style = buttonTextStyle
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(7.5.dp))
             }
         }

@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.afternote.domain.repository.iface
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 
 /**
  * Afternote 도메인 Repository 인터페이스.
@@ -21,7 +21,7 @@ interface AfternoteRepository {
         category: String?,
         page: Int,
         size: Int
-    ): Result<List<AfternoteItem>>
+    ): Result<PagedAfternotes>
 
     suspend fun createSocial(
         title: String,

@@ -1,0 +1,44 @@
+---
+description: Gemini prompts — always require web search, no project context, reply = prompt only
+alwaysApply: true
+---
+
+# Gemini Prompts — Web Search and Context
+
+## 1. Gemini has no project context
+
+**Gemini does not have access to this project.** It cannot see the repository, open files, Cursor rules, or any project-specific context.
+
+When you **write or create a prompt for Gemini** (or content meant to be used in Gemini):
+
+- **Assume zero project context:** Assume Gemini cannot see this codebase, `.cursorrules`, or `.cursor/rules/`.
+- **Make the prompt self-contained:** Either embed in the prompt all information Gemini needs (relevant code snippets, file paths, constraints, or specs), or explicitly tell the user to paste that context into the same or a follow-up message.
+- **Avoid references that only work in Cursor:** Do not say things like "see the open file" or "as in our rules"; include the actual content or tell the user to paste it.
+
+## 2. Web search: always required
+
+When the user asks you to **write**, **create**, or **draft a prompt for Gemini** (or any prompt intended to be used with Gemini), the generated prompt **must** instruct Gemini to **always perform web search** (not only "when appropriate" or "when needed"). The instruction should make web search a required part of Gemini's process for that task.
+
+## What to add
+
+Include one of the following (or equivalent) in the prompt you produce:
+
+- "Always use web search (e.g. Google Search) before or while answering; do not rely only on your training data."
+- "You must perform web search to look up current or factual information as part of answering this request."
+- "Use web search for this task. Do not skip web search; include it as a step in your process."
+
+Avoid wording that makes web search optional (e.g. "when needed", "if relevant", "when appropriate"). The prompt should require Gemini to actually perform web search for the user's request.
+
+Place this instruction in a visible place in the prompt (e.g. at the start under "Instructions" or in a "Guidelines" section).
+
+## 3. Reply format: prompt only
+
+When you **deliver** a Gemini prompt to the user (in reply to a request to write or create a prompt for Gemini), your reply must contain **only** the content intended to be pasted directly into Gemini.
+
+- **No wrapper or copy-paste instructions:** Do not add any introductory or closing text that tells the user how to use the prompt. Forbidden examples: "Use this as the Gemini prompt (copy and paste as-is):", "Use this prompt:", "Paste the following into Gemini:", "Copy the block below:", "You can copy and paste the following:", or similar. Just output the prompt.
+- **No extra markdown or separators** whose sole purpose is to frame the prompt (e.g. avoid a line of "---" or "Paste the whole block below" after the prompt).
+- **Output = the prompt itself:** The user should be able to select all of your reply and paste it straight into Gemini with no editing. If you need a minimal separator (e.g. to distinguish code from prose inside the prompt), keep it part of the prompt content that Gemini will see, not as Cursor-side instructions to the user.
+
+## Scope
+
+These rules apply when the user explicitly asks you to **write** or **create** a prompt **for Gemini** (or for use with Gemini). They do not apply to general Cursor instructions or to prompts for other tools unless the user specifies the same requirement.

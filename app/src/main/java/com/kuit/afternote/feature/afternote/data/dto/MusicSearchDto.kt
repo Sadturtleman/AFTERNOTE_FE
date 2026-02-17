@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.afternote.data.dto
 import kotlinx.serialization.Serializable
 
 /**
- * Response body for GET /api/music/search?keyword=.
+ * Response body for GET /music/search?keyword=.
  * Server returns 200 with tracks array; 400 when keyword is missing.
  */
 @Serializable

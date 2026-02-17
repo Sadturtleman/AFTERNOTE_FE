@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -256,16 +257,18 @@ private fun ProfileEditScrollColumn(
         )
 
         Spacer(Modifier.height((maxHeight.value * 0.225f).dp))
-        // 회원 탈퇴하기
+        // 회원 탈퇴하기 (divider width matches text width via intrinsic size)
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(
+                modifier = Modifier.width(IntrinsicSize.Max),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "회원 탈퇴하기",
+                    maxLines = 1,
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
@@ -276,7 +279,7 @@ private fun ProfileEditScrollColumn(
                     modifier = Modifier.clickable { callbacks.onWithdrawClick() }
                 )
                 HorizontalDivider(
-                    modifier = Modifier.width(93.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
                     color = Gray3
                 )

@@ -59,7 +59,8 @@ fun ClickButton(
     onButtonClick: () -> Unit,
     title: String,
     isTrue: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    activeColor: Color = B3
 ) {
     Button(
         enabled = isTrue,
@@ -77,7 +78,7 @@ fun ClickButton(
             ),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isTrue) B3 else Gray3
+            containerColor = if (isTrue) activeColor else Gray3
         )
     ) {
         Text(
