@@ -33,41 +33,78 @@ class AfternoteListViewModel
         val uiState: StateFlow<AfternoteListUiState> = _uiState.asStateFlow()
 
         private var allItems: List<AfternoteItem> = emptyList()
+        private var currentPage: Int = 0
+        private var hasNextPage: Boolean = false
+        private val pageSize: Int = 10
 
         init {
             loadAfternotes()
         }
 
         /**
-         * API에서 애프터노트 목록을 로드합니다.
+         * API에서 애프터노트 목록 첫 페이지를 로드합니다.
          * category가 null이면 전체, 그 외에는 카테고리별 필터링을 서버에서 수행합니다.
          *
          * 최초 로드는 init에서 자동 호출되며,
          * 편집/저장 후 명시적으로 새로고침이 필요한 경우에만 외부에서 호출합니다.
          */
-        fun loadAfternotes(
-            category: String? = null,
-            page: Int = 0,
-            size: Int = 10
-        ) {
+        fun loadAfternotes(category: String? = null) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, loadError = null) }
-                getAfternotesUseCase(category = category, page = page, size = size)
-                    .onSuccess { items ->
-                        allItems = items
-                        _uiState.update { it.copy(isLoading = false, loadError = null) }
+                getAfternotesUseCase(category = category, page = 0, size = pageSize)
+                    .onSuccess { paged ->
+                        allItems = paged.items
+                        currentPage = 0
+                        hasNextPage = paged.hasNext
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                loadError = null,
+                                hasNext = paged.hasNext,
+                                isLoadingMore = false
+                            )
+                        }
                         updateFilteredItems(_uiState.value.selectedTab)
                     }
                     .onFailure { e ->
-                        // 서버 로딩 실패 시 더미/기존 데이터 대신 오류 상태만 표시
                         allItems = emptyList()
+                        currentPage = 0
+                        hasNextPage = false
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
                                 items = emptyList(),
-                                loadError = e.message ?: "애프터노트 목록을 불러오지 못했습니다."
+                                loadError = e.message ?: "애프터노트 목록을 불러오지 못했습니다.",
+                                hasNext = false,
+                                isLoadingMore = false
                             )
                         }
+                    }
+            }
+        }
+
+        /**
+         * 다음 페이지를 로드하여 목록에 이어붙입니다.
+         * hasNext가 true이고 로딩 중이 아닐 때만 호출합니다.
+         */
+        fun loadNextPage() {
+            if (!hasNextPage || _uiState.value.isLoadingMore) return
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoadingMore = true) }
+                val category: String? = null
+                val nextPage = currentPage + 1
+                getAfternotesUseCase(category = category, page = nextPage, size = pageSize)
+                    .onSuccess { paged ->
+                        allItems = allItems + paged.items
+                        currentPage = nextPage
+                        hasNextPage = paged.hasNext
+                        _uiState.update {
+                            it.copy(isLoadingMore = false, hasNext = paged.hasNext)
+                        }
+                        updateFilteredItems(_uiState.value.selectedTab)
+                    }
+                    .onFailure {
+                        _uiState.update { it.copy(isLoadingMore = false) }
                     }
             }
         }
@@ -77,7 +114,10 @@ class AfternoteListViewModel
          */
         fun setItems(items: List<AfternoteItem>) {
             allItems = items
-            _uiState.update { it.copy(loadError = null, isLoading = false) }
+            hasNextPage = false
+            _uiState.update {
+                it.copy(loadError = null, isLoading = false, hasNext = false, isLoadingMore = false)
+            }
             updateFilteredItems(_uiState.value.selectedTab)
         }
 

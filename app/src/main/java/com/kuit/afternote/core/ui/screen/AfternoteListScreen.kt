@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.AfternoteListContent
+import com.kuit.afternote.core.ui.component.list.AfternoteListContentListParams
 import com.kuit.afternote.core.ui.component.list.AfternoteListScreenShell
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -20,12 +21,15 @@ data class AfternoteListScreenShellParams(
     val onFabClick: () -> Unit = {}
 )
 
-/** List params for AfternoteListScreen (items, tab, callbacks). */
+/** List params for AfternoteListScreen (items, tab, callbacks, pagination). */
 data class AfternoteListScreenListParams(
     val items: List<AfternoteListDisplayItem>,
     val selectedTab: AfternoteTab = AfternoteTab.ALL,
     val onTabSelected: (AfternoteTab) -> Unit,
-    val onItemClick: (String) -> Unit
+    val onItemClick: (String) -> Unit,
+    val hasNext: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val onLoadMore: () -> Unit = {}
 )
 
 /**
@@ -48,10 +52,15 @@ fun AfternoteListScreen(
         content = { contentModifier ->
             AfternoteListContent(
                 modifier = contentModifier,
-                items = list.items,
-                selectedTab = list.selectedTab,
-                onTabSelected = list.onTabSelected,
-                onItemClick = list.onItemClick
+                list = AfternoteListContentListParams(
+                    items = list.items,
+                    selectedTab = list.selectedTab,
+                    onTabSelected = list.onTabSelected,
+                    onItemClick = list.onItemClick,
+                    hasNext = list.hasNext,
+                    isLoadingMore = list.isLoadingMore,
+                    onLoadMore = list.onLoadMore
+                )
             )
         }
     )
@@ -79,7 +88,10 @@ private fun AfternoteListScreenPreview() {
                 ),
                 selectedTab = AfternoteTab.ALL,
                 onTabSelected = {},
-                onItemClick = {}
+                onItemClick = {},
+                hasNext = false,
+                isLoadingMore = false,
+                onLoadMore = {}
             )
         )
     }

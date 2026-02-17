@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentialsDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteMemorialVideoDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSongDto
@@ -14,6 +15,7 @@ import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfterno
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
@@ -51,17 +53,43 @@ class AfternoteEditViewModel
         private val updateUseCase: UpdateAfternoteUseCase,
         private val getDetailUseCase: GetAfternoteDetailUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
-        private val getUserIdUseCase: GetUserIdUseCase
+        private val getUserIdUseCase: GetUserIdUseCase,
+        private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase
     ) : ViewModel() {
 
         private val _saveState = MutableStateFlow(AfternoteSaveState())
         val saveState: StateFlow<AfternoteSaveState> = _saveState.asStateFlow()
+
+        /** Set when memorial thumbnail upload (presigned URL) succeeds; consumed by screen to set state. */
+        private val _uploadedThumbnailUrl = MutableStateFlow<String?>(null)
+        val uploadedThumbnailUrl: StateFlow<String?> = _uploadedThumbnailUrl.asStateFlow()
 
         /**
          * Category from the server when loading for edit. Used for update requests because the API
          * does not allow changing category; we must send the original category.
          */
         private var loadedCategoryForEdit: String? = null
+
+        /**
+         * Uploads memorial thumbnail via POST /images/presigned-url and S3. On success emits URL to
+         * [uploadedThumbnailUrl]; screen should apply it to state then call [clearUploadedThumbnailUrl].
+         */
+        fun uploadMemorialThumbnail(jpegBytes: ByteArray) {
+            viewModelScope.launch {
+                uploadMemorialThumbnailUseCase(jpegBytes)
+                    .onSuccess { url ->
+                        Log.d(TAG, "uploadMemorialThumbnail: success, url=$url")
+                        _uploadedThumbnailUrl.value = url
+                    }
+                    .onFailure { e ->
+                        Log.e(TAG, "uploadMemorialThumbnail: failed", e)
+                    }
+            }
+        }
+
+        fun clearUploadedThumbnailUrl() {
+            _uploadedThumbnailUrl.value = null
+        }
 
         /**
          * 애프터노트 저장 (생성 또는 수정).
@@ -72,13 +100,17 @@ class AfternoteEditViewModel
          * @param receivers 갤러리 카테고리 시 "추가 수신자에게 정보 전달"일 때만 사용(수정 화면 수신자 추가 목록).
          *                  "수신자에게 정보 전달"일 때는 수신자 목록(GET /users/receivers) ID를 사용함.
          * @param playlistStateHolder 추모 가이드라인의 플레이리스트 상태
+         * @param funeralVideoUrl 추모 가이드라인 전용: 장례식에 남길 영상 URL. 있으면 요청에 memorialVideo 포함.
+         * @param funeralThumbnailUrl 추모 가이드라인 전용: 썸네일 URL (API 응답 또는 업로드 API 반환 시). 없으면 null.
          */
         fun saveAfternote(
             editingId: Long?,
             category: String,
             payload: RegisterAfternotePayload,
             receivers: List<AfternoteEditReceiver>,
-            playlistStateHolder: MemorialPlaylistStateHolder?
+            playlistStateHolder: MemorialPlaylistStateHolder?,
+            funeralVideoUrl: String? = null,
+            funeralThumbnailUrl: String? = null
         ) {
             if (_saveState.value.isSaving) {
                 Log.w(TAG, "saveAfternote: already saving, ignoring duplicate call")
@@ -123,14 +155,18 @@ class AfternoteEditViewModel
                         category = categoryForApi,
                         payload = payload,
                         receivers = receivers,
-                        playlistStateHolder = playlistStateHolder
+                        playlistStateHolder = playlistStateHolder,
+                        funeralVideoUrl = funeralVideoUrl,
+                        funeralThumbnailUrl = funeralThumbnailUrl
                     )
                 } else {
                     performCreate(
                         category = categoryForApi,
                         payload = payload,
                         receivers = receivers,
-                        playlistStateHolder = playlistStateHolder
+                        playlistStateHolder = playlistStateHolder,
+                        funeralVideoUrl = funeralVideoUrl,
+                        funeralThumbnailUrl = funeralThumbnailUrl
                     )
                 }
                 result
@@ -233,7 +269,9 @@ class AfternoteEditViewModel
                 informationProcessingMethodName = informationProcessingMethodName,
                 processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
                 galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList(),
-                atmosphere = detail.playlist?.atmosphere
+                atmosphere = detail.playlist?.atmosphere,
+                memorialVideoUrl = detail.playlist?.memorialVideoUrl,
+                memorialThumbnailUrl = detail.playlist?.memorialThumbnailUrl
             )
         }
 
@@ -325,7 +363,9 @@ class AfternoteEditViewModel
             category: String,
             payload: RegisterAfternotePayload,
             receivers: List<AfternoteEditReceiver>,
-            playlistStateHolder: MemorialPlaylistStateHolder?
+            playlistStateHolder: MemorialPlaylistStateHolder?,
+            funeralVideoUrl: String? = null,
+            funeralThumbnailUrl: String? = null
         ): Result<Long> {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
@@ -371,7 +411,12 @@ class AfternoteEditViewModel
                     )
                 }
                 CATEGORY_MEMORIAL -> {
-                    val playlistDto = buildPlaylistDto(playlistStateHolder, payload.atmosphere)
+                    val playlistDto = buildPlaylistDto(
+                        playlistStateHolder = playlistStateHolder,
+                        atmosphere = payload.atmosphere,
+                        funeralVideoUrl = funeralVideoUrl,
+                        funeralThumbnailUrl = funeralThumbnailUrl
+                    )
                     createPlaylistUseCase(
                         title = payload.serviceName,
                         playlist = playlistDto
@@ -393,14 +438,18 @@ class AfternoteEditViewModel
             category: String,
             payload: RegisterAfternotePayload,
             receivers: List<AfternoteEditReceiver>,
-            playlistStateHolder: MemorialPlaylistStateHolder?
+            playlistStateHolder: MemorialPlaylistStateHolder?,
+            funeralVideoUrl: String? = null,
+            funeralThumbnailUrl: String? = null
         ): Result<Long> {
             val body =
                 if (category == CATEGORY_MEMORIAL) {
                     buildMemorialUpdateBody(
                         title = payload.serviceName,
                         atmosphere = payload.atmosphere,
-                        playlistStateHolder = playlistStateHolder
+                        playlistStateHolder = playlistStateHolder,
+                        funeralVideoUrl = funeralVideoUrl,
+                        funeralThumbnailUrl = funeralThumbnailUrl
                     )
                 } else {
                     buildNonMemorialUpdateBody(
@@ -420,12 +469,19 @@ class AfternoteEditViewModel
         private fun buildMemorialUpdateBody(
             title: String,
             atmosphere: String,
-            playlistStateHolder: MemorialPlaylistStateHolder?
+            playlistStateHolder: MemorialPlaylistStateHolder?,
+            funeralVideoUrl: String? = null,
+            funeralThumbnailUrl: String? = null
         ): AfternoteUpdateRequestDto =
             AfternoteUpdateRequestDto(
                 category = "PLAYLIST",
                 title = title,
-                playlist = buildPlaylistDto(playlistStateHolder, atmosphere)
+                playlist = buildPlaylistDto(
+                    playlistStateHolder = playlistStateHolder,
+                    atmosphere = atmosphere,
+                    funeralVideoUrl = funeralVideoUrl,
+                    funeralThumbnailUrl = funeralThumbnailUrl
+                )
             )
 
         private suspend fun buildNonMemorialUpdateBody(
@@ -535,9 +591,15 @@ class AfternoteEditViewModel
             }
         }
 
+        /**
+         * Builds playlist DTO for create/update. memorialVideo is included whenever the user has
+         * selected a video. thumbnailUrl is from POST /images/presigned-url upload or API on edit.
+         */
         private fun buildPlaylistDto(
             playlistStateHolder: MemorialPlaylistStateHolder?,
-            atmosphere: String = ""
+            atmosphere: String = "",
+            funeralVideoUrl: String? = null,
+            funeralThumbnailUrl: String? = null
         ): AfternotePlaylistDto {
             val songs = playlistStateHolder?.songs?.map { song ->
                 AfternoteSongDto(
@@ -547,9 +609,16 @@ class AfternoteEditViewModel
                     coverUrl = song.albumCoverUrl
                 )
             } ?: emptyList()
+            val memorialVideo =
+                if (funeralVideoUrl.isNullOrBlank()) null
+                else AfternoteMemorialVideoDto(
+                    videoUrl = funeralVideoUrl,
+                    thumbnailUrl = funeralThumbnailUrl.takeIf { !it.isNullOrBlank() }
+                )
             return AfternotePlaylistDto(
                 atmosphere = atmosphere.ifEmpty { null },
-                songs = songs
+                songs = songs,
+                memorialVideo = memorialVideo
             )
         }
     }

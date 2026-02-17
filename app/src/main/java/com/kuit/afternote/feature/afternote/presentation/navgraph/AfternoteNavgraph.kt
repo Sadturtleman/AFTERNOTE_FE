@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation.navgraph
 
 import android.util.Log
+import com.kuit.afternote.BuildConfig
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -46,6 +47,7 @@ import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongViewModel
@@ -63,12 +65,19 @@ import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLogin
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteSaveState
 import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 private const val TAG_AFTERNOTE_EDIT = "AfternoteEdit"
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 private const val TAG_AFTERNOTE_DETAIL = "AfternoteDetail"
+
+private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_ID = "default-memorial-1"
+/** Placeholder title for default memorial playlist song (song API not implemented yet). */
+private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_TITLE = "추모 플레이리스트 곡"
+private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_ARTIST = "아티스트 미정"
+private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
 /**
  * Holder and clear callback for hoisted edit state (keeps param count ≤7).
@@ -384,6 +393,89 @@ private fun AfternoteMemorialGuidelineDetailContent(
 
 // -- Edit Route --
 
+/** Result of save error resolution: either a validation string resource id or a raw message. */
+private sealed class EditSaveErrorResult {
+    data class Validation(val messageResId: Int) : EditSaveErrorResult()
+    data class Raw(val message: String) : EditSaveErrorResult()
+}
+
+/**
+ * Returns the save error to show, or null. Suppresses PLAYLIST_SONGS_REQUIRED when playlist has songs.
+ * Returns Validation(resId) or Raw(message) so the Composable can call stringResource(resId) in Composable context.
+ */
+private fun editSaveErrorFromState(
+    saveState: AfternoteSaveState,
+    playlistSongCount: Int
+): EditSaveErrorResult? {
+    if (saveState.validationError == AfternoteValidationError.PLAYLIST_SONGS_REQUIRED &&
+        playlistSongCount > 0
+    ) return null
+    saveState.validationError?.let { return EditSaveErrorResult.Validation(it.messageResId) }
+    saveState.error?.let { return EditSaveErrorResult.Raw(it) }
+    return null
+}
+
+/**
+ * Adds the default memorial playlist song when creating a new memorial guideline with an empty playlist.
+ */
+private fun ensureDefaultMemorialSong(
+    route: AfternoteRoute.EditRoute,
+    selectedCategory: String,
+    playlistStateHolder: MemorialPlaylistStateHolder
+) {
+    if (route.itemId != null) return
+    if (selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) return
+    if (playlistStateHolder.songs.isNotEmpty()) return
+    playlistStateHolder.addSong(
+        Song(
+            id = DEFAULT_MEMORIAL_PLAYLIST_SONG_ID,
+            title = DEFAULT_MEMORIAL_PLAYLIST_SONG_TITLE,
+            artist = DEFAULT_MEMORIAL_PLAYLIST_SONG_ARTIST
+        )
+    )
+    if (BuildConfig.DEBUG) {
+        Log.d(
+            TAG_AFTERNOTE_EDIT,
+            "Added default memorial song: playlist now has ${playlistStateHolder.songs.size} song(s)"
+        )
+    }
+}
+
+private data class EditScreenCallbacksParams(
+    val navController: NavController,
+    val editViewModel: AfternoteEditViewModel,
+    val editStateHandling: AfternoteEditStateHandling,
+    val state: AfternoteEditState,
+    val route: AfternoteRoute.EditRoute,
+    val initialItem: AfternoteItem?,
+    val playlistStateHolder: MemorialPlaylistStateHolder,
+    val onBottomNavTabSelected: (BottomNavItem) -> Unit
+)
+
+private fun buildEditScreenCallbacks(params: EditScreenCallbacksParams): AfternoteEditScreenCallbacks =
+    AfternoteEditScreenCallbacks(
+        onBackClick = {
+            params.editStateHandling.onClear()
+            params.navController.popBackStack()
+        },
+        onRegisterClick = { payload: RegisterAfternotePayload ->
+            params.editViewModel.saveAfternote(
+                editingId = params.route.itemId?.toLongOrNull() ?: params.initialItem?.id?.toLongOrNull(),
+                category = params.state.selectedCategory,
+                payload = payload,
+                receivers = params.state.afternoteEditReceivers,
+                playlistStateHolder = params.playlistStateHolder,
+                funeralVideoUrl = params.state.funeralVideoUrl,
+                funeralThumbnailUrl = params.state.funeralThumbnailUrl
+            )
+        },
+        onNavigateToAddSong = { params.navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
+        onBottomNavTabSelected = params.onBottomNavTabSelected,
+        onThumbnailBytesReady = { bytes ->
+            if (bytes != null) params.editViewModel.uploadMemorialThumbnail(bytes)
+        }
+    )
+
 @Composable
 private fun AfternoteEditRouteContent(
     backStackEntry: NavBackStackEntry,
@@ -430,6 +522,11 @@ private fun AfternoteEditRouteContent(
         }
     }
 
+    // 새 추모 가이드라인 작성 시, 카테고리가 "추모 가이드라인"이면 플레이리스트에 최소 1곡(기본 곡)을 보장한다.
+    LaunchedEffect(state.selectedCategory, route.itemId) {
+        ensureDefaultMemorialSong(route, state.selectedCategory, playlistStateHolder)
+    }
+
     // 편집 진입 시 상세 API를 통해 최신 데이터를 불러와 편집 상태를 채운다.
     // 추모 가이드라인인 경우 플레이리스트 홀더에도 상세 곡 목록을 채워 편집/상세 화면 곡 수가 일치하도록 한다.
     LaunchedEffect(route.itemId) {
@@ -443,10 +540,6 @@ private fun AfternoteEditRouteContent(
         }
     }
 
-    // 초기 진입 시 더미 곡으로 플레이리스트를 채우지 않는다.
-    // 사용자는 "노래 추가하기" 플로우를 통해 직접 곡을 추가하며,
-    // 실 서비스에서는 RealAfternoteEditDataProvider/실제 API가 곡 목록을 공급한다.
-
     LaunchedEffect(saveState.saveSuccess) {
         if (saveState.saveSuccess) {
             editStateHandling.onClear()
@@ -457,33 +550,41 @@ private fun AfternoteEditRouteContent(
         }
     }
 
-    val saveError = when {
-        saveState.validationError == AfternoteValidationError.PLAYLIST_SONGS_REQUIRED &&
-            playlistStateHolder.songs.isNotEmpty() -> null
-        saveState.validationError != null -> AfternoteEditSaveError(
-            stringResource(saveState.validationError!!.messageResId)
-        )
-        saveState.error != null -> AfternoteEditSaveError(saveState.error!!)
-        else -> null
+    val uploadedThumbnailUrl by editViewModel.uploadedThumbnailUrl.collectAsStateWithLifecycle(initialValue = null)
+    LaunchedEffect(uploadedThumbnailUrl) {
+        if (uploadedThumbnailUrl != null) {
+            runCatching {
+                state.onFuneralThumbnailDataUrlReady(uploadedThumbnailUrl)
+            }.onFailure { e -> Log.e(TAG_AFTERNOTE_EDIT, "apply uploadedThumbnailUrl failed", e) }
+            editViewModel.clearUploadedThumbnailUrl()
+        }
+    }
+
+    val errorResult = remember(
+        saveState.validationError,
+        saveState.error,
+        playlistStateHolder.songs.size
+    ) {
+        editSaveErrorFromState(saveState, playlistStateHolder.songs.size)
+    }
+    val saveError = when (errorResult) {
+        is EditSaveErrorResult.Validation -> AfternoteEditSaveError(stringResource(errorResult.messageResId))
+        is EditSaveErrorResult.Raw -> AfternoteEditSaveError(errorResult.message)
+        null -> null
     }
 
     AfternoteEditScreen(
-        callbacks = AfternoteEditScreenCallbacks(
-            onBackClick = {
-                editStateHandling.onClear()
-                navController.popBackStack()
-            },
-            onRegisterClick = { payload: RegisterAfternotePayload ->
-                editViewModel.saveAfternote(
-                    editingId = route.itemId?.toLongOrNull() ?: initialItem?.id?.toLongOrNull(),
-                    category = state.selectedCategory,
-                    payload = payload,
-                    receivers = state.afternoteEditReceivers,
-                    playlistStateHolder = playlistStateHolder
-                )
-            },
-            onNavigateToAddSong = { navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
-            onBottomNavTabSelected = onBottomNavTabSelected
+        callbacks = buildEditScreenCallbacks(
+            EditScreenCallbacksParams(
+                navController = navController,
+                editViewModel = editViewModel,
+                editStateHandling = editStateHandling,
+                state = state,
+                route = route,
+                initialItem = initialItem,
+                playlistStateHolder = playlistStateHolder,
+                onBottomNavTabSelected = onBottomNavTabSelected
+            )
         ),
         playlistStateHolder = playlistStateHolder,
         // Don't pass initialItem when loadForEdit is used (route.itemId != null).

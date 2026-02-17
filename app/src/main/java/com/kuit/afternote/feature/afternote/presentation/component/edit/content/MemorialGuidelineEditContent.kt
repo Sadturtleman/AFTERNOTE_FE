@@ -86,7 +86,8 @@ fun MemorialGuidelineEditContent(
             videoContent = {
                 FuneralVideoUpload(
                     videoUrl = params.funeralVideoUrl,
-                    onAddVideoClick = params.onVideoAddClick
+                    onAddVideoClick = params.onVideoAddClick,
+                    onThumbnailBytesReady = params.onThumbnailBytesReady
                 )
             }
         ),
@@ -128,7 +129,8 @@ private fun MemorialGuidelineEditContentPreview() {
                 onLastWishSelected = {},
                 onCustomLastWishChanged = {},
                 onPhotoAddClick = {},
-                onVideoAddClick = {}
+                onVideoAddClick = {},
+                onThumbnailBytesReady = {}
             )
         )
     }

@@ -144,6 +144,9 @@ class AfternoteEditState(
         private set
     var funeralVideoUrl by mutableStateOf<String?>(null)
         private set
+    /** Memorial video thumbnail URL when available (e.g. from API on edit or future upload). */
+    var funeralThumbnailUrl by mutableStateOf<String?>(null)
+        private set
     var playlistSongCount by mutableIntStateOf(16)
         private set
 
@@ -311,9 +314,18 @@ class AfternoteEditState(
 
     /**
      * 추모 영상 선택 시 호출 (갤러리 등에서 선택한 URI 저장).
+     * 새 영상 선택 시 썸네일 URL은 초기화 (FuneralVideoUpload가 생성 후 콜백으로 설정).
      */
     fun onFuneralVideoSelected(uri: Uri?) {
         funeralVideoUrl = uri?.toString()
+        funeralThumbnailUrl = null
+    }
+
+    /**
+     * 장례식 영상 썸네일이 준비되면 호출 (앱이 생성한 프레임을 data URL로 인코딩한 값).
+     */
+    fun onFuneralThumbnailDataUrlReady(dataUrl: String?) {
+        funeralThumbnailUrl = dataUrl
     }
 
     fun showAddAfternoteEditReceiverDialog() {
@@ -434,6 +446,9 @@ class AfternoteEditState(
                 }
             }
         }
+        // Memorial only: 장례식에 남길 영상 URL and thumbnail from API.
+        funeralVideoUrl = params.memorialVideoUrl
+        funeralThumbnailUrl = params.memorialThumbnailUrl
     }
 }
 
@@ -444,6 +459,8 @@ class AfternoteEditState(
  *        Must come from API [detail.category], not inferred from title, so Gallery processMethod loads.
  * @param atmosphere Memorial(PLAYLIST) only: playlist.atmosphere for "남기고 싶은 당부". When non-null and
  *        not matching a default option, edit screen selects "기타(직접 입력)" and shows this text.
+ * @param memorialVideoUrl Memorial(PLAYLIST) only: playlist memorial video URL from API (장례식에 남길 영상).
+ * @param memorialThumbnailUrl Memorial(PLAYLIST) only: playlist memorial thumbnail URL from API.
  */
 data class LoadFromExistingParams(
     val itemId: String,
@@ -456,7 +473,9 @@ data class LoadFromExistingParams(
     val informationProcessingMethodName: String,
     val processingMethodsList: List<ProcessingMethodItem>,
     val galleryProcessingMethodsList: List<ProcessingMethodItem>,
-    val atmosphere: String? = null
+    val atmosphere: String? = null,
+    val memorialVideoUrl: String? = null,
+    val memorialThumbnailUrl: String? = null
 )
 
 @Composable
