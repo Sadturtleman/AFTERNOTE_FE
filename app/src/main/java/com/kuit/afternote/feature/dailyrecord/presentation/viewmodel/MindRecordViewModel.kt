@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetDailyQuestionUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.DeleteMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordUseCase
@@ -20,7 +21,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -32,11 +35,11 @@ import javax.inject.Inject
 class MindRecordViewModel @Inject constructor(
     private val getMindRecordsUseCase: GetMindRecordsUseCase,
     private val createMindRecordUseCase: CreateMindRecordUseCase,
+    private val getDailyQuestionUseCase: GetDailyQuestionUseCase,
     private val deleteMindRecordUseCase: DeleteMindRecordUseCase,
     private val getMindRecordUseCase: GetMindRecordUseCase,
     private val editMindRecordUseCase: EditMindRecordUseCase
-
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _records = MutableStateFlow<List<MindRecordUiModel>>(emptyList())
     val records: StateFlow<List<MindRecordUiModel>> = _records
@@ -124,25 +127,52 @@ class MindRecordViewModel @Inject constructor(
         onSuccess: () -> Unit = {}
     ) {
         viewModelScope.launch {
+            val resolvedQuestionId = when {
+                type == "DAILY_QUESTION" && questionId == null -> {
+                    val id = getDailyQuestionUseCase()
+                    if (id == null) {
+                        _uiState.update {
+                            it.copy(createErrorMessage = "오늘의 질문을 불러올 수 없습니다.")
+                        }
+                        return@launch
+                    }
+                    id
+                }
+                else -> questionId
+            }
+
             val result = createMindRecordUseCase(
                 type = type,
                 title = title.ifBlank { null },
                 content = content,
                 date = date,
                 isDraft = isDraft,
-                questionId = questionId,
+                questionId = resolvedQuestionId,
                 category = category
             )
             result.fold(
                 onSuccess = {
+                    _uiState.update { it.copy(createErrorMessage = null) }
                     loadRecords(type)
                     onSuccess()
                 },
                 onFailure = { e ->
                     Log.e("MindRecordViewModel", "onCreateRecord 실패", e)
+                    val message = when (e) {
+                        is HttpException -> when (e.code()) {
+                            401 -> "인증이 만료되었습니다. 다시 로그인해 주세요."
+                            else -> e.message() ?: "등록에 실패했습니다."
+                        }
+                        else -> e.message ?: "등록에 실패했습니다."
+                    }
+                    _uiState.update { it.copy(createErrorMessage = message) }
                 }
             )
         }
+    }
+
+    fun clearCreateError() {
+        _uiState.update { it.copy(createErrorMessage = null) }
     }
 
     fun deleteRecord(recordId: Long, recordType: String, onSuccess: () -> Unit = {}) {

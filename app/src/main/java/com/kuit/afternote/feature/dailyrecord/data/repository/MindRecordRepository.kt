@@ -7,6 +7,8 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
 
 interface MindRecordRepository {
+    suspend fun getDailyQuestion(): Long?
+
     suspend fun getMindRecords(
         type: String,
         view: String = "LIST",

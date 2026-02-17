@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.data.api
 
+import com.kuit.afternote.feature.dailyrecord.data.dto.DailyQuestionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
@@ -30,6 +31,13 @@ interface DailyRecordApiService {
      * @param year 연도 (view=CALENDAR일 때)
      * @param month 월 1~12 (view=CALENDAR일 때)
      */
+    /**
+     * 오늘의 데일리 질문 조회 (GET /daily-question)
+     * DAILY_QUESTION 타입 기록 작성 시 questionId가 필수이므로, 등록 전에 호출합니다.
+     */
+    @GET("daily-question")
+    suspend fun getDailyQuestion(): DailyQuestionResponse
+
     @GET("mind-records")
     suspend fun getMindRecords(
         @Query("type") type: String,

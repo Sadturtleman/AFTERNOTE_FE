@@ -10,7 +10,13 @@ import javax.inject.Inject
 
 class MindRecordRepositoryImpl @Inject constructor(
     private val apiService: DailyRecordApiService
-) : MindRecordRepository{
+) : MindRecordRepository {
+    override suspend fun getDailyQuestion(): Long? = try {
+        apiService.getDailyQuestion().questionId
+    } catch (e: Exception) {
+        null
+    }
+
     override suspend fun getMindRecords(
         type: String,
         view: String,

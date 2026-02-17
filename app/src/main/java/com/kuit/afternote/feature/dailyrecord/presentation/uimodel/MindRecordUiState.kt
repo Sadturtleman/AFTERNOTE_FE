@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.uimodel
 
 data class MindRecordUiState(
+    val createErrorMessage: String? = null,
     val title: String = "",
     val content: String = "",
     val sendDate: String = "",

@@ -80,6 +80,17 @@ data class MindRecordDetail(
 )
 
 /**
+ * 데일리 질문 조회 응답 (GET /daily-question)
+ * 오늘 날짜 기준으로 서버가 1개의 질문을 반환합니다.
+ * API 스펙: { questionId, content }
+ */
+@Serializable
+data class DailyQuestionResponse(
+    val questionId: Long,
+    val content: String
+)
+
+/**
  * 기록 작성 요청 DTO (POST /mind-records)
  */
 @Serializable
@@ -118,12 +129,19 @@ data class PostMindRecordData(
 @Serializable
 data class CreateMindRecordRequest(
     val type: String,
-    val title: String?,   // nullable 허용
-    val content: String?, // nullable 허용
-    val date: String?,    // nullable 허용
+    val title: String?,
+    val content: String?,
+    val date: String?,
     val isDraft: Boolean,
     val questionId: Long? = null,
-    val category: String? = null
+    val category: String? = null,
+    val imageList: List<MindRecordImageItem>? = emptyList()  // 추가
+)
+
+@Serializable
+data class MindRecordImageItem(
+    val mediaType: String,
+    val imageUrl: String
 )
 
 

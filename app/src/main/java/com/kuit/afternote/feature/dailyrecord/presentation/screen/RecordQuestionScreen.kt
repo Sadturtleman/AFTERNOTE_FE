@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,12 +9,14 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryQuestionContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
@@ -33,10 +36,20 @@ fun RecordQuestionScreen(
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(record) {
         record?.let {
             title = it.title
             content = it.content ?: ""
+        }
+    }
+
+    LaunchedEffect(uiState.createErrorMessage) {
+        uiState.createErrorMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            viewModel.clearCreateError()
         }
     }
 
