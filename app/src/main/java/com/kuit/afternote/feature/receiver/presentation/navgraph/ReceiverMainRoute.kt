@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.navgraph
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -228,9 +229,11 @@ fun ReceiverMainRoute(
                             showBottomBar = false
                         )
                     }
-                BottomNavItem.AFTERNOTE ->
+                BottomNavItem.AFTERNOTE -> {
+                    val afternoteSenderName = receiverAuthSessionHolder.getSenderName().orEmpty()
+                    Log.d(TAG_RECEIVER_MAIN, "AFTERNOTE tab getSenderName=${receiverAuthSessionHolder.getSenderName()}, orEmpty='$afternoteSenderName'")
                     ReceiverAfterNoteMainScreen(
-                        title = receiverTitle,
+                        senderName = afternoteSenderName,
                         albumCovers = albumCovers,
                         onNavigateToFullList = {
                             navController.navigate("receiver_afternote_list")
@@ -238,7 +241,10 @@ fun ReceiverMainRoute(
                         onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
                         showBottomBar = false
                     )
+                }
             }
         }
     }
 }
+
+private const val TAG_RECEIVER_MAIN = "ReceiverMain"
