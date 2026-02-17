@@ -20,7 +20,7 @@ private const val DIRECTORY_PROFILES = "profiles"
 private const val DEFAULT_EXTENSION = "jpg"
 
 /**
- * Presigned URL을 받아 프로필 이미지를 S3에 업로드하고 imageUrl을 반환합니다.
+ * Presigned URL을 받아 프로필 이미지를 S3에 업로드하고 fileUrl을 반환합니다.
  */
 class ProfileImageUploadRepositoryImpl
     @Inject
@@ -64,7 +64,7 @@ class ProfileImageUploadRepositoryImpl
                     }
                 }
             }
-            presigned.imageUrl
+            presigned.fileUrl
         }
 
     private fun extensionFromUri(uri: Uri): String {

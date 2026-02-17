@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.afternote.data.api.MusicApiService
 import com.kuit.afternote.feature.afternote.data.dto.MusicTrackDto
 import com.kuit.afternote.feature.afternote.domain.repository.iface.MusicSearchRepository
@@ -9,6 +8,7 @@ import javax.inject.Inject
 
 /**
  * Data layer: calls music search API and maps DTO to [PlaylistSongDisplay].
+ * API returns raw { "tracks": [...] } (no ApiResponse wrapper).
  */
 class MusicSearchRepositoryImpl
     @Inject
@@ -20,8 +20,7 @@ class MusicSearchRepositoryImpl
         val trimmed = keyword.trim()
         if (trimmed.isEmpty()) return@runCatching emptyList<PlaylistSongDisplay>()
         val response = api.search(keyword = trimmed)
-        val data = response.requireData()
-        data.tracks.mapIndexed { index, dto -> dto.toPlaylistSongDisplay(index) }
+        response.tracks.mapIndexed { index, dto -> dto.toPlaylistSongDisplay(index) }
     }
 
     private fun MusicTrackDto.toPlaylistSongDisplay(index: Int): PlaylistSongDisplay {

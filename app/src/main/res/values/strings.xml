@@ -23,6 +23,7 @@
     <string name="content_description_select_receiver">수신자 선택</string>
     <string name="content_description_profile_image">프로필 이미지</string>
     <string name="content_description_profile_edit_button">프로필 수정 버튼</string>
+    <string name="content_description_album_cover">앨범 커버</string>
 
     <string name="daily_answer_title">나의 모든 기록</string>
     <string name="daily_answer_intro_line1_suffix">님에게 전달 될</string>
@@ -87,6 +88,10 @@
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
+    <string name="withdrawal_password_error">비밀번호가 맞지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_complete_line1">회원 탈퇴가 완료되었습니다.</string>
+    <string name="withdrawal_complete_line2">애프터노트를 이용해 주셔서 감사합니다.</string>
+    <string name="withdrawal_complete_confirm">확인하기</string>
 
     <string name="design_pending">디자인 예정</string>
     <string name="afternote_detail_invalid_id">잘못된 항목 ID입니다.</string>

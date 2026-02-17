@@ -1,16 +1,10 @@
 package com.kuit.afternote.feature.afternote.presentation.component.edit.content
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.LastWishOption
@@ -19,7 +13,6 @@ import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
 import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
-import com.kuit.afternote.feature.afternote.presentation.common.util.PlaceholderDrawables
 import com.kuit.afternote.feature.afternote.presentation.component.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.afternote.presentation.component.edit.upload.FuneralVideoUpload
 import com.kuit.afternote.feature.afternote.presentation.component.edit.upload.MemorialPhotoUpload
@@ -57,19 +50,7 @@ fun MemorialGuidelineEditContent(
                 MemorialPlaylist(
                     songCount = params.playlistSongCount,
                     albumCovers = params.playlistAlbumCovers,
-                    onAddSongClick = params.onSongAddClick,
-                    albumItemContent = { _, index ->
-                        Box(modifier = Modifier.size(80.dp)) {
-                            Image(
-                                painter = painterResource(
-                                    id = PlaceholderDrawables.forZeroBasedIndex(index)
-                                ),
-                                contentDescription = "${index + 1}",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Fit
-                            )
-                        }
-                    }
+                    onAddSongClick = params.onSongAddClick
                 )
             },
             lastWishContent = {

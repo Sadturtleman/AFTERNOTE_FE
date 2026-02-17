@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.navgraph
 
 import android.util.Log
-import com.kuit.afternote.BuildConfig
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -31,6 +30,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -45,27 +45,25 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailCont
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.AddSongViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteDetailViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditSaveError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteValidationError
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditScreenCallbacks
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditViewModel
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRoute
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListRouteCallbacks
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteSaveState
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteValidationError
 import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteSaveState
 import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
@@ -73,10 +71,6 @@ private const val TAG_AFTERNOTE_EDIT = "AfternoteEdit"
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 private const val TAG_AFTERNOTE_DETAIL = "AfternoteDetail"
 
-private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_ID = "default-memorial-1"
-/** Placeholder title for default memorial playlist song (song API not implemented yet). */
-private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_TITLE = "추모 플레이리스트 곡"
-private const val DEFAULT_MEMORIAL_PLAYLIST_SONG_ARTIST = "아티스트 미정"
 private const val CATEGORY_MEMORIAL_GUIDELINE = "추모 가이드라인"
 
 /**
@@ -415,32 +409,6 @@ private fun editSaveErrorFromState(
     return null
 }
 
-/**
- * Adds the default memorial playlist song when creating a new memorial guideline with an empty playlist.
- */
-private fun ensureDefaultMemorialSong(
-    route: AfternoteRoute.EditRoute,
-    selectedCategory: String,
-    playlistStateHolder: MemorialPlaylistStateHolder
-) {
-    if (route.itemId != null) return
-    if (selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) return
-    if (playlistStateHolder.songs.isNotEmpty()) return
-    playlistStateHolder.addSong(
-        Song(
-            id = DEFAULT_MEMORIAL_PLAYLIST_SONG_ID,
-            title = DEFAULT_MEMORIAL_PLAYLIST_SONG_TITLE,
-            artist = DEFAULT_MEMORIAL_PLAYLIST_SONG_ARTIST
-        )
-    )
-    if (BuildConfig.DEBUG) {
-        Log.d(
-            TAG_AFTERNOTE_EDIT,
-            "Added default memorial song: playlist now has ${playlistStateHolder.songs.size} song(s)"
-        )
-    }
-}
-
 private data class EditScreenCallbacksParams(
     val navController: NavController,
     val editViewModel: AfternoteEditViewModel,
@@ -520,11 +488,6 @@ private fun AfternoteEditRouteContent(
         if (route.itemId == null && route.initialCategory != null) {
             state.onCategorySelected(route.initialCategory)
         }
-    }
-
-    // 새 추모 가이드라인 작성 시, 카테고리가 "추모 가이드라인"이면 플레이리스트에 최소 1곡(기본 곡)을 보장한다.
-    LaunchedEffect(state.selectedCategory, route.itemId) {
-        ensureDefaultMemorialSong(route, state.selectedCategory, playlistStateHolder)
     }
 
     // 편집 진입 시 상세 API를 통해 최신 데이터를 불러와 편집 상태를 채운다.

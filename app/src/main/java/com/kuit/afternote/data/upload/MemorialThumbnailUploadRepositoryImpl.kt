@@ -18,7 +18,7 @@ private const val EXTENSION_JPG = "jpg"
 private const val CONTENT_TYPE_JPEG = "image/jpeg"
 
 /**
- * Uploads memorial thumbnail via POST /images/presigned-url (directory "afternotes") then S3 PUT.
+ * Uploads memorial thumbnail via POST /files/presigned-url (directory "afternotes") then S3 PUT.
  */
 class MemorialThumbnailUploadRepositoryImpl
     @Inject
@@ -54,6 +54,6 @@ class MemorialThumbnailUploadRepositoryImpl
                     }
                 }
             }
-            presigned.imageUrl
+            presigned.fileUrl
         }
 }

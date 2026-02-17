@@ -35,7 +35,7 @@ Place this instruction in a visible place in the prompt (e.g. at the start under
 
 When you **deliver** a Gemini prompt to the user (in reply to a request to write or create a prompt for Gemini), your reply must contain **only** the content intended to be pasted directly into Gemini.
 
-- **No wrapper text:** Do not add introductory or closing phrases such as "Use this prompt:", "Paste the following into Gemini:", "Copy the block below:", or similar.
+- **No wrapper or copy-paste instructions:** Do not add any introductory or closing text that tells the user how to use the prompt. Forbidden examples: "Use this as the Gemini prompt (copy and paste as-is):", "Use this prompt:", "Paste the following into Gemini:", "Copy the block below:", "You can copy and paste the following:", or similar. Just output the prompt.
 - **No extra markdown or separators** whose sole purpose is to frame the prompt (e.g. avoid a line of "---" or "Paste the whole block below" after the prompt).
 - **Output = the prompt itself:** The user should be able to select all of your reply and paste it straight into Gemini with no editing. If you need a minimal separator (e.g. to distinguish code from prose inside the prompt), keep it part of the prompt content that Gemini will see, not as Cursor-side instructions to the user.
 
