@@ -209,15 +209,17 @@ private fun MemorialPlaylistActionBar(
                 ambientColor = Color(0x26000000),
                 spotColor = Color(0x26000000)
             ).background(color = Color.White, shape = actionBarShape)
-            .clip(actionBarShape)
-            .padding(horizontal = 56.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .clip(actionBarShape),
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier.clickable(onClick = onDeleteAllClick)
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onDeleteAllClick)
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "전체 삭제",
                 style = TextStyle(
@@ -229,7 +231,6 @@ private fun MemorialPlaylistActionBar(
                     textAlign = TextAlign.Center
                 )
             )
-            Spacer(modifier = Modifier.height(12.dp))
         }
         Box(
             modifier = Modifier
@@ -238,9 +239,12 @@ private fun MemorialPlaylistActionBar(
                 .background(Color(0xFFE0E0E0))
         )
         Column(
-            modifier = Modifier.clickable(onClick = onDeleteSelectedClick)
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onDeleteSelectedClick)
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "선택 삭제",
                 style = TextStyle(
@@ -252,7 +256,6 @@ private fun MemorialPlaylistActionBar(
                     textAlign = TextAlign.Center
                 )
             )
-            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }
