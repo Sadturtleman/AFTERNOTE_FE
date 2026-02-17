@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
 fun ReceiverAfterNoteScreen(
     showBottomBar: Boolean = true,
     receiverId: String = "1",
+    authCode: String = "",
     senderName: String = "",
     leaveMessage: String? = null,
     mindRecordTotalCount: Int = 0,
@@ -82,8 +83,7 @@ fun ReceiverAfterNoteScreen(
             message = stringResource(R.string.receiver_download_all_dialog_message),
             onDismiss = { showDialog = false },
             onConfirm = {
-                val rid = receiverId.toLongOrNull() ?: 0L
-                if (rid > 0L) viewModel.confirmDownloadAll(rid)
+                if (authCode.isNotBlank()) viewModel.confirmDownloadAll(authCode)
             },
             isLoading = downloadAllUiState.isLoading
         )
@@ -195,7 +195,7 @@ fun ReceiverAfterNoteScreen(
 private class FakeReceiverDownloadAllViewModel : ReceiverDownloadAllViewModelContract {
     private val _uiState = MutableStateFlow(ReceiverDownloadAllUiState())
     override val uiState: StateFlow<ReceiverDownloadAllUiState> = _uiState
-    override fun confirmDownloadAll(receiverId: Long) {}
+    override fun confirmDownloadAll(authCode: String) {}
     override fun clearDownloadSuccess() {}
     override fun clearError() {}
 }
