@@ -84,10 +84,13 @@ fun ReceiverMainRoute(
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteTriggerViewModel: ReceiverAfternoteTriggerViewModel = hiltViewModel()
     val leaveMessage by afternoteTriggerViewModel.leaveMessage.collectAsStateWithLifecycle()
+    val mindRecordTotalCount by afternoteTriggerViewModel.mindRecordTotalCount.collectAsStateWithLifecycle()
+    val timeLetterTotalCount by afternoteTriggerViewModel.timeLetterTotalCount.collectAsStateWithLifecycle()
+    val afternoteTotalCount by afternoteTriggerViewModel.afternoteTotalCount.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         receiverAuthSessionHolder.getAuthCode()
-            ?.let { afternoteTriggerViewModel.loadAfterNotes(it) }
+            ?.let { afternoteTriggerViewModel.loadHomeSummary(it) }
     }
 
     BackHandler {
@@ -129,6 +132,9 @@ fun ReceiverMainRoute(
                         receiverId = receiverId,
                         senderName = receiverAuthSessionHolder.getSenderName().orEmpty(),
                         leaveMessage = leaveMessage,
+                        mindRecordTotalCount = mindRecordTotalCount,
+                        timeLetterTotalCount = timeLetterTotalCount,
+                        afternoteTotalCount = afternoteTotalCount,
                         onNavigateToRecord = { selectedBottomNavItem = BottomNavItem.RECORD },
                         onNavigateToTimeLetter = {
                             receiverAuthSessionHolder.getAuthCode()

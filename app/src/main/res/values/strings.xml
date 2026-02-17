@@ -51,6 +51,7 @@
     <string name="receiver_mindrecord_date_picker_confirm">선택하기</string>
     <string name="receiver_mindrecord_date_picker_content_description">%1$d년 %2$d월 선택</string>
     <string name="receiver_mindrecord_year_month_format">%1$d년 %2$d월</string>
+    <string name="receiver_mindrecord_section_count">%1$d개 마음의 기록이 있습니다.</string>
     <string name="receiver_mindrecord_title">마음의 기록</string>
     <string name="receiver_mindrecord_today_section">오늘의 기록</string>
     <string name="receiver_mindrecord_date_section">날짜별 기록</string>

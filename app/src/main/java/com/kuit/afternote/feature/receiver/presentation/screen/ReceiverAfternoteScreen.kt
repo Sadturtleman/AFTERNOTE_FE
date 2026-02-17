@@ -50,6 +50,7 @@ fun ReceiverAfterNoteScreen(
     receiverId: String = "1",
     senderName: String = "",
     leaveMessage: String? = null,
+    mindRecordTotalCount: Int = 0,
     timeLetterTotalCount: Int = 0,
     afternoteTotalCount: Int = 0,
     onNavigateToRecord: () -> Unit = {},
@@ -138,7 +139,10 @@ fun ReceiverAfterNoteScreen(
                 ContentSection(
                     title = "마음의 기록",
                     desc = "고인의 일상적인 생각과 감정, 일기들입니다.",
-                    subDesc = "150개 마음의 기록이 있습니다.",
+                    subDesc = stringResource(
+                        R.string.receiver_mindrecord_section_count,
+                        mindRecordTotalCount
+                    ),
                     btnText = "마음의 기록 확인하러 가기",
                     imageResource = painterResource(R.drawable.img_book),
                     onButtonClick = onNavigateToRecord
