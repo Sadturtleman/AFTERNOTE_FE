@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface ReceiverDownloadAllViewModelContract {
     val uiState: StateFlow<ReceiverDownloadAllUiState>
-    fun confirmDownloadAll(receiverId: Long)
+    fun confirmDownloadAll(authCode: String)
     fun clearDownloadSuccess()
     fun clearError()
 }
