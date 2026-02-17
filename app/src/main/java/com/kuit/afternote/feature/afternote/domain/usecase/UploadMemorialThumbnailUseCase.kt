@@ -4,7 +4,7 @@ import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailU
 import javax.inject.Inject
 
 /**
- * Uploads memorial thumbnail (JPEG bytes) via POST /images/presigned-url and S3.
+ * Uploads memorial thumbnail (JPEG bytes) via POST /files/presigned-url and S3.
  * Returns the image URL to use as memorialVideo.thumbnailUrl.
  */
 class UploadMemorialThumbnailUseCase

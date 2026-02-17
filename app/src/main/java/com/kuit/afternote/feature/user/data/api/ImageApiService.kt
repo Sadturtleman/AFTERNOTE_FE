@@ -7,11 +7,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 /**
- * Image API (presigned URL for S3 upload).
- * POST /images/presigned-url — S3 이미지 업로드를 위한 Presigned URL을 생성합니다.
+ * File API (presigned URL for S3 upload).
+ * POST /files/presigned-url — S3 파일 업로드를 위한 Presigned URL을 생성합니다.
+ * 지원 형식: 이미지(jpg, jpeg, png, gif, webp, heic), 영상(mp4, mov), 음성(mp3, m4a, wav), 문서(pdf).
  */
 fun interface ImageApiService {
-    @POST("images/presigned-url")
+    @POST("files/presigned-url")
     suspend fun getPresignedUrl(
         @Body body: PresignedUrlRequestDto
     ): ApiResponse<PresignedUrlResponseDto?>

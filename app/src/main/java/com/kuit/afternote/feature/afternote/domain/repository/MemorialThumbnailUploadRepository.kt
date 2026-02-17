@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.repository
 
 /**
- * Memorial (playlist) thumbnail upload via POST /images/presigned-url and S3 PUT.
+ * Memorial (playlist) thumbnail upload via POST /files/presigned-url and S3 PUT.
  * Used for "장례식에 남길 영상" thumbnail so the server receives an image URL, not inline data.
  */
 fun interface MemorialThumbnailUploadRepository {
