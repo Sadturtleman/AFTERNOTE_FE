@@ -47,7 +47,7 @@ import com.kuit.afternote.feature.onboarding.presentation.viewmodel.PasswordChan
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
-import com.kuit.afternote.ui.theme.ErrorRed
+import com.kuit.afternote.ui.theme.Red
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -212,7 +212,7 @@ private fun PasswordChangeContent(
                             lineHeight = 18.sp,
                             fontFamily = Sansneo,
                             fontWeight = FontWeight.Normal,
-                            color = ErrorRed
+                            color = Red
                         )
                     )
                 }
@@ -264,7 +264,7 @@ private fun PasswordGuideSection(
         // 비밀번호 요구사항 목록
         PasswordRequirementItem(
             text = "8 ~ 16자의 영문 대소문자, 숫자, 특수문자를 조합하여 설정해 주세요.",
-            color = if (passwordRequirementError) ErrorRed else B1
+            color = if (passwordRequirementError) Red else B1
         )
         PasswordRequirementItem(
             text = "이전에 사용한 적 없는 비밀번호가 안전합니다.",

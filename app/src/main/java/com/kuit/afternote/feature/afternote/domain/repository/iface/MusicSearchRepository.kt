@@ -4,7 +4,7 @@ import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 
 /**
  * Music search by keyword (artist or title).
- * API: GET /api/music/search?keyword= — 200 success, 400 when keyword is missing.
+ * API: GET /music/search?keyword= — 200 success, 400 when keyword is missing.
  */
 fun interface MusicSearchRepository {
 

@@ -8,16 +8,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.button.ClickButton
@@ -28,17 +33,17 @@ import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Red
 import com.kuit.afternote.ui.theme.Sansneo
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 
 /**
  * Callbacks for the withdrawal password confirmation screen.
  */
 data class WithdrawalPasswordCallbacks(
     val onBackClick: () -> Unit = {},
-    val onWithdrawClick: () -> Unit = {},
-    val onGoBackClick: () -> Unit = {}
+    val onWithdrawClick: (password: String) -> Unit = {},
+    val onGoBackClick: () -> Unit = {},
+    val onPasswordChanged: () -> Unit = {}
 )
 
 /**
@@ -53,6 +58,7 @@ data class WithdrawalPasswordCallbacks(
  *
  * @param accountDisplay 탈퇴할 계정 정보 (예: "박서연(example@mail.com)")
  * @param passwordState 비밀번호 입력 상태
+ * @param passwordError 비밀번호 불일치 시 표시할 에러 메시지 (null이면 숨김, Figma 4688-30596)
  * @param callbacks 화면 콜백
  */
 @Composable
@@ -60,8 +66,12 @@ fun WithdrawalPasswordScreen(
     modifier: Modifier = Modifier,
     accountDisplay: String = "",
     passwordState: TextFieldState = rememberTextFieldState(),
+    passwordError: String? = null,
     callbacks: WithdrawalPasswordCallbacks = WithdrawalPasswordCallbacks()
 ) {
+    LaunchedEffect(passwordState.text) {
+        callbacks.onPasswordChanged()
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
@@ -109,12 +119,29 @@ fun WithdrawalPasswordScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            if (passwordError != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = passwordError,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 12.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Red,
+                    lineHeight = 18.sp
+                )
+            }
+
+            Spacer(
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .height(64.dp)
+            )
 
             // 탈퇴하기 버튼
             ClickButton(
                 color = B2,
-                onButtonClick = callbacks.onWithdrawClick,
+                onButtonClick = { callbacks.onWithdrawClick(passwordState.text.toString()) },
                 title = "탈퇴하기"
             )
 
@@ -172,6 +199,20 @@ private fun WithdrawalPasswordScreenPreview() {
     AfternoteTheme(darkTheme = false) {
         WithdrawalPasswordScreen(
             accountDisplay = "박서연(example@mail.com)"
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+)
+@Composable
+private fun WithdrawalPasswordScreenErrorPreview() {
+    AfternoteTheme(darkTheme = false) {
+        WithdrawalPasswordScreen(
+            accountDisplay = "박서연(example@mail.com)",
+            passwordError = stringResource(R.string.withdrawal_password_error)
         )
     }
 }

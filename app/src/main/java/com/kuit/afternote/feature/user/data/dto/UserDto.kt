@@ -93,19 +93,19 @@ data class ReceiverDailyQuestionsResponseDto(
     val hasNext: Boolean
 )
 
-// --- Image API (POST /images/presigned-url) ---
+// --- File API (POST /files/presigned-url) ---
 
-/** Request for S3 presigned URL. directory: profiles | timeletters | afternotes. */
+/** Request for S3 presigned URL. directory: e.g. profiles, afternotes. extension: e.g. jpg, png. */
 @Serializable
 data class PresignedUrlRequestDto(
     val directory: String,
     val extension: String
 )
 
-/** Response: presignedUrl (PUT target), imageUrl (use in PATCH profile), contentType. */
+/** Response: presignedUrl (PUT target), fileUrl (final URL after upload), contentType. */
 @Serializable
 data class PresignedUrlResponseDto(
     val presignedUrl: String,
-    val imageUrl: String,
+    val fileUrl: String,
     val contentType: String
 )

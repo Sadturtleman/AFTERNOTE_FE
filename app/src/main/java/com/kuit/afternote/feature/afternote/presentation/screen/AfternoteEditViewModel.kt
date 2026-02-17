@@ -71,7 +71,7 @@ class AfternoteEditViewModel
         private var loadedCategoryForEdit: String? = null
 
         /**
-         * Uploads memorial thumbnail via POST /images/presigned-url and S3. On success emits URL to
+         * Uploads memorial thumbnail via POST /files/presigned-url and S3. On success emits URL to
          * [uploadedThumbnailUrl]; screen should apply it to state then call [clearUploadedThumbnailUrl].
          */
         fun uploadMemorialThumbnail(jpegBytes: ByteArray) {
@@ -593,7 +593,7 @@ class AfternoteEditViewModel
 
         /**
          * Builds playlist DTO for create/update. memorialVideo is included whenever the user has
-         * selected a video. thumbnailUrl is from POST /images/presigned-url upload or API on edit.
+         * selected a video. thumbnailUrl is from POST /files/presigned-url upload or API on edit.
          */
         private fun buildPlaylistDto(
             playlistStateHolder: MemorialPlaylistStateHolder?,

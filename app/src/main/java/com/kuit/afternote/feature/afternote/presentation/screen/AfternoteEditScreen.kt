@@ -358,13 +358,21 @@ private fun CategoryContent(
     when (state.selectedCategory) {
         CATEGORY_MEMORIAL_GUIDELINE -> {
             val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
-                (1..songs.size).map { AlbumCover(id = "$it") }
+                songs.mapIndexed { _, s ->
+                    AlbumCover(
+                        id = s.id,
+                        imageUrl = s.albumCoverUrl,
+                        title = s.title
+                    )
+                }
             } ?: state.playlistAlbumCovers
+            val livePlaylistSongCount =
+                state.playlistStateHolder?.songs?.size ?: state.playlistSongCount
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
                     displayMemorialPhotoUri = state.pickedMemorialPhotoUri,
-                    playlistSongCount = state.playlistSongCount,
+                    playlistSongCount = livePlaylistSongCount,
                     playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
                     lastWishOptions = state.lastWishOptions,
