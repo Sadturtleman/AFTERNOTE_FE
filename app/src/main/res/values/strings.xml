@@ -72,6 +72,9 @@
 
     <!-- Afternote detail: design not yet implemented -->
     <string name="design_pending">디자인 예정</string>
+    <string name="afternote_detail_invalid_id">잘못된 항목 ID입니다.</string>
+    <string name="afternote_detail_load_error">상세 정보를 불러오지 못했습니다.</string>
+    <string name="afternote_edit_item_not_found">항목을 찾을 수 없습니다.</string>
 
     <!-- Afternote edit: required field validation -->
     <string name="afternote_validation_title_required">등록할 서비스(플랫폼)명을 입력해 주세요.</string>
@@ -82,9 +85,11 @@
     <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
     <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
     <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
+    <string name="afternote_default_playlist_song_title">추모 플레이리스트 곡</string>
 
     <!-- Time letter detail -->
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
     <string name="content_description_expand_down">아래로</string>
+    <string name="content_description_video_play">영상 재생</string>
 </resources>
