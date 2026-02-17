@@ -78,6 +78,12 @@ class AuthInterceptor
                 return proceedAndLog(chain, originalRequest)
             }
 
+            // 수신자 전용 API: 마스터키(X-Auth-Code)만 사용, Bearer 토큰 미첨부
+            if (path.contains("receiver-auth")) {
+                Log.d(TAG, "Auth: SKIP (receiver-auth, X-Auth-Code only)")
+                return proceedAndLog(chain, originalRequest)
+            }
+
             // 이미 Authorization 헤더가 있으면 그대로 진행
             if (originalRequest.header(AUTHORIZATION_HEADER) != null) {
                 Log.d(TAG, "Auth: ALREADY SET")

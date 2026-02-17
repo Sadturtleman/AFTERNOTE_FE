@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
+import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
 import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -58,10 +60,9 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfterno
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfternoteListEvent
-import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverOnboardingScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.VerifyReceiverScreen
-import com.kuit.afternote.feature.receiver.presentation.screen.VerifySelfScreen
+import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
+import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
+import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
@@ -69,6 +70,7 @@ import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRou
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
@@ -265,6 +267,28 @@ fun NavGraph(navHostController: NavHostController) {
             TokenManagerEntryPoint::class.java
         ).tokenManager()
     }
+    val receiverAuthSessionHolder = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            ReceiverAuthSessionEntryPoint::class.java
+        ).receiverAuthSessionHolder()
+    }
+    val scope = rememberCoroutineScope()
+    val navigateToUserMode: () -> Unit = {
+        scope.launch {
+            val token = tokenManager.getAccessToken()
+            withContext(Dispatchers.Main.immediate) {
+                if (!token.isNullOrEmpty()) {
+                    navHostController.navigate("home") {
+                        launchSingleTop = true
+                    }
+                } else {
+                    navHostController.navigate(OnboardingRoute.SplashRoute)
+                }
+            }
+        }
+    }
+
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
@@ -385,9 +409,11 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverMainRoute(
                 receiverId = receiverId,
                 navController = navHostController,
-                receiverTitle = receiverProvider.getDefaultReceiverTitle(),
-                albumCovers = afternoteProvider.getAlbumCovers()
+                receiverTitle = receiverProvider.getDefaultReceiverTitle(), // 팀원 의도 반영
+                albumCovers = afternoteProvider.getAlbumCovers(),
+                receiverAuthSessionHolder = receiverAuthSessionHolder // 경민님 로직 반영
             )
+
         }
 
         composable("receiver_afternote_list") {
@@ -408,7 +434,7 @@ fun NavGraph(navHostController: NavHostController) {
             )
         }
 
-        composable("receiver_time_letter_detail/{receiverId}/{timeLetterId}") {
+        composable("receiver_time_letter_detail/{receiverId}/{timeLetterReceiverId}") {
             ReceiverTimeLetterDetailRoute(
                 onBackClick = { navHostController.popBackStack() }
             )
@@ -417,22 +443,23 @@ fun NavGraph(navHostController: NavHostController) {
         composable("receiver_onboarding") {
             ReceiverOnboardingScreen(
                 onLoginClick = { navHostController.popBackStack() },
-                onStartClick = { navHostController.navigate("receiver_verify") },
+                onStartClick = { navHostController.navigate("receiver_verify_self") },
                 onSignUpClick = { navHostController.popBackStack() }
-            )
-        }
-
-        composable("receiver_verify") {
-            VerifyReceiverScreen(
-                onBackClick = { navHostController.popBackStack() },
-                onVerifySuccess = { navHostController.navigate("receiver_verify_self") }
             )
         }
 
         composable("receiver_verify_self") {
             VerifySelfScreen(
                 onBackClick = { navHostController.popBackStack() },
-                onNextClick = { navHostController.popBackStack() }
+                onNextClick = { navHostController.popBackStack() },
+                onCompleteClick = { receiverId, authCode, senderName ->
+                    receiverAuthSessionHolder.setAuthCode(authCode)
+                    receiverAuthSessionHolder.setSenderName(senderName)
+                    navHostController.navigate("receiver_main/$receiverId") {
+                        launchSingleTop = true
+                        popUpTo("receiver_onboarding") { inclusive = true }
+                    }
+                }
             )
         }
 

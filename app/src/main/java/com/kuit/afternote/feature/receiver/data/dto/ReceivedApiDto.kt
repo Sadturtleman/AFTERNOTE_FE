@@ -30,15 +30,25 @@ data class CreateMindRecordReceiverRequestDto(
 // --- GET /api/received/{receiverId}/time-letters (수신한 타임레터 목록) ---
 
 @Serializable
+data class ReceivedTimeLetterMediaResponseDto(
+    @SerialName("id") val id: Long,
+    @SerialName("mediaType") val mediaType: String? = null,
+    @SerialName("mediaUrl") val mediaUrl: String
+)
+
+@Serializable
 data class ReceivedTimeLetterResponseDto(
     @SerialName("id") val id: Long,
+    @SerialName("timeLetterReceiverId") val timeLetterReceiverId: Long,
     @SerialName("title") val title: String? = null,
     @SerialName("content") val content: String? = null,
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: String? = null,
     @SerialName("senderName") val senderName: String? = null,
     @SerialName("deliveredAt") val deliveredAt: String? = null,
-    @SerialName("createdAt") val createdAt: String? = null
+    @SerialName("createdAt") val createdAt: String? = null,
+    @SerialName("mediaList") val mediaList: List<ReceivedTimeLetterMediaResponseDto> = emptyList(),
+    @SerialName("isRead") val isRead: Boolean = false
 )
 
 @Serializable

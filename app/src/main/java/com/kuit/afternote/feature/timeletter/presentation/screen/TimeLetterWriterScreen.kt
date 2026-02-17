@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -91,7 +92,7 @@ private val RecipientDropdownMaxHeight = 300.dp
 @Composable
 fun TimeLetterWriterScreen(
     modifier: Modifier = Modifier,
-    recipientName: String,
+    receiverIds: List<Long> = emptyList(),
     title: String,
     content: String,
     sendDate: String = "",
@@ -125,6 +126,15 @@ fun TimeLetterWriterScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
+    val recipientDisplayText = when {
+        receiverIds.isEmpty() -> stringResource(R.string.content_description_select_receiver)
+        receiverIds.size == 1 -> {
+            val name = receivers.find { it.id == receiverIds[0] }?.receiver_name
+            if (name != null) stringResource(R.string.time_letter_detail_receiver_to, name)
+            else stringResource(R.string.content_description_select_receiver)
+        }
+        else -> stringResource(R.string.time_letter_recipients_count, receiverIds.size)
+    }
 
     // UI State
     var isMenuOpen by remember { mutableStateOf(false) }
@@ -204,7 +214,7 @@ fun TimeLetterWriterScreen(
             topBar = {
                 Column(modifier = Modifier.statusBarsPadding()) {
                     TopBar(
-                        title = "${recipientName}님께",
+                        title = recipientDisplayText,
                         onBackClick = onNavigateBack,
                         onActionClick = onRegisterClick,
                         actionText = "등록",
@@ -223,7 +233,7 @@ fun TimeLetterWriterScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "${recipientName}님께",
+                                    text = recipientDisplayText,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight(700),
                                     fontFamily = FontFamily(Font(R.font.sansneobold)),
@@ -231,7 +241,7 @@ fun TimeLetterWriterScreen(
                                 )
                                 Image(
                                     painter = painterResource(R.drawable.ic_down),
-                                    contentDescription = "수신자 선택",
+                                    contentDescription = stringResource(R.string.content_description_select_receiver),
                                     modifier = Modifier.padding(start = 14.dp)
                                 )
                             }
@@ -756,7 +766,7 @@ fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
 @Composable
 private fun TimeLetterWriterScreenPreview() {
     TimeLetterWriterScreen(
-        recipientName = "박채연",
+        receiverIds = listOf(1L),
         title = "",
         content = "",
         sendDate = "",
@@ -772,6 +782,17 @@ private fun TimeLetterWriterScreenPreview() {
         onDateClick = {},
         onTimeClick = {},
         onTimePickerDismiss = {},
-        onTimeSelected = { _, _ -> }
+        onTimeSelected = { _, _ -> },
+        receivers = listOf(
+            TimeLetterReceiver(
+                id = 1L,
+                receiver_name = "박채연",
+                send_at = "2025-01-01",
+                title = "제목",
+                content = "내용",
+                image_url = null,
+                relation = "친구"
+            )
+        )
     )
 }

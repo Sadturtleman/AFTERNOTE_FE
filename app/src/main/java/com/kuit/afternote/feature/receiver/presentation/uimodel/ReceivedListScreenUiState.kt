@@ -2,13 +2,17 @@ package com.kuit.afternote.feature.receiver.presentation.uimodel
 
 /**
  * 수신 타임레터 목록 화면(설정 플로우)용 리스트 아이템 UI 모델.
+ *
+ * API 목록 항목의 표시용 필드 및 읽음 여부(isRead)를 담습니다.
  */
 data class ReceivedTimeLetterListItemUi(
     val timeLetterId: Long,
+    val timeLetterReceiverId: Long,
     val senderName: String,
     val sendAt: String,
     val title: String,
-    val content: String
+    val content: String,
+    val isRead: Boolean = false
 )
 
 /**

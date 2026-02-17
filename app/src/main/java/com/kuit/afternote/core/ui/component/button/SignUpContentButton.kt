@@ -22,6 +22,7 @@ fun SignUpContentButton(
     onNextClick: () -> Unit,
     buttonAlignment: Alignment = Alignment.Center,
     contentSpacing: Dp? = null,
+    buttonTitle: String = "다음",
     content: @Composable ColumnScope.() -> Unit,
 ) {
     // 1. 컨텐츠 기준으로 띄우고 싶을 때 (순서대로 나열)
@@ -41,7 +42,7 @@ fun SignUpContentButton(
                 contentAlignment = Alignment.Center
             ) {
                 ClickButton(
-                    title = "다음",
+                    title = buttonTitle,
                     onButtonClick = onNextClick,
                     color = B3
                 )
@@ -59,7 +60,7 @@ fun SignUpContentButton(
             )
 
             ClickButton(
-                title = "다음",
+                title = buttonTitle,
                 onButtonClick = onNextClick,
                 color = B3,
                 modifier = Modifier

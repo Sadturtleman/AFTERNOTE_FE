@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * 애프터노트 일기 기록하기 화면
@@ -30,10 +32,27 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTo
 @Composable
 fun RecordDiaryScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit
+    onLeftClick: () -> Unit,
+
+    title: String,
+    content: String,
+    onTitleChange: (String) -> Unit,
+    onContentChange: (String) -> Unit,
+
+    //발송시간
+    onDateClick: () -> Unit,
+    sendDate: String,
+    showDatePicker: Boolean,
+    onDatePickerDismiss: () -> Unit,
+
+    //등록 버튼
+    onRegisterClick: () -> Unit,
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
+//    var title by remember { mutableStateOf("") }
+//    var content by remember { mutableStateOf("") }
+    var sendDate by remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -44,18 +63,25 @@ fun RecordDiaryScreen(
                 RecordSubTopbar(
                     text = "일기 기록하기",
                     onLeftClock = onLeftClick,
-                    onRightClick = {}
+                    onRightClick = onRegisterClick
                 )
             }
 
             item {
                 RecordDiaryContentItem(
                     standard = "일기 기록하기",
-                    onDateSelected = { _, _, _ -> },
+                    onDateSelected = { year, month, day ->
+                        val selectedDate = LocalDate.of(year, month, day)
+                        sendDate = selectedDate.format(formatter)   // 원하는 형식으로 변환
+                        showDatePicker = false
+                    } ,
                     title = title,
-                    onTitleChange = { title = it },
+                    onTitleChange = onTitleChange,
                     content = content,
-                    onContentChange = { content = it }
+                    onContentChange = onContentChange,
+                    onDateClick = { showDatePicker = true },                    sendDate = sendDate,
+                    showDatePicker = showDatePicker,
+                    onDatePickerDismiss = onDatePickerDismiss,
                 )
             }
         }
