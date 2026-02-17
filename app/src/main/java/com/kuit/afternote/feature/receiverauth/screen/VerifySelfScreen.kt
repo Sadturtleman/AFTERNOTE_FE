@@ -52,7 +52,7 @@ private enum class PendingDocumentTarget {
 fun VerifySelfScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-    onCompleteClick: (receiverId: Long, authCode: String) -> Unit = { _, _ -> },
+    onCompleteClick: (receiverId: Long, authCode: String, senderName: String?) -> Unit = { _, _, _ -> },
     viewModel: VerifySelfViewModelContract = hiltViewModel<VerifySelfViewModel>()
 ) {
     val context = LocalContext.current
@@ -201,7 +201,9 @@ fun VerifySelfScreen(
                     SignUpContentButton(
                         onNextClick = {
                             val rid = uiState.verifiedReceiverId
-                            if (rid != null) onCompleteClick(rid, uiState.masterKeyInput)
+                            if (rid != null) {
+                                onCompleteClick(rid, uiState.masterKeyInput, uiState.verifiedSenderName)
+                            }
                         },
                         buttonTitle = stringResource(R.string.receiver_verify_complete_confirm)
                     ) {
@@ -243,7 +245,7 @@ private fun VerifySelfScreenPreview() {
     VerifySelfScreen(
         onBackClick = {},
         onNextClick = {},
-        onCompleteClick = { _, _ -> },
+        onCompleteClick = { _, _, _ -> },
         viewModel = remember { FakeVerifySelfViewModel() }
     )
 }

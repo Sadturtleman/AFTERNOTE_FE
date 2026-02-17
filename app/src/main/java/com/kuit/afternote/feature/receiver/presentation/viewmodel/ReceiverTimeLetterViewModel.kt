@@ -30,10 +30,6 @@ class ReceiverTimeLetterViewModel
     private val _uiState = MutableStateFlow(ReceiverTimeLetterUiState())
     val uiState: StateFlow<ReceiverTimeLetterUiState> = _uiState.asStateFlow()
 
-    init {
-        receiverAuthSessionHolder.getAuthCode()?.let { authCode -> loadTimeLetters(authCode) }
-    }
-
     /**
      * 타임레터 목록을 로드합니다.
      *

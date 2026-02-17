@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.screen.afternote
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Suppress("AssignedValueIsNeverRead")
 @Composable
 fun ReceiverAfterNoteMainScreen(
-    title: String,
+    senderName: String,
     onNavigateToFullList: () -> Unit = {},
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
@@ -59,6 +60,7 @@ fun ReceiverAfterNoteMainScreen(
     songCount: Int = 16,
     showBottomBar: Boolean = true
 ) {
+    Log.d(TAG_RECEIVER_AFTERNOTE_MAIN, "ReceiverAfterNoteMainScreen received senderName='$senderName'")
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.TIME_LETTER) }
     val profileResId = profileImageResId ?: R.drawable.img_default_profile_deceased
 
@@ -66,7 +68,7 @@ fun ReceiverAfterNoteMainScreen(
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
                 TopBar(
-                    title = "故${title}님의 애프터노트",
+                    title = "故${senderName}님의 애프터노트",
                     onBackClick = { onBackClick() }
                 )
             }
@@ -92,7 +94,7 @@ fun ReceiverAfterNoteMainScreen(
                     slots = MemorialGuidelineSlots(
                         introContent = {
                             Text(
-                                text = "故 ${title}님의 애프터노트입니다.",
+                                text = "故 ${senderName}님의 애프터노트입니다.",
                                 color = Gray9,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
@@ -146,6 +148,7 @@ fun ReceiverAfterNoteMainScreen(
     }
 }
 
+private const val TAG_RECEIVER_AFTERNOTE_MAIN = "ReceiverAfterNoteMain"
 private const val LABEL_VIDEO_SECTION = "장례식에 남길 영상"
 
 @Composable
@@ -190,6 +193,6 @@ private fun ReceiverSectionHeader(title: String = LABEL_VIDEO_SECTION) {
 @Composable
 fun PreviewReceiverAfterNoteMain() {
     AfternoteTheme {
-        ReceiverAfterNoteMainScreen(title = "박서연", albumCovers = emptyList())
+        ReceiverAfterNoteMainScreen(senderName = "박서연", albumCovers = emptyList())
     }
 }

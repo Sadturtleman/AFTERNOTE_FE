@@ -20,6 +20,9 @@ class ReceiverAuthSessionHolder
     private var authCode: String? = null
 
     @Volatile
+    private var senderName: String? = null
+
+    @Volatile
     private var selectedTimeLetter: ReceivedTimeLetter? = null
 
     fun setAuthCode(code: String) {
@@ -28,8 +31,16 @@ class ReceiverAuthSessionHolder
 
     fun getAuthCode(): String? = authCode
 
+    /** 마스터키 검증 성공 시 수신한 발신자 이름. 수신자 홈 "故 OO님이 남기신 기록" 표시용. */
+    fun setSenderName(name: String?) {
+        senderName = name
+    }
+
+    fun getSenderName(): String? = senderName
+
     fun clearAuthCode() {
         authCode = null
+        senderName = null
         selectedTimeLetter = null
     }
 

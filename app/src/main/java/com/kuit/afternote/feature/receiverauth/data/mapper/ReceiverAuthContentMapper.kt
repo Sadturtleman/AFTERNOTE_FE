@@ -37,5 +37,6 @@ fun ReceivedMindRecordAuthResponseDto.toReceivedMindRecord(): ReceivedMindRecord
 fun ReceivedAfternoteAuthResponseDto.toReceivedAfternote(): ReceivedAfternote =
     ReceivedAfternote(
         sourceType = category.orEmpty(),
-        lastUpdatedAt = createdAt.orEmpty()
+        lastUpdatedAt = createdAt.orEmpty(),
+        leaveMessage = leaveMessage
     )

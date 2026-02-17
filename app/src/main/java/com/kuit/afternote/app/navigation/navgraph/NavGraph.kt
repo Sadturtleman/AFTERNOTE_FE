@@ -452,8 +452,9 @@ fun NavGraph(navHostController: NavHostController) {
             VerifySelfScreen(
                 onBackClick = { navHostController.popBackStack() },
                 onNextClick = { navHostController.popBackStack() },
-                onCompleteClick = { receiverId, authCode ->
+                onCompleteClick = { receiverId, authCode, senderName ->
                     receiverAuthSessionHolder.setAuthCode(authCode)
+                    receiverAuthSessionHolder.setSenderName(senderName)
                     navHostController.navigate("receiver_main/$receiverId") {
                         launchSingleTop = true
                         popUpTo("receiver_onboarding") { inclusive = true }
