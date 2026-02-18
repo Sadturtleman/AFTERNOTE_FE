@@ -87,6 +87,7 @@
     <string name="receiver_verify_document_input_label">서류 촬영 또는 파일 첨부</string>
     <string name="receiver_verify_add_image">이미지 추가</string>
     <string name="receiver_verify_add_file">파일 추가</string>
+    <string name="receiver_verify_wait_for_approval">인증이 완료된 후에 이용 가능합니다.</string>
 
     <string name="login_kakao_button">카카오로 로그인</string>
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
