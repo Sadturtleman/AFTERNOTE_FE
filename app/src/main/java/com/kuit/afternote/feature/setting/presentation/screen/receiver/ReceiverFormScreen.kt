@@ -44,12 +44,14 @@ import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.White
 
 @Composable
-fun ReceiverRegisterScreen(
+fun ReceiverFormScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onRegisterClick: () -> Unit = {},
+    onActionClick: () -> Unit = {},
     onAddProfileImageClick: () -> Unit = {},
-    registerViewModel: RegisterReceiverViewModel? = null
+    registerViewModel: RegisterReceiverViewModel? = null,
+    screenTitle: String = "수신자 등록",
+    actionText: String = "등록"
 ) {
     val nameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
@@ -58,7 +60,7 @@ fun ReceiverRegisterScreen(
     val relationshipOptions = listOf("딸", "아들", "친구", "가족", "연인", "동료", "기타")
     val dropdownState = rememberSelectionDropdownState()
 
-    val onRegisterAction: () -> Unit = {
+    val onPrimaryAction: () -> Unit = {
         if (registerViewModel != null) {
             registerViewModel.registerReceiver(
                 name = nameState.text.toString().trim(),
@@ -67,7 +69,7 @@ fun ReceiverRegisterScreen(
                 email = emailState.text.toString().trim().takeIf { it.isNotBlank() }
             )
         } else {
-            onRegisterClick()
+            onActionClick()
         }
     }
 
@@ -76,10 +78,10 @@ fun ReceiverRegisterScreen(
         containerColor = Gray1,
         topBar = {
             TopBar(
-                title = "수신자 등록",
+                title = screenTitle,
                 onBackClick = onBackClick,
-                onActionClick = onRegisterAction,
-                actionText = "등록"
+                onActionClick = onPrimaryAction,
+                actionText = actionText
             )
         }
     ) { paddingValues ->
@@ -205,12 +207,26 @@ private fun ProfileImageWithAddButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun ReceiverRegisterScreenPreview() {
+private fun ReceiverFormScreenRegisterPreview() {
     AfternoteTheme {
-        ReceiverRegisterScreen(
+        ReceiverFormScreen(
             onBackClick = {},
-            onRegisterClick = {},
+            onActionClick = {},
             onAddProfileImageClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReceiverFormScreenEditPreview() {
+    AfternoteTheme {
+        ReceiverFormScreen(
+            onBackClick = {},
+            onActionClick = {},
+            onAddProfileImageClick = {},
+            screenTitle = "수신자 수정",
+            actionText = "수정"
         )
     }
 }

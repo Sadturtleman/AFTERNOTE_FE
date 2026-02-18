@@ -50,7 +50,7 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreenParams
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
-import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverFormScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.setting.presentation.viewmodel.WithdrawalPasswordViewModel
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
@@ -107,6 +107,9 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
     composable<SettingRoute.ReceiverRegisterRoute> {
         ReceiverRegisterRouteContent(navController)
+    }
+    composable<SettingRoute.ReceiverEditRoute> {
+        ReceiverEditRouteContent(navController)
     }
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
@@ -300,7 +303,11 @@ private fun ReceiverDetailRouteContent(
         ),
         callbacks = ReceiverDetailEditCallbacks(
             onBackClick = { navController.popBackStack() },
-            onEditClick = { },
+            onEditClick = {
+                navController.navigate(
+                    SettingRoute.ReceiverEditRoute(receiverId = route.receiverId)
+                )
+            },
             onReceiverDetailImageClick = { },
             onDailyQuestionClick = {
                 navController.navigate(
@@ -358,10 +365,22 @@ private fun ReceiverRegisterRouteContent(navController: NavController) {
             navController.popBackStack()
         }
     }
-    ReceiverRegisterScreen(
+    ReceiverFormScreen(
         onBackClick = { navController.popBackStack() },
-        onRegisterClick = { navController.popBackStack() },
-        registerViewModel = registerViewModel
+        onActionClick = { navController.popBackStack() },
+        registerViewModel = registerViewModel,
+        screenTitle = "수신자 등록",
+        actionText = "등록"
+    )
+}
+
+@Composable
+private fun ReceiverEditRouteContent(navController: NavController) {
+    ReceiverFormScreen(
+        onBackClick = { navController.popBackStack() },
+        onActionClick = { navController.popBackStack() },
+        screenTitle = "수신자 수정",
+        actionText = "수정"
     )
 }
 
