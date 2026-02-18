@@ -116,8 +116,7 @@ fun TimeLetterDetailScreen(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surface
             ) {
-                Column(
-                ) {
+                Column {
                     Row {
                         Text(
                             text = recipientLabel,

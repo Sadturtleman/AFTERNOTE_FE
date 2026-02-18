@@ -191,8 +191,8 @@ private fun WithdrawalPasswordRouteContent(navController: NavController) {
     } else {
         ""
     }
-    val passwordError = if (withdrawalPasswordState.showPasswordError) {
-        stringResource(R.string.withdrawal_password_error)
+    val sentenceError = if (withdrawalPasswordState.showSentenceError) {
+        stringResource(R.string.withdrawal_sentence_mismatch)
     } else {
         null
     }
@@ -208,16 +208,16 @@ private fun WithdrawalPasswordRouteContent(navController: NavController) {
     }
     WithdrawalPasswordScreen(
         accountDisplay = accountDisplay,
-        passwordError = passwordError,
+        sentenceError = sentenceError,
         callbacks = WithdrawalPasswordCallbacks(
             onBackClick = { navController.popBackStack() },
-            onWithdrawClick = { password ->
-                withdrawalPasswordViewModel.submitWithdrawal(password)
-                Log.d(TAG_SETTING_NAV, "Withdrawal password confirmed")
+            onWithdrawClick = { confirmationText ->
+                withdrawalPasswordViewModel.submitWithdrawal(confirmationText)
+                Log.d(TAG_SETTING_NAV, "Withdrawal sentence submitted")
             },
             onGoBackClick = { navController.popBackStack() },
-            onPasswordChanged = { withdrawalPasswordViewModel.clearPasswordError() }
-        )
+            onInputChanged = { withdrawalPasswordViewModel.clearSentenceError() },
+        ),
     )
 }
 
