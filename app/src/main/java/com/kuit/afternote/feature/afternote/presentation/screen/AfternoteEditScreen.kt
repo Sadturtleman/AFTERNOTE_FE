@@ -375,7 +375,7 @@ private fun CategoryContent(
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
-                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri,
+                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri ?: state.memorialPhotoUrl,
                     playlistSongCount = livePlaylistSongCount,
                     playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,

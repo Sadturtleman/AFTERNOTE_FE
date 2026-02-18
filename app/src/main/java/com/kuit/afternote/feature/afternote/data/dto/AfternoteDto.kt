@@ -120,6 +120,7 @@ data class AfternoteDetailReceiverDto(
 data class AfternotePlaylistDto(
     val profilePhoto: String? = null,
     val atmosphere: String? = null,
+    val memorialPhotoUrl: String? = null,
     val songs: List<AfternoteSongDto> = emptyList(),
     val memorialVideo: AfternoteMemorialVideoDto? = null
 )

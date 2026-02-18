@@ -56,6 +56,7 @@ object AfternoteMapper {
                 AfternotePlaylistDetail(
                     profilePhoto = p.profilePhoto,
                     atmosphere = p.atmosphere,
+                    memorialPhotoUrl = p.memorialPhotoUrl ?: p.profilePhoto,
                     songs = p.songs.map { s ->
                         AfternoteDetailSong(
                             id = s.id,
