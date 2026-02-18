@@ -27,6 +27,7 @@ object TimeLetterMapper {
             DtoMediaType.IMAGE -> DomainMediaType.IMAGE
             DtoMediaType.VIDEO -> DomainMediaType.VIDEO
             DtoMediaType.AUDIO -> DomainMediaType.AUDIO
+            DtoMediaType.DOCUMENT -> DomainMediaType.DOCUMENT
         }
 
     private fun toDomainMedia(dto: TimeLetterMediaResponse): TimeLetterMedia =

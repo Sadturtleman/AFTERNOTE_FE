@@ -43,7 +43,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
                         sendDate = letter.sendDate,
                         title = letter.title,
                         content = letter.content,
-                        createDate = letter.createDate
+                        createDate = letter.createDate,
+                        mediaUrls = letter.mediaUrls
                     )
                 )
             },
@@ -118,7 +119,10 @@ fun NavGraphBuilder.timeLetterNavGraph(
             showRegisteredPopUp = uiState.showRegisteredPopUp,
             showDraftSavePopUp = uiState.showDraftSavePopUp,
             showWaitingAgainPopUp = uiState.showWaitingAgainPopUp,
-            onBackCLick = {navController.popBackStack()}
+            onBackCLick = { navController.popBackStack() },
+            selectedImageUriStrings = uiState.selectedImageUriStrings,
+            onAddImages = viewModel::addImageUris,
+            onRemoveImage = viewModel::removeImageUri
         )
     }
 
@@ -158,6 +162,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             title = route.title,
             content = route.content,
             createdAt = route.createDate,
+            mediaUrls = route.mediaUrls,
             onBackClick = { navController.popBackStack() }
         )
     }
