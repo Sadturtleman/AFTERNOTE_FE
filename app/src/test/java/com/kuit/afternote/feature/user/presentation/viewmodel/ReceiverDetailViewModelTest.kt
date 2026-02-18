@@ -3,7 +3,6 @@ package com.kuit.afternote.feature.user.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiverDetailUseCase
-import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -31,13 +30,10 @@ class ReceiverDetailViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var getReceiverDetailUseCase: GetReceiverDetailUseCase
-    private lateinit var getUserIdUseCase: GetUserIdUseCase
 
     @Before
     fun setUp() {
         getReceiverDetailUseCase = mockk()
-        getUserIdUseCase = mockk()
-        coEvery { getUserIdUseCase() } returns 1L
     }
 
     private fun savedStateHandle(receiverId: String = ""): SavedStateHandle =
@@ -49,8 +45,7 @@ class ReceiverDetailViewModelTest {
             val savedStateHandle = savedStateHandle(receiverId = "")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             advanceUntilIdle()
 
@@ -71,12 +66,11 @@ class ReceiverDetailViewModelTest {
                 timeLetterCount = 12,
                 afterNoteCount = 4
             )
-            coEvery { getReceiverDetailUseCase(userId = 1L, receiverId = 1L) } returns Result.success(detail)
+            coEvery { getReceiverDetailUseCase(receiverId = 1L) } returns Result.success(detail)
             val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             viewModel.loadReceiverDetail(receiverId = 1L)
             advanceUntilIdle()
@@ -94,12 +88,11 @@ class ReceiverDetailViewModelTest {
             val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(401, errorBody))
-            coEvery { getReceiverDetailUseCase(userId = any(), receiverId = any()) } returns Result.failure(httpException)
+            coEvery { getReceiverDetailUseCase(receiverId = any()) } returns Result.failure(httpException)
             val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             viewModel.loadReceiverDetail(receiverId = 1L)
             advanceUntilIdle()
@@ -114,12 +107,11 @@ class ReceiverDetailViewModelTest {
             val errorBody = """{"status":404,"code":404,"message":"Receiver not found"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(404, errorBody))
-            coEvery { getReceiverDetailUseCase(userId = any(), receiverId = any()) } returns Result.failure(httpException)
+            coEvery { getReceiverDetailUseCase(receiverId = any()) } returns Result.failure(httpException)
             val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             viewModel.loadReceiverDetail(receiverId = 999L)
             advanceUntilIdle()
@@ -134,12 +126,11 @@ class ReceiverDetailViewModelTest {
             val errorBody = """{"status":500,"code":500,"message":"Server error"}"""
                 .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Any>(500, errorBody))
-            coEvery { getReceiverDetailUseCase(userId = any(), receiverId = any()) } returns Result.failure(httpException)
+            coEvery { getReceiverDetailUseCase(receiverId = any()) } returns Result.failure(httpException)
             val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             viewModel.loadReceiverDetail(receiverId = 1L)
             advanceUntilIdle()
@@ -151,14 +142,13 @@ class ReceiverDetailViewModelTest {
     @Test
     fun loadReceiverDetail_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { getReceiverDetailUseCase(userId = any(), receiverId = any()) } returns Result.failure(
+            coEvery { getReceiverDetailUseCase(receiverId = any()) } returns Result.failure(
                 java.io.IOException("Network unavailable")
             )
             val savedStateHandle = savedStateHandle(receiverId = "1")
             val viewModel = ReceiverDetailViewModel(
                 savedStateHandle,
-                getReceiverDetailUseCase,
-                getUserIdUseCase
+                getReceiverDetailUseCase
             )
             viewModel.loadReceiverDetail(receiverId = 1L)
             advanceUntilIdle()

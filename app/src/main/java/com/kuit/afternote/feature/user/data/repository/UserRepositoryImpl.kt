@@ -124,10 +124,10 @@ class UserRepositoryImpl
                 data.receiverId
             }
 
-        override suspend fun getReceiverDetail(userId: Long, receiverId: Long): Result<ReceiverDetail> =
+        override suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail> =
             runCatching {
-                Log.d(TAG, "getReceiverDetail: userId=$userId, receiverId=$receiverId")
-                val response = api.getReceiverDetail(userId = userId, receiverId = receiverId)
+                Log.d(TAG, "getReceiverDetail: receiverId=$receiverId")
+                val response = api.getReceiverDetail(receiverId = receiverId)
                 Log.d(TAG, "getReceiverDetail: response=$response")
                 UserMapper.toReceiverDetail(response.requireData())
             }

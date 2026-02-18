@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -83,7 +84,11 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         PasswordModifyScreen(onBackClick = { navController.popBackStack() })
     }
     composable<SettingRoute.ReceiverDetailRoute> { backStackEntry ->
-        ReceiverDetailRouteContent(navController, backStackEntry.toRoute())
+        ReceiverDetailRouteContent(
+            navController = navController,
+            backStackEntry = backStackEntry,
+            route = backStackEntry.toRoute()
+        )
     }
     composable<SettingRoute.ProfileEditRoute> {
         ProfileEditScreen(
@@ -268,9 +273,10 @@ private fun SettingMainRouteContent(navController: NavController) {
 @Composable
 private fun ReceiverDetailRouteContent(
     navController: NavController,
+    backStackEntry: NavBackStackEntry,
     route: SettingRoute.ReceiverDetailRoute
 ) {
-    val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
+    val detailViewModel: ReceiverDetailViewModel = hiltViewModel(backStackEntry)
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
 
     val phoneNumberState = rememberTextFieldState()

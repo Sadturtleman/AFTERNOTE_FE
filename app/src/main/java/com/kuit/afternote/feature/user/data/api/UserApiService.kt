@@ -82,7 +82,6 @@ interface UserApiService {
      */
     @GET("users/receivers/{receiverId}")
     suspend fun getReceiverDetail(
-        @Query("userId") userId: Long,
         @Path("receiverId") receiverId: Long
     ): ApiResponse<ReceiverDetailResponseDto?>
 

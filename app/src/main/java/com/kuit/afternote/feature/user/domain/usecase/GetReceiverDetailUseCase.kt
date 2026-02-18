@@ -14,9 +14,8 @@ class GetReceiverDetailUseCase
         private val userRepository: UserRepository
     ) {
         /**
-         * @param userId 사용자 ID (query, required)
          * @param receiverId 수신인 식별자 (path, required)
          */
-        suspend operator fun invoke(userId: Long, receiverId: Long): Result<ReceiverDetail> =
-            userRepository.getReceiverDetail(userId = userId, receiverId = receiverId)
+        suspend operator fun invoke(receiverId: Long): Result<ReceiverDetail> =
+            userRepository.getReceiverDetail(receiverId = receiverId)
     }

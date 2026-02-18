@@ -39,7 +39,7 @@ interface UserRepository {
         email: String?
     ): Result<Long>
 
-    suspend fun getReceiverDetail(userId: Long, receiverId: Long): Result<ReceiverDetail>
+    suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail>
 
     suspend fun getReceiverDailyQuestions(
         receiverId: Long,
