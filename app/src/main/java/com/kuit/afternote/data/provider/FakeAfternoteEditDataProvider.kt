@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 /**
  * Fake implementation. Only place that imports and uses *Dummies.
- * Initial receivers are empty so "수신자 추가" does not show dummy names (김지은, 박선호)
- * when the user selects "추가 수신자에게 정보 전달"; matches [RealAfternoteEditDataProvider].
+ * Initial receivers are empty; Gallery uses Settings receiver list (GET /users/receivers).
  */
 class FakeAfternoteEditDataProvider @Inject constructor() : AfternoteEditDataProvider {
     override fun getSongs(): List<Song> =

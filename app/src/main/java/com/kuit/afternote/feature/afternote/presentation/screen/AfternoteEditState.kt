@@ -416,8 +416,14 @@ class AfternoteEditState(
         }
 
         if (params.informationProcessingMethodName.isNotEmpty()) {
+            val infoMethodName =
+                when (params.informationProcessingMethodName) {
+                    "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                    "ADDITIONAL" -> "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
+                    else -> params.informationProcessingMethodName
+                }
             selectedInformationProcessingMethod = runCatching {
-                InformationProcessingMethod.valueOf(params.informationProcessingMethodName)
+                InformationProcessingMethod.valueOf(infoMethodName)
             }.getOrDefault(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER)
         }
 

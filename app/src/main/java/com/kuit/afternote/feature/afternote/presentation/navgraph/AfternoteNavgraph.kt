@@ -252,7 +252,14 @@ private fun AfternoteDetailRouteContent(
                 accountProcessingMethod = detail.processMethod ?: "",
                 processingMethods = detail.actions,
                 message = detail.leaveMessage ?: "",
-                finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt }
+                finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
+                afternoteEditReceivers = detail.receivers.map { r ->
+                    AfternoteEditReceiver(
+                        id = "",
+                        name = r.name,
+                        label = r.relation
+                    )
+                }
             ),
             onBackClick = { navController.popBackStack() },
             onEditClick = {
@@ -361,6 +368,13 @@ private fun AfternoteMemorialGuidelineDetailContent(
                 userName = userName,
                 finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
                 profileImageUri = detail.playlist?.profilePhoto,
+                afternoteEditReceivers = detail.receivers.map { r ->
+                    AfternoteEditReceiver(
+                        id = "",
+                        name = r.name,
+                        label = r.relation
+                    )
+                },
                 albumCovers = detail.playlist?.songs?.map { s ->
                     AlbumCover(
                         id = (s.id ?: 0L).toString(),
@@ -431,7 +445,6 @@ private fun buildEditScreenCallbacks(params: EditScreenCallbacksParams): Afterno
                 editingId = params.route.itemId?.toLongOrNull() ?: params.initialItem?.id?.toLongOrNull(),
                 category = params.state.selectedCategory,
                 payload = payload,
-                receivers = params.state.afternoteEditReceivers,
                 playlistStateHolder = params.playlistStateHolder,
                 funeralVideoUrl = params.state.funeralVideoUrl,
                 funeralThumbnailUrl = params.state.funeralThumbnailUrl

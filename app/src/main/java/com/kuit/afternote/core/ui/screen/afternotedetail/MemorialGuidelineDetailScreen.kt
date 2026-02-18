@@ -43,10 +43,12 @@ import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
+import com.kuit.afternote.core.ui.component.detail.ReceiversCard
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.B1
@@ -66,7 +68,8 @@ data class MemorialGuidelineDetailState(
     val profileImageUri: String? = null,
     val albumCovers: List<AlbumCover> = emptyList(),
     val songCount: Int = 0,
-    val lastWish: String = ""
+    val lastWish: String = "",
+    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList()
 )
 
 /**
@@ -203,6 +206,7 @@ private fun CardSection(detailState: MemorialGuidelineDetailState) {
             finalWriteDate = detailState.finalWriteDate,
             profileImageUri = detailState.profileImageUri
         )
+        ReceiversCard(receivers = detailState.afternoteEditReceivers)
         PlaylistCard(
             albumCovers = detailState.albumCovers,
             songCount = detailState.songCount
@@ -407,7 +411,7 @@ private fun MemorialGuidelineDetailScreenDeleteDialogPreview() {
             detailState = MemorialGuidelineDetailState(
                 songCount = 16,
                 albumCovers = AlbumDummies.list,
-                lastWish = "차분하고 조용하게 보내주세요."
+                lastWish = "차분하고 조용하게 보내주세요.1"
             ),
             callbacks = MemorialGuidelineDetailCallbacks(
                 onBackClick = {},
@@ -430,7 +434,7 @@ private fun MemorialGuidelineDetailScreenReceiverModePreview() {
             detailState = MemorialGuidelineDetailState(
                 songCount = 16,
                 albumCovers = AlbumDummies.list,
-                lastWish = "차분하고 조용하게 보내주세요."
+                lastWish = "차분하고 조용하게 보내주세요.2"
             ),
             callbacks = MemorialGuidelineDetailCallbacks(
                 onBackClick = {}
