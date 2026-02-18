@@ -68,10 +68,12 @@ interface UserRepository {
      * @param conditionType 전달 조건 타입
      * @param inactivityPeriodDays 비활동 기간(일), INACTIVITY일 때 사용
      * @param specificDate 특정 날짜(yyyy-MM-dd), SPECIFIC_DATE일 때 사용
+     * @param leaveMessage 마지막 인사말 (수신자에게 전달되는 메시지)
      */
     suspend fun updateDeliveryCondition(
         conditionType: DeliveryConditionType,
         inactivityPeriodDays: Int?,
-        specificDate: String?
+        specificDate: String?,
+        leaveMessage: String? = null
     ): Result<DeliveryCondition>
 }
