@@ -9,13 +9,13 @@ import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.usecase.GetDeliveryConditionUseCase
 import com.kuit.afternote.feature.user.domain.usecase.UpdateDeliveryConditionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import javax.inject.Inject
 
 private const val CODE_AUTOMATIC_TRANSFER = "AUTOMATIC_TRANSFER"
 private const val CODE_RECEIVER_APPROVAL = "RECEIVER_APPROVAL_TRANSFER"
@@ -203,5 +203,5 @@ constructor(
             CODE_SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
             CODE_RECEIVER_REQUEST -> TriggerConditionOption.ReceiverRequest
             else -> TriggerConditionOption.AppInactivity
-        }g
+        }
 }
