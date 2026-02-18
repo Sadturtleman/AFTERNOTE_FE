@@ -44,6 +44,7 @@ class ReceiverAfternotesListViewModel
                                 items = data.items.map { item ->
                                     ReceivedAfternoteListItemUi(
                                         id = item.id,
+                                        title = item.title.orEmpty(),
                                         sourceType = item.sourceType.orEmpty(),
                                         lastUpdatedAt = item.lastUpdatedAt.orEmpty()
                                     )
@@ -66,5 +67,13 @@ class ReceiverAfternotesListViewModel
 
         fun clearError() {
             _uiState.update { it.copy(errorMessage = null) }
+        }
+
+        /**
+         * 에러 상태에서 재시도. 세션의 authCode로 목록을 다시 로드합니다.
+         */
+        fun retry() {
+            clearError()
+            receiverAuthSessionHolder.getAuthCode()?.let { loadAfterNotes(it) }
         }
     }

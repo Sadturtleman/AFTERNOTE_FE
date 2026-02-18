@@ -12,16 +12,27 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -34,7 +45,10 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
@@ -58,6 +72,7 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLet
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
 import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
@@ -177,36 +192,82 @@ private fun FingerprintLoginRouteContent(
 
 @Composable
 private fun ReceiverAfternoteListRouteContent(navHostController: NavHostController) {
-    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     BackHandler { navHostController.popBackStack() }
-    val afternoteItems = remember(receiverProvider) {
-        receiverProvider.getAfternoteListSeedsForReceiverList().map { seed ->
-            AfternoteListDisplayItem(
-                id = seed.id,
-                serviceName = seed.serviceNameLiteral ?: "",
-                date = seed.date,
-                iconResId = seed.iconResId
-            )
+    val viewModel: ReceiverAfternotesListViewModel = hiltViewModel()
+    val afterNotesState by viewModel.uiState.collectAsStateWithLifecycle()
+    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
+    val filteredItems = remember(afterNotesState.items, selectedTab) {
+        val list = afterNotesState.items
+        when (selectedTab) {
+            AfternoteTab.ALL -> list
+            AfternoteTab.SOCIAL_NETWORK -> list.filter {
+                it.sourceType.equals("SOCIAL", ignoreCase = true)
+            }
+            AfternoteTab.GALLERY_AND_FILES -> list.filter {
+                it.sourceType.equals("GALLERY", ignoreCase = true)
+            }
+            AfternoteTab.MEMORIAL -> list.filter {
+                it.sourceType.equals("PLAYLIST", ignoreCase = true)
+            }
         }
     }
-    var listState by remember {
-        mutableStateOf(ReceiverAfternoteListUiState(items = afternoteItems))
+    val displayItems = filteredItems.map { item ->
+        val iconResId =
+            if (item.title.isNotBlank()) getIconResForServiceName(item.title)
+            else getAfternoteDisplayRes(item.sourceType).second
+        AfternoteListDisplayItem(
+            id = item.id.toString(),
+            serviceName = item.title,
+            date = item.lastUpdatedAt,
+            iconResId = iconResId
+        )
     }
-    ReceiverAfternoteListRoute(
-        uiState = listState,
-        onEvent = { event ->
-            listState = when (event) {
-                is ReceiverAfternoteListEvent.SelectTab ->
-                    listState.copy(selectedTab = event.tab)
-                is ReceiverAfternoteListEvent.SelectBottomNav ->
-                    listState.copy(selectedBottomNavItem = event.navItem)
-                is ReceiverAfternoteListEvent.ClickItem -> {
-                    navHostController.navigate("receiver_afternote_detail/${event.itemId}")
-                    listState
+    val listState = ReceiverAfternoteListUiState(
+        items = displayItems,
+        selectedTab = selectedTab,
+        selectedBottomNavItem = selectedBottomNavItem
+    )
+    when {
+        afterNotesState.isLoading && displayItems.isEmpty() -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        afterNotesState.errorMessage != null && displayItems.isEmpty() -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(PaddingValues(24.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = afterNotesState.errorMessage!!)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { viewModel.retry() }) {
+                    Text(stringResource(R.string.retry))
                 }
             }
         }
-    )
+        else -> {
+            ReceiverAfternoteListRoute(
+                uiState = listState,
+                onEvent = { event ->
+                    when (event) {
+                        is ReceiverAfternoteListEvent.SelectTab ->
+                            selectedTab = event.tab
+                        is ReceiverAfternoteListEvent.SelectBottomNav ->
+                            selectedBottomNavItem = event.navItem
+                        is ReceiverAfternoteListEvent.ClickItem ->
+                            navHostController.navigate("receiver_afternote_detail/${event.itemId}")
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable

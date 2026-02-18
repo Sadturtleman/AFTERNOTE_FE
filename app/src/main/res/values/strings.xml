@@ -40,6 +40,7 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+    <string name="receiver_memorial_video_no_app">영상을 재생할 수 있는 앱이 없습니다.</string>
 
     <string name="receiver_sender_record_title">故 %1$s님이 남기신 기록</string>
     <string name="receiver_afternote_section_count">%1$d개의 애프터노트가 있습니다.</string>
@@ -138,4 +139,5 @@
 
     <string name="post_delivery_last_greeting_placeholder">마지막 인사말을 입력해주세요</string>
     <string name="post_delivery_confirm">확인</string>
+    <string name="retry">재시도</string>
 </resources>

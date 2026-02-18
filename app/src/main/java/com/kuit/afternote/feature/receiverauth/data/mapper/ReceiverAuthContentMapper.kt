@@ -67,6 +67,7 @@ fun ReceivedMindRecordAuthResponseDto.toReceivedMindRecord(): ReceivedMindRecord
 fun ReceivedAfternoteAuthResponseDto.toReceivedAfternote(): ReceivedAfternote =
     ReceivedAfternote(
         id = id,
+        title = title.orEmpty(),
         sourceType = category.orEmpty(),
         lastUpdatedAt = createdAt.orEmpty(),
         leaveMessage = leaveMessage
@@ -84,10 +85,17 @@ fun ReceivedAfternoteDetailAuthResponseDto.toReceivedAfternoteDetail(): Received
         id = id,
         category = category,
         title = title,
+        processMethod = processMethod,
+        actions = actions,
+        leaveMessage = leaveMessage,
+        senderName = senderName,
+        createdAt = createdAt,
         playlist = playlist?.let { p ->
             ReceivedAfternotePlaylist(
                 atmosphere = p.atmosphere,
-                songs = p.songs.map { it.toReceivedPlaylistSong() }
+                songs = p.songs.map { it.toReceivedPlaylistSong() },
+                memorialVideoUrl = p.memorialVideo?.videoUrl,
+                memorialThumbnailUrl = p.memorialVideo?.thumbnailUrl
             )
         }
     )

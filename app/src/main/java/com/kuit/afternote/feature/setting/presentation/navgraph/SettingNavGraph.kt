@@ -21,6 +21,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ConfirmationPopup
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
@@ -469,11 +470,12 @@ private fun ReceiverAfternoteListRouteContent(
     val afterNotesViewModel: ReceiverAfternotesListViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteItems = afterNotesState.items.map { item ->
-        val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
-        val serviceName = stringResource(stringResId)
+        val iconResId =
+            if (item.title.isNotBlank()) getIconResForServiceName(item.title)
+            else getAfternoteDisplayRes(item.sourceType).second
         AfternoteListDisplayItem(
             id = item.id.toString(),
-            serviceName = serviceName,
+            serviceName = item.title,
             date = item.lastUpdatedAt,
             iconResId = iconResId
         )
