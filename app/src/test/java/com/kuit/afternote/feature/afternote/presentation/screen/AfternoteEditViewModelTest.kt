@@ -6,6 +6,8 @@ import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfterno
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule
@@ -38,6 +40,8 @@ class AfternoteEditViewModelTest {
     private lateinit var getDetailUseCase: GetAfternoteDetailUseCase
     private lateinit var getReceiversUseCase: GetReceiversUseCase
     private lateinit var getUserIdUseCase: GetUserIdUseCase
+    private lateinit var uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase
+    private lateinit var uploadMemorialVideoUseCase: UploadMemorialVideoUseCase
     private lateinit var viewModel: AfternoteEditViewModel
 
     private val socialPayload =
@@ -62,6 +66,8 @@ class AfternoteEditViewModelTest {
         getDetailUseCase = mockk()
         getReceiversUseCase = mockk()
         getUserIdUseCase = mockk()
+        uploadMemorialThumbnailUseCase = mockk()
+        uploadMemorialVideoUseCase = mockk()
         coEvery { getUserIdUseCase() } returns null
         viewModel =
             AfternoteEditViewModel(
@@ -71,7 +77,9 @@ class AfternoteEditViewModelTest {
                 updateUseCase = updateUseCase,
                 getDetailUseCase = getDetailUseCase,
                 getReceiversUseCase = getReceiversUseCase,
-                getUserIdUseCase = getUserIdUseCase
+                getUserIdUseCase = getUserIdUseCase,
+                uploadMemorialThumbnailUseCase = uploadMemorialThumbnailUseCase,
+                uploadMemorialVideoUseCase = uploadMemorialVideoUseCase
             )
     }
 

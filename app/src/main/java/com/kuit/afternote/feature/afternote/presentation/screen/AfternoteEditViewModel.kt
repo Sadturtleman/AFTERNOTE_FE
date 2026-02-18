@@ -16,6 +16,7 @@ import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternote
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
@@ -54,7 +55,8 @@ class AfternoteEditViewModel
         private val getDetailUseCase: GetAfternoteDetailUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase,
-        private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase
+        private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase,
+        private val uploadMemorialVideoUseCase: UploadMemorialVideoUseCase
     ) : ViewModel() {
 
         private val _saveState = MutableStateFlow(AfternoteSaveState())
@@ -149,6 +151,27 @@ class AfternoteEditViewModel
                 _saveState.update {
                     it.copy(isSaving = true, error = null, validationError = null)
                 }
+                var resolvedVideoUrl: String? =
+                    when {
+                        funeralVideoUrl.isNullOrBlank() -> null
+                        !funeralVideoUrl.startsWith("content://") -> funeralVideoUrl
+                        else -> null
+                    }
+                if (funeralVideoUrl != null && funeralVideoUrl.startsWith("content://")) {
+                    uploadMemorialVideoUseCase(funeralVideoUrl).fold(
+                        onSuccess = { resolvedVideoUrl = it },
+                        onFailure = { e ->
+                            Log.e(TAG, "saveAfternote: video upload failed", e)
+                            _saveState.update {
+                                it.copy(
+                                    isSaving = false,
+                                    error = e.message ?: "영상 업로드에 실패했습니다."
+                                )
+                            }
+                            return@launch
+                        }
+                    )
+                }
                 val result = if (editingId != null) {
                     performUpdate(
                         afternoteId = editingId,
@@ -156,7 +179,7 @@ class AfternoteEditViewModel
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder,
-                        funeralVideoUrl = funeralVideoUrl,
+                        funeralVideoUrl = resolvedVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
                     )
                 } else {
@@ -165,7 +188,7 @@ class AfternoteEditViewModel
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder,
-                        funeralVideoUrl = funeralVideoUrl,
+                        funeralVideoUrl = resolvedVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
                     )
                 }
