@@ -374,6 +374,20 @@ class AfternoteEditState(
         afternoteEditReceivers = afternoteEditReceivers.filter { it.id != afternoteEditReceiverId }
     }
 
+    /**
+     * Adds a receiver from the receiver selection screen (e.g. Time Letter 수신자 목록).
+     * Call when returning from navigation with a selected receiver.
+     */
+    fun addReceiverFromSelection(receiverId: Long, name: String, relation: String) {
+        if (afternoteEditReceivers.any { it.id == receiverId.toString() }) return
+        val newReceiver = AfternoteEditReceiver(
+            id = receiverId.toString(),
+            name = name,
+            label = relation
+        )
+        afternoteEditReceivers = afternoteEditReceivers + newReceiver
+    }
+
     fun onAfternoteEditReceiverItemAdded(text: String) {
         val newAfternoteEditReceiver = AfternoteEditReceiver(
             id = (afternoteEditReceivers.size + 1).toString(),

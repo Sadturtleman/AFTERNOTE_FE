@@ -19,16 +19,17 @@ import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbna
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -68,6 +69,28 @@ class AfternoteEditViewModel
         private val _uploadedThumbnailUrl = MutableStateFlow<String?>(null)
         val uploadedThumbnailUrl: StateFlow<String?> = _uploadedThumbnailUrl.asStateFlow()
 
+        /** Cached receiver list (GET /users/receivers) for lookup when returning from receiver selection. */
+        private var cachedReceivers: List<ReceiverListItem> = emptyList()
+
+        /**
+         * Loads receivers (GET /users/receivers) and caches for [getReceiverById] lookup.
+         * Call when entering edit screen so selection-from-navigation can resolve names.
+         */
+        fun loadReceivers() {
+            viewModelScope.launch {
+                val userId = getUserIdUseCase() ?: return@launch
+                getReceiversUseCase(userId = userId)
+                    .getOrNull()
+                    ?.let { cachedReceivers = it }
+            }
+        }
+
+        /**
+         * Returns the receiver for the given id from the last [loadReceivers] result, or null.
+         */
+        fun getReceiverById(id: Long): ReceiverListItem? =
+            cachedReceivers.find { it.receiverId == id }
+
         /**
          * Category from the server when loading for edit. Used for update requests because the API
          * does not allow changing category; we must send the original category.
@@ -97,11 +120,12 @@ class AfternoteEditViewModel
 
         /**
          * 애프터노트 저장 (생성 또는 수정).
-         * 수신자 ID는 모든 카테고리에서 설정 수신자 목록(GET /users/receivers)을 사용합니다.
+         * 수신자: [selectedReceiverIds]에 최소 1명 이상 필요하며, 비어 있으면 검증 오류로 저장하지 않습니다.
          *
          * @param editingId null이면 신규 생성, non-null이면 수정
          * @param category 선택된 카테고리 한국어 문자열
          * @param payload 편집 화면에서 수집된 데이터
+         * @param selectedReceiverIds 수신자 지정에서 선택한 수신자 ID 목록 (최소 1명 필요)
          * @param playlistStateHolder 추모 가이드라인의 플레이리스트 상태
          * @param funeralVideoUrl 추모 가이드라인 전용: 장례식에 남길 영상 URL. 있으면 요청에 memorialVideo 포함.
          * @param funeralThumbnailUrl 추모 가이드라인 전용: 썸네일 URL (API 응답 또는 업로드 API 반환 시). 없으면 null.
@@ -110,6 +134,7 @@ class AfternoteEditViewModel
             editingId: Long?,
             category: String,
             payload: RegisterAfternotePayload,
+            selectedReceiverIds: List<Long>,
             playlistStateHolder: MemorialPlaylistStateHolder?,
             funeralVideoUrl: String? = null,
             funeralThumbnailUrl: String? = null
@@ -122,6 +147,7 @@ class AfternoteEditViewModel
             val validationError = validateRequiredFieldsSync(
                 category = category,
                 payload = payload,
+                selectedReceiverIds = selectedReceiverIds,
                 playlistStateHolder = playlistStateHolder
             )
             if (validationError != null) {
@@ -161,6 +187,7 @@ class AfternoteEditViewModel
                         afternoteId = editingId,
                         category = categoryForApi,
                         payload = payload,
+                        selectedReceiverIds = selectedReceiverIds,
                         playlistStateHolder = playlistStateHolder,
                         funeralVideoUrl = videoUrlForUpdate,
                         funeralThumbnailUrl = thumbnailForUpdate
@@ -169,6 +196,7 @@ class AfternoteEditViewModel
                     performCreate(
                         category = categoryForApi,
                         payload = payload,
+                        selectedReceiverIds = selectedReceiverIds,
                         playlistStateHolder = playlistStateHolder,
                         funeralVideoUrl = resolvedVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
@@ -332,18 +360,6 @@ class AfternoteEditViewModel
         }
 
         /**
-         * 수신자 ID 목록. 모든 카테고리(갤러리, 추모 가이드라인, 소셜네트워크)에서 동일하게
-         * 수신자 목록(GET /users/receivers, 설정 > 수신자 목록)을 사용합니다.
-         */
-        private suspend fun resolveReceiverIds(): List<Long> {
-            val userId = getUserIdUseCase() ?: return emptyList()
-            return getReceiversUseCase(userId = userId)
-                .getOrNull()
-                ?.map { it.receiverId }
-                ?: emptyList()
-        }
-
-        /**
          * Validates required fields for SOCIAL category (소셜네트워크).
          * Returns the first validation error found, or null if valid.
          */
@@ -370,8 +386,12 @@ class AfternoteEditViewModel
         private fun validateRequiredFieldsSync(
             category: String,
             payload: RegisterAfternotePayload,
+            selectedReceiverIds: List<Long>,
             playlistStateHolder: MemorialPlaylistStateHolder?
         ): AfternoteValidationError? {
+            if (selectedReceiverIds.isEmpty()) {
+                return AfternoteValidationError.RECEIVERS_REQUIRED
+            }
             if (payload.serviceName.trim().isEmpty()) {
                 return AfternoteValidationError.TITLE_REQUIRED
             }
@@ -401,6 +421,7 @@ class AfternoteEditViewModel
         private suspend fun performCreate(
             category: String,
             payload: RegisterAfternotePayload,
+            selectedReceiverIds: List<Long>,
             playlistStateHolder: MemorialPlaylistStateHolder?,
             funeralVideoUrl: String? = null,
             funeralThumbnailUrl: String? = null
@@ -425,23 +446,18 @@ class AfternoteEditViewModel
 
                 return when (category) {
                 CATEGORY_GALLERY -> {
-                    val receiverIds = resolveReceiverIds()
-                    if (receiverIds.isEmpty()) {
-                        return Result.failure(
-                            AfternoteValidationException(
-                                AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
-                            )
-                        )
-                    }
                     val galleryActions =
                         actions.ifEmpty { listOf("정보 전달") }
-                    Log.d(TAG, "performCreate GALLERY: receiverIds=$receiverIds, actions=$galleryActions")
+                    Log.d(
+                        TAG,
+                        "performCreate GALLERY: receiverIds=$selectedReceiverIds, actions=$galleryActions"
+                    )
                     createGalleryUseCase(
                         title = payload.serviceName,
                         processMethod = processMethod,
                         actions = galleryActions,
                         leaveMessage = leaveMessage,
-                        receiverIds = receiverIds
+                        receiverIds = selectedReceiverIds
                     )
                 }
                 CATEGORY_MEMORIAL -> {
@@ -451,29 +467,13 @@ class AfternoteEditViewModel
                         funeralVideoUrl = funeralVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
                     )
-                    val receiverIds = resolveReceiverIds()
-                    if (receiverIds.isEmpty()) {
-                        return Result.failure(
-                            AfternoteValidationException(
-                                AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
-                            )
-                        )
-                    }
                     createPlaylistUseCase(
                         title = payload.serviceName,
                         playlist = playlistDto,
-                        receiverIds = receiverIds
+                        receiverIds = selectedReceiverIds
                     )
                 }
                 else -> {
-                    val receiverIds = resolveReceiverIds()
-                    if (receiverIds.isEmpty()) {
-                        return Result.failure(
-                            AfternoteValidationException(
-                                AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
-                            )
-                        )
-                    }
                     createSocialUseCase(
                         title = payload.serviceName,
                         processMethod = processMethod,
@@ -481,7 +481,7 @@ class AfternoteEditViewModel
                         leaveMessage = leaveMessage,
                         credentialsId = payload.accountId.takeIf { it.isNotEmpty() },
                         credentialsPassword = payload.password.takeIf { it.isNotEmpty() },
-                        receiverIds = receiverIds
+                        receiverIds = selectedReceiverIds
                     )
                 }
             }
@@ -491,6 +491,7 @@ class AfternoteEditViewModel
             afternoteId: Long,
             category: String,
             payload: RegisterAfternotePayload,
+            selectedReceiverIds: List<Long>,
             playlistStateHolder: MemorialPlaylistStateHolder?,
             funeralVideoUrl: String? = null,
             funeralThumbnailUrl: String? = null
@@ -507,7 +508,8 @@ class AfternoteEditViewModel
                 } else {
                     buildNonMemorialUpdateBody(
                         category = category,
-                        payload = payload
+                        payload = payload,
+                        selectedReceiverIds = selectedReceiverIds
                     )
                 }
             return updateUseCase(afternoteId = afternoteId, body = body)
@@ -536,9 +538,10 @@ class AfternoteEditViewModel
                 )
             )
 
-        private suspend fun buildNonMemorialUpdateBody(
+        private fun buildNonMemorialUpdateBody(
             category: String,
-            payload: RegisterAfternotePayload
+            payload: RegisterAfternotePayload,
+            selectedReceiverIds: List<Long>
         ): AfternoteUpdateRequestDto {
             val actions = payload.processingMethods.map { it.text } +
                 payload.galleryProcessingMethods.map { it.text }
@@ -573,10 +576,8 @@ class AfternoteEditViewModel
                     else -> null
                 },
                 receivers = when (category) {
-                    CATEGORY_GALLERY -> {
-                        val ids = resolveReceiverIds()
-                        ids.map { AfternoteReceiverRefDto(receiverId = it) }.ifEmpty { null }
-                    }
+                    CATEGORY_GALLERY ->
+                        selectedReceiverIds.map { AfternoteReceiverRefDto(receiverId = it) }
                     else -> null
                 },
                 playlist = null
