@@ -1,0 +1,18 @@
+---
+description: Do not include "Made with Cursor" or Cursor attribution in PRs or commits
+alwaysApply: true
+---
+
+# No Cursor Attribution in PR / Commits
+
+**Do not include "Made with Cursor" or any Cursor branding in content that is committed or submitted to the repo.**
+
+## Applies to
+
+- **PR title and body**: Do not add "Made with Cursor", Cursor links, or similar attribution in pull request descriptions or titles.
+- **Commit messages**: Do not add Cursor attribution in commit subject, body, or footer.
+- **Code and docs**: Do not add "Made with Cursor" (or similar) in comments, README, or any file that would be part of a PR.
+
+## Rule
+
+When generating or suggesting text for PRs, commits, or repo-facing content, omit any line or block that promotes or attributes the content to Cursor (e.g. "Made with Cursor", Cursor badges, or Cursor marketing links). Keep content professional and tool-agnostic.
