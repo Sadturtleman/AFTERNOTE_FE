@@ -22,8 +22,9 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteScreen
-import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMemorialPlaylistRoute
+import com.kuit.afternote.feature.receiver.presentation.screen.afternote.MemorialPlaylistScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfterNoteMainScreen
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverMemorialPlaylistViewModel
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordDetailScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.timeletter.ReceiverTimeLetterListScreen
@@ -233,16 +234,22 @@ fun ReceiverMainRoute(
                         )
                     }
                 BottomNavItem.AFTERNOTE -> {
+                    val playlistViewModel: ReceiverMemorialPlaylistViewModel = hiltViewModel()
+                    val playlistUiState by playlistViewModel.uiState.collectAsStateWithLifecycle()
                     val afternoteSenderName = receiverAuthSessionHolder.getSenderName().orEmpty()
                     Log.d(TAG_RECEIVER_MAIN, "AFTERNOTE tab getSenderName=${receiverAuthSessionHolder.getSenderName()}, orEmpty='$afternoteSenderName'")
                     if (showMemorialPlaylist) {
-                        ReceiverMemorialPlaylistRoute(
+                        MemorialPlaylistScreen(
+                            songs = playlistUiState.songs,
                             onBackClick = { showMemorialPlaylist = false }
                         )
                     } else {
                         ReceiverAfterNoteMainScreen(
                             senderName = afternoteSenderName,
                             albumCovers = albumCovers,
+                            songCount = playlistUiState.songs.size,
+                            memorialVideoUrl = playlistUiState.memorialVideoUrl,
+                            memorialThumbnailUrl = playlistUiState.memorialThumbnailUrl,
                             onNavigateToFullList = {
                                 navController.navigate("receiver_afternote_list")
                             },

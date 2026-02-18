@@ -1,11 +1,25 @@
 package com.kuit.afternote.feature.receiver.presentation.navgraph
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
+import com.kuit.afternote.R
+import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
@@ -15,73 +29,138 @@ import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetail
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
 import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetailState
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternoteDetailViewModel
 
 /**
  * 수신자 애프터노트 상세 라우트.
- * ReceiverDataProvider에서 seed를 조회해 카테고리별 상세 스크린(Gallery/MemorialGuideline/Social)을 표시합니다.
+ *
+ * GET /api/receiver-auth/after-notes/{afternoteId}로 상세를 조회하고,
+ * 발신자 상세와 동일한 화면(Social/Gallery/MemorialGuideline)에 title→serviceName, senderName→userName으로 표시합니다.
  */
 @Composable
 fun ReceiverAfternoteDetailRoute(
     navHostController: NavHostController,
-    itemId: String?
+    itemId: String?,
+    viewModel: ReceiverAfternoteDetailViewModel = hiltViewModel()
 ) {
-    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
-    val seed =
-        remember(receiverProvider, itemId) {
-            receiverProvider
-                .getAfternoteListSeedsForReceiverList()
-                .firstOrNull { it.id == itemId }
-                ?: receiverProvider.getAfternoteListSeedsForReceiverList().firstOrNull()
-        }
-    val category = receiverDetailCategoryFromSeed(seed)
-    val serviceName = seed?.serviceNameLiteral ?: ""
-    val userName = receiverProvider.getDefaultReceiverTitle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(itemId) {
+        viewModel.loadDetail(itemId)
+    }
+
     val defaultState = rememberAfternoteDetailState(
         defaultBottomNavItem = BottomNavItem.AFTERNOTE
     )
-    when (category) {
-        ReceiverDetailCategory.GALLERY -> GalleryDetailScreen(
-            detailState = GalleryDetailState(
-                serviceName = serviceName.ifEmpty { "갤러리" },
-                userName = userName,
-                finalWriteDate = seed?.date ?: ""
-            ),
-            callbacks = GalleryDetailCallbacks(
-                onBackClick = { navHostController.popBackStack() },
-                onEditClick = {}
-            ),
-            isEditable = false,
-            uiState = defaultState
-        )
-        ReceiverDetailCategory.MEMORIAL_GUIDELINE -> MemorialGuidelineDetailScreen(
-            detailState = MemorialGuidelineDetailState(
-                userName = userName,
-                finalWriteDate = seed?.date ?: ""
-            ),
-            callbacks = MemorialGuidelineDetailCallbacks(
-                onBackClick = { navHostController.popBackStack() }
-            ),
-            isEditable = false,
-            uiState = defaultState
-        )
-        ReceiverDetailCategory.SOCIAL -> SocialNetworkDetailScreen(
-            content = SocialNetworkDetailContent(
-                serviceName = serviceName,
-                userName = userName
-            ),
-            isEditable = false,
-            onBackClick = { navHostController.popBackStack() },
-            state = defaultState
-        )
+    val onBackClick: () -> Unit = { navHostController.popBackStack(); Unit }
+
+    when {
+        uiState.isLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        uiState.errorMessage != null || uiState.detail == null -> {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopBar(title = "", onBackClick = onBackClick)
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = uiState.errorMessage ?: stringResource(R.string.design_pending)
+                    )
+                }
+            }
+        }
+        else -> {
+            val detail = uiState.detail!!
+            val serviceName = detail.title.orEmpty().ifEmpty { "애프터노트" }
+            val userName = detail.senderName.orEmpty().ifEmpty { "" }
+            val finalWriteDate = detail.createdAt.orEmpty()
+
+            when (receiverDetailCategoryFromApi(detail.category)) {
+                ReceiverDetailCategory.GALLERY -> GalleryDetailScreen(
+                    detailState = GalleryDetailState(
+                        serviceName = serviceName,
+                        userName = userName,
+                        finalWriteDate = finalWriteDate,
+                        afternoteEditReceivers = emptyList(),
+                        informationProcessingMethod = detail.processMethod.orEmpty(),
+                        processingMethods = detail.actions,
+                        message = detail.leaveMessage.orEmpty()
+                    ),
+                    callbacks = GalleryDetailCallbacks(
+                        onBackClick = onBackClick,
+                        onEditClick = {}
+                    ),
+                    isEditable = false,
+                    uiState = defaultState
+                )
+                ReceiverDetailCategory.MEMORIAL_GUIDELINE -> MemorialGuidelineDetailScreen(
+                    detailState = MemorialGuidelineDetailState(
+                        userName = userName,
+                        finalWriteDate = finalWriteDate,
+                        profileImageUri = null,
+                        albumCovers = detail.playlist?.songs?.mapIndexed { index, s ->
+                            AlbumCover(
+                                id = index.toString(),
+                                imageUrl = s.coverUrl,
+                                title = s.title
+                            )
+                        } ?: emptyList(),
+                        songCount = detail.playlist?.songs?.size ?: 0,
+                        lastWish = detail.playlist?.atmosphere.orEmpty(),
+                        afternoteEditReceivers = emptyList(),
+                        memorialVideoUrl = detail.playlist?.memorialVideoUrl,
+                        memorialThumbnailUrl = detail.playlist?.memorialThumbnailUrl
+                    ),
+                    callbacks = MemorialGuidelineDetailCallbacks(
+                        onBackClick = onBackClick,
+                        onEditClick = {}
+                    ),
+                    isEditable = false,
+                    uiState = defaultState
+                )
+                ReceiverDetailCategory.SOCIAL -> SocialNetworkDetailScreen(
+                    content = SocialNetworkDetailContent(
+                        serviceName = serviceName,
+                        userName = userName,
+                        accountId = "",
+                        password = "",
+                        accountProcessingMethod = detail.processMethod.orEmpty(),
+                        processingMethods = detail.actions,
+                        message = detail.leaveMessage.orEmpty(),
+                        finalWriteDate = finalWriteDate,
+                        afternoteEditReceivers = emptyList()
+                    ),
+                    isEditable = false,
+                    onBackClick = onBackClick,
+                    state = defaultState
+                )
+            }
+        }
     }
 }
 
-private enum class ReceiverDetailCategory { GALLERY, MEMORIAL_GUIDELINE, SOCIAL }
+private enum class ReceiverDetailCategory {
+    GALLERY,
+    MEMORIAL_GUIDELINE,
+    SOCIAL
+}
 
-private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): ReceiverDetailCategory {
-    return when (seed?.serviceNameLiteral) {
-        "갤러리" -> ReceiverDetailCategory.GALLERY
-        "추모 가이드라인" -> ReceiverDetailCategory.MEMORIAL_GUIDELINE
+private fun receiverDetailCategoryFromApi(category: String?): ReceiverDetailCategory =
+    when (category?.uppercase()) {
+        "GALLERY" -> ReceiverDetailCategory.GALLERY
+        "PLAYLIST" -> ReceiverDetailCategory.MEMORIAL_GUIDELINE
         else -> ReceiverDetailCategory.SOCIAL
     }
-}

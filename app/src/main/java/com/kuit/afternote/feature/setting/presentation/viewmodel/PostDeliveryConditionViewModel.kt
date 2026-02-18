@@ -43,7 +43,7 @@ interface PostDeliveryConditionViewModelContract {
     fun onTriggerConditionSelected(option: TriggerConditionOption)
     fun onDateSelected(date: LocalDate?)
     fun onLastGreetingChanged(text: String)
-    fun onSaveLastGreeting()
+    fun onSaveLastGreeting(lastGreetingText: String)
 }
 
 /**
@@ -122,7 +122,8 @@ constructor(
         _state.update { it.copy(lastGreetingMessage = text) }
     }
 
-    override fun onSaveLastGreeting() {
+    override fun onSaveLastGreeting(lastGreetingText: String) {
+        _state.update { it.copy(lastGreetingMessage = lastGreetingText) }
         viewModelScope.launch { updateDeliveryConditionApi() }
     }
 
