@@ -27,7 +27,15 @@ class CreateMindRecordUseCase @Inject constructor(
         category: String? = null
     ): Result<PostMindRecordResponse> {
         return try {
-            val request = CreateMindRecordRequest(type, title, content, date, isDraft, questionId, category)
+            val request = CreateMindRecordRequest(
+                type = type,
+                title = title,
+                content = content ?: "",
+                date = date,
+                isDraft = isDraft,
+                questionId = questionId,
+                category = category
+            )
             val response = repository.createMindRecord(request)
             Result.success(response)
         } catch (e: Exception) {

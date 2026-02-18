@@ -8,39 +8,33 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
-    //viewModel: MindRecordViewModel,
     recordId: Long?,
+    title: String,
+    content: String,
+    onTitleChange: (String) -> Unit,
+    onContentChange: (String) -> Unit,
     onDateClick: () -> Unit,
     sendDate: String,
     showDatePicker: Boolean,
-    onDatePickerDismiss: () -> Unit
-
+    onDatePickerDismiss: () -> Unit,
+    selectedCategory: String,
+    onCategoryChange: (String) -> Unit,
+    showCategoryDropdown: Boolean,
+    onCategoryClick: () -> Unit,
+    onCategoryDropdownDismiss: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-
-   // val uiState by viewModel.uiState.collectAsState()
-
     Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -51,19 +45,7 @@ fun RecordDeepMindScreen(
                 RecordSubTopbar(
                     text = "깊은 생각 기록하기",
                     onLeftClock = onLeftClick,
-                    onRightClick = {
-//                        viewModel.onCreateRecord(
-//                            type = "DIARY",
-//                            title = title,
-//                            content = content,
-//                            date = LocalDate.now().toString(),
-//                            isDraft = false
-//                        ) {
-//                            viewModel.loadRecords() // 등록 성공 후 조회 실행
-//                            onLeftClick() // 성공 시 화면 닫기
-//                        }
-                    }
-
+                    onRightClick = onRegisterClick
                 )
             }
 
@@ -72,13 +54,18 @@ fun RecordDeepMindScreen(
                     standard = "깊은 생각 기록하기",
                     onDateSelected = { _, _, _ -> },
                     title = title,
-                    onTitleChange = { title = it },
+                    onTitleChange = onTitleChange,
                     content = content,
-                    onContentChange = { content = it },
+                    onContentChange = onContentChange,
                     onDateClick = {},
                     sendDate = sendDate,
                     showDatePicker = showDatePicker,
                     onDatePickerDismiss = onDatePickerDismiss,
+                    selectedCategory = selectedCategory,
+                    onCategoryChange = onCategoryChange,
+                    showCategoryDropdown = showCategoryDropdown,
+                    onCategoryClick = onCategoryClick,
+                    onCategoryDropdownDismiss = onCategoryDropdownDismiss
                 )
             }
         }
