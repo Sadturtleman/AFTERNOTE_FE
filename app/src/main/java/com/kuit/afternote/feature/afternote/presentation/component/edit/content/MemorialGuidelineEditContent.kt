@@ -67,6 +67,7 @@ fun MemorialGuidelineEditContent(
             videoContent = {
                 FuneralVideoUpload(
                     videoUrl = params.funeralVideoUrl,
+                    thumbnailUrl = params.funeralThumbnailUrl,
                     onAddVideoClick = params.onVideoAddClick,
                     onThumbnailBytesReady = params.onThumbnailBytesReady
                 )
