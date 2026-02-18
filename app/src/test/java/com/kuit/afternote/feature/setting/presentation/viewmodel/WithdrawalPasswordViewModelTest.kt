@@ -23,7 +23,8 @@ import retrofit2.Response
 /**
  * [WithdrawalPasswordViewModel] 단위 테스트.
  *
- * DELETE /users/me (회원 탈퇴) 호출 및 HTTP 에러/네트워크 에러 처리 검증.
+ * 확인 문장("탈퇴하겠습니다.") 검증 및 DELETE /users/me (회원 탈퇴) 호출,
+ * HTTP 에러/네트워크 에러 처리 검증.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class WithdrawalPasswordViewModelTest {
@@ -43,42 +44,52 @@ class WithdrawalPasswordViewModelTest {
     }
 
     @Test
-    fun submitWithdrawal_whenBlankPassword_setsShowPasswordError() {
-        viewModel.submitWithdrawal("")
+    fun submitWithdrawal_whenWrongSentence_setsShowSentenceError() {
+        viewModel.submitWithdrawal("잘못된 문장")
 
-        assertTrue(viewModel.uiState.value.showPasswordError)
+        assertTrue(viewModel.uiState.value.showSentenceError)
         assertFalse(viewModel.uiState.value.withdrawalComplete)
     }
 
     @Test
-    fun submitWithdrawal_whenSuccess_clearsTokensAndSetsWithdrawalComplete() =
+    fun submitWithdrawal_whenEmptyInput_setsShowSentenceError() {
+        viewModel.submitWithdrawal("")
+
+        assertTrue(viewModel.uiState.value.showSentenceError)
+        assertFalse(viewModel.uiState.value.withdrawalComplete)
+    }
+
+    @Test
+    fun submitWithdrawal_whenBlankInput_setsShowSentenceError() {
+        viewModel.submitWithdrawal("   ")
+
+        assertTrue(viewModel.uiState.value.showSentenceError)
+        assertFalse(viewModel.uiState.value.withdrawalComplete)
+    }
+
+    @Test
+    fun submitWithdrawal_whenCorrectSentence_clearsTokensAndSetsWithdrawalComplete() =
         runTest {
             coEvery { withdrawAccountUseCase() } returns Result.success(Unit)
 
-            viewModel.submitWithdrawal("password123")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(viewModel.uiState.value.withdrawalComplete)
             assertNull(viewModel.uiState.value.errorMessage)
-            assertFalse(viewModel.uiState.value.showPasswordError)
+            assertFalse(viewModel.uiState.value.showSentenceError)
             assertFalse(viewModel.uiState.value.isLoading)
         }
 
     @Test
-    fun submitWithdrawal_when401Unauthorized_setsShowPasswordError() =
+    fun submitWithdrawal_whenCorrectSentenceWithWhitespace_clearsTokensAndSetsWithdrawalComplete() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
-                .toResponseBody("application/json".toMediaType())
-            val httpException = HttpException(Response.error<Unit>(401, errorBody))
-            coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
+            coEvery { withdrawAccountUseCase() } returns Result.success(Unit)
 
-            viewModel.submitWithdrawal("wrongPassword")
+            viewModel.submitWithdrawal("  탈퇴하겠습니다.  ")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.showPasswordError)
-            assertFalse(viewModel.uiState.value.withdrawalComplete)
-            assertNull(viewModel.uiState.value.errorMessage)
-            assertFalse(viewModel.uiState.value.isLoading)
+            assertTrue(viewModel.uiState.value.withdrawalComplete)
         }
 
     @Test
@@ -89,12 +100,28 @@ class WithdrawalPasswordViewModelTest {
             val httpException = HttpException(Response.error<Unit>(400, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
-            viewModel.submitWithdrawal("password")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(viewModel.uiState.value.errorMessage!!.contains("400"))
             assertFalse(viewModel.uiState.value.withdrawalComplete)
-            assertFalse(viewModel.uiState.value.showPasswordError)
+            assertFalse(viewModel.uiState.value.showSentenceError)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun submitWithdrawal_when401Unauthorized_setsErrorMessage() =
+        runTest {
+            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
+                .toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<Unit>(401, errorBody))
+            coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
+
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.errorMessage!!.contains("401"))
+            assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.isLoading)
         }
 
@@ -106,7 +133,7 @@ class WithdrawalPasswordViewModelTest {
             val httpException = HttpException(Response.error<Unit>(404, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
-            viewModel.submitWithdrawal("password")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(viewModel.uiState.value.errorMessage!!.contains("404"))
@@ -122,7 +149,7 @@ class WithdrawalPasswordViewModelTest {
             val httpException = HttpException(Response.error<Unit>(500, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
-            viewModel.submitWithdrawal("password")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(viewModel.uiState.value.errorMessage!!.contains("500"))
@@ -137,7 +164,7 @@ class WithdrawalPasswordViewModelTest {
                 java.io.IOException("Network unavailable")
             )
 
-            viewModel.submitWithdrawal("password")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(
@@ -152,7 +179,7 @@ class WithdrawalPasswordViewModelTest {
     fun clearWithdrawalComplete_resetsWithdrawalComplete() =
         runTest {
             coEvery { withdrawAccountUseCase() } returns Result.success(Unit)
-            viewModel.submitWithdrawal("password")
+            viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
             assertTrue(viewModel.uiState.value.withdrawalComplete)
 
@@ -162,12 +189,12 @@ class WithdrawalPasswordViewModelTest {
         }
 
     @Test
-    fun clearPasswordError_clearsShowPasswordError() {
-        viewModel.submitWithdrawal("")
-        assertTrue(viewModel.uiState.value.showPasswordError)
+    fun clearSentenceError_clearsShowSentenceError() {
+        viewModel.submitWithdrawal("잘못된 문장")
+        assertTrue(viewModel.uiState.value.showSentenceError)
 
-        viewModel.clearPasswordError()
+        viewModel.clearSentenceError()
 
-        assertFalse(viewModel.uiState.value.showPasswordError)
+        assertFalse(viewModel.uiState.value.showSentenceError)
     }
 }

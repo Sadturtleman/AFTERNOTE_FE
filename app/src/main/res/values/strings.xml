@@ -103,7 +103,8 @@
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
-    <string name="withdrawal_password_error">비밀번호가 맞지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_sentence_mismatch">문장이 일치하지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_confirmation_sentence">탈퇴하겠습니다.</string>
     <string name="withdrawal_complete_line1">회원 탈퇴가 완료되었습니다.</string>
     <string name="withdrawal_complete_line2">애프터노트를 이용해 주셔서 감사합니다.</string>
     <string name="withdrawal_complete_confirm">확인하기</string>
