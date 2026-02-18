@@ -36,7 +36,8 @@ class CreatePlaylistAfternoteUseCaseTest {
             coEvery {
                 repository.createPlaylist(
                     title = any(),
-                    playlist = any()
+                    playlist = any(),
+                    receiverIds = any()
                 )
             } returns Result.success(7L)
 
@@ -47,7 +48,8 @@ class CreatePlaylistAfternoteUseCaseTest {
             coVerify(exactly = 1) {
                 repository.createPlaylist(
                     title = "마지막 플레이리스트",
-                    playlist = playlist
+                    playlist = playlist,
+                    receiverIds = emptyList()
                 )
             }
         }
@@ -65,7 +67,8 @@ class CreatePlaylistAfternoteUseCaseTest {
             coEvery {
                 repository.createPlaylist(
                     title = any(),
-                    playlist = any()
+                    playlist = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(RuntimeException("Validation failed"))
 

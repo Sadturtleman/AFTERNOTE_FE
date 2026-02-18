@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.dailyrecord.data.repository
 
 import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
+import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
@@ -24,5 +25,5 @@ interface MindRecordRepository {
 
     suspend fun editMindRecord(recordId: Long, request: PostMindRecordRequest): MindRecordDetailResponse
 
-
+    suspend fun getEmotions(): EmotionResponse
 }

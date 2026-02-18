@@ -69,6 +69,7 @@ import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
+import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import dagger.hilt.android.EntryPointAccessors
@@ -411,7 +412,10 @@ fun NavGraph(navHostController: NavHostController) {
                     listRefreshRequestedProvider = { listRefreshRequested },
                     onListRefreshConsumed = { listRefreshRequested = false },
                     onAfternoteDeleted = { listRefreshRequested = true }
-                )
+                ),
+                onNavigateToSelectReceiver = {
+                    navHostController.navigate(ReceiverRoute.ReceiverListRoute)
+                }
             ),
             onBottomNavTabSelected = onBottomNavTabSelected
         )

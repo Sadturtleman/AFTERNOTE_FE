@@ -1,7 +1,10 @@
 package com.kuit.afternote.feature.dailyrecord.data.repository
 
+import android.util.Log
+import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
+import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
@@ -15,7 +18,9 @@ class MindRecordRepositoryImpl @Inject constructor(
 ) : MindRecordRepository {
     override suspend fun getDailyQuestion(): DailyQuestionData? = try {
         val response = apiService.getDailyQuestion()
-        DailyQuestionData(questionId = response.questionId, content = response.content)
+        response.data?.let { dto ->
+            DailyQuestionData(questionId = dto.questionId, content = dto.content)
+        }
     } catch (e: Exception) {
         null
     }
@@ -49,6 +54,8 @@ class MindRecordRepositoryImpl @Inject constructor(
         return response.body() ?: throw IllegalStateException("Response body is null")
     }
 
-
+    override suspend fun getEmotions(): EmotionResponse {
+        return apiService.getEmotions().body()!!
+    }
 }
 
