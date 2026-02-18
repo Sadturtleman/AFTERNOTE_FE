@@ -16,6 +16,7 @@ import com.kuit.afternote.feature.afternote.domain.usecase.CreateSocialAfternote
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
+import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
@@ -33,6 +34,9 @@ private const val TAG = "AfternoteEditVM"
 private const val CATEGORY_SOCIAL = "소셜네트워크"
 private const val CATEGORY_GALLERY = "갤러리 및 파일"
 private const val CATEGORY_MEMORIAL = "추모 가이드라인"
+
+/** S3 presigned URLs contain this; we must not send them back on PATCH or the server overwrites the stored key. */
+private const val PRESIGNED_URL_MARKER = "X-Amz-"
 
 /**
  * 애프터노트 생성/수정 ViewModel.
@@ -54,7 +58,8 @@ class AfternoteEditViewModel
         private val getDetailUseCase: GetAfternoteDetailUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase,
-        private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase
+        private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase,
+        private val uploadMemorialVideoUseCase: UploadMemorialVideoUseCase
     ) : ViewModel() {
 
         private val _saveState = MutableStateFlow(AfternoteSaveState())
@@ -149,15 +154,22 @@ class AfternoteEditViewModel
                 _saveState.update {
                     it.copy(isSaving = true, error = null, validationError = null)
                 }
-                val result = if (editingId != null) {
+                val resolvedVideoUrl = resolveVideoUrlForSave(funeralVideoUrl)
+                if (resolvedVideoUrl == null && funeralVideoUrl != null && funeralVideoUrl.startsWith("content://")) {
+                    return@launch
+                }
+                val videoUrlForUpdate = videoUrlForUpdateRequest(editingId != null, resolvedVideoUrl)
+                val thumbnailForUpdate =
+                    if (videoUrlForUpdate == null) null else funeralThumbnailUrl
+                (if (editingId != null) {
                     performUpdate(
                         afternoteId = editingId,
                         category = categoryForApi,
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder,
-                        funeralVideoUrl = funeralVideoUrl,
-                        funeralThumbnailUrl = funeralThumbnailUrl
+                        funeralVideoUrl = videoUrlForUpdate,
+                        funeralThumbnailUrl = thumbnailForUpdate
                     )
                 } else {
                     performCreate(
@@ -165,11 +177,10 @@ class AfternoteEditViewModel
                         payload = payload,
                         receivers = receivers,
                         playlistStateHolder = playlistStateHolder,
-                        funeralVideoUrl = funeralVideoUrl,
+                        funeralVideoUrl = resolvedVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
                     )
-                }
-                result
+                })
                     .onSuccess { id ->
                         Log.d(TAG, "saveAfternote: SUCCESS, savedId=$id")
                         _saveState.update {
@@ -177,22 +188,55 @@ class AfternoteEditViewModel
                         }
                     }
                     .onFailure { e ->
-                        Log.e(TAG, "saveAfternote: FAILURE, category=$categoryForApi", e)
-                        when (e) {
-                            is AfternoteValidationException -> _saveState.update {
-                                it.copy(
-                                    isSaving = false,
-                                    validationError = e.validationError
-                                )
-                            }
-                            else -> _saveState.update {
-                                it.copy(
-                                    isSaving = false,
-                                    error = e.message ?: "저장에 실패했습니다."
-                                )
-                            }
-                        }
+                        handleSaveFailure(e, categoryForApi)
                     }
+            }
+        }
+
+        /**
+         * Resolves [funeralVideoUrl] for save: returns as-is if non-blank and not content://;
+         * uploads and returns file URL if content://; on upload failure updates [saveState] and returns null.
+         */
+        private suspend fun resolveVideoUrlForSave(funeralVideoUrl: String?): String? {
+            when {
+                funeralVideoUrl.isNullOrBlank() -> return null
+                !funeralVideoUrl.startsWith("content://") -> return funeralVideoUrl
+            }
+            return uploadMemorialVideoUseCase(funeralVideoUrl).fold(
+                onSuccess = { it },
+                onFailure = { e ->
+                    Log.e(TAG, "saveAfternote: video upload failed", e)
+                    _saveState.update {
+                        it.copy(
+                            isSaving = false,
+                            error = e.message ?: "영상 업로드에 실패했습니다."
+                        )
+                    }
+                    null
+                }
+            )
+        }
+
+        /**
+         * For update (PATCH), do not send presigned URLs so the server does not overwrite the stored key.
+         */
+        private fun videoUrlForUpdateRequest(isUpdate: Boolean, resolvedVideoUrl: String?): String? {
+            if (!isUpdate || resolvedVideoUrl == null) return resolvedVideoUrl
+            if (resolvedVideoUrl.contains(PRESIGNED_URL_MARKER)) {
+                Log.d(TAG, "saveAfternote: skipping videoUrl in PATCH (presigned URL)")
+                return null
+            }
+            return resolvedVideoUrl
+        }
+
+        private fun handleSaveFailure(e: Throwable, categoryForApi: String) {
+            Log.e(TAG, "saveAfternote: FAILURE, category=$categoryForApi", e)
+            _saveState.update {
+                it.copy(
+                    isSaving = false,
+                    validationError = (e as? AfternoteValidationException)?.validationError,
+                    error = if (e is AfternoteValidationException) it.error else (e.message ?: "저장에 실패했습니다.")
+                )
             }
         }
 

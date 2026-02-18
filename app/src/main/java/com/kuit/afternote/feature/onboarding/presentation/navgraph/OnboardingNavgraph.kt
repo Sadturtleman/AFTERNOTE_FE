@@ -56,7 +56,7 @@ fun NavGraphBuilder.onboardingNavGraph(
             password = route.password,
             onFinishClick = {
                 android.util.Log.d("OnboardingNavGraph", "onFinishClick 호출됨, AfternoteListRoute로 이동 시도")
-                navController.navigate(AfternoteRoute.AfternoteListRoute)
+                navController.navigate("home")
                 android.util.Log.d("OnboardingNavGraph", "navigate 호출 완료")
             },
             onBackClick = { navController.popBackStack() }

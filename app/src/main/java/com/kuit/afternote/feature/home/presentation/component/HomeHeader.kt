@@ -42,14 +42,7 @@ fun HomeHeader(
             modifier = Modifier.height(16.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = onProfileClick) {
-            Icon(
-                painter = painterResource(R.drawable.ic_user),
-                contentDescription = "프로필",
-                modifier = Modifier.size(24.dp),
-                tint = Gray9
-            )
-        }
+
         IconButton(onClick = onSettingsClick) {
             Icon(
                 painter = painterResource(R.drawable.setting),

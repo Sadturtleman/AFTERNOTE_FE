@@ -377,7 +377,7 @@ fun NavGraph(navHostController: NavHostController) {
                     }
                 },
                 onTImeLetterClick = {
-                    navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
+                    navHostController.navigate("record_main") {
                         launchSingleTop = true
                     }
                 }
