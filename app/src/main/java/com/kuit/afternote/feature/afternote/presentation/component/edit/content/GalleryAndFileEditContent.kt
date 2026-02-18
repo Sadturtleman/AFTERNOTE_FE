@@ -19,14 +19,10 @@ import com.kuit.afternote.core.ui.component.Label
 import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AfternoteEditReceiverList
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InfoMethodSection
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodListParams
-import com.kuit.afternote.core.ui.component.SelectableRadioCard
-import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -65,63 +61,7 @@ private fun GalleryAndFileEditContentBody(
     spacerHeight: Dp
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        // 정보 처리 방법 섹션
-        Label(
-            text = "정보 처리 방법",
-            isRequired = true,
-            style = LabelStyle(requiredDotOffsetY = 4.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SelectableRadioCard(
-            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
-            onClick = { params.infoMethodSection.onMethodSelected(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER) },
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                OptionRadioCardContent(
-                    option = InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
-                    selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SelectableRadioCard(
-            selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
-            onClick = {
-                params.infoMethodSection.onMethodSelected(
-                    InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                OptionRadioCardContent(
-                    option = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
-                    selected = params.infoMethodSection.selectedMethod == InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER
-                )
-            }
-        )
-
-        // 추가 수신자에게 정보 전달 선택 시 수신자 추가 섹션 표시
-        params.afternoteEditReceiverSection?.let { afternoteEditReceiverSection ->
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // 수신자 추가 섹션 제목
-            Label(
-                text = "수신자 추가",
-                isRequired = true,
-                style = LabelStyle(requiredDotOffsetY = 3.dp)
-            )
-
-            Spacer(modifier = Modifier.height(9.dp))
-
-            AfternoteEditReceiverList(
-                afternoteEditReceivers = afternoteEditReceiverSection.afternoteEditReceivers,
-                events = afternoteEditReceiverSection.callbacks
-            )
-        }
+        RecipientDesignationSection(section = params.recipientSection)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -173,10 +113,8 @@ private fun GalleryAndFileEditContentPreview() {
                 bottomPadding = PaddingValues(bottom = 88.dp),
                 params = GalleryAndFileEditContentParams(
                     messageState = rememberTextFieldState(),
-                    infoMethodSection = InfoMethodSection(
-                        selectedMethod = InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
-                        onMethodSelected = {}
-                    )
+                    recipientSection = AfternoteEditReceiverSection(),
+                    processingMethodSection = ProcessingMethodSection()
                 )
             )
         }
@@ -200,11 +138,7 @@ private fun GalleryAndFileEditContentWithAfternoteEditReceiversPreview() {
                     bottomPadding = PaddingValues(bottom = 88.dp),
                     params = GalleryAndFileEditContentParams(
                         messageState = rememberTextFieldState(),
-                        infoMethodSection = InfoMethodSection(
-                            selectedMethod = InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
-                            onMethodSelected = {}
-                        ),
-                        afternoteEditReceiverSection = AfternoteEditReceiverSection(
+                        recipientSection = AfternoteEditReceiverSection(
                             afternoteEditReceivers = provider.getAfternoteEditReceivers()
                         )
                     )

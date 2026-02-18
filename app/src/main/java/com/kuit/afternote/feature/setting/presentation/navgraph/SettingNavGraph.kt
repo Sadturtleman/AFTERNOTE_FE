@@ -12,12 +12,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ConfirmationPopup
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
@@ -49,7 +51,9 @@ import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverD
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverDetailScreenParams
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverManagementScreen
-import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverRegisterScreen
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverFormCallbacks
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverFormInitialState
+import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverFormScreen
 import com.kuit.afternote.feature.setting.presentation.screen.receiver.ReceiverTimeLetterListScreen
 import com.kuit.afternote.feature.setting.presentation.viewmodel.WithdrawalPasswordViewModel
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
@@ -57,12 +61,19 @@ import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.EditReceiverViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 
-fun NavGraphBuilder.settingNavGraph(navController: NavController) {
+fun NavGraphBuilder.settingNavGraph(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+) {
     composable<SettingRoute.SettingMainRoute> {
-        SettingMainRouteContent(navController)
+        SettingMainRouteContent(
+            navController = navController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
     }
     composable<SettingRoute.ConnectedAccountsRoute> {
         ConnectedAccountsScreen(onBackClick = { navController.popBackStack() })
@@ -83,7 +94,11 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
         PasswordModifyScreen(onBackClick = { navController.popBackStack() })
     }
     composable<SettingRoute.ReceiverDetailRoute> { backStackEntry ->
-        ReceiverDetailRouteContent(navController, backStackEntry.toRoute())
+        ReceiverDetailRouteContent(
+            navController = navController,
+            backStackEntry = backStackEntry,
+            route = backStackEntry.toRoute()
+        )
     }
     composable<SettingRoute.ProfileEditRoute> {
         ProfileEditScreen(
@@ -102,6 +117,12 @@ fun NavGraphBuilder.settingNavGraph(navController: NavController) {
     }
     composable<SettingRoute.ReceiverRegisterRoute> {
         ReceiverRegisterRouteContent(navController)
+    }
+    composable<SettingRoute.ReceiverEditRoute> { backStackEntry ->
+        ReceiverEditRouteContent(
+            navController = navController,
+            backStackEntry = backStackEntry
+        )
     }
     composable<SettingRoute.PostDeliveryConditionRoute> {
         PostDeliveryConditionScreen(
@@ -192,7 +213,6 @@ private fun WithdrawalPasswordRouteContent(navController: NavController) {
             onBackClick = { navController.popBackStack() },
             onWithdrawClick = { password ->
                 withdrawalPasswordViewModel.submitWithdrawal(password)
-                // TODO: API 연동 후 실제 탈퇴 처리; 성공 시 withdrawalComplete = true로 설정
                 Log.d(TAG_SETTING_NAV, "Withdrawal password confirmed")
             },
             onGoBackClick = { navController.popBackStack() },
@@ -212,7 +232,10 @@ private fun sampleNoticeItems(): List<NoticeItemUiModel> = List(10) { index ->
 private const val TAG_SETTING_NAV = "SettingNavGraph"
 
 @Composable
-private fun SettingMainRouteContent(navController: NavController) {
+private fun SettingMainRouteContent(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val unhandledMessage = stringResource(R.string.setting_menu_not_connected)
     val logoutConfirmMessage = stringResource(R.string.setting_logout_confirm_message)
@@ -242,6 +265,7 @@ private fun SettingMainRouteContent(navController: NavController) {
     }
 
     SettingMainScreen(
+        onBottomNavTabSelected = onBottomNavTabSelected,
         onClick = { title ->
             when (title) {
                 "프로필 수정" -> navController.navigate(SettingRoute.ProfileEditRoute)
@@ -268,9 +292,10 @@ private fun SettingMainRouteContent(navController: NavController) {
 @Composable
 private fun ReceiverDetailRouteContent(
     navController: NavController,
+    backStackEntry: NavBackStackEntry,
     route: SettingRoute.ReceiverDetailRoute
 ) {
-    val detailViewModel: ReceiverDetailViewModel = hiltViewModel()
+    val detailViewModel: ReceiverDetailViewModel = hiltViewModel(backStackEntry)
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
 
     val phoneNumberState = rememberTextFieldState()
@@ -294,7 +319,11 @@ private fun ReceiverDetailRouteContent(
         ),
         callbacks = ReceiverDetailEditCallbacks(
             onBackClick = { navController.popBackStack() },
-            onEditClick = { },
+            onEditClick = {
+                navController.navigate(
+                    SettingRoute.ReceiverEditRoute(receiverId = route.receiverId)
+                )
+            },
             onReceiverDetailImageClick = { },
             onDailyQuestionClick = {
                 navController.navigate(
@@ -352,10 +381,48 @@ private fun ReceiverRegisterRouteContent(navController: NavController) {
             navController.popBackStack()
         }
     }
-    ReceiverRegisterScreen(
-        onBackClick = { navController.popBackStack() },
-        onRegisterClick = { navController.popBackStack() },
-        registerViewModel = registerViewModel
+    ReceiverFormScreen(
+        callbacks = ReceiverFormCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onActionClick = { navController.popBackStack() },
+            onAddProfileImageClick = {}
+        ),
+        registerViewModel = registerViewModel,
+        screenTitle = "수신자 등록",
+        actionText = "등록"
+    )
+}
+
+@Composable
+private fun ReceiverEditRouteContent(
+    navController: NavController,
+    backStackEntry: NavBackStackEntry
+) {
+    val editViewModel: EditReceiverViewModel = hiltViewModel(backStackEntry)
+    val editState by editViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(editState.updateSuccess) {
+        if (editState.updateSuccess) {
+            editViewModel.clearUpdateSuccess()
+            navController.popBackStack()
+        }
+    }
+
+    ReceiverFormScreen(
+        callbacks = ReceiverFormCallbacks(
+            onBackClick = { navController.popBackStack() },
+            onActionClick = {},
+            onAddProfileImageClick = {}
+        ),
+        editViewModel = editViewModel,
+        screenTitle = "수신자 수정",
+        actionText = "수정",
+        initialFormState = ReceiverFormInitialState(
+            name = editState.name,
+            phone = editState.phone,
+            email = editState.email,
+            relation = editState.relation
+        )
     )
 }
 

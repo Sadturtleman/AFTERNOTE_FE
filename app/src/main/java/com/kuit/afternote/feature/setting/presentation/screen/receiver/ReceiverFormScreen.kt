@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,18 +39,40 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.rememberSelectionDropdownState
+import com.kuit.afternote.feature.user.presentation.viewmodel.EditReceiverViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.White
 
+/**
+ * Callbacks for the receiver form screen (register / edit).
+ */
+data class ReceiverFormCallbacks(
+    val onBackClick: () -> Unit = {},
+    val onActionClick: () -> Unit = {},
+    val onAddProfileImageClick: () -> Unit = {}
+)
+
+/**
+ * Pre-filled values for the receiver form (edit mode).
+ */
+data class ReceiverFormInitialState(
+    val name: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val relation: String = ""
+)
+
 @Composable
-fun ReceiverRegisterScreen(
+fun ReceiverFormScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onRegisterClick: () -> Unit = {},
-    onAddProfileImageClick: () -> Unit = {},
-    registerViewModel: RegisterReceiverViewModel? = null
+    callbacks: ReceiverFormCallbacks = ReceiverFormCallbacks(),
+    registerViewModel: RegisterReceiverViewModel? = null,
+    editViewModel: EditReceiverViewModel? = null,
+    screenTitle: String = "수신자 등록",
+    actionText: String = "등록",
+    initialFormState: ReceiverFormInitialState = ReceiverFormInitialState()
 ) {
     val nameState = rememberTextFieldState()
     val phoneNumberState = rememberTextFieldState()
@@ -57,29 +80,52 @@ fun ReceiverRegisterScreen(
     var relationshipSelectedValue by remember { mutableStateOf("딸") }
     val relationshipOptions = listOf("딸", "아들", "친구", "가족", "연인", "동료", "기타")
     val dropdownState = rememberSelectionDropdownState()
+    var initialApplied by remember { mutableStateOf(false) }
 
-    val onRegisterAction: () -> Unit = {
-        if (registerViewModel != null) {
-            registerViewModel.registerReceiver(
+    LaunchedEffect(
+        initialFormState.name,
+        initialFormState.phone,
+        initialFormState.email,
+        initialFormState.relation
+    ) {
+        if (!initialApplied && initialFormState.name.isNotEmpty()) {
+            nameState.edit { replace(0, length, initialFormState.name) }
+            phoneNumberState.edit { replace(0, length, initialFormState.phone) }
+            emailState.edit { replace(0, length, initialFormState.email) }
+            relationshipSelectedValue =
+                if (initialFormState.relation in relationshipOptions) initialFormState.relation
+                else "딸"
+            initialApplied = true
+        }
+    }
+
+    val onPrimaryAction: () -> Unit = {
+        when {
+            editViewModel != null -> editViewModel.updateReceiver(
                 name = nameState.text.toString().trim(),
                 relation = relationshipSelectedValue,
                 phone = phoneNumberState.text.toString().trim().takeIf { it.isNotBlank() },
                 email = emailState.text.toString().trim().takeIf { it.isNotBlank() }
             )
-        } else {
-            onRegisterClick()
+            registerViewModel != null -> registerViewModel.registerReceiver(
+                name = nameState.text.toString().trim(),
+                relation = relationshipSelectedValue,
+                phone = phoneNumberState.text.toString().trim().takeIf { it.isNotBlank() },
+                email = emailState.text.toString().trim().takeIf { it.isNotBlank() }
+            )
+            else -> callbacks.onActionClick()
         }
     }
 
-    BackHandler(onBack = onBackClick)
+    BackHandler(onBack = callbacks.onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
             TopBar(
-                title = "수신자 등록",
-                onBackClick = onBackClick,
-                onActionClick = onRegisterAction,
-                actionText = "등록"
+                title = screenTitle,
+                onBackClick = callbacks.onBackClick,
+                onActionClick = onPrimaryAction,
+                actionText = actionText
             )
         }
     ) { paddingValues ->
@@ -94,7 +140,7 @@ fun ReceiverRegisterScreen(
 
             // Profile Image with Add Button
             ProfileImageWithAddButton(
-                onAddClick = onAddProfileImageClick
+                onAddClick = callbacks.onAddProfileImageClick
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -205,12 +251,30 @@ private fun ProfileImageWithAddButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun ReceiverRegisterScreenPreview() {
+private fun ReceiverFormScreenRegisterPreview() {
     AfternoteTheme {
-        ReceiverRegisterScreen(
-            onBackClick = {},
-            onRegisterClick = {},
-            onAddProfileImageClick = {}
+        ReceiverFormScreen(
+            callbacks = ReceiverFormCallbacks(
+                onBackClick = {},
+                onActionClick = {},
+                onAddProfileImageClick = {}
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReceiverFormScreenEditPreview() {
+    AfternoteTheme {
+        ReceiverFormScreen(
+            callbacks = ReceiverFormCallbacks(
+                onBackClick = {},
+                onActionClick = {},
+                onAddProfileImageClick = {}
+            ),
+            screenTitle = "수신자 수정",
+            actionText = "수정"
         )
     }
 }

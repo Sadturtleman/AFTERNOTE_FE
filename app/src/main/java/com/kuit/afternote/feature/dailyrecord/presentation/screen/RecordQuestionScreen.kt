@@ -52,7 +52,35 @@ fun RecordQuestionScreen(
         }
     }
 
-    Scaffold { paddingValues ->
+    fun onSaveClick() {
+        if (record != null) {
+            viewModel.editRecord(
+                params = EditRecordParams(
+                    recordId = record.id,
+                    title = title.ifBlank { questionText },
+                    content = content,
+                    date = record.originalDate,
+                    type = record.type ?: "DAILY_QUESTION",
+                    category = record.category,
+                    isDraft = false
+                ),
+                onSuccess = onLeftClick
+            )
+        } else {
+            viewModel.onCreateRecord(
+                params = CreateRecordParams(
+                    type = "DAILY_QUESTION",
+                    title = title.ifBlank { questionText },
+                    content = content,
+                    date = LocalDate.now().toString(),
+                    isDraft = false
+                ),
+                onSuccess = onLeftClick
+            )
+        }
+    }
+
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,39 +90,13 @@ fun RecordQuestionScreen(
                 RecordSubTopbar(
                     text = "데일리 질문 답변",
                     onLeftClock = onLeftClick,
-                    onRightClick = {
-                        if (record != null) {
-                            viewModel.editRecord(
-                                params = EditRecordParams(
-                                    recordId = record.id,
-                                    title = title.ifBlank { questionText },
-                                    content = content,
-                                    date = record.originalDate,
-                                    type = record.type ?: "DAILY_QUESTION",
-                                    category = record.category,
-                                    isDraft = false
-                                ),
-                                onSuccess = onLeftClick
-                            )
-                        } else {
-                            viewModel.onCreateRecord(
-                                params = CreateRecordParams(
-                                    type = "DAILY_QUESTION",
-                                    title = title.ifBlank { questionText },
-                                    content = content,
-                                    date = LocalDate.now().toString(),
-                                    isDraft = false
-                                ),
-                                onSuccess = onLeftClick
-                            )
-                        }
-                    }
+                    onRightClick = { onSaveClick() }
                 )
             }
 
             item {
                 RecordDiaryQuestionContentItem(
-                    questionText = if (record != null) (record.title.ifBlank { questionText }) else questionText,
+                    questionText = record?.title?.ifBlank { questionText } ?: questionText,
                     title = title,
                     onTitleChange = { title = it },
                     content = content,

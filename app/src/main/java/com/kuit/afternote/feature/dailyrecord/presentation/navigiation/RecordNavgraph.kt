@@ -13,16 +13,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordCategoryState
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDailyQuestionListScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreen
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDeepMindScreenParams
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryContentState
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryDateState
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreen
+import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDiaryScreenParams
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordFirstDiaryListScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordMainScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordQuestionScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordWeekendReportScreen
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordWriterViewModel
-import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -89,22 +93,32 @@ fun NavGraphBuilder.recordNavGraph(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         RecordDiaryScreen(
-            onLeftClick = { navController.popBackStack() },
-            title = uiState.title,
-            content = uiState.content,
-            onTitleChange = viewModel::updateTitle,
-            onContentChange = viewModel::updateContent,
-            sendDate = uiState.sendDate,
-            showDatePicker = uiState.showDatePicker,
-            onDateClick = viewModel::showDatePicker,
-            onDatePickerDismiss = viewModel::hideDatePicker,
-            onDateSelected = { year, month, day ->
-                val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
-                viewModel.updateSendDate(LocalDate.of(year, month, day).format(formatter))
-            },
-            onRegisterClick = {
-                viewModel.registerWithPopUpThenSave(onSuccess = { navController.popBackStack() })
-            }
+            params = RecordDiaryScreenParams(
+                contentState = RecordDiaryContentState(
+                    title = uiState.title,
+                    content = uiState.content,
+                    onTitleChange = viewModel::updateTitle,
+                    onContentChange = viewModel::updateContent
+                ),
+                dateState = RecordDiaryDateState(
+                    sendDate = uiState.sendDate,
+                    showDatePicker = uiState.showDatePicker,
+                    onDateClick = viewModel::showDatePicker,
+                    onDatePickerDismiss = viewModel::hideDatePicker,
+                    onDateSelected = { year, month, day ->
+                        val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
+                        viewModel.updateSendDate(
+                            LocalDate.of(year, month, day).format(formatter)
+                        )
+                    }
+                ),
+                onLeftClick = { navController.popBackStack() },
+                onRegisterClick = {
+                    viewModel.registerWithPopUpThenSave(
+                        onSuccess = { navController.popBackStack() }
+                    )
+                }
+            )
         )
     }
     composable<RecordRoute.QuestionRoute> {
@@ -122,28 +136,36 @@ fun NavGraphBuilder.recordNavGraph(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         RecordDeepMindScreen(
-            onLeftClick = { navController.popBackStack() },
-            recordId = null,
-            title = uiState.title,
-            content = uiState.content,
-            onTitleChange = viewModel::updateTitle,
-            onContentChange = viewModel::updateContent,
-            sendDate = uiState.sendDate,
-            showDatePicker = uiState.showDatePicker,
-            onDateClick = viewModel::showDatePicker,
-            onDatePickerDismiss = viewModel::hideDatePicker,
-            selectedCategory = uiState.selectedCategory,
-            onCategoryChange = viewModel::updateCategory,
-            showCategoryDropdown = uiState.showCategoryDropdown,
-            onCategoryClick = viewModel::showCategoryDropdown,
-            onCategoryDropdownDismiss = viewModel::hideCategoryDropdown,
-            onRegisterClick = {
-                viewModel.registerWithPopUpThenSave(
-                    recordType = "DEEP_THOUGHT",
-                    category = uiState.selectedCategory,
-                    onSuccess = { navController.popBackStack() }
-                )
-            }
+            params = RecordDeepMindScreenParams(
+                contentState = RecordDiaryContentState(
+                    title = uiState.title,
+                    content = uiState.content,
+                    onTitleChange = viewModel::updateTitle,
+                    onContentChange = viewModel::updateContent
+                ),
+                dateState = RecordDiaryDateState(
+                    sendDate = uiState.sendDate,
+                    showDatePicker = uiState.showDatePicker,
+                    onDateClick = viewModel::showDatePicker,
+                    onDatePickerDismiss = viewModel::hideDatePicker,
+                    onDateSelected = { _, _, _ -> }
+                ),
+                categoryState = RecordCategoryState(
+                    selectedCategory = uiState.selectedCategory,
+                    onCategoryChange = viewModel::updateCategory,
+                    showCategoryDropdown = uiState.showCategoryDropdown,
+                    onCategoryClick = viewModel::showCategoryDropdown,
+                    onCategoryDropdownDismiss = viewModel::hideCategoryDropdown
+                ),
+                onLeftClick = { navController.popBackStack() },
+                onRegisterClick = {
+                    viewModel.registerWithPopUpThenSave(
+                        recordType = "DEEP_THOUGHT",
+                        category = uiState.selectedCategory,
+                        onSuccess = { navController.popBackStack() }
+                    )
+                }
+            )
         )
     }
 

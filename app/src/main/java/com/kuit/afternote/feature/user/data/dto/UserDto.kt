@@ -72,9 +72,9 @@ data class ReceiverDetailResponseDto(
     val relation: String,
     val phone: String? = null,
     val email: String? = null,
-    val dailyQuestionCount: Int,
-    val timeLetterCount: Int,
-    val afterNoteCount: Int
+    val dailyQuestionCount: Int = 0,
+    val timeLetterCount: Int = 0,
+    val afterNoteCount: Int = 0
 )
 
 // --- GET /users/receivers/{receiverId}/daily-questions (time-letters, after-notes are in Received API) ---
