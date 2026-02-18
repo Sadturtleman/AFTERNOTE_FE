@@ -65,6 +65,7 @@ import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLogin
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.screen.RegisterAfternotePayload
+import com.kuit.afternote.feature.afternote.presentation.screen.SaveAfternoteMemorialMedia
 import com.kuit.afternote.feature.afternote.presentation.screen.rememberAfternoteEditState
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
@@ -99,7 +100,7 @@ data class AfternoteNavGraphParams(
     val onItemsUpdated: (List<AfternoteItem>) -> Unit,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
-    val userName: String,
+    val userNameProvider: () -> String,
     val editStateHandling: AfternoteEditStateHandling,
     val listRefresh: AfternoteListRefreshParams? = null,
     val onNavigateToSelectReceiver: () -> Unit = {}
@@ -369,7 +370,7 @@ private fun AfternoteMemorialGuidelineDetailContent(
             detailState = MemorialGuidelineDetailState(
                 userName = userName,
                 finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
-                profileImageUri = detail.playlist?.profilePhoto,
+                profileImageUri = detail.playlist?.memorialPhotoUrl ?: detail.playlist?.profilePhoto,
                 afternoteEditReceivers = detail.receivers.map { r ->
                     AfternoteEditReceiver(
                         id = "",
@@ -386,7 +387,9 @@ private fun AfternoteMemorialGuidelineDetailContent(
                 } ?: emptyList(),
                 songCount = detail.playlist?.songs?.size ?: 0,
                 // Memorial only: "남기고 싶은 당부" comes from playlist.atmosphere; other categories use leaveMessage.
-                lastWish = detail.playlist?.atmosphere ?: ""
+                lastWish = detail.playlist?.atmosphere ?: "",
+                memorialVideoUrl = detail.playlist?.memorialVideoUrl,
+                memorialThumbnailUrl = detail.playlist?.memorialThumbnailUrl,
             ),
             callbacks = MemorialGuidelineDetailCallbacks(
                 onBackClick = { navController.popBackStack() },
@@ -497,8 +500,12 @@ private fun buildEditScreenCallbacks(params: EditScreenCallbacksParams): Afterno
                 payload = payload,
                 selectedReceiverIds = params.state.afternoteEditReceivers.mapNotNull { it.id.toLongOrNull() },
                 playlistStateHolder = params.playlistStateHolder,
-                funeralVideoUrl = params.state.funeralVideoUrl,
-                funeralThumbnailUrl = params.state.funeralThumbnailUrl
+                memorialMedia = SaveAfternoteMemorialMedia(
+                    funeralVideoUrl = params.state.funeralVideoUrl,
+                    funeralThumbnailUrl = params.state.funeralThumbnailUrl,
+                    memorialPhotoUrl = params.state.memorialPhotoUrl,
+                    pickedMemorialPhotoUri = params.state.pickedMemorialPhotoUri
+                )
             )
         },
         onNavigateToAddSong = { params.navController.navigate(AfternoteRoute.MemorialPlaylistRoute) },
@@ -721,7 +728,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }
@@ -730,7 +737,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }
@@ -755,7 +762,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }

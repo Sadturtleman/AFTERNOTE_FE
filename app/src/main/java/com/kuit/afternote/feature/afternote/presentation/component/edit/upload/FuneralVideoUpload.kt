@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import coil3.network.NetworkHeaders
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
@@ -81,6 +83,15 @@ fun FuneralVideoUpload(
     val addContentDescription = if (hasVideo) "영상 변경" else "영상 추가"
     val context = LocalContext.current
     var thumbnailBitmap by remember(videoUrl) { mutableStateOf<ImageBitmap?>(null) }
+
+    LaunchedEffect(videoUrl, thumbnailUrl, hasVideo, thumbnailBitmap) {
+        Log.d(
+            TAG,
+            "FuneralVideoUpload active: videoUrl=${videoUrl?.take(50) ?: "null"}, " +
+                "thumbnailUrl=${thumbnailUrl?.take(80) ?: "null"}, hasVideo=$hasVideo, " +
+                "hasBitmap=${thumbnailBitmap != null}"
+        )
+    }
 
     LaunchedEffect(videoUrl) {
         if (videoUrl.isNullOrBlank()) {
@@ -175,6 +186,9 @@ fun FuneralVideoUpload(
             ) {
                 when {
                     !thumbnailUrl.isNullOrBlank() -> {
+                        SideEffect {
+                            Log.d(TAG, "Branch=URL, thumbnailUrl=$thumbnailUrl")
+                        }
                         AsyncImage(
                             model =
                                 ImageRequest.Builder(context)
@@ -188,23 +202,41 @@ fun FuneralVideoUpload(
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
-                            error = painterResource(R.drawable.ic_add_circle),
-                            onError = { state ->
+                            error = painterResource(R.drawable.img_placeholder_1),
+                            onLoading = {
+                                Log.d(TAG, "Coil loading started: url=$thumbnailUrl")
+                            },
+                            onSuccess = {
+                                Log.d(TAG, "Coil load success: url=$thumbnailUrl")
+                            },
+                            onError = { state: AsyncImagePainter.State.Error ->
                                 Log.e(
                                     TAG,
-                                    "Thumbnail load failed: url=$thumbnailUrl",
+                                    "Coil load failed: url=$thumbnailUrl",
                                     state.result.throwable
                                 )
                             }
                         )
                     }
                     thumbnailBitmap != null -> {
+                        SideEffect {
+                            Log.d(TAG, "Branch=LocalBitmap, videoUrl=$videoUrl")
+                        }
                         Image(
                             bitmap = thumbnailBitmap!!,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
+                    }
+                    else -> {
+                        SideEffect {
+                            Log.w(
+                                TAG,
+                                "Branch=NoThumbnail, videoUrl=$videoUrl, " +
+                                    "thumbnailUrl=$thumbnailUrl, thumbnailBitmap=null"
+                            )
+                        }
                     }
                 }
                 Image(

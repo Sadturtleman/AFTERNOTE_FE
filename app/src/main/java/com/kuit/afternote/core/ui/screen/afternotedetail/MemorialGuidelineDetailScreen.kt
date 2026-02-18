@@ -1,5 +1,6 @@
 package com.kuit.afternote.core.ui.screen.afternotedetail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,9 +23,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -69,7 +73,9 @@ data class MemorialGuidelineDetailState(
     val albumCovers: List<AlbumCover> = emptyList(),
     val songCount: Int = 0,
     val lastWish: String = "",
-    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList()
+    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList(),
+    val memorialVideoUrl: String? = null,
+    val memorialThumbnailUrl: String? = null,
 )
 
 /**
@@ -212,6 +218,10 @@ private fun CardSection(detailState: MemorialGuidelineDetailState) {
             songCount = detailState.songCount
         )
         LastWishCard(lastWish = detailState.lastWish)
+        VideoCard(
+            videoUrl = detailState.memorialVideoUrl,
+            thumbnailUrl = detailState.memorialThumbnailUrl,
+        )
     }
 }
 
@@ -248,6 +258,94 @@ private fun PhotoCard(
             }
         }
     )
+}
+
+/**
+ * 장례식에 남길 영상 카드 — 피그마 node 4813:15198 기준.
+ *
+ * InfoCard(Gray2) 안에 제목 + 썸네일(dark gradient overlay + 재생 아이콘) 구조.
+ * 영상 URL이 없으면 카드를 표시하지 않는다.
+ */
+@Composable
+private fun VideoCard(
+    videoUrl: String?,
+    thumbnailUrl: String?,
+) {
+    if (videoUrl.isNullOrBlank()) return
+
+    InfoCard(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "장례식에 남길 영상",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9
+                    )
+                )
+                VideoThumbnail(thumbnailUrl = thumbnailUrl)
+            }
+        }
+    )
+}
+
+/**
+ * 영상 썸네일 + 다크 그라데이션 오버레이 + 재생 아이콘.
+ *
+ * 피그마 기준: 높이 183dp, 16dp radius, gradient 0x99757575 → 0x99222222, 재생 아이콘 32dp 중앙.
+ */
+@Composable
+private fun VideoThumbnail(thumbnailUrl: String?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(183.dp)
+            .clip(RoundedCornerShape(16.dp))
+    ) {
+        // 썸네일 이미지
+        if (!thumbnailUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(thumbnailUrl)
+                    .httpHeaders(
+                        NetworkHeaders.Builder().apply {
+                            this["User-Agent"] = "Afternote Android App"
+                        }.build()
+                    )
+                    .build(),
+                contentDescription = "장례식에 남길 영상 썸네일",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        // 다크 그라데이션 오버레이
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x99757575),
+                            Color(0x99222222)
+                        )
+                    )
+                )
+        )
+
+        // 재생 아이콘
+        Image(
+            painter = painterResource(R.drawable.ic_playback),
+            contentDescription = "영상 재생",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp)
+        )
+    }
 }
 
 /**

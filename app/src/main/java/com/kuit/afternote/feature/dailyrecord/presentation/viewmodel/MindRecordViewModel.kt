@@ -5,16 +5,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
-import com.kuit.afternote.feature.dailyrecord.data.dto.Emotion
 import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
-import com.kuit.afternote.feature.dailyrecord.domain.usecase.*
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.DeleteMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetDailyQuestionUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetEmotionsUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordsUseCase
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiState
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.time.DayOfWeek
@@ -48,6 +58,14 @@ data class EditRecordParams(
     val isDraft: Boolean
 )
 
+/**
+ * Contract for HomeScreen so a fake can be used in Previews (no Hilt).
+ */
+interface MindRecordHomeContract {
+    val calendarDays: StateFlow<List<CalendarDay>>
+    fun loadRecordsForDiaryList()
+}
+
 @HiltViewModel
 class MindRecordViewModel @Inject constructor(
     private val getMindRecordsUseCase: GetMindRecordsUseCase,
@@ -58,7 +76,7 @@ class MindRecordViewModel @Inject constructor(
     private val editMindRecordUseCase: EditMindRecordUseCase,
     private val getAfternotesUseCase: GetAfternotesUseCase,
     private val getEmotionsUseCase: GetEmotionsUseCase
-) : ViewModel() {
+) : ViewModel(), MindRecordHomeContract {
 
     // --- State 정의 ---
     private val _records = MutableStateFlow<List<MindRecordUiModel>>(emptyList())
@@ -124,7 +142,7 @@ class MindRecordViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeeklySummaryUiState())
 
     // 기존 캘린더 데이 (메인 화면용 유지)
-    val calendarDays: StateFlow<List<CalendarDay>> = _records
+    override val calendarDays: StateFlow<List<CalendarDay>> = _records
         .map { recordList ->
             val recordedDates = recordList.map { it.originalDate }.toSet()
             val today = LocalDate.now()
@@ -215,7 +233,7 @@ class MindRecordViewModel @Inject constructor(
                     MindRecordUiModel(
                         id = summary.recordId,
                         title = summary.title ?: "",
-                        formattedDate = runCatching { formatDate(summary.date) }.getOrElse { summary.date },
+                        formattedDate = runCatching { formatDate(summary.date) }.getOrNull() ?: summary.date,
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
                         content = summary.content,
                         originalDate = summary.date,
@@ -239,7 +257,7 @@ class MindRecordViewModel @Inject constructor(
         }
     }
 
-    fun loadRecordsForDiaryList() {
+    override fun loadRecordsForDiaryList() {
         viewModelScope.launch {
             try {
                 val diaryResult = getMindRecordsUseCase("DIARY", "LIST", null, null)
@@ -251,7 +269,7 @@ class MindRecordViewModel @Inject constructor(
                     MindRecordUiModel(
                         id = summary.recordId,
                         title = summary.title ?: "",
-                        formattedDate = runCatching { formatDate(summary.date) }.getOrElse { summary.date },
+                        formattedDate = runCatching { formatDate(summary.date) }.getOrNull() ?: summary.date,
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
                         content = summary.content,
                         originalDate = summary.date,
@@ -358,7 +376,7 @@ class MindRecordViewModel @Inject constructor(
                     _selectedRecord.value = MindRecordUiModel(
                         id = detail.recordId,
                         title = detail.title,
-                        formattedDate = runCatching { formatDate(detail.date) }.getOrElse { detail.date },
+                        formattedDate = runCatching { formatDate(detail.date) }.getOrNull() ?: detail.date,
                         draftLabel = if (detail.isDraft) "임시저장" else "완료",
                         content = detail.content,
                         type = detail.type,
@@ -396,9 +414,7 @@ fun AfternoteItem.toMindRecordUiModel(): MindRecordUiModel {
 
     val parsedDate = runCatching {
         java.time.LocalDate.parse(this.date, inputFormatter)
-    }.getOrElse {
-        java.time.LocalDate.now() // 파싱 실패 시 오늘 날짜로 폴백 (시스템 안정성)
-    }
+    }.getOrNull() ?: java.time.LocalDate.now() // 파싱 실패 시 오늘 날짜로 폴백 (시스템 안정성)
 
     val originalDateStr = parsedDate.format(isoFormatter) // "2026-02-06"
     val formattedDateStr = "${parsedDate.monthValue}월 ${parsedDate.dayOfMonth}일"

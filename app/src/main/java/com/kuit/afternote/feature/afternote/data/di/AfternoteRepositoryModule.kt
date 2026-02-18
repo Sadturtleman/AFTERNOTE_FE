@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.afternote.data.di
 
 import com.kuit.afternote.data.upload.MemorialThumbnailUploadRepositoryImpl
+import com.kuit.afternote.data.upload.PhotoUploadRepository
+import com.kuit.afternote.data.upload.PhotoUploadRepositoryImpl
 import com.kuit.afternote.data.upload.MemorialVideoUploadRepositoryImpl
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.api.MusicApiService
@@ -52,6 +54,12 @@ abstract class AfternoteRepositoryModule {
     ): MemorialThumbnailUploadRepository
 
     @Suppress("unused")
+    @Binds
+    @Singleton
+    abstract fun bindPhotoUploadRepository(
+        impl: PhotoUploadRepositoryImpl
+    ): PhotoUploadRepository
+
     @Binds
     @Singleton
     abstract fun bindMemorialVideoUploadRepository(
