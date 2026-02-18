@@ -203,5 +203,5 @@ constructor(
             CODE_SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
             CODE_RECEIVER_REQUEST -> TriggerConditionOption.ReceiverRequest
             else -> TriggerConditionOption.AppInactivity
-        }g
+        }
 }

@@ -21,8 +21,6 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun RecordDiaryQuestionContentItem(
     modifier: Modifier = Modifier,
     questionText: String,
-    title: String,
-    onTitleChange: (String) -> Unit,
     content: String,
     onContentChange: (String) -> Unit
 ) {
@@ -44,36 +42,11 @@ fun RecordDiaryQuestionContentItem(
         HorizontalDivider(color = Color.LightGray, thickness = 0.8.dp)
 
         BasicTextField(
-            value = title,
-            onValueChange = onTitleChange,
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, top = 16.dp, bottom = 8.dp),
-            textStyle = androidx.compose.ui.text.TextStyle(
-                fontSize = 18.sp,
-                color = Black
-            ),
-            decorationBox = { innerTextField ->
-                if (title.isEmpty()) {
-                    Text(
-                        text = "제목",
-                        color = Gray5,
-                        fontSize = 16.sp
-                    )
-                }
-                innerTextField()
-            }
-        )
-
-        HorizontalDivider(color = Color.LightGray, thickness = 0.8.dp)
-
-        BasicTextField(
             value = content,
             onValueChange = onContentChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp),
+                .padding(top = 16.dp),
             textStyle = androidx.compose.ui.text.TextStyle(
                 fontSize = 18.sp,
                 color = Black

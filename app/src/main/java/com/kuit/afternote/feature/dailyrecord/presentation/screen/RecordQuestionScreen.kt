@@ -34,21 +34,13 @@ fun RecordQuestionScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val questionText = uiState.dailyQuestionText ?: ""
-    var title by remember { mutableStateOf(record?.title ?: "") }
     var content by remember { mutableStateOf(record?.content ?: "") }
 
     LaunchedEffect(record) {
         if (record == null) {
             viewModel.loadDailyQuestion()
         } else {
-            title = record.title ?: ""
             content = record.content ?: ""
-        }
-    }
-
-    LaunchedEffect(questionText) {
-        if (record == null && questionText.isNotBlank() && title.isEmpty()) {
-            title = questionText
         }
     }
 
@@ -57,7 +49,7 @@ fun RecordQuestionScreen(
             viewModel.editRecord(
                 params = EditRecordParams(
                     recordId = record.id,
-                    title = title.ifBlank { questionText },
+                    title = record.title ?: questionText,
                     content = content,
                     date = record.originalDate,
                     type = record.type ?: "DAILY_QUESTION",
@@ -70,7 +62,7 @@ fun RecordQuestionScreen(
             viewModel.onCreateRecord(
                 params = CreateRecordParams(
                     type = "DAILY_QUESTION",
-                    title = title.ifBlank { questionText },
+                    title = questionText,
                     content = content,
                     date = LocalDate.now().toString(),
                     isDraft = false
@@ -96,9 +88,7 @@ fun RecordQuestionScreen(
 
             item {
                 RecordDiaryQuestionContentItem(
-                    questionText = record?.title?.ifBlank { questionText } ?: questionText,
-                    title = title,
-                    onTitleChange = { title = it },
+                    questionText = questionText,
                     content = content,
                     onContentChange = { content = it }
                 )
