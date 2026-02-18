@@ -34,7 +34,13 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) },
-            onShowAllClick = { navController.navigate(ReceiverRoute.ReceiverListRoute) },
+            onShowAllClick = {
+                navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.remove<Long>(SELECTED_RECEIVER_ID_KEY)
+                navController.navigate(ReceiverRoute.ReceiverListRoute)
+            },
+
             onLetterClick = { letter ->
                 navController.navigate(
                     TimeLetterRoute.TimeLetterDetailRoute(

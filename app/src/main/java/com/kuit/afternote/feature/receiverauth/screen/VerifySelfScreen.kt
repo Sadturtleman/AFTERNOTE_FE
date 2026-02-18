@@ -21,12 +21,15 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,6 +52,7 @@ import com.kuit.afternote.feature.receiverauth.presentation.viewmodel.VerifySelf
 import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Red
+import kotlinx.coroutines.launch
 
 private enum class PendingDocumentTarget {
     DEATH_CERT,
@@ -70,6 +74,9 @@ fun VerifySelfScreen(
     val pendingDocumentTargetState = remember { mutableStateOf<PendingDocumentTarget?>(null) }
     val deathCertificateUriState = remember { mutableStateOf<Uri?>(null) }
     val familyCertificateUriState = remember { mutableStateOf<Uri?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val pendingMessage = stringResource(R.string.receiver_verify_wait_for_approval)
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -122,7 +129,8 @@ fun VerifySelfScreen(
                     step = step
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -150,7 +158,12 @@ fun VerifySelfScreen(
                 )
                 VerifyStep.END -> VerifySelfEndStep(
                     uiState = uiState,
-                    onCompleteClick = onCompleteClick
+                    onCompleteClick = onCompleteClick,
+                    onShowPendingMessage = {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(pendingMessage)
+                        }
+                    }
                 )
             }
         }
@@ -286,13 +299,19 @@ private fun VerifySelfPdfStep(
 @Composable
 private fun VerifySelfEndStep(
     uiState: VerifySelfUiState,
-    onCompleteClick: (receiverId: Long, authCode: String, senderName: String?) -> Unit
+    onCompleteClick: (receiverId: Long, authCode: String, senderName: String?) -> Unit,
+    onShowPendingMessage: () -> Unit
 ) {
     SignUpContentButton(
         onNextClick = {
             val rid = uiState.verifiedReceiverId
-            if (rid != null) {
+            if (rid == null) return@SignUpContentButton
+            val isApproved = uiState.deliveryVerificationStatus?.status
+                ?.equals("APPROVED", ignoreCase = true) == true
+            if (isApproved) {
                 onCompleteClick(rid, uiState.masterKeyInput, uiState.verifiedSenderName)
+            } else {
+                onShowPendingMessage()
             }
         },
         buttonTitle = stringResource(R.string.receiver_verify_complete_confirm)

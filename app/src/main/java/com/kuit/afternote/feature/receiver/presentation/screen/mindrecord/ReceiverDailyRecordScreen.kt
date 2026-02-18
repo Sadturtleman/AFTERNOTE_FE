@@ -156,7 +156,10 @@ fun MindRecordScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        TodayRecordCard(todayRecord = uiState.todayRecord)
+                        TodayRecordCard(
+                            todayRecord = uiState.todayRecord,
+                            todayRecordImageUrl = uiState.todayRecordImageUrl
+                        )
                     }
                 }
 

@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
+import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordDetailByAuthCodeUseCase
 import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import com.kuit.afternote.feature.receiver.presentation.uimodel.MindRecordItemUiModel
@@ -30,7 +31,8 @@ class MindRecordViewModel
     @Inject
     constructor(
         private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
-        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase
+        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase,
+        private val getMindRecordDetailByAuthCodeUseCase: GetMindRecordDetailByAuthCodeUseCase
     ) : ViewModel(), MindRecordViewModelContract {
 
     private val _uiState = MutableStateFlow(MindRecordListUiState())
@@ -45,6 +47,7 @@ class MindRecordViewModel
             getMindRecordsByAuthCodeUseCase(authCode)
                 .onSuccess { data ->
                     allMindRecords = data.items
+                    val today = findTodayRecord(data.items)
                     _uiState.update { state ->
                         state.copy(
                             daysWithRecords = computeDaysWithRecords(
@@ -52,11 +55,13 @@ class MindRecordViewModel
                                 YearMonth.from(state.selectedDate)
                             ),
                             selectedDateRecords = filterAndMapToUiModels(data.items, state.selectedDate),
-                            todayRecord = findTodayRecord(data.items),
+                            todayRecord = today,
+                            todayRecordImageUrl = null,
                             isLoading = false,
                             errorMessage = null
                         )
                     }
+                    today?.let { loadTodayRecordImage(authCode, it.mindRecordId) }
                 }
                 .onFailure { e ->
                     _uiState.update {
@@ -88,6 +93,15 @@ class MindRecordViewModel
 
     override fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    private fun loadTodayRecordImage(authCode: String, mindRecordId: Long) {
+        viewModelScope.launch {
+            getMindRecordDetailByAuthCodeUseCase(authCode, mindRecordId)
+                .onSuccess { url ->
+                    _uiState.update { it.copy(todayRecordImageUrl = url) }
+                }
+        }
     }
 
     private fun computeDaysWithRecords(

@@ -1,7 +1,9 @@
 package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.SELECTED_RECEIVER_ID_KEY
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetter
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterMediaType
 import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteTimeLettersUseCase
@@ -33,7 +35,8 @@ class TimeLetterViewModel
         private val getTimeLettersUseCase: GetTimeLettersUseCase,
         private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
         private val getUserIdUseCase: GetUserIdUseCase,
-        private val getReceiversUseCase: GetReceiversUseCase
+        private val getReceiversUseCase: GetReceiversUseCase,
+        private val savedStateHandle: SavedStateHandle
     ) : ViewModel() {
         private val _viewMode = MutableStateFlow(ViewMode.LIST)
         val viewMode: StateFlow<ViewMode> = _viewMode.asStateFlow()
@@ -50,21 +53,36 @@ class TimeLetterViewModel
 
         /**
          * 타임레터 목록 로드 (GET /time-letters)
-         * 수신자 목록(GET /users/receivers)으로 receiverIds → 이름 매핑 후 표시
+         * 수신자 목록(GET /users/receivers)으로 receiverIds → 이름 매핑 후 표시.
+         * SavedStateHandle에 선택 수신자 ID가 있으면 해당 수신자로 필터링하고 헤더에 이름을 노출한다.
          */
         private fun loadLetters() {
             viewModelScope.launch {
                 _uiState.value = TimeLetterUiState.Loading
                 val receivers = loadReceiversOrEmpty()
+                val selectedReceiverId = savedStateHandle.get<Long>(SELECTED_RECEIVER_ID_KEY)
                 getTimeLettersUseCase()
                     .onSuccess { list ->
-                        val items = list.timeLetters.mapIndexed { index, timeLetter ->
+                        val filteredLetters =
+                            if (selectedReceiverId != null) {
+                                list.timeLetters.filter { it.receiverIds.contains(selectedReceiverId) }
+                            } else {
+                                list.timeLetters
+                            }
+                        val items = filteredLetters.mapIndexed { index, timeLetter ->
                             toTimeLetterItem(timeLetter, index, receivers)
                         }
+                        val selectedReceiverName =
+                            selectedReceiverId?.let { id ->
+                                receivers.find { it.receiverId == id }?.name
+                            }
                         _uiState.value = if (items.isEmpty()) {
                             TimeLetterUiState.Empty
                         } else {
-                            TimeLetterUiState.Success(items)
+                            TimeLetterUiState.Success(
+                                letters = items,
+                                selectedReceiverName = selectedReceiverName
+                            )
                         }
                     }.onFailure {
                         _uiState.value = TimeLetterUiState.Empty
