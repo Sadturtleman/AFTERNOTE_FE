@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -49,6 +50,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
+import com.kuit.afternote.feature.user.presentation.viewmodel.CurrentUserNameViewModel
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
@@ -69,6 +71,7 @@ import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
+import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import dagger.hilt.android.EntryPointAccessors
@@ -329,6 +332,13 @@ fun NavGraph(navHostController: NavHostController) {
 
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
+    val currentUserNameViewModel: CurrentUserNameViewModel = hiltViewModel()
+    val currentUserName by currentUserNameViewModel.userName.collectAsStateWithLifecycle(
+        initialValue = ""
+    )
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn == true) currentUserNameViewModel.loadUserName()
+    }
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
@@ -402,7 +412,7 @@ fun NavGraph(navHostController: NavHostController) {
                 },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
-                userName = receiverProvider.getDefaultReceiverTitle(),
+                userNameProvider = { currentUserName },
                 editStateHandling = AfternoteEditStateHandling(
                     holder = afternoteEditStateHolder,
                     onClear = { afternoteEditStateHolder.value = null }
@@ -411,7 +421,10 @@ fun NavGraph(navHostController: NavHostController) {
                     listRefreshRequestedProvider = { listRefreshRequested },
                     onListRefreshConsumed = { listRefreshRequested = false },
                     onAfternoteDeleted = { listRefreshRequested = true }
-                )
+                ),
+                onNavigateToSelectReceiver = {
+                    navHostController.navigate(ReceiverRoute.ReceiverListRoute)
+                }
             ),
             onBottomNavTabSelected = onBottomNavTabSelected
         )

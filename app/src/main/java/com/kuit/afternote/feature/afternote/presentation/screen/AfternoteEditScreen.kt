@@ -44,6 +44,7 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.afternot
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountSection
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
@@ -70,6 +71,7 @@ data class AfternoteEditScreenCallbacks(
     val onBackClick: () -> Unit = {},
     val onRegisterClick: (RegisterAfternotePayload) -> Unit = {},
     val onNavigateToAddSong: () -> Unit = {},
+    val onNavigateToSelectReceiver: () -> Unit = {},
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     val onThumbnailBytesReady: (ByteArray?) -> Unit = {}
 )
@@ -224,6 +226,7 @@ fun AfternoteEditScreen(
             EditContent(
                 state = state,
                 onNavigateToAddSong = callbacks.onNavigateToAddSong,
+                onNavigateToSelectReceiver = callbacks.onNavigateToSelectReceiver,
                 onPhotoAddClick = {
                     memorialPhotoPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -281,6 +284,7 @@ fun AfternoteEditScreen(
 private fun EditContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
+    onNavigateToSelectReceiver: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
     onThumbnailBytesReady: (ByteArray?) -> Unit,
@@ -335,6 +339,7 @@ private fun EditContent(
             CategoryContent(
                 state = state,
                 onNavigateToAddSong = onNavigateToAddSong,
+                onNavigateToSelectReceiver = onNavigateToSelectReceiver,
                 onPhotoAddClick = onPhotoAddClick,
                 onVideoAddClick = onVideoAddClick,
                 onThumbnailBytesReady = onThumbnailBytesReady,
@@ -348,6 +353,7 @@ private fun EditContent(
 private fun CategoryContent(
     state: AfternoteEditState,
     onNavigateToAddSong: () -> Unit,
+    onNavigateToSelectReceiver: () -> Unit,
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
     onThumbnailBytesReady: (ByteArray?) -> Unit,
@@ -369,7 +375,7 @@ private fun CategoryContent(
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params = MemorialGuidelineEditContentParams(
-                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri,
+                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri ?: state.memorialPhotoUrl,
                     playlistSongCount = livePlaylistSongCount,
                     playlistAlbumCovers = albumCoversFromPlaylist,
                     selectedLastWish = state.selectedLastWish,
@@ -379,7 +385,11 @@ private fun CategoryContent(
                     customLastWishText = state.customLastWishText,
                     recipientSection = AfternoteEditReceiverSection(
                         afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = state.galleryAfternoteEditReceiverCallbacks
+                        callbacks = AfternoteEditReceiverCallbacks(
+                            onAddClick = onNavigateToSelectReceiver,
+                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                            onItemAdded = state::onAfternoteEditReceiverItemAdded
+                        )
                     ),
                     onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
@@ -398,7 +408,11 @@ private fun CategoryContent(
                     messageState = state.messageState,
                     recipientSection = AfternoteEditReceiverSection(
                         afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = state.galleryAfternoteEditReceiverCallbacks
+                        callbacks = AfternoteEditReceiverCallbacks(
+                            onAddClick = onNavigateToSelectReceiver,
+                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                            onItemAdded = state::onAfternoteEditReceiverItemAdded
+                        )
                     ),
                     processingMethodSection = ProcessingMethodSection(
                         items = state.galleryProcessingMethods,
@@ -421,7 +435,11 @@ private fun CategoryContent(
                     ),
                     recipientSection = AfternoteEditReceiverSection(
                         afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = state.galleryAfternoteEditReceiverCallbacks
+                        callbacks = AfternoteEditReceiverCallbacks(
+                            onAddClick = onNavigateToSelectReceiver,
+                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                            onItemAdded = state::onAfternoteEditReceiverItemAdded
+                        )
                     ),
                     processingMethodSection = ProcessingMethodSection(
                         items = state.processingMethods,

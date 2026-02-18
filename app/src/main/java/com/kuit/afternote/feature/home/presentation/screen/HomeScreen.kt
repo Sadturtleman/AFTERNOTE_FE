@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordHomeContract
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
@@ -36,12 +37,16 @@ import com.kuit.afternote.feature.home.presentation.component.HomeHeader
 import com.kuit.afternote.feature.home.presentation.component.HomeInfoCard
 import com.kuit.afternote.feature.home.presentation.component.RecipientBadge
 import com.kuit.afternote.feature.home.presentation.component.WeeklyCalendarStrip
+import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
+import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -69,8 +74,8 @@ interface HomeScreenEvent {
 fun HomeScreen(
     modifier: Modifier = Modifier,
     event: HomeScreenEvent = EmptyHomeScreenEvent,
-    profileViewModel: ProfileViewModel = hiltViewModel(),
-    recordViewModel: MindRecordViewModel = hiltViewModel()
+    profileViewModel: ProfileEditViewModelContract = hiltViewModel<ProfileViewModel>(),
+    recordViewModel: MindRecordHomeContract = hiltViewModel<MindRecordViewModel>()
 ) {
     var content by remember { mutableStateOf(HomeScreenContent()) }
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
@@ -91,6 +96,11 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
+        topBar = {
+            HomeHeader(
+                onSettingsClick = event::onSettingsClick
+            )
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = BottomNavItem.HOME,
@@ -104,12 +114,6 @@ fun HomeScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Header
-            HomeHeader(
-                onProfileClick = event::onProfileClick,
-                onSettingsClick = event::onSettingsClick
-            )
-
             // Greeting section
             GreetingSection(userName = uiState.value.name)
 
@@ -192,6 +196,7 @@ private fun GreetingSection(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+        Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.home_greeting, userName),
             fontFamily = Sansneo,
@@ -229,12 +234,65 @@ private fun SectionTitle(
 }
 
 private object EmptyHomeScreenEvent : HomeScreenEvent {
-    override fun onBottomNavTabSelected(item: BottomNavItem) = Unit
-    override fun onProfileClick() = Unit
-    override fun onSettingsClick() = Unit
-    override fun onDailyQuestionCtaClick() = Unit
-    override fun onTimeLetterClick() = Unit
-    override fun onAfterNoteClick() = Unit
+    override fun onBottomNavTabSelected(item: BottomNavItem) {
+        // No-op: default event when no callback is provided.
+    }
+
+    override fun onProfileClick() {
+        // No-op: default event when no callback is provided.
+    }
+
+    override fun onSettingsClick() {
+        // No-op: default event when no callback is provided.
+    }
+
+    override fun onDailyQuestionCtaClick() {
+        // No-op: default event when no callback is provided.
+    }
+
+    override fun onTimeLetterClick() {
+        // No-op: default event when no callback is provided.
+    }
+
+    override fun onAfterNoteClick() {
+        // No-op: default event when no callback is provided.
+    }
+}
+
+/** Fake ProfileEditViewModelContract for Preview (no Hilt). */
+private class FakeProfileEditViewModel : ProfileEditViewModelContract {
+    private val _uiState = MutableStateFlow(ProfileUiState(name = "박서연"))
+    override val uiState: StateFlow<ProfileUiState> = _uiState
+    override fun loadProfile() {
+        // No-op: Fake for Preview only; no API call.
+    }
+
+    override fun updateProfile(
+        name: String?,
+        phone: String?,
+        profileImageUrl: String?,
+        pickedProfileImageUri: String?
+    ) {
+        // No-op: Fake for Preview only; no state update.
+    }
+
+    override fun setSelectedProfileImageUri(uri: android.net.Uri?) {
+        // No-op: Fake for Preview only.
+    }
+
+    override fun clearUpdateSuccess() {
+        // No-op: Fake for Preview only.
+    }
+}
+
+/** Fake MindRecordHomeContract for Preview (no Hilt). */
+private class FakeMindRecordHomeViewModel : MindRecordHomeContract {
+    override val calendarDays: StateFlow<List<CalendarDay>> =
+        MutableStateFlow(defaultCalendarDays())
+
+    override fun loadRecordsForDiaryList() {
+        // No-op: Fake for Preview only; no API call.
+    }
 }
 
 internal fun defaultCalendarDays(): List<CalendarDay> = listOf(
@@ -251,6 +309,9 @@ internal fun defaultCalendarDays(): List<CalendarDay> = listOf(
 @Composable
 private fun HomeScreenPreview() {
     AfternoteTheme {
-        HomeScreen()
+        HomeScreen(
+            profileViewModel = remember { FakeProfileEditViewModel() },
+            recordViewModel = remember { FakeMindRecordHomeViewModel() }
+        )
     }
 }

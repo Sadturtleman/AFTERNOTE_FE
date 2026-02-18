@@ -8,7 +8,9 @@ sealed class TimeLetterUiState {
     object Empty : TimeLetterUiState()
 
     data class Success(
-        val letters: List<TimeLetterItem>
+        val letters: List<TimeLetterItem>,
+        /** 수신자 필터 적용 시 해당 수신자 이름. null이면 "전체보기" 표시 */
+        val selectedReceiverName: String? = null
     ) : TimeLetterUiState()
 }
 

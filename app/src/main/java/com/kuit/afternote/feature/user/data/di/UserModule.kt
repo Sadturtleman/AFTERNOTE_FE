@@ -2,9 +2,7 @@ package com.kuit.afternote.feature.user.data.di
 
 import com.kuit.afternote.feature.user.data.api.ImageApiService
 import com.kuit.afternote.feature.user.data.api.UserApiService
-import com.kuit.afternote.feature.user.data.repository.ProfileImageUploadRepositoryImpl
 import com.kuit.afternote.feature.user.data.repository.UserRepositoryImpl
-import com.kuit.afternote.feature.user.domain.repository.ProfileImageUploadRepository
 import com.kuit.afternote.feature.user.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -22,11 +20,6 @@ import javax.inject.Singleton
 abstract class UserModule {
     @Binds
     abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
-
-    @Binds
-    abstract fun bindProfileImageUploadRepository(
-        impl: ProfileImageUploadRepositoryImpl
-    ): ProfileImageUploadRepository
 
     companion object {
         @Provides

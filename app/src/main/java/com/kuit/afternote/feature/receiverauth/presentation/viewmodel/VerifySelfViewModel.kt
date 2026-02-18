@@ -13,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -35,6 +37,8 @@ class VerifySelfViewModel
 
     private val _uiState = MutableStateFlow(VerifySelfUiState())
     override val uiState: StateFlow<VerifySelfUiState> = _uiState.asStateFlow()
+
+    private var deliveryStatusPollingJob: Job? = null
 
     /**
      * 마스터 키 입력값 갱신. 에러 메시지 초기화.
@@ -103,6 +107,10 @@ class VerifySelfViewModel
         val current = _uiState.value.currentStep
         val previous = current.previous()
         if (previous != null) {
+            if (current == VerifyStep.END) {
+                deliveryStatusPollingJob?.cancel()
+                deliveryStatusPollingJob = null
+            }
             _uiState.update { it.copy(currentStep = previous, verifyError = null) }
         }
         return previous
@@ -168,6 +176,14 @@ class VerifySelfViewModel
                         )
                     }
                     loadDeliveryVerificationStatus(authCode)
+                    deliveryStatusPollingJob?.cancel()
+                    deliveryStatusPollingJob = viewModelScope.launch {
+                        while (_uiState.value.currentStep == VerifyStep.END) {
+                            delay(POLLING_INTERVAL_MS)
+                            if (_uiState.value.currentStep != VerifyStep.END) break
+                            loadDeliveryVerificationStatus(authCode)
+                        }
+                    }
                 }
                 .onFailure { e ->
                     Log.e(TAG, "Submit delivery verification failed", e)
@@ -185,6 +201,11 @@ class VerifySelfViewModel
         viewModelScope.launch {
             getDeliveryVerificationStatusUseCase(authCode)
                 .onSuccess { status ->
+                    val isApproved = status.status.equals("APPROVED", ignoreCase = true)
+                    if (isApproved) {
+                        deliveryStatusPollingJob?.cancel()
+                        deliveryStatusPollingJob = null
+                    }
                     _uiState.update {
                         it.copy(deliveryVerificationStatus = status)
                     }
@@ -207,5 +228,6 @@ class VerifySelfViewModel
 
     companion object {
         private const val TAG = "VerifySelfViewModel"
+        private const val POLLING_INTERVAL_MS = 5000L
     }
 }

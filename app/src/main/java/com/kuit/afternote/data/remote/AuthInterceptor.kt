@@ -33,6 +33,12 @@ class AuthInterceptor
             private const val REISSUE_ENDPOINT = "auth/reissue"
 
             /**
+             * 토큰 재발급 동기화 락.
+             * companion object에 두어 프로세스 전역에서 하나의 refresh만 실행되도록 보장.
+             */
+            private val refreshTokenLock = Any()
+
+            /**
              * 인증이 필요 없는 경로 목록.
              */
             private val NO_AUTH_PATHS = listOf(
@@ -107,10 +113,10 @@ class AuthInterceptor
 
             val response = proceedAndLog(chain, authenticatedRequest)
 
-            // 401 응답 시 토큰 재발급 시도
+            // 401 응답 시 토큰 재발급 시도 (synchronized double-check locking)
             if (response.code == 401) {
                 Log.w(TAG, "Auth: 401 Unauthorized - Attempting token refresh")
-                return handleTokenRefresh(chain, originalRequest, response)
+                return handleTokenRefresh(chain, originalRequest, response, accessToken)
             }
 
             return response
@@ -118,59 +124,74 @@ class AuthInterceptor
 
         /**
          * 401 응답 시 토큰 재발급을 시도하고 요청을 재시도합니다.
+         *
+         * synchronized + double-check locking으로 동시 401에서 reissue API가
+         * 한 번만 호출되도록 보장합니다. 나머지 스레드는 lock을 기다린 후
+         * 이미 갱신된 토큰으로 바로 재시도합니다.
+         *
+         * @param failedAccessToken 401을 받은 시점의 accessToken (double-check에 사용)
          */
         private fun handleTokenRefresh(
             chain: Interceptor.Chain,
             originalRequest: Request,
-            originalResponse: Response
+            originalResponse: Response,
+            failedAccessToken: String,
         ): Response {
-            val refreshToken = runBlocking { tokenManager.getRefreshToken() }
-
-            if (refreshToken.isNullOrEmpty()) {
-                Log.e(TAG, "TokenRefresh: No refresh token available")
-                // 토큰이 전혀 없는 상태에서는 추가 조치를 하지 않고 401을 그대로 반환한다.
-                // (UI 레이어에서 isLoggedInFlow를 보고 로그인 화면으로 유도)
-                return originalResponse
-            }
-
-            Log.d(TAG, "TokenRefresh: Attempting with refreshToken=${refreshToken.take(n = 20)}...")
-
-            return try {
-                val newTokens = refreshAccessToken(refreshToken)
-
-                if (newTokens != null) {
-                    Log.d(TAG, "TokenRefresh: SUCCESS - New tokens received")
-
-                    // 새 토큰 저장
-                    runBlocking {
-                        tokenManager.updateTokens(
-                            accessToken = newTokens.accessToken ?: "",
-                            refreshToken = newTokens.refreshToken ?: refreshToken
-                        )
-                    }
-
-                    // 원래 응답 닫기
+            // refreshTokenLock으로 동기화 — 동시에 하나의 스레드만 refresh 수행
+            synchronized(refreshTokenLock) {
+                // Double-check: lock을 기다리는 동안 다른 스레드가 이미 갱신했는지 확인
+                val currentAccessToken = runBlocking { tokenManager.getAccessToken() }
+                if (currentAccessToken != failedAccessToken && !currentAccessToken.isNullOrEmpty()) {
+                    // 다른 스레드가 이미 토큰을 갱신함 → refresh 없이 새 토큰으로 재시도
+                    Log.d(TAG, "TokenRefresh: Already refreshed by another thread, retrying")
                     originalResponse.close()
-
-                    // 새 토큰으로 원래 요청 재시도
                     val newRequest = originalRequest
                         .newBuilder()
-                        .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX${newTokens.accessToken}")
+                        .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$currentAccessToken")
                         .build()
+                    return proceedAndLog(chain, newRequest)
+                }
 
-                    Log.d(TAG, "TokenRefresh: Retrying original request with new token")
-                    proceedAndLog(chain, newRequest)
-                } else {
-                    Log.e(TAG, "TokenRefresh: FAILED - keeping existing tokens")
-                    // 재발급 실패 시 기존 토큰을 삭제하지 않고 401을 그대로 반환한다.
-                    // 이렇게 해야 사용자가 이미 로그인했다고 생각하는 상태에서
-                    // 토큰이 갑자기 null로 사라지는 문제를 방지할 수 있다.
+                // 이 스레드가 최초 진입 → 실제 refresh 수행
+                val refreshToken = runBlocking { tokenManager.getRefreshToken() }
+
+                if (refreshToken.isNullOrEmpty()) {
+                    Log.e(TAG, "TokenRefresh: No refresh token available")
+                    return originalResponse
+                }
+
+                Log.d(TAG, "TokenRefresh: Attempting with refreshToken=${refreshToken.take(n = 20)}...")
+
+                return try {
+                    val newTokens = refreshAccessToken(refreshToken)
+
+                    if (newTokens != null) {
+                        Log.d(TAG, "TokenRefresh: SUCCESS - New tokens received")
+
+                        runBlocking {
+                            tokenManager.updateTokens(
+                                accessToken = newTokens.accessToken ?: "",
+                                refreshToken = newTokens.refreshToken ?: refreshToken
+                            )
+                        }
+
+                        originalResponse.close()
+
+                        val newRequest = originalRequest
+                            .newBuilder()
+                            .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX${newTokens.accessToken}")
+                            .build()
+
+                        Log.d(TAG, "TokenRefresh: Retrying original request with new token")
+                        proceedAndLog(chain, newRequest)
+                    } else {
+                        Log.e(TAG, "TokenRefresh: FAILED - keeping existing tokens")
+                        originalResponse
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "TokenRefresh: Exception - ${e.message}", e)
                     originalResponse
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "TokenRefresh: Exception - ${e.message}", e)
-                // 예외 발생 시에도 토큰을 강제로 삭제하지 않고 401 응답을 그대로 반환한다.
-                originalResponse
             }
         }
 

@@ -8,6 +8,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kuit.afternote.core.navigation.ReceiverRoute
+import com.kuit.afternote.core.navigation.SELECTED_RECEIVER_ID_KEY
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
@@ -16,8 +18,6 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScree
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
-
-private const val SELECTED_RECEIVER_ID_KEY = "selected_receiver_id"
 
 /**
  * 타임레터 기능의 네비게이션 그래프
@@ -34,7 +34,13 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) },
-            onShowAllClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) },
+            onShowAllClick = {
+                navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.remove<Long>(SELECTED_RECEIVER_ID_KEY)
+                navController.navigate(ReceiverRoute.ReceiverListRoute)
+            },
+
             onLetterClick = { letter ->
                 navController.navigate(
                     TimeLetterRoute.TimeLetterDetailRoute(
@@ -81,7 +87,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onTitleChange = viewModel::updateTitle,
             onContentChange = viewModel::updateContent,
             onNavigateBack = { navController.popBackStack() },
-            onRecipientClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) },
+            onRecipientClick = { navController.navigate(ReceiverRoute.ReceiverListRoute) },
             receivers = uiState.receivers,
             showRecipientDropdown = uiState.showRecipientDropdown,
             onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
@@ -137,7 +143,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
         )
     }
 
-    composable<TimeLetterRoute.ReceiveListRoute> {
+    composable<ReceiverRoute.ReceiverListRoute> {
         val receiveListViewModel: ReceiveListViewModel = hiltViewModel()
         val receiveListState by receiveListViewModel.uiState.collectAsStateWithLifecycle()
         LaunchedEffect(Unit) { receiveListViewModel.loadReceivers() }

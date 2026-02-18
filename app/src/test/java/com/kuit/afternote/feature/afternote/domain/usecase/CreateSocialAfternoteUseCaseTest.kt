@@ -31,7 +31,8 @@ class CreateSocialAfternoteUseCaseTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.success(3L)
 
@@ -54,7 +55,8 @@ class CreateSocialAfternoteUseCaseTest {
                     actions = listOf("게시물 내리기"),
                     leaveMessage = "감사했습니다",
                     credentialsId = "id",
-                    credentialsPassword = "pw"
+                    credentialsPassword = "pw",
+                    receiverIds = emptyList()
                 )
             }
         }
@@ -69,7 +71,8 @@ class CreateSocialAfternoteUseCaseTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(RuntimeException("Server error"))
 

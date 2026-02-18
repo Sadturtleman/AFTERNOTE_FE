@@ -29,7 +29,7 @@ data class AfternoteListItemDto(
 
 /**
  * Server request form for POST /afternotes (SOCIAL category).
- * Matches API: category, title, processMethod, actions, leaveMessage, credentials.
+ * Matches API: category, title, processMethod, actions, leaveMessage, credentials, receivers.
  */
 @Serializable
 data class AfternoteCreateSocialRequestDto(
@@ -38,11 +38,13 @@ data class AfternoteCreateSocialRequestDto(
     val processMethod: String,
     val actions: List<String>,
     val leaveMessage: String? = null,
-    val credentials: AfternoteCredentialsDto? = null
+    val credentials: AfternoteCredentialsDto? = null,
+    val receivers: List<AfternoteReceiverRefDto> = emptyList()
 )
 
 /**
  * Server request form for POST /afternotes (GALLERY category).
+ * receivers: 수신자 목록 (모든 카테고리에서 가능).
  */
 @Serializable
 data class AfternoteCreateGalleryRequestDto(
@@ -60,6 +62,9 @@ data class AfternoteCredentialsDto(
     val password: String? = null
 )
 
+/**
+ * 수신자 참조 (API ReceiverRequest). 수신자 목록은 모든 카테고리에서 사용 가능.
+ */
 @Serializable
 data class AfternoteReceiverRefDto(
     val receiverId: Long
@@ -81,13 +86,14 @@ data class AfternoteIdResponseDto(
  * Server response for GET /afternotes/{afternoteId}.
  * Common fields always present; category-specific fields (credentials, receivers, playlist) are null when not applicable.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteDetailResponseDto(
     val afternoteId: Long,
     val category: String,
     val title: String,
-    val createdAt: String = "",
-    val updatedAt: String = "",
+    @JsonNames("created_at", "createdAt") val createdAt: String = "",
+    @JsonNames("updated_at", "updatedAt") val updatedAt: String = "",
     val credentials: AfternoteCredentialsDto? = null,
     val receivers: List<AfternoteDetailReceiverDto>? = null,
     val processMethod: String? = null,
@@ -114,6 +120,7 @@ data class AfternoteDetailReceiverDto(
 data class AfternotePlaylistDto(
     val profilePhoto: String? = null,
     val atmosphere: String? = null,
+    val memorialPhotoUrl: String? = null,
     val songs: List<AfternoteSongDto> = emptyList(),
     val memorialVideo: AfternoteMemorialVideoDto? = null
 )
@@ -134,11 +141,16 @@ data class AfternoteMemorialVideoDto(
 
 // --- POST /afternotes (PLAYLIST category) ---
 
+/**
+ * Server request form for POST /afternotes (PLAYLIST category).
+ * receivers: 수신자 목록 (모든 카테고리에서 가능).
+ */
 @Serializable
 data class AfternoteCreatePlaylistRequestDto(
     val category: String = "PLAYLIST",
     val title: String,
-    val playlist: AfternotePlaylistDto
+    val playlist: AfternotePlaylistDto,
+    val receivers: List<AfternoteReceiverRefDto> = emptyList()
 )
 
 // --- PATCH /afternotes/{afternoteId} (partial update) ---
