@@ -196,6 +196,7 @@ private fun GreetingSection(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+        Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.home_greeting, userName),
             fontFamily = Sansneo,
@@ -236,18 +237,23 @@ private object EmptyHomeScreenEvent : HomeScreenEvent {
     override fun onBottomNavTabSelected(item: BottomNavItem) {
         // No-op: default event when no callback is provided.
     }
+
     override fun onProfileClick() {
         // No-op: default event when no callback is provided.
     }
+
     override fun onSettingsClick() {
         // No-op: default event when no callback is provided.
     }
+
     override fun onDailyQuestionCtaClick() {
         // No-op: default event when no callback is provided.
     }
+
     override fun onTimeLetterClick() {
         // No-op: default event when no callback is provided.
     }
+
     override fun onAfterNoteClick() {
         // No-op: default event when no callback is provided.
     }
@@ -260,6 +266,7 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
     override fun loadProfile() {
         // No-op: Fake for Preview only; no API call.
     }
+
     override fun updateProfile(
         name: String?,
         phone: String?,
@@ -268,9 +275,11 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
     ) {
         // No-op: Fake for Preview only; no state update.
     }
+
     override fun setSelectedProfileImageUri(uri: android.net.Uri?) {
         // No-op: Fake for Preview only.
     }
+
     override fun clearUpdateSuccess() {
         // No-op: Fake for Preview only.
     }
@@ -280,6 +289,7 @@ private class FakeProfileEditViewModel : ProfileEditViewModelContract {
 private class FakeMindRecordHomeViewModel : MindRecordHomeContract {
     override val calendarDays: StateFlow<List<CalendarDay>> =
         MutableStateFlow(defaultCalendarDays())
+
     override fun loadRecordsForDiaryList() {
         // No-op: Fake for Preview only; no API call.
     }
