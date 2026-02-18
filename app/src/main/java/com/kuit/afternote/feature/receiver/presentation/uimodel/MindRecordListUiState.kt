@@ -10,6 +10,8 @@ data class MindRecordListUiState(
     val daysWithRecords: Set<Int> = emptySet(),
     val selectedDateRecords: List<MindRecordItemUiModel> = emptyList(),
     val todayRecord: MindRecordItemUiModel? = null,
+    /** 오늘의 기록 카드용 대표 이미지 URL. 상세 API imageList 첫 번째 항목. */
+    val todayRecordImageUrl: String? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val showDatePicker: Boolean = false

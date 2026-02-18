@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.receiverauth.data.di
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfternoteDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfterNotesByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetSenderMessageRepository
+import com.kuit.afternote.feature.receiver.domain.repository.iface.GetMindRecordDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetMindRecordsByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetTimeLetterDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetTimeLettersByAuthCodeRepository
@@ -11,6 +12,7 @@ import com.kuit.afternote.feature.receiverauth.data.repository.impl.GetDeliveryV
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthAfternoteDetailRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthAfternoteRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthMessageRepositoryImpl
+import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthMindRecordDetailRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthMindRecordRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthTimeLetterDetailRepositoryImpl
@@ -64,6 +66,12 @@ abstract class ReceiverAuthModule {
     abstract fun bindGetMindRecordsByAuthCodeRepository(
         impl: ReceiverAuthMindRecordRepositoryImpl
     ): GetMindRecordsByAuthCodeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGetMindRecordDetailByAuthCodeRepository(
+        impl: ReceiverAuthMindRecordDetailRepositoryImpl
+    ): GetMindRecordDetailByAuthCodeRepository
 
     @Binds
     @Singleton

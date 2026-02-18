@@ -60,6 +60,7 @@
     <string name="receiver_mindrecord_confirm">확인하기</string>
     <string name="receiver_mindrecord_no_record_yet">이 기록은 아직 확인할 수 없어요</string>
     <string name="receiver_mindrecord_today_empty">오늘의 기록이 없어요</string>
+    <string name="receiver_mindrecord_card_logo">오늘의 기록 카드 로고</string>
     <string name="afternote_category_social_network">소셜 네트워크</string>
 
     <string name="receiver_verify_title">수신자 인증</string>
