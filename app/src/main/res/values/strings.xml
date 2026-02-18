@@ -128,6 +128,7 @@
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
     <string name="time_letter_detail_delivery_date">발송 일자: %1$s</string>
     <string name="time_letter_detail_created_at">작성 일자: %1$s</string>
+    <string name="time_letter_voice_file_label">음성 녹음 파일 %1$d</string>
     <string name="time_letter_detail_recipient_label">수신인:</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
     <string name="time_letter_recipients_count">%d명에게</string>

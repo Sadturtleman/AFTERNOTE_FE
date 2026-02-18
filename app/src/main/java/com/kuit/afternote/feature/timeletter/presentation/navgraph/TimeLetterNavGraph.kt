@@ -13,6 +13,7 @@ import com.kuit.afternote.core.navigation.SELECTED_RECEIVER_ID_KEY
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailParams
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
@@ -52,7 +53,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
                         title = letter.title,
                         content = letter.content,
                         createDate = letter.createDate,
-                        mediaUrls = letter.mediaUrls
+                        mediaUrls = letter.mediaUrls,
+                        audioUrls = letter.audioUrls
                     )
                 )
             },
@@ -93,7 +95,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
                 showDraftSavePopUp = uiState.showDraftSavePopUp,
                 showWaitingAgainPopUp = uiState.showWaitingAgainPopUp,
                 selectedImageUriStrings = uiState.selectedImageUriStrings,
-                selectedVoiceUriStrings = uiState.selectedVoiceUriStrings
+                selectedVoiceUriStrings = uiState.selectedVoiceUriStrings,
+                addedLinks = uiState.addedLinks
             ),
             events = TimeLetterWriterScreenEvents(
                 onTitleChange = viewModel::updateTitle,
@@ -129,7 +132,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
                 onAddImages = viewModel::addImageUris,
                 onRemoveImage = viewModel::removeImageUri,
                 onAddVoiceUris = viewModel::addVoiceUris,
-                onRemoveVoiceUri = viewModel::removeVoiceUri
+                onRemoveVoiceUri = viewModel::removeVoiceUri,
+                onAddedLinksChange = viewModel::updateAddedLinks
             )
         )
     }
@@ -165,13 +169,16 @@ fun NavGraphBuilder.timeLetterNavGraph(
     composable<TimeLetterRoute.TimeLetterDetailRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<TimeLetterRoute.TimeLetterDetailRoute>()
         TimeLetterDetailScreen(
-            receiverName = route.receiverName,
-            sendDate = route.sendDate,
-            title = route.title,
-            content = route.content,
-            createdAt = route.createDate,
-            mediaUrls = route.mediaUrls,
-            onBackClick = { navController.popBackStack() }
+            params = TimeLetterDetailParams(
+                receiverName = route.receiverName,
+                sendDate = route.sendDate,
+                title = route.title,
+                content = route.content,
+                createdAt = route.createDate,
+                mediaUrls = route.mediaUrls,
+                audioUrls = route.audioUrls,
+                onBackClick = { navController.popBackStack() }
+            )
         )
     }
 }

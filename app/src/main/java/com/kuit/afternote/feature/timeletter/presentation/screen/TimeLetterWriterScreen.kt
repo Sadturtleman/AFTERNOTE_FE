@@ -105,7 +105,8 @@ data class TimeLetterWriterScreenState(
     val showDraftSavePopUp: Boolean = false,
     val showWaitingAgainPopUp: Boolean = false,
     val selectedImageUriStrings: List<String> = emptyList(),
-    val selectedVoiceUriStrings: List<String> = emptyList()
+    val selectedVoiceUriStrings: List<String> = emptyList(),
+    val addedLinks: List<String> = emptyList()
 )
 
 /**
@@ -176,7 +177,8 @@ data class TimeLetterWriterScreenEvents(
     val onAddImages: (List<Uri>) -> Unit = {},
     val onRemoveImage: (String) -> Unit = {},
     val onAddVoiceUris: (List<Uri>) -> Unit = {},
-    val onRemoveVoiceUri: (String) -> Unit = {}
+    val onRemoveVoiceUri: (String) -> Unit = {},
+    val onAddedLinksChange: (List<String>) -> Unit = {}
 )
 
 @Composable
@@ -190,7 +192,6 @@ fun TimeLetterWriterScreen(
         receivers = state.receivers
     )
     var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var addedLinks by remember { mutableStateOf<List<String>>(emptyList()) }
     var showLinkDialog by remember { mutableStateOf(false) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
@@ -209,10 +210,10 @@ fun TimeLetterWriterScreen(
             events = events,
             recipientDisplayText = recipientDisplayText,
             selectedFiles = selectedFiles,
-            addedLinks = addedLinks,
+            addedLinks = state.addedLinks,
             showLinkDialog = showLinkDialog,
             onSelectedFilesChange = { selectedFiles = it },
-            onAddedLinksChange = { addedLinks = it },
+            onAddedLinksChange = events.onAddedLinksChange,
             onShowLinkDialogChange = { showLinkDialog = it },
             imagePickerLauncher = imagePickerLauncher,
             voicePickerLauncher = voicePickerLauncher,

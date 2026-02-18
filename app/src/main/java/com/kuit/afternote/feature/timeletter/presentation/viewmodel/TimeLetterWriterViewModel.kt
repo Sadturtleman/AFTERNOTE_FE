@@ -83,6 +83,9 @@ class TimeLetterWriterViewModel
                         val existingUrls = letter.mediaList
                             .filter { it.mediaType == TimeLetterMediaType.IMAGE }
                             .map { it.mediaUrl }
+                        val existingLinks = letter.mediaList
+                            .filter { it.mediaType == TimeLetterMediaType.DOCUMENT }
+                            .map { it.mediaUrl }
                         _uiState.update {
                             it.copy(
                                 draftId = letter.id,
@@ -91,6 +94,7 @@ class TimeLetterWriterViewModel
                                 sendDate = date,
                                 sendTime = time,
                                 existingMediaUrls = existingUrls,
+                                addedLinks = existingLinks,
                                 selectedImageUriStrings = emptyList(),
                                 selectedVoiceUriStrings = emptyList(),
                                 isLoading = false
@@ -236,6 +240,15 @@ class TimeLetterWriterViewModel
         }
 
         /**
+         * 첨부 링크 목록 업데이트 (mediaList DOCUMENT로 전송됨)
+         *
+         * @param links 링크 URL 목록
+         */
+        fun updateAddedLinks(links: List<String>) {
+            _uiState.update { it.copy(addedLinks = links) }
+        }
+
+        /**
          * 발송 날짜 업데이트
          *
          * @param date 발송 날짜 (yyyy. MM. dd 형식)
@@ -341,13 +354,14 @@ class TimeLetterWriterViewModel
 
         /**
          * 현재 상태 기준으로 mediaList 구성. 선택 이미지·오디오 업로드 후 (타입, url) 쌍 목록 반환.
-         * 이미지·오디오가 하나도 없으면 null 반환.
+         * 링크는 URL 그대로 DOCUMENT 타입으로 추가. 이미지·오디오·링크가 하나도 없으면 null 반환.
          */
         private suspend fun buildMediaList(state: TimeLetterWriterUiState): Result<List<Pair<TimeLetterMediaType, String>>?> {
             val existingImages = state.existingMediaUrls
             val pendingImages = state.selectedImageUriStrings
             val pendingVoices = state.selectedVoiceUriStrings
-            if (existingImages.isEmpty() && pendingImages.isEmpty() && pendingVoices.isEmpty()) {
+            val links = state.addedLinks
+            if (existingImages.isEmpty() && pendingImages.isEmpty() && pendingVoices.isEmpty() && links.isEmpty()) {
                 return Result.success(null)
             }
             val mediaList = mutableListOf<Pair<TimeLetterMediaType, String>>()
@@ -366,6 +380,8 @@ class TimeLetterWriterViewModel
                     .onSuccess { url -> mediaList.add(TimeLetterMediaType.AUDIO to url) }
                     .onFailure { return Result.failure(it) }
             }
+
+            mediaList.addAll(links.map { TimeLetterMediaType.DOCUMENT to it })
 
             return Result.success(mediaList.ifEmpty { null })
         }

@@ -24,6 +24,7 @@ sealed interface TimeLetterRoute {
         val title: String,
         val content: String,
         val createDate: String,
-        val mediaUrls: List<String> = emptyList()
+        val mediaUrls: List<String> = emptyList(),
+        val audioUrls: List<String> = emptyList()
     ) : TimeLetterRoute
 }
