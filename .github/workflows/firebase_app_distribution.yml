@@ -53,13 +53,8 @@ jobs:
       # Without this hash, Kakao login fails with "카카오 로그인에 실패했습니다" on distributed builds.
       - name: Print debug keystore SHA-1 for Kakao
         run: |
-          KEYSTORE="$HOME/.android/debug.keystore"
-          if [ -f "$KEYSTORE" ]; then
-            echo "Register this SHA-1 in Kakao Developers (앱 설정 → 플랫폼 → Android → 키 해시):"
-            keytool -list -v -keystore "$KEYSTORE" -alias androiddebugkey -storepass android -keypass android 2>/dev/null | grep -i "SHA1:" || true
-          else
-            echo "Debug keystore not found at $KEYSTORE; SHA-1 may be from Gradle default."
-          fi
+          echo "Register the SHA-1 below in Kakao Developers (앱 설정 → 플랫폼 → Android → 키 해시):"
+          ./gradlew signingReport --no-daemon 2>/dev/null | grep -i "SHA1:" || true
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
