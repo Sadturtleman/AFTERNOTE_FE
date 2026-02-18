@@ -91,9 +91,7 @@ fun ReceiverAfterNoteScreen(
 
     Scaffold(
         topBar = {
-            Column(modifier = Modifier.statusBarsPadding()) {
-                TopHeader()
-            }
+             TopHeader()
         },
         bottomBar = {
             if (showBottomBar) {
