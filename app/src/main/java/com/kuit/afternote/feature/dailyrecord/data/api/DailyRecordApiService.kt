@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.data.api
 
+import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.*
 import retrofit2.Response
 import retrofit2.http.*
