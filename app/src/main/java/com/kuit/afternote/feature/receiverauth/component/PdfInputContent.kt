@@ -26,11 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray6
@@ -48,7 +50,7 @@ fun PdfInputContent(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "증빙 서류 업로드",
+            text = stringResource(R.string.receiver_verify_document_upload_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = Sansneo
@@ -57,7 +59,7 @@ fun PdfInputContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "사망진단서와 가족관계증명서를 업로드 해주세요.\n담당자의 확인 후 승인됩니다.",
+            text = stringResource(R.string.receiver_verify_document_upload_description),
             fontSize = 16.sp,
             fontFamily = Sansneo,
             color = Gray6,
@@ -67,9 +69,9 @@ fun PdfInputContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         SinglePdfInputRow(
-            title = "사망진단서 업로드",
+            title = stringResource(R.string.receiver_verify_death_cert_title),
             textFieldState = deadPdf,
-            label = "서류 촬영 또는 파일 첨부",
+            label = stringResource(R.string.receiver_verify_document_input_label),
             onImageAdd = onDeadImageAdd,
             onFileAdd = onDeadFileAdd
         )
@@ -77,9 +79,9 @@ fun PdfInputContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SinglePdfInputRow(
-            title = "가족관계증명서 업로드",
+            title = stringResource(R.string.receiver_verify_family_cert_title),
             textFieldState = familyPdf,
-            label = "서류 촬영 또는 파일 첨부",
+            label = stringResource(R.string.receiver_verify_document_input_label),
             onImageAdd = onFamilyImageAdd,
             onFileAdd = onFamilyFileAdd
         )
@@ -126,7 +128,7 @@ private fun SinglePdfInputRow(
                     modifier = Modifier.background(Color.White)
                 ) {
                     DropdownMenuItem(
-                        text = { Text("이미지 추가") },
+                        text = { Text(stringResource(R.string.receiver_verify_add_image)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Outlined.PhotoCamera,
@@ -140,7 +142,7 @@ private fun SinglePdfInputRow(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("파일 추가") },
+                        text = { Text(stringResource(R.string.receiver_verify_add_file)) },
                         leadingIcon = {
                             Icon(
                                 Icons.Outlined.Photo,

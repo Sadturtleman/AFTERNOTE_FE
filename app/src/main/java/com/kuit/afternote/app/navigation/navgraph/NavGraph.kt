@@ -15,9 +15,9 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -29,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import kotlinx.coroutines.flow.map
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
@@ -65,14 +64,15 @@ import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRou
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
+import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
-import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.map
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 
@@ -375,7 +375,7 @@ fun NavGraph(navHostController: NavHostController) {
                         }
                     },
                     onTImeLetterClick = {
-                        navHostController.navigate("record_main") {
+                        navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
                             launchSingleTop = true
                         }
                     }

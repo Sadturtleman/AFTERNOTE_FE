@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.CreateMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.DeleteMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.EditMindRecordUseCase
+import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordUseCase
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.GetMindRecordsUseCase
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 @HiltViewModel
 class MindRecordWriterViewModel
@@ -28,7 +31,7 @@ constructor(
     private val deleteMindRecordUseCase: DeleteMindRecordUseCase,
     private val editMindRecordUseCase: EditMindRecordUseCase,
     private val getMindRecordsUseCase: GetMindRecordsUseCase,
-    private val getMindRecordUseCase: EditMindRecordUseCase,
+    private val getMindRecordUseCase: GetMindRecordUseCase,
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(MindRecordUiState())
     val uiState: StateFlow<MindRecordUiState> = _uiState.asStateFlow()
@@ -52,6 +55,23 @@ constructor(
     fun updateContent(content: String) {
         _uiState.update { it.copy(content = content) }
         validateSaveEnabled()
+    }
+
+    /**
+     * 깊은 생각 카테고리 업데이트
+     *
+     * @param category 나의 가치관, 오늘 떠올린 생각, 인생을 되돌아 보며
+     */
+    fun updateCategory(category: String) {
+        _uiState.update { it.copy(selectedCategory = category) }
+    }
+
+    fun showCategoryDropdown() {
+        _uiState.update { it.copy(showCategoryDropdown = true) }
+    }
+
+    fun hideCategoryDropdown() {
+        _uiState.update { it.copy(showCategoryDropdown = false) }
     }
 
     /**
@@ -96,11 +116,23 @@ constructor(
      *
      * @param onSuccess 저장 성공 시 콜백
      */
-    fun registerWithPopUpThenSave(onSuccess: () -> Unit) {
-        saveMindRecord(onSuccess = onSuccess)
+    fun registerWithPopUpThenSave(
+        recordType: String = "DIARY",
+        category: String? = null,
+        onSuccess: () -> Unit
+    ) {
+        saveMindRecord(recordType = recordType, category = category, onSuccess = onSuccess)
     }
 
+    /**
+     * 마음의 기록 저장 (일기 또는 깊은 생각).
+     *
+     * @param recordType "DIARY" 또는 "DEEP_THOUGHT"
+     * @param category DEEP_THOUGHT일 때 카테고리 (예: 나의 가치관)
+     */
     fun saveMindRecord(
+        recordType: String = "DIARY",
+        category: String? = null,
         showPopUpAfterSuccess: Boolean = true,
         onSuccess: () -> Unit
     ) {
@@ -109,11 +141,12 @@ constructor(
             val state = _uiState.value
             val sendAt = buildSendAt(state.sendDate)
             val result = createMindRecordUseCase(
-                type = "DIARY", // 혹은 "MIND_RECORD" 등 서버에서 요구하는 타입
+                type = recordType,
                 title = state.title.ifBlank { null },
-                content = state.content.ifBlank { null },
-                date = sendAt,
-                isDraft = false
+                content = state.content.ifBlank { "" },
+                date = sendAt ?: LocalDate.now().toString(),
+                isDraft = false,
+                category = category
             )
 
             _uiState.update { it.copy(isLoading = false) }
@@ -136,13 +169,19 @@ constructor(
         }
     }
     /**
-     * sendAt 문자열 생성 (yyyy. MM. dd + HH:mm -> yyyy-MM-ddTHH:mm:00)
+     * sendDate를 API 형식(yyyy-MM-dd)으로 변환.
+     * "yyyy년 MM월 dd일" 또는 "yyyy. MM. dd" 형식 지원.
      */
-    private fun buildSendAt(
-        sendDate: String,
-    ): String? {
+    private fun buildSendAt(sendDate: String): String? {
         if (sendDate.isBlank()) return null
-        val normalizedDate = sendDate.replace(". ", "-").trim()
-        return "$normalizedDate"
+        return runCatching {
+            val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
+            LocalDate.parse(sendDate.trim(), formatter).toString()
+        }.getOrElse {
+            runCatching {
+                val altFormatter = DateTimeFormatter.ofPattern("yyyy. MM. dd")
+                LocalDate.parse(sendDate.trim(), altFormatter).toString()
+            }.getOrNull()
+        }
     }
 }

@@ -8,77 +8,61 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryCategorySectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItemParams
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryDateSectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
-    //viewModel: MindRecordViewModel,
-    recordId: Long?,
-    onDateClick: () -> Unit,
-    sendDate: String,
-    showDatePicker: Boolean,
-    onDatePickerDismiss: () -> Unit
-
+    params: RecordDeepMindScreenParams
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-
-   // val uiState by viewModel.uiState.collectAsState()
-
-    Scaffold { paddingValues ->
+    val content = params.contentState
+    val date = params.dateState
+    val category = params.categoryState
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
             item {
                 RecordSubTopbar(
                     text = "깊은 생각 기록하기",
-                    onLeftClock = onLeftClick,
-                    onRightClick = {
-//                        viewModel.onCreateRecord(
-//                            type = "DIARY",
-//                            title = title,
-//                            content = content,
-//                            date = LocalDate.now().toString(),
-//                            isDraft = false
-//                        ) {
-//                            viewModel.loadRecords() // 등록 성공 후 조회 실행
-//                            onLeftClick() // 성공 시 화면 닫기
-//                        }
-                    }
-
+                    onLeftClock = params.onLeftClick,
+                    onRightClick = params.onRegisterClick
                 )
             }
 
             item {
                 RecordDiaryContentItem(
-                    standard = "깊은 생각 기록하기",
-                    onDateSelected = { _, _, _ -> },
-                    title = title,
-                    onTitleChange = { title = it },
-                    content = content,
-                    onContentChange = { content = it },
-                    onDateClick = {},
-                    sendDate = sendDate,
-                    showDatePicker = showDatePicker,
-                    onDatePickerDismiss = onDatePickerDismiss,
+                    params = RecordDiaryContentItemParams(
+                        standard = "깊은 생각 기록하기",
+                        onDateSelected = { _, _, _ -> },
+                        title = content.title,
+                        onTitleChange = content.onTitleChange,
+                        content = content.content,
+                        onContentChange = content.onContentChange,
+                        dateSection = RecordDiaryDateSectionParams(
+                            onDateClick = {},
+                            sendDate = date.sendDate,
+                            showDatePicker = date.showDatePicker,
+                            onDatePickerDismiss = date.onDatePickerDismiss
+                        ),
+                        categorySection = RecordDiaryCategorySectionParams(
+                            selectedCategory = category.selectedCategory,
+                            onCategoryChange = category.onCategoryChange,
+                            showCategoryDropdown = category.showCategoryDropdown,
+                            onCategoryClick = category.onCategoryClick,
+                            onCategoryDropdownDismiss = category.onCategoryDropdownDismiss
+                        )
+                    )
                 )
             }
         }

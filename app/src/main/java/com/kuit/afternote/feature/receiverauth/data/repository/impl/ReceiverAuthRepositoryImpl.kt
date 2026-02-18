@@ -4,6 +4,8 @@ import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.receiverauth.data.api.ReceiverAuthApiService
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthPresignedUrlRequestDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthPresignedUrlResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthVerifyRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthVerifyResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteDetailAuthResponseDto
@@ -36,6 +38,17 @@ class ReceiverAuthRepositoryImpl
                 ReceiverAuthVerifyRequestDto(authCode = authCode)
             ).requireData()
             dto.toDomain()
+        }
+
+    override suspend fun getPresignedUrl(
+        authCode: String,
+        extension: String
+    ): Result<ReceiverAuthPresignedUrlResponseDto> =
+        runCatching {
+            api.getPresignedUrl(
+                authCode = authCode,
+                body = ReceiverAuthPresignedUrlRequestDto(extension = extension)
+            ).requireData()
         }
 
     override suspend fun submitDeliveryVerification(

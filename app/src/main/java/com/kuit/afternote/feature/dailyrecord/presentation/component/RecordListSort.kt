@@ -34,19 +34,15 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray5
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordListSort(
     modifier: Modifier = Modifier,
-    today: LocalDate
+    today: LocalDate,
+    markedDates: Set<String> = emptySet()
 ) {
     var isClicked by remember { mutableStateOf(true) }
-    val year = today.year
-    val month = today.monthValue
-    val formatter = DateTimeFormatter.ofPattern("yyyy.mm", Locale.KOREA)
 
     Row(
         modifier = Modifier
@@ -104,7 +100,8 @@ fun RecordListSort(
     Spacer(Modifier.height(20.dp))
     if (!isClicked) {
         RecordCalendarSort(
-            today = today
+            today = today,
+            markedDates = markedDates
         )
     }
 }

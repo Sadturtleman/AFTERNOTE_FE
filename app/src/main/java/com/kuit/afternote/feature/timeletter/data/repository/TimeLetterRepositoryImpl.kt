@@ -54,6 +54,7 @@ class TimeLetterRepositoryImpl
                         DomainMediaType.IMAGE -> DtoMediaType.IMAGE
                         DomainMediaType.VIDEO -> DtoMediaType.VIDEO
                         DomainMediaType.AUDIO -> DtoMediaType.AUDIO
+                        DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
                     }
                     TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
                 }
@@ -102,6 +103,7 @@ class TimeLetterRepositoryImpl
                         DomainMediaType.IMAGE -> DtoMediaType.IMAGE
                         DomainMediaType.VIDEO -> DtoMediaType.VIDEO
                         DomainMediaType.AUDIO -> DtoMediaType.AUDIO
+                        DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
                     }
                     TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
                 }

@@ -8,6 +8,8 @@ import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
 import com.kuit.afternote.feature.user.data.dto.UserUpdatePushSettingRequest
 import com.kuit.afternote.feature.user.data.mapper.UserMapper
+import com.kuit.afternote.feature.user.domain.model.DeliveryCondition
+import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
@@ -177,6 +179,31 @@ class UserRepositoryImpl
                 val body = response.requireData()
                 val items = body.items.map(UserMapper::toDailyQuestionAnswerItem)
                 UserMapper.toReceiverDailyQuestionsResult(items = items, hasNext = body.hasNext)
+            }
+
+        override suspend fun getDeliveryCondition(): Result<DeliveryCondition> =
+            runCatching {
+                Log.d(TAG, "getDeliveryCondition: request")
+                val response = api.getDeliveryCondition()
+                Log.d(TAG, "getDeliveryCondition: response=$response")
+                UserMapper.toDeliveryCondition(response.requireData())
+            }
+
+        override suspend fun updateDeliveryCondition(
+            conditionType: DeliveryConditionType,
+            inactivityPeriodDays: Int?,
+            specificDate: String?
+        ): Result<DeliveryCondition> =
+            runCatching {
+                Log.d(TAG, "updateDeliveryCondition: conditionType=$conditionType")
+                val body = UserMapper.toDeliveryConditionRequestDto(
+                    conditionType = conditionType,
+                    inactivityPeriodDays = inactivityPeriodDays,
+                    specificDate = specificDate
+                )
+                val response = api.updateDeliveryCondition(body)
+                Log.d(TAG, "updateDeliveryCondition: response=$response")
+                UserMapper.toDeliveryCondition(response.requireData())
             }
 
         companion object {

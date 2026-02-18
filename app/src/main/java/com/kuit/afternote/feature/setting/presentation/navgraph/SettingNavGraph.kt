@@ -459,7 +459,7 @@ private fun ReceiverAfternoteListRouteContent(
         val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
         val serviceName = stringResource(stringResId)
         AfternoteListDisplayItem(
-            id = item.sourceType,
+            id = item.id.toString(),
             serviceName = serviceName,
             date = item.lastUpdatedAt,
             iconResId = iconResId
@@ -489,7 +489,8 @@ private fun ReceiverTimeLetterListRouteContent(
             title = item.title,
             content = item.content,
             imageResId = null,
-            theme = LetterTheme.BLUE
+            theme = LetterTheme.BLUE,
+            createDate = "2026.11.24"
         )
     }
     val receiverName = route.receiverName.ifBlank { "수신인" }

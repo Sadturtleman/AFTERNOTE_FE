@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -66,6 +67,8 @@ fun PostDeliveryConditionScreen(
     val selectedDeliveryMethod = state.selectedDeliveryMethod
     val selectedTriggerCondition = state.selectedTriggerCondition
     val selectedDate = state.selectedDate
+    val isLoading = state.isLoading
+    val errorMessage = state.errorMessage
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
     val deliveryMethods = listOf(
@@ -80,16 +83,17 @@ fun PostDeliveryConditionScreen(
     )
 
     BackHandler(onBack = onBackClick)
-    Scaffold(
-        containerColor = Gray1,
-        topBar = {
-            TopBar(
-                title = "사후 전달 조건",
-                onBackClick = onBackClick
-            )
-        }
-    ) { paddingValues ->
-        Column(
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            containerColor = Gray1,
+            topBar = {
+                TopBar(
+                    title = "사후 전달 조건",
+                    onBackClick = onBackClick
+                )
+            }
+        ) { paddingValues ->
+            Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -103,7 +107,7 @@ fun PostDeliveryConditionScreen(
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Label(text = "정보 처리 방법")
+                Label(text = "정보 전달 방법")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -201,6 +205,32 @@ fun PostDeliveryConditionScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray9
+                    ),
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+        }
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Gray1.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
     }
 
@@ -252,7 +282,10 @@ private class FakePostDeliveryConditionViewModel : PostDeliveryConditionViewMode
             PostDeliveryConditionState(
                 selectedDeliveryMethod = DeliveryMethodOption.AutomaticTransfer,
                 selectedTriggerCondition = TriggerConditionOption.AppInactivity,
-                selectedDate = null
+                selectedDate = null,
+                inactivityPeriodDays = null,
+                isLoading = false,
+                errorMessage = null
             )
         )
 

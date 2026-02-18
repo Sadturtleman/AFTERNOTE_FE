@@ -10,6 +10,8 @@ import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
  * @property content 편지 내용
  * @property sendDate 발송 날짜 (yyyy. MM. dd 형식)
  * @property sendTime 발송 시간 (HH:mm 형식)
+ * @property selectedImageUriStrings 첨부할 이미지 URI 문자열 목록 (업로드 대기)
+ * @property existingMediaUrls draft 로드 시 기존 미디어 URL 목록 (IMAGE 타입만)
  * @property isLoading 로딩 상태
  * @property isSaveEnabled 저장 버튼 활성화 여부
  * @property showDatePicker DatePicker 표시 여부
@@ -29,6 +31,8 @@ data class TimeLetterWriterUiState(
     val content: String = "",
     val sendDate: String = "",
     val sendTime: String = "",
+    val selectedImageUriStrings: List<String> = emptyList(),
+    val existingMediaUrls: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val isSaveEnabled: Boolean = false,
     val showDatePicker: Boolean = false,

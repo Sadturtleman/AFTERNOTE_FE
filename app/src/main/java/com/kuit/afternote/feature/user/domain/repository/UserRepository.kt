@@ -1,5 +1,7 @@
 package com.kuit.afternote.feature.user.domain.repository
 
+import com.kuit.afternote.feature.user.domain.model.DeliveryCondition
+import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
@@ -54,4 +56,22 @@ interface UserRepository {
         page: Int,
         size: Int
     ): Result<ReceiverDailyQuestionsResult>
+
+    /**
+     * GET /users/delivery-condition — 로그인한 사용자의 전달 조건 설정 조회.
+     */
+    suspend fun getDeliveryCondition(): Result<DeliveryCondition>
+
+    /**
+     * PATCH /users/delivery-condition — 로그인한 사용자의 전달 조건 설정/변경.
+     *
+     * @param conditionType 전달 조건 타입
+     * @param inactivityPeriodDays 비활동 기간(일), INACTIVITY일 때 사용
+     * @param specificDate 특정 날짜(yyyy-MM-dd), SPECIFIC_DATE일 때 사용
+     */
+    suspend fun updateDeliveryCondition(
+        conditionType: DeliveryConditionType,
+        inactivityPeriodDays: Int?,
+        specificDate: String?
+    ): Result<DeliveryCondition>
 }

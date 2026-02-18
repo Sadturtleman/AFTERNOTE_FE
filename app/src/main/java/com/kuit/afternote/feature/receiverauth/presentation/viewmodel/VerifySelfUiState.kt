@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiverauth.presentation.viewmodel
 
+import com.kuit.afternote.feature.receiverauth.domain.entity.DeliveryVerificationStatus
 import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 
 /**
@@ -11,6 +12,9 @@ import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
  * @param verifyError 검증 실패 시 에러 타입 (화면에서 stringResource로 메시지 표시)
  * @param verifiedReceiverId 마스터키 검증 성공 시 수신받은 receiverId (열람요청 완료에서 수신자 홈 이동 시 사용)
  * @param verifiedSenderName 마스터키 검증 성공 시 수신받은 발신자 이름 (수신자 홈 상단 "故 OO님이 남기신 기록" 표시용)
+ * @param isSubmitting 증빙 서류 업로드·제출 중 여부
+ * @param submitError 증빙 서류 제출 실패 시 에러 타입
+ * @param deliveryVerificationStatus END 단계에서 표시할 인증 요청 상태 (PENDING/APPROVED/REJECTED)
  */
 data class VerifySelfUiState(
     val currentStep: VerifyStep = VerifyStep.MASTER_KEY_AUTH,
@@ -18,7 +22,10 @@ data class VerifySelfUiState(
     val isLoading: Boolean = false,
     val verifyError: VerifyErrorType? = null,
     val verifiedReceiverId: Long? = null,
-    val verifiedSenderName: String? = null
+    val verifiedSenderName: String? = null,
+    val isSubmitting: Boolean = false,
+    val submitError: VerifyErrorType? = null,
+    val deliveryVerificationStatus: DeliveryVerificationStatus? = null
 )
 
 /**

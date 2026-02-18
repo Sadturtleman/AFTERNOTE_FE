@@ -9,9 +9,16 @@ import retrofit2.http.*
  */
 interface DailyRecordApiService {
 
-    // 전체 기록 목록 조회
+    @GET("daily-question")
+    suspend fun getDailyQuestion(): DailyQuestionResponse
+
     @GET("mind-records")
-    suspend fun getMindRecords(): MindRecordListResponse
+    suspend fun getMindRecords(
+        @Query("type") type: String,
+        @Query("view") view: String = "LIST",
+        @Query("year") year: Int? = null,
+        @Query("month") month: Int? = null
+    ): MindRecordListResponse
 
     // 기록 작성
     @POST("mind-records")

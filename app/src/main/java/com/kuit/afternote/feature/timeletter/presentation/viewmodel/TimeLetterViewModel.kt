@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetter
+import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterMediaType
 import com.kuit.afternote.feature.timeletter.domain.usecase.DeleteTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
@@ -118,6 +119,9 @@ class TimeLetterViewModel
             receivers: List<ReceiverListItem>
         ): TimeLetterItem {
             val themes = listOf(LetterTheme.PEACH, LetterTheme.BLUE, LetterTheme.YELLOW)
+            val imageUrls = t.mediaList
+                .filter { it.mediaType == TimeLetterMediaType.IMAGE }
+                .map { it.mediaUrl }
             return TimeLetterItem(
                 id = t.id.toString(),
                 receivername = resolveReceiverDisplayText(t.receiverIds, receivers),
@@ -125,7 +129,9 @@ class TimeLetterViewModel
                 title = t.title ?: "",
                 content = t.content ?: "",
                 imageResId = null,
-                theme = themes[index % themes.size]
+                theme = themes[index % themes.size],
+                createDate = formatSendAtForDisplay(t.createdAt),
+                mediaUrls = imageUrls
             )
         }
 

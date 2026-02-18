@@ -109,6 +109,7 @@ fun TimeLetterWriterScreen(
     onDraftCountClick: () -> Unit,
     onDateClick: () -> Unit,
     onTimeClick: () -> Unit,
+    onBackCLick: () -> Unit,
     onDatePickerDismiss: () -> Unit = {},
     onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> },
     onTimePickerDismiss: () -> Unit = {},
@@ -122,7 +123,10 @@ fun TimeLetterWriterScreen(
     onReceiverSelected: (TimeLetterReceiver) -> Unit = {},
     showRegisteredPopUp: Boolean = false,
     showDraftSavePopUp: Boolean = false,
-    showWaitingAgainPopUp: Boolean = false
+    showWaitingAgainPopUp: Boolean = false,
+    selectedImageUriStrings: List<String> = emptyList(),
+    onAddImages: (List<Uri>) -> Unit = {},
+    onRemoveImage: (String) -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
@@ -136,9 +140,8 @@ fun TimeLetterWriterScreen(
         else -> stringResource(R.string.time_letter_recipients_count, receiverIds.size)
     }
 
-    // UI State
+    // UI State (이미지는 ViewModel 호이스팅, 나머지 미디어는 로컬 유지)
     var isMenuOpen by remember { mutableStateOf(false) }
-    var selectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var selectedVoices by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var selectedFiles by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var addedLinks by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -147,7 +150,7 @@ fun TimeLetterWriterScreen(
     // Activity Result Launchers
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 6)
-    ) { uris -> if (uris.isNotEmpty()) selectedImages = selectedImages + uris }
+    ) { uris -> if (uris.isNotEmpty()) onAddImages(uris) }
 
     val voicePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments()
@@ -219,11 +222,11 @@ fun TimeLetterWriterScreen(
                         onActionClick = onRegisterClick,
                         actionText = "등록",
                         navigationIcon = {
-                            IconButton(onClick = { keyboardController?.hide() }) {
+                            IconButton(onClick = { onBackCLick() }) {
                                 Image(
-                                    painter = painterResource(R.drawable.img_writing),
-                                    contentDescription = "키보드 숨기기",
-                                    modifier = Modifier.size(width = 20.dp, height = 22.dp)
+                                    painter = painterResource(R.drawable.ic_arrow_back),
+                                    contentDescription = "뒤로가기",
+                                    modifier = Modifier.size(width = 6.dp, height = 12.dp)
                                 )
                             }
                         },
@@ -458,8 +461,11 @@ fun TimeLetterWriterScreen(
                 // [4] 첨부 파일 표시 영역 (본문 하단에 수직 배치)
 
                 // (1) 이미지
-                if (selectedImages.isNotEmpty()) {
-                    SelectedImageGrid(images = selectedImages) { selectedImages = selectedImages - it }
+                if (selectedImageUriStrings.isNotEmpty()) {
+                    SelectedImageGrid(
+                        images = selectedImageUriStrings.map { Uri.parse(it) },
+                        onRemoveImage = { uri -> onRemoveImage(uri.toString()) }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -782,6 +788,7 @@ private fun TimeLetterWriterScreenPreview() {
         onDateClick = {},
         onTimeClick = {},
         onTimePickerDismiss = {},
+        onBackCLick = {},
         onTimeSelected = { _, _ -> },
         receivers = listOf(
             TimeLetterReceiver(

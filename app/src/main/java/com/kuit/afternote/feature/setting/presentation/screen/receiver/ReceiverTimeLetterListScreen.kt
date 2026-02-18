@@ -52,11 +52,11 @@ fun ReceiverTimeLetterListScreen(
                 onBackClick = onBackClick
             )
         }
-    ) { paddingValues ->
+    ) { contentPadding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(contentPadding),
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -76,12 +76,7 @@ fun ReceiverTimeLetterListScreen(
                 key = { item -> item.id }
             ) { item ->
                 TimeLetterBlockItem(
-                    receiverName = item.receivername,
-                    sendDate = item.sendDate,
-                    title = item.title,
-                    content = item.content,
-                    imageResId = item.imageResId,
-                    theme = item.theme,
+                    timeLetter = item,
                     onClick = { onItemClick(item) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -136,7 +131,8 @@ private fun ReceiverTimeLetterListScreenPreview() {
                     title = "채연아 20번째 생일을 축하해",
                     content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
                     imageResId = R.drawable.ic_test_block,
-                    theme = LetterTheme.PEACH
+                    theme = LetterTheme.PEACH,
+                    createDate = "2026.11.24"
                 ),
                 TimeLetterItem(
                     id = "2",
@@ -145,7 +141,8 @@ private fun ReceiverTimeLetterListScreenPreview() {
                     title = "채연아 21번째 생일을 축하해",
                     content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..아빠가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
                     imageResId = null,
-                    theme = LetterTheme.BLUE
+                    theme = LetterTheme.BLUE,
+                    createDate = "2026.11.24"
                 ),
                 TimeLetterItem(
                     id = "3",
@@ -154,7 +151,8 @@ private fun ReceiverTimeLetterListScreenPreview() {
                     title = "채연아 22번째 생일을 축하해",
                     content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄빠가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
                     imageResId = null,
-                    theme = LetterTheme.YELLOW
+                    theme = LetterTheme.YELLOW,
+                    createDate = "2026.11.24"
                 )
             ),
             onBackClick = {},
