@@ -21,6 +21,10 @@ sealed interface RecordRoute {
     @Serializable
     data object ListRoute : RecordRoute
 
+    /** 깊은 생각 전용 리스트. DEEP_THOUGHT 기록만 표시, FAB → RecordDeepMindScreen */
+    @Serializable
+    data object DeepMindListRoute : RecordRoute
+
     @Serializable
     data object WeekendReportRoute : RecordRoute
 

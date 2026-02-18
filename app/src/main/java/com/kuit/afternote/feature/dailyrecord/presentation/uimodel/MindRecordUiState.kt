@@ -7,6 +7,8 @@ data class MindRecordUiState(
     val title: String = "",
     val content: String = "",
     val sendDate: String = "",
+    /** 깊은 생각 카테고리 (예: 나의 가치관, 자아성찰). DEEP_THOUGHT일 때만 사용. */
+    val category: String? = null,
     val isLoading: Boolean = false,
     val isSaveEnabled: Boolean = false,
     val showDatePicker: Boolean = false,

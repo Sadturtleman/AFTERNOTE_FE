@@ -42,7 +42,7 @@ fun RecordListItem(
     var expanded by remember { mutableStateOf(false) }
 
     RecordQnAListItem(
-        question = record.title,
+        question = record.title.ifBlank { "-" },
         answer = (record.content ?: record.title).ifBlank { "-" },
         dateText = record.formattedDate,
         trailing = {

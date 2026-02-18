@@ -44,6 +44,7 @@ fun RecordDiaryScreen(
     showDatePicker: Boolean,
     onDatePickerDismiss: () -> Unit,
     onRegisterClick: () -> Unit,
+    isRegisterEnabled: Boolean = true
 ) {
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     Scaffold { paddingValues ->
@@ -56,7 +57,8 @@ fun RecordDiaryScreen(
                 RecordSubTopbar(
                     text = "일기 기록하기",
                     onLeftClock = onLeftClick,
-                    onRightClick = onRegisterClick
+                    onRightClick = onRegisterClick,
+                    isRegisterEnabled = isRegisterEnabled
                 )
             }
 

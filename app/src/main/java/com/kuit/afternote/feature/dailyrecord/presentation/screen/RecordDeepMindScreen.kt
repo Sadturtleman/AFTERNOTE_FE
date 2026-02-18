@@ -55,11 +55,13 @@ fun RecordDeepMindScreen(
                         viewModel.registerWithPopUpThenSave(type = "DEEP_THOUGHT") {
                             onRegisterSuccess()
                         }
-                    }
+                    },
+                    isRegisterEnabled = !uiState.isLoading
                 )
             }
 
             item {
+                var showCategoryDropdown by remember { mutableStateOf(false) }
                 RecordDiaryContentItem(
                     standard = "깊은 생각 기록하기",
                     onDateSelected = { year, month, day ->
@@ -75,6 +77,11 @@ fun RecordDeepMindScreen(
                     sendDate = sendDate,
                     showDatePicker = showDatePicker,
                     onDatePickerDismiss = onDatePickerDismiss,
+                    selectedCategory = uiState.category,
+                    showCategoryDropdown = showCategoryDropdown,
+                    onCategoryClick = { showCategoryDropdown = true },
+                    onCategorySelected = viewModel::updateCategory,
+                    onCategoryDropdownDismiss = { showCategoryDropdown = false }
                 )
             }
         }

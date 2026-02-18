@@ -12,16 +12,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -45,8 +47,15 @@ import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
+import com.kuit.afternote.ui.theme.White
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+/** 깊은 생각 기록 시 선택 가능한 카테고리 목록 */
+private val DEEP_THOUGHT_CATEGORIES = listOf(
+    "나의 가치관",
+    "자아성찰",
+    "새로운 관점"
+)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -64,67 +73,116 @@ fun RecordDiaryContentItem(
     sendDate: String,
     showDatePicker: Boolean = false,
     onDatePickerDismiss: () -> Unit,
-
-
-    ) {
+    selectedCategory: String? = null,
+    showCategoryDropdown: Boolean = false,
+    onCategoryClick: () -> Unit = {},
+    onCategorySelected: (String) -> Unit = {},
+    onCategoryDropdownDismiss: () -> Unit = {}
+) {
     // 오늘 날짜 기준으로 받아오기
     val today = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
     val formattedDate = today.format(formatter)
 
-    var s = " "
-    if (standard == "일기 기록하기") {
-        s = "작성 날짜"
-    } else {
-        s = "기록 주제"
-    }
+    val isDeepThought = standard == "깊은 생각 기록하기"
     Column(
         modifier = Modifier
             .padding(top = 24.dp, start = 20.dp, end = 20.dp)
     ) {
-        Text(
-            text = s,
-            color = Black,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = Sansneo
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(all = 8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        if (isDeepThought) {
+            Text(
+                text = "기록 주제",
+                color = Black,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = Sansneo
+            )
+            Box(modifier = Modifier.padding(all = 8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        Text(
+                            text = selectedCategory ?: "나의 가치관",
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .clickable { onCategoryClick() }
+                        )
+                        DropdownMenu(
+                            expanded = showCategoryDropdown,
+                            onDismissRequest = onCategoryDropdownDismiss,
+                            offset = DpOffset(x = 0.dp, y = 8.dp),
+                            modifier = Modifier
+                                .width(350.dp)
+                                .height(162.dp)
+                                .background(White)
+                        ) {
+                            DEEP_THOUGHT_CATEGORIES.forEach { category ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = category,
+                                            fontFamily = Sansneo,
+                                            fontSize = 14.sp
+                                        )
+                                    },
+                                    onClick = {
+                                        onCategorySelected(category)
+                                        onCategoryDropdownDismiss()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_under),
+                        contentDescription = "카테고리 선택",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onCategoryClick() }
+                    )
+                }
+                Divider(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    color = Color.LightGray,
+                    thickness = 0.8.dp
+                )
+            }
+        } else {
+            Text(
+                text = "작성 날짜",
+                color = Black,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = Sansneo
+            )
+            Box(
+                modifier = Modifier
+                    .padding(all = 8.dp)
             ) {
-                if (s == "작성 날짜") {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = if (sendDate.isNotEmpty()) sendDate else formattedDate,
                         fontSize = 12.sp,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                } else if (s == "기록 주제") {
-                    Text(
-                        text = "나의 가치관",
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_under),
+                        contentDescription = "날짜 선택",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onDateClick() }
                     )
                 }
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_under),
-                    contentDescription = "밑 화살표",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { onDateClick() }
-                )
-                if (sendDate.isNotEmpty()) {
-                    val sendDate = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
-                }
+                Divider(color = Color.LightGray, thickness = 0.8.dp)
             }
-            Divider(color = Color.LightGray, thickness = 0.8.dp)
         }
         BasicTextField(
             value = title,
@@ -148,7 +206,7 @@ fun RecordDiaryContentItem(
                 innerTextField()
             }
         )
-        if (showDatePicker) {
+        if (!isDeepThought && showDatePicker) {
             var selectedDate by remember { mutableStateOf(LocalDate.now()) }
             Box(
                 modifier = Modifier
@@ -176,10 +234,7 @@ fun RecordDiaryContentItem(
                 DateWheelPicker(
                     modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
                     currentDate = selectedDate,
-                    onDateChanged = { date ->
-                        selectedDate = date
-                        onDateSelected(date.year, date.monthValue, date.dayOfMonth)
-                    },
+                    onDateChanged = { date -> selectedDate = date },
                     minDate = LocalDate.now()
                 )
             }

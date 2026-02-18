@@ -67,7 +67,8 @@ constructor(
                             it.copy(
                                 title = detail.title,
                                 content = detail.content,
-                                sendDate = sendDateFormatted.ifBlank { it.sendDate }
+                                sendDate = sendDateFormatted.ifBlank { it.sendDate },
+                                category = detail.category
                             )
                         }
                         validateSaveEnabled()
@@ -123,6 +124,14 @@ constructor(
         _uiState.update { it.copy(sendDate = date) }
         validateSaveEnabled()
     }
+
+    /**
+     * 깊은 생각 카테고리 업데이트 (나의 가치관 등)
+     */
+    fun updateCategory(category: String?) {
+        _uiState.update { it.copy(category = category) }
+        validateSaveEnabled()
+    }
     /**
      * 저장 버튼 활성화 여부 검증
      *
@@ -174,6 +183,9 @@ constructor(
             }
 
             val effectiveType = recordTypeForEdit ?: type
+            val categoryForRequest =
+                if (effectiveType == "DEEP_THOUGHT") (state.category ?: "나의 가치관") else null
+
             val result = if (recordIdForEdit != null) {
                 val request = PostMindRecordRequest(
                     type = effectiveType,
@@ -182,7 +194,7 @@ constructor(
                     date = dateStr,
                     isDraft = false,
                     questionId = null,
-                    category = null
+                    category = categoryForRequest
                 )
                 editMindRecordUseCase(recordIdForEdit!!, request)
             } else {
@@ -193,7 +205,7 @@ constructor(
                     date = dateStr,
                     isDraft = false,
                     questionId = null,
-                    category = null
+                    category = categoryForRequest
                 )
             }
 

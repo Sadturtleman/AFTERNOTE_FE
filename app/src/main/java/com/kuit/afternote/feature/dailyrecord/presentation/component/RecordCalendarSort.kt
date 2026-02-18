@@ -19,6 +19,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,17 +43,19 @@ import java.util.Locale
  * 기록들 정렬할 때 쓰이는 컴포넌트
  */
 
+private val BlueCircleColor = Color(0xFF328BFF)
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordCalendarSort(
     modifier: Modifier = Modifier,
-    today: LocalDate
+    today: LocalDate,
+    recordedDates: Set<String> = emptySet()
 ) {
     val year = today.year
     val month = today.monthValue
     val formatter = DateTimeFormatter.ofPattern("yyyy년 mm월", Locale.KOREA)
-    val markedDates = listOf(1, 6, 8, 11, 13, 15, 16, 17, 25)
-    var selectedDate = today.dayOfMonth
+    var selectedDate by remember { mutableStateOf(today.dayOfMonth) }
 
     Box(
         modifier = Modifier
@@ -113,6 +119,14 @@ fun RecordCalendarSort(
                         for (col in 0..6) {
                             val day = row * 7 + col - startOffset + 1
                             if (day in 1..daysInMonth) {
+                                val cellDate = LocalDate.of(year, month, day)
+                                val dateString = cellDate.toString()
+                                val isToday =
+                                    year == today.year &&
+                                        month == today.monthValue &&
+                                        day == today.dayOfMonth
+                                val isRecorded = dateString in recordedDates
+
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
@@ -122,18 +136,23 @@ fun RecordCalendarSort(
                                         .clickable(onClick = { selectedDate = day })
                                         .background(
                                             when {
-                                                day == selectedDate -> Color(0xFF328BFF)
+                                                day == selectedDate -> BlueCircleColor
                                                 else -> Color.Transparent
                                             }
-                                        ).then(
-                                            if (day in markedDates) {
-                                                Modifier.border(
-                                                    width = 1.dp,
-                                                    color = Color(0xFF328BFF),
+                                        )
+                                        .then(
+                                            when {
+                                                isToday -> Modifier.border(
+                                                    width = 2.dp,
+                                                    color = BlueCircleColor,
                                                     shape = CircleShape
                                                 )
-                                            } else {
-                                                Modifier
+                                                isRecorded -> Modifier.border(
+                                                    width = 1.dp,
+                                                    color = BlueCircleColor,
+                                                    shape = CircleShape
+                                                )
+                                                else -> Modifier
                                             }
                                         ),
                                     contentAlignment = Alignment.Center

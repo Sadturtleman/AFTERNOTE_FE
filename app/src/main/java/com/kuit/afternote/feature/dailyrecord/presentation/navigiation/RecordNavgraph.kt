@@ -35,7 +35,7 @@ fun NavGraphBuilder.recordNavGraph(
         RecordMainScreen(
             onDiaryClick = { navController.navigate(RecordRoute.ListRoute) },
             onQuestionClick = { navController.navigate(RecordRoute.QuestionRouteList) },
-            onDeepMindClick = { navController.navigate(RecordRoute.DeepMindRoute) },
+            onDeepMindClick = { navController.navigate(RecordRoute.DeepMindListRoute) },
             onWeekendReportClick = { navController.navigate(RecordRoute.WeekendReportRoute) },
             onBottomNavTabSelected = onBottomNavTabSelected
         )
@@ -43,8 +43,26 @@ fun NavGraphBuilder.recordNavGraph(
     composable<RecordRoute.ListRoute> {
         val viewModel: MindRecordViewModel = hiltViewModel()
         RecordFirstDiaryListScreen(
+            listMode = "DIARY",
             onBackClick = { navController.popBackStack() },
             onPlusRecordClick = { navController.navigate(RecordRoute.DiaryRoute) },
+            onEditClick = { recordId, recordType ->
+                when (recordType) {
+                    "DIARY" -> navController.navigate(RecordRoute.EditDiaryRoute(recordId))
+                    "DEEP_THOUGHT" -> navController.navigate(RecordRoute.EditDeepMindRoute(recordId))
+                    else -> navController.navigate(RecordRoute.EditRoute(recordId))
+                }
+            },
+            onBottomNavTabSelected = onBottomNavTabSelected,
+            viewModel = viewModel
+        )
+    }
+    composable<RecordRoute.DeepMindListRoute> {
+        val viewModel: MindRecordViewModel = hiltViewModel()
+        RecordFirstDiaryListScreen(
+            listMode = "DEEP_THOUGHT",
+            onBackClick = { navController.popBackStack() },
+            onPlusRecordClick = { navController.navigate(RecordRoute.DeepMindRoute) },
             onEditClick = { recordId, recordType ->
                 when (recordType) {
                     "DIARY" -> navController.navigate(RecordRoute.EditDiaryRoute(recordId))
@@ -92,7 +110,8 @@ fun NavGraphBuilder.recordNavGraph(
                 viewModel.registerWithPopUpThenSave(type = "DIARY") {
                     navController.popBackStack()
                 }
-            }
+            },
+            isRegisterEnabled = !uiState.isLoading
         )
     }
     composable<RecordRoute.DiaryRoute> {
@@ -114,7 +133,8 @@ fun NavGraphBuilder.recordNavGraph(
                 viewModel.registerWithPopUpThenSave(type = "DIARY") {
                     navController.popBackStack()
                 }
-            }
+            },
+            isRegisterEnabled = !uiState.isLoading
         )
     }
     composable<RecordRoute.QuestionRoute> {
@@ -155,7 +175,7 @@ fun NavGraphBuilder.recordNavGraph(
         RecordDeepMindScreen(
             onLeftClick = { navController.popBackStack() },
             onRegisterSuccess = {
-                navController.navigate(RecordRoute.ListRoute) {
+                navController.navigate(RecordRoute.DeepMindListRoute) {
                     popUpTo(RecordRoute.DeepMindRoute) { inclusive = true }
                 }
             },

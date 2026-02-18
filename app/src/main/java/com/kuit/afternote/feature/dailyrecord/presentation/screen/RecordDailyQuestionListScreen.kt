@@ -75,7 +75,8 @@ fun RecordDailyQuestionListScreen(
             LazyColumn {
                 item {
                     RecordListSort(
-                        today = today
+                        today = today,
+                        recordedDates = records.map { it.originalDate }.toSet()
                     )
                 }
                 items(records) { record ->

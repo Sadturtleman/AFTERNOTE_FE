@@ -36,6 +36,7 @@ fun RecordSubTopbar(
     text: String,
     onLeftClock: () -> Unit,
     onRightClick: () -> Unit,
+    isRegisterEnabled: Boolean = true
 ) {
     Box(
         modifier = modifier
@@ -68,14 +69,13 @@ fun RecordSubTopbar(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable(onClick = onRightClick)
+                .clickable(enabled = isRegisterEnabled) { onRightClick() }
                 .padding(end = 13.dp),
-            contentAlignment = Alignment.Center,
-            
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "등록",
-                color = Gray5,
+                color = if (isRegisterEnabled) Gray5 else Gray5.copy(alpha = 0.5f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
                 fontFamily = Sansneo

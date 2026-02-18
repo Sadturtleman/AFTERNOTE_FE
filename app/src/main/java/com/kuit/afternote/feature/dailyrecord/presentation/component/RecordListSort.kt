@@ -41,7 +41,8 @@ import java.util.Locale
 @Composable
 fun RecordListSort(
     modifier: Modifier = Modifier,
-    today: LocalDate
+    today: LocalDate,
+    recordedDates: Set<String> = emptySet()
 ) {
     var isClicked by remember { mutableStateOf(true) }
     val year = today.year
@@ -104,7 +105,8 @@ fun RecordListSort(
     Spacer(Modifier.height(20.dp))
     if (!isClicked) {
         RecordCalendarSort(
-            today = today
+            today = today,
+            recordedDates = recordedDates
         )
     }
 }

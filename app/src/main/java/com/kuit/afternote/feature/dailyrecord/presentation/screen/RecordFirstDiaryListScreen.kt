@@ -36,26 +36,31 @@ import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordV
 import java.time.LocalDate
 
 /**
- * 일기, 깊은 생각하기로 넘어가면 먼저뜨는 리스트형 창
- * - 상단 : 제목
- * - 중간 : 리스트
- * - 하단 : FAB 바
+ * 일기 또는 깊은 생각 리스트형 창
+ *
+ * @param listMode "DIARY" = 일기+깊은생각 통합, "DEEP_THOUGHT" = 깊은생각만
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
+    listMode: String = "DIARY",
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
     onEditClick: (Long, String?) -> Unit,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    viewModel: MindRecordViewModel // ViewModel 주입
+    viewModel: MindRecordViewModel
 ) {
     val today = LocalDate.now()
     val records by viewModel.records.collectAsStateWithLifecycle()
+    val title = if (listMode == "DEEP_THOUGHT") "깊은 생각" else "일기"
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.loadRecordsForDiaryList()
+    LaunchedEffect(listMode) {
+        if (listMode == "DEEP_THOUGHT") {
+            viewModel.loadRecords("DEEP_THOUGHT")
+        } else {
+            viewModel.loadRecordsForDiaryList()
+        }
     }
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -100,12 +105,15 @@ fun RecordFirstDiaryListScreen(
             modifier = Modifier.padding(paddingValues)
         ) {
             TopBar(
-                title = "일기",
+                title = title,
                 onBackClick = onBackClick,
             )
             LazyColumn {
                 item {
-                    RecordListSort(today = today)
+                    RecordListSort(
+                        today = today,
+                        recordedDates = records.map { it.originalDate }.toSet()
+                    )
                 }
                 items(records) { record ->
                     RecordListItem(
@@ -113,8 +121,14 @@ fun RecordFirstDiaryListScreen(
                         onDeleteClick = {
                             viewModel.deleteRecord(
                                 recordId = record.id,
-                                recordType = record.type ?: "DIARY",
-                                onReload = { viewModel.loadRecordsForDiaryList() }
+                                recordType = record.type ?: listMode,
+                                onReload = {
+                                    if (listMode == "DEEP_THOUGHT") {
+                                        viewModel.loadRecords("DEEP_THOUGHT")
+                                    } else {
+                                        viewModel.loadRecordsForDiaryList()
+                                    }
+                                }
                             )
                         },
                         onEditClick = { recordId, recordType ->
