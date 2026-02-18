@@ -13,9 +13,12 @@ import com.kuit.afternote.core.navigation.SELECTED_RECEIVER_ID_KEY
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailParams
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreenEvents
+import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreenState
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
 
@@ -50,7 +53,9 @@ fun NavGraphBuilder.timeLetterNavGraph(
                         title = letter.title,
                         content = letter.content,
                         createDate = letter.createDate,
-                        mediaUrls = letter.mediaUrls
+                        mediaUrls = letter.mediaUrls,
+                        audioUrls = letter.audioUrls,
+                        linkUrls = letter.linkUrls
                     )
                 )
             },
@@ -76,59 +81,61 @@ fun NavGraphBuilder.timeLetterNavGraph(
         }
 
         TimeLetterWriterScreen(
-            receiverIds = uiState.receiverIds,
-            title = uiState.title,
-            content = uiState.content,
-            sendDate = uiState.sendDate,
-            sendTime = uiState.sendTime,
-            showDatePicker = uiState.showDatePicker,
-            showTimePicker = uiState.showTimePicker,
-            draftCount = uiState.draftCount,
-            onTitleChange = viewModel::updateTitle,
-            onContentChange = viewModel::updateContent,
-            onNavigateBack = { navController.popBackStack() },
-            onRecipientClick = { navController.navigate(ReceiverRoute.ReceiverListRoute) },
-            receivers = uiState.receivers,
-            showRecipientDropdown = uiState.showRecipientDropdown,
-            onRecipientDropdownDismiss = { viewModel.hideRecipientDropdown() },
-            onReceiverSelected = { receiver ->
-                viewModel.updateSelectedReceiverIds(listOf(receiver.id))
-                viewModel.hideRecipientDropdown()
-            },
-            onRegisterClick = {
-                viewModel.registerWithPopUpThenSave {
-                    navController.popBackStack()
-                }
-            },
-            onSaveDraftClick = {
-                viewModel.saveDraft {
-                    navController.navigate(TimeLetterRoute.DraftLetterRoute)
-                }
-            },
-            onDraftCountClick = {
-                navController.navigate(TimeLetterRoute.DraftLetterRoute)
-            },
-            onDateClick = viewModel::showDatePicker,
-            onTimeClick = viewModel::showTimePicker,
-            onDatePickerDismiss = viewModel::hideDatePicker,
-            onDateSelected = { year, month, day ->
-                val formattedDate = "$year. ${month.toString().padStart(2, '0')}. ${day.toString().padStart(2, '0')}"
-                viewModel.updateSendDate(formattedDate)
-            },
-            onTimePickerDismiss = viewModel::hideTimePicker,
-            onTimeSelected = { hour, minute ->
-                viewModel.updateSendTime("%02d:%02d".format(hour, minute))
-            },
-            showWritingPlusMenu = uiState.showWritingPlusMenu,
-            onMoreClick = viewModel::showPlusMenu,
-            onDismissPlusMenu = viewModel::hidePlusMenu,
-            showRegisteredPopUp = uiState.showRegisteredPopUp,
-            showDraftSavePopUp = uiState.showDraftSavePopUp,
-            showWaitingAgainPopUp = uiState.showWaitingAgainPopUp,
-            onBackCLick = { navController.popBackStack() },
-            selectedImageUriStrings = uiState.selectedImageUriStrings,
-            onAddImages = viewModel::addImageUris,
-            onRemoveImage = viewModel::removeImageUri
+            state = TimeLetterWriterScreenState(
+                receiverIds = uiState.receiverIds,
+                title = uiState.title,
+                content = uiState.content,
+                sendDate = uiState.sendDate,
+                sendTime = uiState.sendTime,
+                showDatePicker = uiState.showDatePicker,
+                showTimePicker = uiState.showTimePicker,
+                draftCount = uiState.draftCount,
+                receivers = uiState.receivers,
+                showWritingPlusMenu = uiState.showWritingPlusMenu,
+                showRegisteredPopUp = uiState.showRegisteredPopUp,
+                showDraftSavePopUp = uiState.showDraftSavePopUp,
+                showWaitingAgainPopUp = uiState.showWaitingAgainPopUp,
+                selectedImageUriStrings = uiState.selectedImageUriStrings,
+                selectedVoiceUriStrings = uiState.selectedVoiceUriStrings,
+                addedLinks = uiState.addedLinks
+            ),
+            events = TimeLetterWriterScreenEvents(
+                onTitleChange = viewModel::updateTitle,
+                onContentChange = viewModel::updateContent,
+                onNavigateBack = { navController.popBackStack() },
+                onRecipientClick = { navController.navigate(ReceiverRoute.ReceiverListRoute) },
+                onRegisterClick = {
+                    viewModel.registerWithPopUpThenSave {
+                        navController.popBackStack()
+                    }
+                },
+                onSaveDraftClick = {
+                    viewModel.saveDraft {
+                        navController.navigate(TimeLetterRoute.DraftLetterRoute)
+                    }
+                },
+                onDraftCountClick = { navController.navigate(TimeLetterRoute.DraftLetterRoute) },
+                onDateClick = viewModel::showDatePicker,
+                onTimeClick = viewModel::showTimePicker,
+                onBackClick = { navController.popBackStack() },
+                onDatePickerDismiss = viewModel::hideDatePicker,
+                onDateSelected = { year, month, day ->
+                    val formattedDate =
+                        "$year. ${month.toString().padStart(2, '0')}. ${day.toString().padStart(2, '0')}"
+                    viewModel.updateSendDate(formattedDate)
+                },
+                onTimePickerDismiss = viewModel::hideTimePicker,
+                onTimeSelected = { hour, minute ->
+                    viewModel.updateSendTime("%02d:%02d".format(hour, minute))
+                },
+                onMoreClick = viewModel::showPlusMenu,
+                onDismissPlusMenu = viewModel::hidePlusMenu,
+                onAddImages = viewModel::addImageUris,
+                onRemoveImage = viewModel::removeImageUri,
+                onAddVoiceUris = viewModel::addVoiceUris,
+                onRemoveVoiceUri = viewModel::removeVoiceUri,
+                onAddedLinksChange = viewModel::updateAddedLinks
+            )
         )
     }
 
@@ -163,13 +170,17 @@ fun NavGraphBuilder.timeLetterNavGraph(
     composable<TimeLetterRoute.TimeLetterDetailRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<TimeLetterRoute.TimeLetterDetailRoute>()
         TimeLetterDetailScreen(
-            receiverName = route.receiverName,
-            sendDate = route.sendDate,
-            title = route.title,
-            content = route.content,
-            createdAt = route.createDate,
-            mediaUrls = route.mediaUrls,
-            onBackClick = { navController.popBackStack() }
+            params = TimeLetterDetailParams(
+                receiverName = route.receiverName,
+                sendDate = route.sendDate,
+                title = route.title,
+                content = route.content,
+                createdAt = route.createDate,
+                mediaUrls = route.mediaUrls,
+                audioUrls = route.audioUrls,
+                linkUrls = route.linkUrls,
+                onBackClick = { navController.popBackStack() }
+            )
         )
     }
 }

@@ -23,5 +23,7 @@ data class TimeLetterItem(
     val imageResId: Int? = null,
     val createDate: String,
     val theme: LetterTheme = LetterTheme.BLUE,
-    val mediaUrls: List<String> = emptyList()
+    val mediaUrls: List<String> = emptyList(),
+    val audioUrls: List<String> = emptyList(),
+    val linkUrls: List<String> = emptyList()
 )

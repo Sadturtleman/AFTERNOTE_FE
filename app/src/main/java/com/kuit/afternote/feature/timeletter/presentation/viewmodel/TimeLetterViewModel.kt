@@ -60,7 +60,7 @@ class TimeLetterViewModel
             viewModelScope.launch {
                 _uiState.value = TimeLetterUiState.Loading
                 val receivers = loadReceiversOrEmpty()
-                val selectedReceiverId = savedStateHandle.get<Long>(SELECTED_RECEIVER_ID_KEY)
+                val selectedReceiverId = savedStateHandle[SELECTED_RECEIVER_ID_KEY] as? Long
                 getTimeLettersUseCase()
                     .onSuccess { list ->
                         val filteredLetters =
@@ -140,6 +140,12 @@ class TimeLetterViewModel
             val imageUrls = t.mediaList
                 .filter { it.mediaType == TimeLetterMediaType.IMAGE }
                 .map { it.mediaUrl }
+            val audioUrls = t.mediaList
+                .filter { it.mediaType == TimeLetterMediaType.AUDIO }
+                .map { it.mediaUrl }
+            val linkUrls = t.mediaList
+                .filter { it.mediaType == TimeLetterMediaType.DOCUMENT }
+                .map { it.mediaUrl }
             return TimeLetterItem(
                 id = t.id.toString(),
                 receivername = resolveReceiverDisplayText(t.receiverIds, receivers),
@@ -149,7 +155,9 @@ class TimeLetterViewModel
                 imageResId = null,
                 theme = themes[index % themes.size],
                 createDate = formatSendAtForDisplay(t.createdAt),
-                mediaUrls = imageUrls
+                mediaUrls = imageUrls,
+                audioUrls = audioUrls,
+                linkUrls = linkUrls
             )
         }
 

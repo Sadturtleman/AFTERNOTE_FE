@@ -298,6 +298,13 @@ private fun ReceiverDetailRouteContent(
     val detailViewModel: ReceiverDetailViewModel = hiltViewModel(backStackEntry)
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
 
+    val isCurrentDestination = navController.currentBackStackEntry == backStackEntry
+    LaunchedEffect(isCurrentDestination) {
+        if (isCurrentDestination) {
+            route.receiverId.toLongOrNull()?.let { detailViewModel.loadReceiverDetail(it) }
+        }
+    }
+
     val phoneNumberState = rememberTextFieldState()
     val emailState = rememberTextFieldState()
     LaunchedEffect(detailState.receiverId, detailState.name) {
