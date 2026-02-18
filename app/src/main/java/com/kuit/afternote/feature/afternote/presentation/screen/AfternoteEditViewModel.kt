@@ -24,10 +24,13 @@ import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 private const val TAG = "AfternoteEditVM"
@@ -231,13 +234,32 @@ class AfternoteEditViewModel
 
         private fun handleSaveFailure(e: Throwable, categoryForApi: String) {
             Log.e(TAG, "saveAfternote: FAILURE, category=$categoryForApi", e)
+            val validationError = when {
+                e is AfternoteValidationException -> e.validationError
+                e is HttpException && e.code() == 400 -> parseReceiversRequiredFromBody(e)
+                else -> null
+            }
+            val errorMessage = when {
+                validationError != null -> null
+                e is AfternoteValidationException -> null
+                else -> e.message ?: "저장에 실패했습니다."
+            }
             _saveState.update {
                 it.copy(
                     isSaving = false,
-                    validationError = (e as? AfternoteValidationException)?.validationError,
-                    error = if (e is AfternoteValidationException) it.error else (e.message ?: "저장에 실패했습니다.")
+                    validationError = validationError,
+                    error = errorMessage
                 )
             }
+        }
+
+        /** API 400 + code 475 (수신자 최소 1명) 시 RECEIVERS_REQUIRED로 통일. */
+        private fun parseReceiversRequiredFromBody(e: HttpException): AfternoteValidationError? {
+            val body = e.response()?.errorBody()?.string() ?: return null
+            return runCatching {
+                val parsed = Json.decodeFromString<ApiErrorBody>(body)
+                if (parsed.code == 475) AfternoteValidationError.RECEIVERS_REQUIRED else null
+            }.getOrNull()
         }
 
         /**
@@ -372,12 +394,29 @@ class AfternoteEditViewModel
                 return AfternoteValidationError.TITLE_REQUIRED
             }
             return when (category) {
-                CATEGORY_SOCIAL -> validateSocialLikeRequiredFields(payload)
                 CATEGORY_GALLERY -> validateGalleryRequiredFields(payload, receivers)
-                CATEGORY_MEMORIAL -> validateMemorialRequiredFields(playlistStateHolder)
-                else -> validateSocialLikeRequiredFields(payload)
+                CATEGORY_MEMORIAL -> requireReceiversIfNeeded(
+                    validateMemorialRequiredFields(playlistStateHolder),
+                    receivers
+                )
+                else -> requireReceiversIfNeeded(
+                    validateSocialLikeRequiredFields(payload),
+                    receivers
+                )
             }
         }
+
+        private fun requireReceiversIfNeeded(
+            firstError: AfternoteValidationError?,
+            receivers: List<AfternoteEditReceiver>
+        ): AfternoteValidationError? =
+            firstError ?: if (!hasAtLeastOneResolvedReceiver(receivers)) {
+                AfternoteValidationError.RECEIVERS_REQUIRED
+            } else null
+
+        /** 수신자 목록에서 최소 1명이 유효한 receiverId(Long)를 가지는지. API 475 검증용. */
+        private fun hasAtLeastOneResolvedReceiver(receivers: List<AfternoteEditReceiver>): Boolean =
+            receivers.mapNotNull { it.id.toLongOrNull() }.isNotEmpty()
 
         private fun validateGalleryRequiredFields(
             payload: RegisterAfternotePayload,
@@ -387,9 +426,9 @@ class AfternoteEditViewModel
                 return AfternoteValidationError.GALLERY_ACTIONS_REQUIRED
             }
             if (payload.informationProcessingMethod == INFO_METHOD_ADDITIONAL &&
-                receivers.isEmpty()
+                (receivers.isEmpty() || !hasAtLeastOneResolvedReceiver(receivers))
             ) {
-                return AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
+                return AfternoteValidationError.RECEIVERS_REQUIRED
             }
             return null
         }
@@ -438,7 +477,7 @@ class AfternoteEditViewModel
                     if (receiverIds.isEmpty()) {
                         return Result.failure(
                             AfternoteValidationException(
-                                AfternoteValidationError.GALLERY_RECEIVERS_REQUIRED
+                                AfternoteValidationError.RECEIVERS_REQUIRED
                             )
                         )
                     }
@@ -461,19 +500,39 @@ class AfternoteEditViewModel
                         funeralVideoUrl = funeralVideoUrl,
                         funeralThumbnailUrl = funeralThumbnailUrl
                     )
+                    val memorialReceiverIds = receivers.mapNotNull { it.id.toLongOrNull() }
+                    if (memorialReceiverIds.isEmpty()) {
+                        return Result.failure(
+                            AfternoteValidationException(
+                                AfternoteValidationError.RECEIVERS_REQUIRED
+                            )
+                        )
+                    }
                     createPlaylistUseCase(
                         title = payload.serviceName,
-                        playlist = playlistDto
+                        playlist = playlistDto,
+                        receiverIds = memorialReceiverIds
                     )
                 }
-                else -> createSocialUseCase(
-                    title = payload.serviceName,
-                    processMethod = processMethod,
-                    actions = actions,
-                    leaveMessage = leaveMessage,
-                    credentialsId = payload.accountId.takeIf { it.isNotEmpty() },
-                    credentialsPassword = payload.password.takeIf { it.isNotEmpty() }
-                )
+                else -> {
+                    val socialReceiverIds = receivers.mapNotNull { it.id.toLongOrNull() }
+                    if (socialReceiverIds.isEmpty()) {
+                        return Result.failure(
+                            AfternoteValidationException(
+                                AfternoteValidationError.RECEIVERS_REQUIRED
+                            )
+                        )
+                    }
+                    createSocialUseCase(
+                        title = payload.serviceName,
+                        processMethod = processMethod,
+                        actions = actions,
+                        leaveMessage = leaveMessage,
+                        credentialsId = payload.accountId.takeIf { it.isNotEmpty() },
+                        credentialsPassword = payload.password.takeIf { it.isNotEmpty() },
+                        receiverIds = socialReceiverIds
+                    )
+                }
             }
         }
 
@@ -666,3 +725,9 @@ class AfternoteEditViewModel
             )
         }
     }
+
+/** API 400 응답 body 파싱용 (code 475 등). */
+@Serializable
+private data class ApiErrorBody(
+    val code: Int? = null
+)

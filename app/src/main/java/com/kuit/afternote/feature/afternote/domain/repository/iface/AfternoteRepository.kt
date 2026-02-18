@@ -29,7 +29,8 @@ interface AfternoteRepository {
         actions: List<String>,
         leaveMessage: String?,
         credentialsId: String?,
-        credentialsPassword: String?
+        credentialsPassword: String?,
+        receiverIds: List<Long> = emptyList()
     ): Result<Long>
 
     suspend fun createGallery(
@@ -44,7 +45,8 @@ interface AfternoteRepository {
 
     suspend fun createPlaylist(
         title: String,
-        playlist: AfternotePlaylistDto
+        playlist: AfternotePlaylistDto,
+        receiverIds: List<Long> = emptyList()
     ): Result<Long>
 
     suspend fun updateAfternote(

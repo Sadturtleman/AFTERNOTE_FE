@@ -99,7 +99,8 @@ class AfternoteRepositoryImplTest {
                         processMethod = "MEMORIAL",
                         actions = listOf("게시물 내리기"),
                         leaveMessage = "감사했습니다",
-                        credentials = AfternoteCredentialsDto(id = "id", password = "pw")
+                        credentials = AfternoteCredentialsDto(id = "id", password = "pw"),
+                        receivers = emptyList()
                     )
                 )
             }
@@ -201,7 +202,12 @@ class AfternoteRepositoryImplTest {
                         )
                 )
 
-            val result = repository.createPlaylist(title = "마지막 플레이리스트", playlist = playlist)
+            val result =
+                repository.createPlaylist(
+                    title = "마지막 플레이리스트",
+                    playlist = playlist,
+                    receiverIds = emptyList()
+                )
 
             assertTrue(result.isSuccess)
             assertEquals(7L, result.getOrNull())
@@ -210,7 +216,8 @@ class AfternoteRepositoryImplTest {
                     AfternoteCreatePlaylistRequestDto(
                         category = "PLAYLIST",
                         title = "마지막 플레이리스트",
-                        playlist = playlist
+                        playlist = playlist,
+                        receivers = emptyList()
                     )
                 )
             }

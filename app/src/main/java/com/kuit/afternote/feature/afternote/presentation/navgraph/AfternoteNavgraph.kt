@@ -252,7 +252,7 @@ private fun AfternoteDetailRouteContent(
                 accountProcessingMethod = detail.processMethod ?: "",
                 processingMethods = detail.actions,
                 message = detail.leaveMessage ?: "",
-                finalWriteDate = detail.updatedAt
+                finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt }
             ),
             onBackClick = { navController.popBackStack() },
             onEditClick = {
@@ -300,7 +300,7 @@ private fun AfternoteGalleryDetailRouteContent(
             detailState = GalleryDetailState(
                 serviceName = detail.title,
                 userName = userName,
-                finalWriteDate = detail.updatedAt,
+                finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
                 afternoteEditReceivers = detail.receivers.map { r ->
                     AfternoteEditReceiver(
                         id = "",
@@ -359,7 +359,7 @@ private fun AfternoteMemorialGuidelineDetailContent(
         else -> MemorialGuidelineDetailScreen(
             detailState = MemorialGuidelineDetailState(
                 userName = userName,
-                finalWriteDate = detail.updatedAt,
+                finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
                 profileImageUri = detail.playlist?.profilePhoto,
                 albumCovers = detail.playlist?.songs?.map { s ->
                     AlbumCover(

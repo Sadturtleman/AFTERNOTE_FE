@@ -117,6 +117,7 @@
     <string name="afternote_validation_social_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
     <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
     <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
+    <string name="afternote_validation_receivers_required">수신자(receivers)는 최소 1명 이상 필요합니다.</string>
     <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
     <string name="afternote_default_playlist_song_title">추모 플레이리스트 곡</string>
 

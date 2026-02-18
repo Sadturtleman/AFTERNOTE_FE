@@ -18,6 +18,8 @@ enum class AfternoteValidationError(@StringRes val messageResId: Int) {
     SOCIAL_PROCESS_METHOD_REQUIRED(R.string.afternote_validation_social_process_method_required),
     SOCIAL_ACTIONS_REQUIRED(R.string.afternote_validation_social_actions_required),
     GALLERY_ACTIONS_REQUIRED(R.string.afternote_validation_gallery_actions_required),
+    /** 수신자 최소 1명 필요 (모든 카테고리). API 400/475와 동일 메시지. */
+    RECEIVERS_REQUIRED(R.string.afternote_validation_receivers_required),
     GALLERY_RECEIVERS_REQUIRED(R.string.afternote_validation_gallery_receivers_required),
     PLAYLIST_SONGS_REQUIRED(R.string.afternote_validation_playlist_songs_required)
 }
