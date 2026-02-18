@@ -21,6 +21,11 @@ interface UserRepository {
         profileImageUrl: String?
     ): Result<UserProfile>
 
+    /**
+     * DELETE /users/me — 회원 탈퇴. 로그인한 사용자의 계정을 삭제합니다. 모든 데이터가 영구 삭제되며 복구할 수 없습니다.
+     */
+    suspend fun withdrawAccount(): Result<Unit>
+
     /** GET /users/push-settings — 푸시 알림 설정 조회. */
     suspend fun getMyPushSettings(userId: Long): Result<PushSettings>
 
