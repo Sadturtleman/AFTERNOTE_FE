@@ -139,6 +139,11 @@ private fun SocialNetworkEditContentContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        params.recipientSection?.let { section ->
+            RecipientDesignationSection(section = section)
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+
         // 처리 방법 리스트 섹션
         Label(
             text = "처리 방법 리스트",
