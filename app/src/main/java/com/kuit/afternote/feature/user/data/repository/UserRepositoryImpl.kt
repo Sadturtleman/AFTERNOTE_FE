@@ -126,12 +126,41 @@ class UserRepositoryImpl
                 data.receiverId
             }
 
-        override suspend fun getReceiverDetail(userId: Long, receiverId: Long): Result<ReceiverDetail> =
+        override suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail> =
             runCatching {
-                Log.d(TAG, "getReceiverDetail: userId=$userId, receiverId=$receiverId")
-                val response = api.getReceiverDetail(userId = userId, receiverId = receiverId)
+                Log.d(TAG, "getReceiverDetail: receiverId=$receiverId")
+                val response = api.getReceiverDetail(receiverId = receiverId)
                 Log.d(TAG, "getReceiverDetail: response=$response")
                 UserMapper.toReceiverDetail(response.requireData())
+            }
+
+        override suspend fun updateReceiver(
+            receiverId: Long,
+            name: String,
+            relation: String,
+            phone: String?,
+            email: String?
+        ): Result<Unit> =
+            runCatching {
+                Log.d(TAG, "updateReceiver: receiverId=$receiverId, name=$name")
+                val response = api.updateReceiver(
+                    receiverId = receiverId,
+                    body = RegisterReceiverRequestDto(
+                        name = name,
+                        relation = relation,
+                        phone = phone,
+                        email = email
+                    )
+                )
+                Log.d(TAG, "updateReceiver: response=$response")
+                if (response.status !in 200..299) {
+                    throw ApiException(
+                        status = response.status,
+                        code = response.code,
+                        message = response.message
+                    )
+                }
+                Unit
             }
 
         override suspend fun getReceiverDailyQuestions(

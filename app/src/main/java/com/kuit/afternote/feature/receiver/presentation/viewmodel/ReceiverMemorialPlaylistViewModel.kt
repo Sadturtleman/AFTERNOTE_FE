@@ -34,7 +34,7 @@ class ReceiverMemorialPlaylistViewModel
     val uiState: StateFlow<ReceiverMemorialPlaylistUiState> = _uiState.asStateFlow()
 
     init {
-        val afternoteId = savedStateHandle.get<String>("afternoteId")?.toLongOrNull()
+        val afternoteId = (savedStateHandle["afternoteId"] as? String)?.toLongOrNull()
         val authCode = receiverAuthSessionHolder.getAuthCode()
 
         when {

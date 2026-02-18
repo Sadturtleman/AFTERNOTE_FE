@@ -11,61 +11,58 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryCategorySectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItemParams
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryDateSectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecordDeepMindScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
-    recordId: Long?,
-    title: String,
-    content: String,
-    onTitleChange: (String) -> Unit,
-    onContentChange: (String) -> Unit,
-    onDateClick: () -> Unit,
-    sendDate: String,
-    showDatePicker: Boolean,
-    onDatePickerDismiss: () -> Unit,
-    selectedCategory: String,
-    onCategoryChange: (String) -> Unit,
-    showCategoryDropdown: Boolean,
-    onCategoryClick: () -> Unit,
-    onCategoryDropdownDismiss: () -> Unit,
-    onRegisterClick: () -> Unit
+    params: RecordDeepMindScreenParams
 ) {
-    Scaffold { paddingValues ->
+    val content = params.contentState
+    val date = params.dateState
+    val category = params.categoryState
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
             item {
                 RecordSubTopbar(
                     text = "깊은 생각 기록하기",
-                    onLeftClock = onLeftClick,
-                    onRightClick = onRegisterClick
+                    onLeftClock = params.onLeftClick,
+                    onRightClick = params.onRegisterClick
                 )
             }
 
             item {
                 RecordDiaryContentItem(
-                    standard = "깊은 생각 기록하기",
-                    onDateSelected = { _, _, _ -> },
-                    title = title,
-                    onTitleChange = onTitleChange,
-                    content = content,
-                    onContentChange = onContentChange,
-                    onDateClick = {},
-                    sendDate = sendDate,
-                    showDatePicker = showDatePicker,
-                    onDatePickerDismiss = onDatePickerDismiss,
-                    selectedCategory = selectedCategory,
-                    onCategoryChange = onCategoryChange,
-                    showCategoryDropdown = showCategoryDropdown,
-                    onCategoryClick = onCategoryClick,
-                    onCategoryDropdownDismiss = onCategoryDropdownDismiss
+                    params = RecordDiaryContentItemParams(
+                        standard = "깊은 생각 기록하기",
+                        onDateSelected = { _, _, _ -> },
+                        title = content.title,
+                        onTitleChange = content.onTitleChange,
+                        content = content.content,
+                        onContentChange = content.onContentChange,
+                        dateSection = RecordDiaryDateSectionParams(
+                            onDateClick = {},
+                            sendDate = date.sendDate,
+                            showDatePicker = date.showDatePicker,
+                            onDatePickerDismiss = date.onDatePickerDismiss
+                        ),
+                        categorySection = RecordDiaryCategorySectionParams(
+                            selectedCategory = category.selectedCategory,
+                            onCategoryChange = category.onCategoryChange,
+                            showCategoryDropdown = category.showCategoryDropdown,
+                            onCategoryClick = category.onCategoryClick,
+                            onCategoryDropdownDismiss = category.onCategoryDropdownDismiss
+                        )
+                    )
                 )
             }
         }

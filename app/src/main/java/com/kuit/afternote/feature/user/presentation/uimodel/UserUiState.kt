@@ -57,6 +57,17 @@ data class ReceiverDetailUiState(
     val errorMessage: String? = null
 )
 
+data class EditReceiverUiState(
+    val receiverId: Long = 0L,
+    val name: String = "",
+    val relation: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val updateSuccess: Boolean = false
+)
+
 data class DailyQuestionAnswerItemUi(
     val dailyQuestionAnswerId: Long,
     val question: String,

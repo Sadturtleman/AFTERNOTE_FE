@@ -45,6 +45,11 @@ sealed interface SettingRoute {
     data object ReceiverRegisterRoute : SettingRoute
 
     @Serializable
+    data class ReceiverEditRoute(
+        val receiverId: String = ""
+    ) : SettingRoute
+
+    @Serializable
     data object PostDeliveryConditionRoute : SettingRoute
 
     @Serializable

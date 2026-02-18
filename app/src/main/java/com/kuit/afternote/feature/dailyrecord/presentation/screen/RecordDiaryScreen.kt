@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItemParams
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryDateSectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 
 /**
@@ -26,51 +28,40 @@ import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTo
 @Composable
 fun RecordDiaryScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
-
-    title: String,
-    content: String,
-    onTitleChange: (String) -> Unit,
-    onContentChange: (String) -> Unit,
-
-    //발송시간
-    onDateClick: () -> Unit,
-    sendDate: String,
-    showDatePicker: Boolean,
-    onDatePickerDismiss: () -> Unit,
-
-    //등록 버튼
-    onRegisterClick: () -> Unit,
-    onDateSelected: (Int, Int, Int) -> Unit = { _, _, _ -> },
+    params: RecordDiaryScreenParams
 ) {
-    Scaffold { paddingValues ->
+    val content = params.contentState
+    val date = params.dateState
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
             item {
                 RecordSubTopbar(
                     text = "일기 기록하기",
-                    onLeftClock = onLeftClick,
-                    onRightClick = onRegisterClick
+                    onLeftClock = params.onLeftClick,
+                    onRightClick = params.onRegisterClick
                 )
             }
 
             item {
                 RecordDiaryContentItem(
-                    standard = "일기 기록하기",
-                    onDateSelected = { year, month, day ->
-                        onDateSelected(year, month, day)
-                    },
-                    title = title,
-                    onTitleChange = onTitleChange,
-                    content = content,
-                    onContentChange = onContentChange,
-                    onDateClick = onDateClick,
-                    sendDate = sendDate,
-                    showDatePicker = showDatePicker,
-                    onDatePickerDismiss = onDatePickerDismiss,
+                    params = RecordDiaryContentItemParams(
+                        standard = "일기 기록하기",
+                        onDateSelected = date.onDateSelected,
+                        title = content.title,
+                        onTitleChange = content.onTitleChange,
+                        content = content.content,
+                        onContentChange = content.onContentChange,
+                        dateSection = RecordDiaryDateSectionParams(
+                            onDateClick = date.onDateClick,
+                            sendDate = date.sendDate,
+                            showDatePicker = date.showDatePicker,
+                            onDatePickerDismiss = date.onDatePickerDismiss
+                        )
+                    )
                 )
             }
         }

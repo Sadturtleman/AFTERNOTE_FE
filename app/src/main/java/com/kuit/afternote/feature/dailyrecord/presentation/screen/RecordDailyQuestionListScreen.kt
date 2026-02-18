@@ -13,8 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
@@ -38,7 +38,7 @@ fun RecordDailyQuestionListScreen(
     viewModel: MindRecordViewModel // ViewModel 주입
 ) {
     val today = LocalDate.now()
-    val records by viewModel.records.collectAsState() // UIModel 구독
+    val records by viewModel.records.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.loadRecords("DAILY_QUESTION")

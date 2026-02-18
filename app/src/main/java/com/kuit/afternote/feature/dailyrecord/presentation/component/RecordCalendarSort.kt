@@ -36,24 +36,9 @@ import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.White
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-/**
- * 기록들 정렬할 때 쓰이는 컴포넌트
- */
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun RecordCalendarSort(
-    modifier: Modifier = Modifier,
-    today: LocalDate,
-    markedDates: Set<String> = emptySet()
-) {
-    val year = today.year
-    val month = today.monthValue
-    val formatter = DateTimeFormatter.ofPattern("yyyy년 mm월", Locale.KOREA)
-    val markedDaysInMonth = markedDates.mapNotNull { dateStr ->
+private fun parseMarkedDaysInMonth(markedDates: Set<String>, year: Int, month: Int): Set<Int> =
+    markedDates.mapNotNull { dateStr ->
         runCatching {
             val parts = dateStr.split("-")
             if (parts.size == 3 &&
@@ -64,6 +49,95 @@ fun RecordCalendarSort(
             } else null
         }.getOrNull()
     }.filterNotNull().toSet()
+
+@Composable
+private fun CalendarDayCell(
+    modifier: Modifier,
+    day: Int,
+    isSelected: Boolean,
+    isMarked: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .padding(4.dp)
+            .clip(CircleShape)
+            .clickable(onClick = onClick)
+            .background(
+                if (isSelected) Color(0xFF328BFF) else Color.Transparent
+            )
+            .then(
+                if (isMarked) {
+                    Modifier.border(
+                        width = 2.dp,
+                        color = Color(0xFF328BFF),
+                        shape = CircleShape
+                    )
+                } else {
+                    Modifier
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = day.toString(),
+            fontSize = 18.sp,
+            color = if (isSelected) Color.White else Color.Black
+        )
+    }
+}
+
+@Composable
+private fun CalendarGrid(
+    year: Int,
+    month: Int,
+    markedDaysInMonth: Set<Int>,
+    selectedDate: Int,
+    onDateSelected: (Int) -> Unit
+) {
+    val daysInMonth = YearMonth.of(year, month).lengthOfMonth()
+    val startOffset = LocalDate.of(year, month, 1).dayOfWeek.value
+    val totalCells = startOffset + daysInMonth
+    val rows = (totalCells / 7) + if (totalCells % 7 != 0) 1 else 0
+
+    for (row in 0 until rows) {
+        Row {
+            for (col in 0..6) {
+                val day = row * 7 + col - startOffset + 1
+                if (day in 1..daysInMonth) {
+                    CalendarDayCell(
+                        modifier = Modifier.weight(1f),
+                        day = day,
+                        isSelected = day == selectedDate,
+                        isMarked = day in markedDaysInMonth,
+                        onClick = { onDateSelected(day) }
+                    )
+                } else {
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 기록들 정렬할 때 쓰이는 컴포넌트
+ */
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun RecordCalendarSort(
+    modifier: Modifier = Modifier,
+    today: LocalDate,
+    markedDates: Set<String> = emptySet()
+) {
+    val year = today.year
+    val month = today.monthValue
+    val markedDaysInMonth = parseMarkedDaysInMonth(markedDates, year, month)
     var selectedDate by remember { mutableStateOf(today.dayOfMonth) }
 
     Box(
@@ -80,11 +154,11 @@ fun RecordCalendarSort(
                     .size(120.dp, 34.dp)
                     .background(color = White)
                     .border(
-                        width = 1.dp, // 두께
-                        color = Color(0xFF328BFF), // 색상
-                        shape = RoundedCornerShape(20.dp) // 모양 (선택)
+                        width = 1.dp,
+                        color = Color(0xFF328BFF),
+                        shape = RoundedCornerShape(20.dp)
                     ),
-                contentAlignment = Alignment.Center // 가운데 정렬
+                contentAlignment = Alignment.Center
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -99,8 +173,7 @@ fun RecordCalendarSort(
                     Image(
                         painter = painterResource(R.drawable.ic_under),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp),
+                        modifier = Modifier.size(24.dp),
                         colorFilter = ColorFilter.tint(Color(0xFF328BFF))
                     )
                 }
@@ -110,65 +183,13 @@ fun RecordCalendarSort(
                     .padding(top = 16.dp)
                     .padding(horizontal = 16.dp)
             ) {
-                // 요일 헤더
-//                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-//                    listOf("일", "월", "화", "수", "목", "금", "토").forEach {
-//                        Text(text = it, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
-//                    }
-//                }
-
-                // 날짜 그리드 (예: 1일부터 30일까지)
-                val daysInMonth = YearMonth.of(year, month).lengthOfMonth()
-                val startOffset = LocalDate.of(year, month, 1).dayOfWeek.value
-                val totalCells = startOffset + daysInMonth
-                val rows = (totalCells / 7) + if (totalCells % 7 != 0) 1 else 0
-
-                for (row in 0 until rows) {
-                    Row {
-                        for (col in 0..6) {
-                            val day = row * 7 + col - startOffset + 1
-                            if (day in 1..daysInMonth) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f)
-                                        .padding(4.dp)
-                                        .clip(CircleShape)
-                                        .clickable(onClick = { selectedDate = day })
-                                        .background(
-                                            when {
-                                                day == selectedDate -> Color(0xFF328BFF)
-                                                else -> Color.Transparent
-                                            }
-                                        )                                        .then(
-                                            if (day in markedDaysInMonth) {
-                                                Modifier.border(
-                                                    width = 2.dp,
-                                                    color = Color(0xFF328BFF),
-                                                    shape = CircleShape
-                                                )
-                                            } else {
-                                                Modifier
-                                            }
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = day.toString(),
-                                        fontSize = 18.sp,
-                                        color = if (day == selectedDate) Color.White else Color.Black
-                                    )
-                                }
-                            } else {
-                                Spacer(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f)
-                                )
-                            }
-                        }
-                    }
-                }
+                CalendarGrid(
+                    year = year,
+                    month = month,
+                    markedDaysInMonth = markedDaysInMonth,
+                    selectedDate = selectedDate,
+                    onDateSelected = { selectedDate = it }
+                )
             }
         }
     }
