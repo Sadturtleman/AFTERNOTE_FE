@@ -114,6 +114,7 @@ data class DeliveryConditionResponseDto(
     val conditionType: DeliveryConditionTypeDto,
     val inactivityPeriodDays: Int? = null,
     val specificDate: String? = null,
+    val leaveMessage: String? = null,
     val conditionFulfilled: Boolean,
     val conditionMet: Boolean
 )
@@ -125,7 +126,8 @@ data class DeliveryConditionResponseDto(
 data class DeliveryConditionRequestDto(
     val conditionType: DeliveryConditionTypeDto,
     val inactivityPeriodDays: Int? = null,
-    val specificDate: String? = null
+    val specificDate: String? = null,
+    val leaveMessage: String? = null
 )
 
 // --- File API (POST /files/presigned-url) ---

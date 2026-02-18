@@ -22,21 +22,27 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.Label
+import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.SelectableRadioCard
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodOption
@@ -48,13 +54,16 @@ import com.kuit.afternote.feature.setting.presentation.model.TriggerConditionOpt
 import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionState
 import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionViewModel
 import com.kuit.afternote.feature.setting.presentation.viewmodel.PostDeliveryConditionViewModelContract
+import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray3
+import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.time.LocalDate
 
 @Composable
@@ -67,9 +76,22 @@ fun PostDeliveryConditionScreen(
     val selectedDeliveryMethod = state.selectedDeliveryMethod
     val selectedTriggerCondition = state.selectedTriggerCondition
     val selectedDate = state.selectedDate
+    val lastGreetingMessage = state.lastGreetingMessage
     val isLoading = state.isLoading
     val errorMessage = state.errorMessage
     var showDatePickerDialog by remember { mutableStateOf(false) }
+
+    val lastGreetingTextFieldState = rememberTextFieldState(initialText = lastGreetingMessage)
+    LaunchedEffect(lastGreetingMessage) {
+        if (lastGreetingTextFieldState.text.toString() != lastGreetingMessage) {
+            lastGreetingTextFieldState.edit { replace(0, length, lastGreetingMessage) }
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { lastGreetingTextFieldState.text.toString() }
+            .distinctUntilChanged()
+            .collect { viewModel.onLastGreetingChanged(it) }
+    }
 
     val deliveryMethods = listOf(
         DeliveryMethodOption.AutomaticTransfer,
@@ -94,132 +116,158 @@ fun PostDeliveryConditionScreen(
             }
         ) { paddingValues ->
             Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // 첫 번째 섹션: 정보 처리 방법 (전달 방식)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Label(text = "정보 전달 방법")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
+                // 첫 번째 섹션: 정보 처리 방법 (전달 방식)
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                 ) {
-                    deliveryMethods.forEach { method ->
-                        val option = object : ProcessingMethodOption {
-                            override val title: String = method.title
-                            override val description: String = method.description
-                        }
-                        val isSelected = selectedDeliveryMethod == method
-                        SelectableRadioCard(
-                            selected = isSelected,
-                            onClick = { viewModel.onDeliveryMethodSelected(method) },
-                            modifier = Modifier.fillMaxWidth(),
-                            content = {
-                                OptionRadioCardContent(
-                                    option = option,
-                                    selected = isSelected
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // 두 번째 섹션: 정보 처리 방법 (트리거 조건)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            ) {
-                Label(text = "정보 처리 방법")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // SelectedDateText - 특정 날짜가 선택되었을 때만 표시
-                if (selectedTriggerCondition == TriggerConditionOption.SpecificDate && selectedDate != null) {
-                    SelectedDateText(date = selectedDate)
                     Spacer(modifier = Modifier.height(16.dp))
-                }
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    triggerConditions.forEach { condition ->
-                        val option = object : ProcessingMethodOption {
-                            override val title: String = condition.title
-                            override val description: String = condition.description
-                        }
-                        val isSelected = selectedTriggerCondition == condition
-                        SelectableRadioCard(
-                            selected = isSelected,
-                            onClick = {
-                                viewModel.onTriggerConditionSelected(condition)
-                                if (condition == TriggerConditionOption.SpecificDate) {
-                                    showDatePickerDialog = true
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            content = {
-                                OptionRadioCardContent(
-                                    option = option,
-                                    selected = isSelected
-                                )
+                    Label(text = "정보 전달 방법")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        deliveryMethods.forEach { method ->
+                            val option = object : ProcessingMethodOption {
+                                override val title: String = method.title
+                                override val description: String = method.description
                             }
-                        )
+                            val isSelected = selectedDeliveryMethod == method
+                            SelectableRadioCard(
+                                selected = isSelected,
+                                onClick = { viewModel.onDeliveryMethodSelected(method) },
+                                modifier = Modifier.fillMaxWidth(),
+                                content = {
+                                    OptionRadioCardContent(
+                                        option = option,
+                                        selected = isSelected
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            // 구분선
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                thickness = 1.dp,
-                color = Gray3
-            )
+                // 두 번째 섹션: 정보 처리 방법 (트리거 조건)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Label(text = "정보 처리 방법")
 
-            Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            // 하단 안내 문구
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                BulletItem(text = "해당 정보는 지정된 조건이 충족 시에만 전달됩니다.")
-                BulletItem(text = "예기치 않은 상황에서도 설정된 방식에 따라 안전하게 전달됩니다.")
-            }
+                    // SelectedDateText - 특정 날짜가 선택되었을 때만 표시
+                    if (selectedTriggerCondition == TriggerConditionOption.SpecificDate && selectedDate != null) {
+                        SelectedDateText(date = selectedDate)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        triggerConditions.forEach { condition ->
+                            val option = object : ProcessingMethodOption {
+                                override val title: String = condition.title
+                                override val description: String = condition.description
+                            }
+                            val isSelected = selectedTriggerCondition == condition
+                            SelectableRadioCard(
+                                selected = isSelected,
+                                onClick = {
+                                    viewModel.onTriggerConditionSelected(condition)
+                                    if (condition == TriggerConditionOption.SpecificDate) {
+                                        showDatePickerDialog = true
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                content = {
+                                    OptionRadioCardContent(
+                                        option = option,
+                                        selected = isSelected
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
 
-            if (errorMessage != null) {
-                Text(
-                    text = errorMessage,
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray9
-                    ),
+                Spacer(modifier = Modifier.height(40.dp))
+
+                // 구분선
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    thickness = 1.dp,
+                    color = Gray3
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Label(text = "마지막 인삿말")
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                OutlineTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    textFieldState = lastGreetingTextFieldState,
+                    placeholder = stringResource(R.string.post_delivery_last_greeting_placeholder),
+                    containerColor = Gray1
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                ClickButton(
+                    color = B3,
+                    onButtonClick = { viewModel.onSaveLastGreeting() },
+                    title = stringResource(R.string.post_delivery_confirm),
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 하단 안내 문구
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    BulletItem(text = "해당 정보는 지정된 조건이 충족 시에만 전달됩니다.")
+                    BulletItem(text = "예기치 않은 상황에서도 설정된 방식에 따라 안전하게 전달됩니다.")
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray9
+                        ),
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
-        }
         }
 
         if (isLoading) {
@@ -284,6 +332,7 @@ private class FakePostDeliveryConditionViewModel : PostDeliveryConditionViewMode
                 selectedTriggerCondition = TriggerConditionOption.AppInactivity,
                 selectedDate = null,
                 inactivityPeriodDays = null,
+                lastGreetingMessage = "",
                 isLoading = false,
                 errorMessage = null
             )
@@ -298,6 +347,14 @@ private class FakePostDeliveryConditionViewModel : PostDeliveryConditionViewMode
     }
 
     override fun onDateSelected(date: LocalDate?) {
+        // No-op: Fake for Preview only; no persistence.
+    }
+
+    override fun onLastGreetingChanged(text: String) {
+        // No-op: Fake for Preview only; no persistence.
+    }
+
+    override fun onSaveLastGreeting() {
         // No-op: Fake for Preview only; no persistence.
     }
 }

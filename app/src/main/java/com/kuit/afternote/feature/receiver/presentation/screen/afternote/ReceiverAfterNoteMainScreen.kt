@@ -54,6 +54,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ReceiverAfterNoteMainScreen(
     senderName: String,
     onNavigateToFullList: () -> Unit = {},
+    onNavigateToPlaylist: () -> Unit = {},
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
     albumCovers: List<AlbumCover>,
@@ -119,7 +120,8 @@ fun ReceiverAfterNoteMainScreen(
                                 label = "추모 플레이리스트",
                                 songCount = songCount,
                                 albumCovers = albumCovers,
-                                onAddSongClick = null
+                                onAddSongClick = null,
+                                onPlaylistClick = onNavigateToPlaylist
                             )
                         },
                         lastWishContent = {

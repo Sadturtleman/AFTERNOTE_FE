@@ -29,6 +29,7 @@ data class PostDeliveryConditionState(
     val selectedTriggerCondition: TriggerConditionOption = TriggerConditionOption.AppInactivity,
     val selectedDate: LocalDate? = null,
     val inactivityPeriodDays: Int? = null,
+    val lastGreetingMessage: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -41,6 +42,8 @@ interface PostDeliveryConditionViewModelContract {
     fun onDeliveryMethodSelected(option: DeliveryMethodOption)
     fun onTriggerConditionSelected(option: TriggerConditionOption)
     fun onDateSelected(date: LocalDate?)
+    fun onLastGreetingChanged(text: String)
+    fun onSaveLastGreeting()
 }
 
 /**
@@ -73,6 +76,7 @@ constructor(
                         selectedTriggerCondition = conditionTypeToTriggerOption(condition.conditionType),
                         selectedDate = condition.specificDate?.let { iso -> LocalDate.parse(iso) },
                         inactivityPeriodDays = condition.inactivityPeriodDays,
+                        lastGreetingMessage = condition.leaveMessage ?: "",
                         isLoading = false,
                         errorMessage = null
                     )
@@ -114,6 +118,14 @@ constructor(
         viewModelScope.launch { updateDeliveryConditionApi() }
     }
 
+    override fun onLastGreetingChanged(text: String) {
+        _state.update { it.copy(lastGreetingMessage = text) }
+    }
+
+    override fun onSaveLastGreeting() {
+        viewModelScope.launch { updateDeliveryConditionApi() }
+    }
+
     private suspend fun updateDeliveryConditionApi() {
         val s = _state.value
         val conditionType = triggerOptionToConditionType(s.selectedTriggerCondition)
@@ -128,7 +140,8 @@ constructor(
         updateDeliveryConditionUseCase(
             conditionType = conditionType,
             inactivityPeriodDays = inactivityPeriodDays,
-            specificDate = specificDate
+            specificDate = specificDate,
+            leaveMessage = s.lastGreetingMessage.ifBlank { null }
         )
             .onSuccess { condition ->
                 _state.update {

@@ -64,6 +64,7 @@ data class DeliveryCondition(
     val conditionType: DeliveryConditionType,
     val inactivityPeriodDays: Int?,
     val specificDate: String?,
+    val leaveMessage: String? = null,
     val conditionFulfilled: Boolean,
     val conditionMet: Boolean
 )

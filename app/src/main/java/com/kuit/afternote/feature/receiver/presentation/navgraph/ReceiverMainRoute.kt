@@ -22,6 +22,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.presentation.screen.ReceiverAfterNoteScreen
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMemorialPlaylistRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfterNoteMainScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordDetailScreen
 import com.kuit.afternote.feature.receiver.presentation.screen.mindrecord.MindRecordScreen
@@ -77,6 +78,7 @@ fun ReceiverMainRoute(
     var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showTimeLetterList by remember { mutableStateOf(false) }
     var timeLetterListMode by remember { mutableStateOf(TimeLetterListMode.SortByDate) }
+    var showMemorialPlaylist by remember { mutableStateOf(false) }
     val timeLetterViewModel: ReceiverTimeLetterViewModel = hiltViewModel()
     val timeLetterUiState by timeLetterViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteTriggerViewModel: ReceiverAfternoteTriggerViewModel = hiltViewModel()
@@ -94,6 +96,9 @@ fun ReceiverMainRoute(
         when {
             selectedBottomNavItem == BottomNavItem.TIME_LETTER && showTimeLetterList -> {
                 showTimeLetterList = false
+            }
+            selectedBottomNavItem == BottomNavItem.AFTERNOTE && showMemorialPlaylist -> {
+                showMemorialPlaylist = false
             }
             selectedBottomNavItem == BottomNavItem.HOME -> {
                 receiverAuthSessionHolder.clearAuthCode()
@@ -230,15 +235,22 @@ fun ReceiverMainRoute(
                 BottomNavItem.AFTERNOTE -> {
                     val afternoteSenderName = receiverAuthSessionHolder.getSenderName().orEmpty()
                     Log.d(TAG_RECEIVER_MAIN, "AFTERNOTE tab getSenderName=${receiverAuthSessionHolder.getSenderName()}, orEmpty='$afternoteSenderName'")
-                    ReceiverAfterNoteMainScreen(
-                        senderName = afternoteSenderName,
-                        albumCovers = albumCovers,
-                        onNavigateToFullList = {
-                            navController.navigate("receiver_afternote_list")
-                        },
-                        onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
-                        showBottomBar = false
-                    )
+                    if (showMemorialPlaylist) {
+                        ReceiverMemorialPlaylistRoute(
+                            onBackClick = { showMemorialPlaylist = false }
+                        )
+                    } else {
+                        ReceiverAfterNoteMainScreen(
+                            senderName = afternoteSenderName,
+                            albumCovers = albumCovers,
+                            onNavigateToFullList = {
+                                navController.navigate("receiver_afternote_list")
+                            },
+                            onNavigateToPlaylist = { showMemorialPlaylist = true },
+                            onBackClick = { selectedBottomNavItem = BottomNavItem.HOME },
+                            showBottomBar = false
+                        )
+                    }
                 }
             }
         }

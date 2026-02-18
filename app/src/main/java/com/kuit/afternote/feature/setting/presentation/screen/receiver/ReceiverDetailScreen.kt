@@ -35,9 +35,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.feature.setting.presentation.component.ThumbSwitch
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -59,7 +61,8 @@ data class ReceiverDetailEditCallbacks(
     val onReceiverDetailImageClick: () -> Unit = {},
     val onDailyQuestionClick: () -> Unit = {},
     val onTimeLetterClick: () -> Unit = {},
-    val onAfternoteClick: () -> Unit = {}
+    val onAfternoteClick: () -> Unit = {},
+    val onMindRecordDeliveryChange: (Boolean) -> Unit = {}
 )
 
 @Immutable
@@ -70,7 +73,8 @@ data class ReceiverDetailScreenParams(
     val emailState: TextFieldState,
     val dailyQuestionCount: Int,
     val timeLetterCount: Int,
-    val afternoteCount: Int
+    val afternoteCount: Int,
+    val mindRecordDeliveryEnabled: Boolean = true
 )
 
 @Composable
@@ -167,8 +171,48 @@ fun ReceiverDetailScreen(
                     onClick = callbacks.onAfternoteClick
                 )
             }
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "전달 허용 기록",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Bold,
+                    color = Black
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = White, shape = RoundedCornerShape(8.dp))
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.daily_answer_title),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 22.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9
+                    )
+                )
+                ThumbSwitch(
+                    checked = params.mindRecordDeliveryEnabled,
+                    onCheckedChange = callbacks.onMindRecordDeliveryChange
+                )
+            }
+
+
+                Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -365,7 +409,8 @@ private fun ReceiverDetailScreenPreview() {
                 emailState = emailState,
                 dailyQuestionCount = 8,
                 timeLetterCount = 12,
-                afternoteCount = 4
+                afternoteCount = 4,
+                mindRecordDeliveryEnabled = true
             )
         )
     }

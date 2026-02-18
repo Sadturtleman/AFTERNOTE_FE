@@ -315,7 +315,8 @@ private fun ReceiverDetailRouteContent(
             emailState = emailState,
             dailyQuestionCount = detailState.dailyQuestionCount,
             timeLetterCount = detailState.timeLetterCount,
-            afternoteCount = detailState.afterNoteCount
+            afternoteCount = detailState.afterNoteCount,
+            mindRecordDeliveryEnabled = detailState.mindRecordDeliveryEnabled
         ),
         callbacks = ReceiverDetailEditCallbacks(
             onBackClick = { navController.popBackStack() },
@@ -348,6 +349,11 @@ private fun ReceiverDetailRouteContent(
                         receiverName = detailState.name
                     )
                 )
+            },
+            onMindRecordDeliveryChange = { enabled ->
+                route.receiverId.toLongOrNull()?.let { receiverId ->
+                    detailViewModel.setMindRecordDeliveryEnabled(receiverId, enabled)
+                }
             }
         )
     )

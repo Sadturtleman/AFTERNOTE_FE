@@ -133,4 +133,7 @@
     <string name="time_letter_recipients_count">%d명에게</string>
     <string name="content_description_expand_down">아래로</string>
     <string name="content_description_video_play">영상 재생</string>
+
+    <string name="post_delivery_last_greeting_placeholder">마지막 인사말을 입력해주세요</string>
+    <string name="post_delivery_confirm">확인</string>
 </resources>

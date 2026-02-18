@@ -53,6 +53,7 @@ data class ReceiverDetailUiState(
     val dailyQuestionCount: Int = 0,
     val timeLetterCount: Int = 0,
     val afterNoteCount: Int = 0,
+    val mindRecordDeliveryEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
