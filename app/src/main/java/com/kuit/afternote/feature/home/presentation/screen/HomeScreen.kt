@@ -98,7 +98,6 @@ fun HomeScreen(
         containerColor = Gray1,
         topBar = {
             HomeHeader(
-                onProfileClick = event::onProfileClick,
                 onSettingsClick = event::onSettingsClick
             )
         },
