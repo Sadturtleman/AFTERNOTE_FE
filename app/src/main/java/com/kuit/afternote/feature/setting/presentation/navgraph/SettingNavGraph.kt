@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ConfirmationPopup
+import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
@@ -64,9 +65,15 @@ import com.kuit.afternote.feature.user.presentation.viewmodel.EditReceiverViewMo
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 
-fun NavGraphBuilder.settingNavGraph(navController: NavController) {
+fun NavGraphBuilder.settingNavGraph(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {}
+) {
     composable<SettingRoute.SettingMainRoute> {
-        SettingMainRouteContent(navController)
+        SettingMainRouteContent(
+            navController = navController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
     }
     composable<SettingRoute.ConnectedAccountsRoute> {
         ConnectedAccountsScreen(onBackClick = { navController.popBackStack() })
@@ -225,7 +232,10 @@ private fun sampleNoticeItems(): List<NoticeItemUiModel> = List(10) { index ->
 private const val TAG_SETTING_NAV = "SettingNavGraph"
 
 @Composable
-private fun SettingMainRouteContent(navController: NavController) {
+private fun SettingMainRouteContent(
+    navController: NavController,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit
+) {
     val context = LocalContext.current
     val unhandledMessage = stringResource(R.string.setting_menu_not_connected)
     val logoutConfirmMessage = stringResource(R.string.setting_logout_confirm_message)
@@ -255,6 +265,7 @@ private fun SettingMainRouteContent(navController: NavController) {
     }
 
     SettingMainScreen(
+        onBottomNavTabSelected = onBottomNavTabSelected,
         onClick = { title ->
             when (title) {
                 "프로필 수정" -> navController.navigate(SettingRoute.ProfileEditRoute)

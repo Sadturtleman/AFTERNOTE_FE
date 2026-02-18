@@ -27,6 +27,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun SettingMainScreen(
     modifier: Modifier = Modifier,
+    onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     onClick: (String) -> Unit
 ) {
     val sections = listOf(
@@ -71,7 +72,12 @@ fun SettingMainScreen(
         topBar = {
             TopBar(title = "설정")
         },
-        bottomBar = { BottomNavigationBar(selectedItem = BottomNavItem.HOME) { } }
+        bottomBar = {
+            BottomNavigationBar(
+                selectedItem = BottomNavItem.HOME,
+                onItemSelected = onBottomNavTabSelected
+            )
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = modifier

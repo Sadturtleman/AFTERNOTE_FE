@@ -419,7 +419,10 @@ fun NavGraph(navHostController: NavHostController) {
             navController = navHostController,
             onNavItemSelected = onBottomNavTabSelected
         )
-        settingNavGraph(navController = navHostController)
+        settingNavGraph(
+            navController = navHostController,
+            onBottomNavTabSelected = onBottomNavTabSelected
+        )
 
         composable("receiver_main/{receiverId}") { backStackEntry ->
             val receiverId = backStackEntry.arguments?.getString("receiverId") ?: "1"
