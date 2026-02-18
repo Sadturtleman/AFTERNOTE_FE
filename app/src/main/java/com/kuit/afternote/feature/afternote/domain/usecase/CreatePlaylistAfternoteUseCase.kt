@@ -16,9 +16,11 @@ class CreatePlaylistAfternoteUseCase
     ) {
         suspend operator fun invoke(
             title: String,
-            playlist: AfternotePlaylistDto
+            playlist: AfternotePlaylistDto,
+            receiverIds: List<Long> = emptyList()
         ): Result<Long> = repository.createPlaylist(
             title = title,
-            playlist = playlist
+            playlist = playlist,
+            receiverIds = receiverIds
         )
     }

@@ -93,7 +93,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.success(3L)
 
@@ -149,7 +150,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(httpException)
 
@@ -180,7 +182,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(httpException)
 
@@ -211,7 +214,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(httpException)
 
@@ -242,7 +246,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(httpException)
 
@@ -270,7 +275,8 @@ class AfternoteEditViewModelTest {
                     actions = any(),
                     leaveMessage = any(),
                     credentialsId = any(),
-                    credentialsPassword = any()
+                    credentialsPassword = any(),
+                    receiverIds = any()
                 )
             } returns Result.failure(java.io.IOException("Network unavailable"))
 

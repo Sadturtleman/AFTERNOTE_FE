@@ -29,6 +29,7 @@ import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.detail.InfoRow
 import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.detail.ReceiversCard
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -37,6 +38,7 @@ import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
@@ -52,7 +54,8 @@ data class SocialNetworkDetailContent(
     val accountProcessingMethod: String = "",
     val processingMethods: List<String> = emptyList(),
     val message: String = "",
-    val finalWriteDate: String = "2025.11.26."
+    val finalWriteDate: String = "2025.11.26.",
+    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList()
 )
 
 /**
@@ -185,6 +188,8 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                 }
             }
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        ReceiversCard(receivers = content.afternoteEditReceivers)
         Spacer(modifier = Modifier.height(8.dp))
         InfoCard(
             modifier = Modifier.fillMaxWidth(),

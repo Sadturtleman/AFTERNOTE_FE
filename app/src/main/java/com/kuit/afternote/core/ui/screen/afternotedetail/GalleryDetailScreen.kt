@@ -1,18 +1,14 @@
 package com.kuit.afternote.core.ui.screen.afternotedetail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,20 +24,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
+import com.kuit.afternote.core.ui.component.detail.ReceiversCard
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.B1
-import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
-import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -209,7 +201,7 @@ private fun CardSection(detailState: GalleryDetailState) {
             finalWriteDate = detailState.finalWriteDate,
             informationProcessingMethod = detailState.informationProcessingMethod
         )
-        AfternoteEditReceiversCard(afternoteEditReceivers = detailState.afternoteEditReceivers)
+        ReceiversCard(receivers = detailState.afternoteEditReceivers)
         ProcessingMethodsCard(processingMethods = detailState.processingMethods)
         MessageCard(message = detailState.message)
     }
@@ -273,13 +265,10 @@ private fun InformationProcessingMethodText(informationProcessingMethod: String)
     val annotatedText =
         when (informationProcessingMethod) {
             "TRANSFER",
-            "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-                append("에게 정보 전달")
-            }
+            "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
             "ADDITIONAL",
             "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
                 append("에게 정보 전달")
             }
             else -> buildAnnotatedString {
@@ -295,36 +284,6 @@ private fun InformationProcessingMethodText(informationProcessingMethod: String)
             fontWeight = FontWeight.Medium,
             color = Gray9
         )
-    )
-}
-
-@Composable
-private fun AfternoteEditReceiversCard(afternoteEditReceivers: List<AfternoteEditReceiver>) {
-    if (afternoteEditReceivers.isEmpty()) return
-
-    InfoCard(
-        modifier = Modifier.fillMaxWidth(),
-        content = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(
-                    space = 8.dp
-                )
-            ) {
-                Text(
-                    text = "추가 수신자",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
-                )
-                afternoteEditReceivers.forEachIndexed { _, receiver ->
-                    AfternoteEditReceiverDetailItem(receiver = receiver)
-                }
-            }
-        }
     )
 }
 
@@ -393,57 +352,6 @@ private fun MessageCard(message: String) {
     )
 }
 
-/**
- * 수신자 상세 아이템 컴포넌트
- * 갤러리 상세 화면에서 사용하는 수신자 정보 표시
- */
-@Composable
-private fun AfternoteEditReceiverDetailItem(
-    modifier: Modifier = Modifier,
-    receiver: AfternoteEditReceiver
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(58.dp)
-                .clip(CircleShape)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.img_recipient_profile),
-                contentDescription = "프로필 사진",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        Column {
-            Text(
-                text = receiver.name,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Black
-                )
-            )
-            Text(
-                text = receiver.label,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray8
-                )
-            )
-        }
-    }
-}
-
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
@@ -453,7 +361,7 @@ private fun GalleryDetailScreenPreview() {
     AfternoteLightTheme {
         GalleryDetailScreen(
             detailState = GalleryDetailState(
-                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
                 processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
             ),
             callbacks = GalleryDetailCallbacks(
@@ -477,7 +385,7 @@ private fun GalleryDetailScreenWithDialogPreview() {
 
         GalleryDetailScreen(
             detailState = GalleryDetailState(
-                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
                 processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
             ),
             callbacks = GalleryDetailCallbacks(

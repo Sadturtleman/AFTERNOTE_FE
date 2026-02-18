@@ -19,13 +19,15 @@ class CreateSocialAfternoteUseCase
             actions: List<String>,
             leaveMessage: String? = null,
             credentialsId: String? = null,
-            credentialsPassword: String? = null
+            credentialsPassword: String? = null,
+            receiverIds: List<Long> = emptyList()
         ): Result<Long> = repository.createSocial(
             title = title,
             processMethod = processMethod,
             actions = actions,
             leaveMessage = leaveMessage,
             credentialsId = credentialsId,
-            credentialsPassword = credentialsPassword
+            credentialsPassword = credentialsPassword,
+            receiverIds = receiverIds
         )
     }
