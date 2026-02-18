@@ -76,12 +76,7 @@ fun ReceiverTimeLetterListScreen(
                 key = { item -> item.id }
             ) { item ->
                 TimeLetterBlockItem(
-                    receiverName = item.receivername,
-                    sendDate = item.sendDate,
-                    title = item.title,
-                    content = item.content,
-                    imageResId = item.imageResId,
-                    theme = item.theme,
+                    timeLetter = item,
                     onClick = { onItemClick(item) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))

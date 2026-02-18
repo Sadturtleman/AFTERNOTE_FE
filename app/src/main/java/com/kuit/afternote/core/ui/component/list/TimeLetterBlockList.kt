@@ -35,12 +35,7 @@ fun TimeLetterBlockList(
             key = { it.id }
         ) { letter ->
             TimeLetterBlockItem(
-                receiverName = letter.receivername,
-                sendDate = letter.sendDate,
-                title = letter.title,
-                content = letter.content,
-                imageResId = letter.imageResId,
-                theme = letter.theme,
+                timeLetter = letter,
                 onClick = { onItemClick(letter) }
             )
         }

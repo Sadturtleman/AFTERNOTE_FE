@@ -43,7 +43,8 @@ fun NavGraphBuilder.timeLetterNavGraph(
                         sendDate = letter.sendDate,
                         title = letter.title,
                         content = letter.content,
-                        createDate = letter.createDate
+                        createDate = letter.createDate,
+                        mediaUrls = letter.mediaUrls
                     )
                 )
             },
@@ -161,6 +162,7 @@ fun NavGraphBuilder.timeLetterNavGraph(
             title = route.title,
             content = route.content,
             createdAt = route.createDate,
+            mediaUrls = route.mediaUrls,
             onBackClick = { navController.popBackStack() }
         )
     }
