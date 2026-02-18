@@ -33,9 +33,7 @@ class ReceiverDetailViewModel
             .receiverId.toLongOrNull()
 
         init {
-            if (receiverId != null) {
-                loadReceiverDetail(receiverId)
-            } else {
+            if (receiverId == null) {
                 _uiState.update {
                     it.copy(name = "수신인", relation = "")
                 }
