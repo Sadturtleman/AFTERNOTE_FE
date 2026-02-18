@@ -185,7 +185,8 @@ object ReceiverDummies {
                     0 -> LetterTheme.BLUE
                     1 -> LetterTheme.YELLOW
                     else -> LetterTheme.PEACH
-                }
+                },
+                createDate = "2026.11.24"
             )
         }
     }
@@ -219,7 +220,8 @@ object ReceiverDummies {
                 title = "채연아 20번째 생일을 축하해",
                 content = "너가 태어난 게 엊그제같은데 벌써 스무살이라니..엄마가 없어도 씩씩하게 컸을 채연이를 상상하면 너무 기특해서 안아주고 싶...",
                 imageResId = R.drawable.ic_test_block,
-                theme = LetterTheme.PEACH
+                theme = LetterTheme.PEACH,
+                createDate = "2026.11.24"
             ),
             TimeLetterItem(
                 id = "2",
@@ -228,7 +230,8 @@ object ReceiverDummies {
                 title = "졸업 축하해 친구야",
                 content = "드디어 졸업이구나! 우리가 함께한 시간들이 정말 소중했어. 앞으로도 좋은 일만 가득하길...",
                 imageResId = null,
-                theme = LetterTheme.BLUE
+                theme = LetterTheme.BLUE,
+                createDate = "2026.11.24"
             ),
             TimeLetterItem(
                 id = "3",
@@ -237,7 +240,8 @@ object ReceiverDummies {
                 title = "새해 복 많이 받아",
                 content = "새해가 밝았어! 올해도 건강하고 행복하게 보내길 바라. 사랑해!",
                 imageResId = R.drawable.ic_test_block,
-                theme = LetterTheme.YELLOW
+                theme = LetterTheme.YELLOW,
+                createDate = "2026.11.24"
             ),
             TimeLetterItem(
                 id = "4",
@@ -246,7 +250,8 @@ object ReceiverDummies {
                 title = "오랜만이야 친구",
                 content = "정말 오랜만이다! 요즘 어떻게 지내? 다음에 시간 되면 같이 밥 먹자.",
                 imageResId = null,
-                theme = LetterTheme.PEACH
+                theme = LetterTheme.PEACH,
+                createDate = "2026.11.24"
             )
         )
 }

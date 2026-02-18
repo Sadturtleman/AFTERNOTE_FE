@@ -109,6 +109,7 @@ fun TimeLetterWriterScreen(
     onDraftCountClick: () -> Unit,
     onDateClick: () -> Unit,
     onTimeClick: () -> Unit,
+    onBackCLick: () -> Unit,
     onDatePickerDismiss: () -> Unit = {},
     onDateSelected: (year: Int, month: Int, day: Int) -> Unit = { _, _, _ -> },
     onTimePickerDismiss: () -> Unit = {},
@@ -219,7 +220,7 @@ fun TimeLetterWriterScreen(
                         onActionClick = onRegisterClick,
                         actionText = "등록",
                         navigationIcon = {
-                            IconButton(onClick = { keyboardController?.hide() }) {
+                            IconButton(onClick = { onBackCLick() }) {
                                 Image(
                                     painter = painterResource(R.drawable.img_writing),
                                     contentDescription = "키보드 숨기기",
@@ -782,6 +783,7 @@ private fun TimeLetterWriterScreenPreview() {
         onDateClick = {},
         onTimeClick = {},
         onTimePickerDismiss = {},
+        onBackCLick = {},
         onTimeSelected = { _, _ -> },
         receivers = listOf(
             TimeLetterReceiver(

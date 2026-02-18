@@ -125,7 +125,8 @@ class TimeLetterViewModel
                 title = t.title ?: "",
                 content = t.content ?: "",
                 imageResId = null,
-                theme = themes[index % themes.size]
+                theme = themes[index % themes.size],
+                createDate = formatSendAtForDisplay(t.createdAt)
             )
         }
 
