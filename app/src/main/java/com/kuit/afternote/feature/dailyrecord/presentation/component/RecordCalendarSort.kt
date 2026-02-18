@@ -19,6 +19,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,13 +47,24 @@ import java.util.Locale
 @Composable
 fun RecordCalendarSort(
     modifier: Modifier = Modifier,
-    today: LocalDate
+    today: LocalDate,
+    markedDates: Set<String> = emptySet()
 ) {
     val year = today.year
     val month = today.monthValue
     val formatter = DateTimeFormatter.ofPattern("yyyy년 mm월", Locale.KOREA)
-    val markedDates = listOf(1, 6, 8, 11, 13, 15, 16, 17, 25)
-    var selectedDate = today.dayOfMonth
+    val markedDaysInMonth = markedDates.mapNotNull { dateStr ->
+        runCatching {
+            val parts = dateStr.split("-")
+            if (parts.size == 3 &&
+                parts[0].toIntOrNull() == year &&
+                parts[1].toIntOrNull() == month
+            ) {
+                parts[2].toIntOrNull()
+            } else null
+        }.getOrNull()
+    }.filterNotNull().toSet()
+    var selectedDate by remember { mutableStateOf(today.dayOfMonth) }
 
     Box(
         modifier = Modifier
@@ -125,10 +140,10 @@ fun RecordCalendarSort(
                                                 day == selectedDate -> Color(0xFF328BFF)
                                                 else -> Color.Transparent
                                             }
-                                        ).then(
-                                            if (day in markedDates) {
+                                        )                                        .then(
+                                            if (day in markedDaysInMonth) {
                                                 Modifier.border(
-                                                    width = 1.dp,
+                                                    width = 2.dp,
                                                     color = Color(0xFF328BFF),
                                                     shape = CircleShape
                                                 )

@@ -41,7 +41,7 @@ fun RecordDailyQuestionListScreen(
     val records by viewModel.records.collectAsState() // UIModel 구독
 
     LaunchedEffect(Unit) {
-        viewModel.loadRecords()
+        viewModel.loadRecords("DAILY_QUESTION")
     }
 
     Scaffold(
@@ -82,12 +82,14 @@ fun RecordDailyQuestionListScreen(
                     RecordListItem(
                         record = record,
                         onDeleteClick = {
-                            viewModel.deleteRecord(record.id){
-                                viewModel.loadRecords()
-                            }
+                            viewModel.deleteRecord(
+                                recordId = record.id,
+                                recordType = record.type ?: "DAILY_QUESTION",
+                                onReload = { viewModel.loadRecords("DAILY_QUESTION") }
+                            )
                         },
-                        onEditClick = { record->
-                            onEditClick(record)
+                        onEditClick = { recordId ->
+                            onEditClick(recordId)
                         }
                     ) // 이제 UIModel을 그대로 넘김
                 }
