@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.data.api
 
+import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -53,4 +54,6 @@ interface DailyRecordApiService {
         @Body request: ReceiverEnabledRequest
     ): Response<Unit>
 
+    @GET("/api/v1/emotions")
+    suspend fun getEmotions(): Response<EmotionResponse>
 }
