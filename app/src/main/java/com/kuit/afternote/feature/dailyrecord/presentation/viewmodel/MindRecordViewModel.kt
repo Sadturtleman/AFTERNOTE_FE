@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
+import com.kuit.afternote.feature.dailyrecord.data.dto.Emotion
+import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.domain.usecase.*
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
@@ -54,12 +56,29 @@ class MindRecordViewModel @Inject constructor(
     private val deleteMindRecordUseCase: DeleteMindRecordUseCase,
     private val getMindRecordUseCase: GetMindRecordUseCase,
     private val editMindRecordUseCase: EditMindRecordUseCase,
-    private val getAfternotesUseCase: GetAfternotesUseCase
+    private val getAfternotesUseCase: GetAfternotesUseCase,
+    private val getEmotionsUseCase: GetEmotionsUseCase
 ) : ViewModel() {
 
     // --- State 정의 ---
     private val _records = MutableStateFlow<List<MindRecordUiModel>>(emptyList())
     val records: StateFlow<List<MindRecordUiModel>> = _records
+
+    private val _emotions = MutableStateFlow<EmotionResponse>(EmotionResponse(emotions = emptyList()))
+    val emotions: StateFlow<EmotionResponse> = _emotions
+    fun getEmotions() {
+        viewModelScope.launch {
+            Log.d("TRACE_VM", "1. getEmotions 시작")
+            try {
+                val response = getEmotionsUseCase()
+                _emotions.value = response
+                Log.d("TRACE_VM", "2. 성공: ${response.emotions}")
+            } catch (e: Exception) {
+                // 이 로그가 찍혀야 범인을 잡을 수 있습니다.
+                Log.e("TRACE_VM", "3. 실패: ${e.message}", e)
+            }
+        }
+    }
 
     // [추가] 리포트용 독립적 데이터 소스 (UI 데이터 스트림 분리)
     private val _dailyQuestionRecords = MutableStateFlow<List<MindRecordUiModel>>(emptyList())
@@ -81,7 +100,16 @@ class MindRecordViewModel @Inject constructor(
         val totalWeeklyCount: Int = 0,
         val dayCounts: Map<String, Int> = emptyMap()
     )
-
+    fun loadWeeklyReportData() {
+        viewModelScope.launch {
+            // 모든 리포트 데이터를 병렬 혹은 순차적으로 로드
+            launch { loadRecords("DAILY_QUESTION") }
+            launch { loadRecordsForDiaryList() }
+            launch { loadAfternoteRecords() }
+            launch { getEmotions() }
+            Log.d("emotion", emotions.value.emotions.toString())
+        }
+    }
     // [추가] 데일리 질문 주간 통계 스트림
     val dailyQuestionSummary: StateFlow<WeeklySummaryUiState> = _dailyQuestionRecords
         .map { calculateWeeklySummary(it) }

@@ -23,6 +23,18 @@ data class MindRecordListResponse(
     val data: MindRecordListData?
 )
 
+@Serializable
+data class EmotionResponse(
+    val emotions: List<Emotion>,
+    val summary: String = ""
+)
+
+@Serializable
+data class Emotion(
+    val keyword: String,
+    val percentage: Double
+)
+
 /**
  * 기록 목록 데이터
  */

@@ -5,10 +5,13 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,8 +37,11 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListViewModel
+import com.kuit.afternote.feature.dailyrecord.presentation.component.EmotionBubbleReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordTextComponent
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekTotal
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordWeekendReview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordweekendMindKeyword
@@ -59,9 +65,15 @@ fun RecordWeekendReportScreen(
     val weekState = mindRecordViewModel.totalSummary.collectAsStateWithLifecycle()
     val dailyState = mindRecordViewModel.dailyQuestionSummary.collectAsStateWithLifecycle()
     val afternoteState = mindRecordViewModel.afternoteSummary.collectAsStateWithLifecycle()
+    val emotionResponse by mindRecordViewModel.emotions.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        mindRecordViewModel.loadRecordsForDiaryList()
+        mindRecordViewModel.loadWeeklyReportData()
+    }
+    val records by mindRecordViewModel.records.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        mindRecordViewModel.loadRecords("DAILY_QUESTION")
     }
 
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.RECORD) }
@@ -148,10 +160,27 @@ fun RecordWeekendReportScreen(
                 )
             }
             item {
-                RecordweekendMindKeyword()
+                Spacer(Modifier.height(20.dp))
+                RecordTextComponent(title = "나의 감정 키워드")
+                EmotionBubbleReport(emotionResponse = emotionResponse)
             }
             item {
-                RecordWeekendReview()
+                RecordTextComponent(title = "나의 기록 다시 읽기")
+            }
+            items(records) { record ->
+                RecordListItem(
+                    record = record,
+                    onDeleteClick = {
+                        mindRecordViewModel.deleteRecord(
+                            recordId = record.id,
+                            recordType = record.type ?: "DAILY_QUESTION",
+                            onReload = { mindRecordViewModel.loadRecords("DAILY_QUESTION") }
+                        )
+                    },
+                    onEditClick = { recordId ->
+
+                    }
+                ) // 이제 UIModel을 그대로 넘김
             }
         }
     }
