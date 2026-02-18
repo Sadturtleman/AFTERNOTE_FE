@@ -3,9 +3,12 @@ package com.kuit.afternote.feature.receiverauth.data.mapper
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetterMedia
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedMindRecordAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterAuthResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterDetailAuthResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.TimeLetterMediaAuthResponseDto
 
 /**
  * receiver-auth API DTO를 receiver 도메인 엔티티로 매핑합니다.
@@ -14,7 +17,7 @@ import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterAuthRe
 fun ReceivedTimeLetterAuthResponseDto.toReceivedTimeLetter(): ReceivedTimeLetter =
     ReceivedTimeLetter(
         timeLetterId = id,
-        timeLetterReceiverId = id,
+        timeLetterReceiverId = timeLetterReceiverId,
         title = title,
         content = content,
         sendAt = sendAt,
@@ -22,8 +25,30 @@ fun ReceivedTimeLetterAuthResponseDto.toReceivedTimeLetter(): ReceivedTimeLetter
         senderName = senderName,
         deliveredAt = deliveredAt,
         createdAt = createdAt,
-        mediaList = emptyList(),
-        isRead = false
+        mediaList = mediaList.map { it.toReceivedTimeLetterMedia() },
+        isRead = isRead
+    )
+
+fun TimeLetterMediaAuthResponseDto.toReceivedTimeLetterMedia(): ReceivedTimeLetterMedia =
+    ReceivedTimeLetterMedia(
+        id = id,
+        mediaType = mediaType,
+        mediaUrl = mediaUrl
+    )
+
+fun ReceivedTimeLetterDetailAuthResponseDto.toReceivedTimeLetter(): ReceivedTimeLetter =
+    ReceivedTimeLetter(
+        timeLetterId = id,
+        timeLetterReceiverId = timeLetterReceiverId,
+        title = title,
+        content = content,
+        sendAt = sendAt,
+        status = status,
+        senderName = senderName,
+        deliveredAt = deliveredAt,
+        createdAt = createdAt,
+        mediaList = mediaList.map { it.toReceivedTimeLetterMedia() },
+        isRead = isRead
     )
 
 fun ReceivedMindRecordAuthResponseDto.toReceivedMindRecord(): ReceivedMindRecord =
