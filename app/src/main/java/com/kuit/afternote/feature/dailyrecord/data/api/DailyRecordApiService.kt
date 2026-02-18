@@ -54,4 +54,6 @@ interface DailyRecordApiService {
         @Body request: ReceiverEnabledRequest
     ): Response<Unit>
 
+    @GET("/api/v1/emotions")
+    suspend fun getEmotions(): Response<EmotionResponse>
 }
