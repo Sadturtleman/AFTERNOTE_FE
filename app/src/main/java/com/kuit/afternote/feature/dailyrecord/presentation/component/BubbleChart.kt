@@ -27,13 +27,15 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.Emotion
 import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.ui.theme.Sansneo
 
+// 1. 화면 비율(0.0 ~ 1.0)에 따른 위치 정의 (화면 중앙 기준이 아니라 전체 영역에서의 상대 좌표)
 private data class BubblePosition(val xRate: Float, val yRate: Float)
 
+// 4방향으로 고르게 분산되도록 좌표 수정 (좌상, 우상, 좌하, 우하)
 private val BubblePresets = listOf(
-    BubblePosition(0.25f, 0.35f), // 메인 (가장 큰 버블)
-    BubblePosition(0.55f, 0.20f), // 우상단
-    BubblePosition(0.80f, 0.50f), // 우측 중앙
-    BubblePosition(0.60f, 0.75f)  // 하단 중앙
+    BubblePosition(0.20f, 0.25f), // 좌측 상단 (메인 느낌)
+    BubblePosition(0.75f, 0.20f), // 우측 상단
+    BubblePosition(0.25f, 0.75f), // 좌측 하단
+    BubblePosition(0.80f, 0.70f)  // 우측 하단
 )
 
 private val BubbleGradients = listOf(
@@ -43,19 +45,19 @@ private val BubbleGradients = listOf(
     listOf(Color(0xFFBBDEFB), Color(0xFFE3F2FD))
 )
 
+// [Visual Update] 더미 데이터 색상을 "탁한 회색"에서 "밝고 깨끗한 회색/화이트 톤"으로 변경
+private val PlaceholderGradients = listOf(
+    listOf(Color(0xFFFFFFFF), Color(0xFFF5F5F5)), // 거의 흰색에 가까운 밝은 톤
+    listOf(Color(0xFFFAFAFA), Color(0xFFEEEEEE)), // 아주 연한 회색
+    listOf(Color(0xFFF0F0F0), Color(0xFFFFFFFF)),
+    listOf(Color(0xFFFFFFFF), Color(0xFFF0F4F8))  // 아주 미세한 쿨톤 섞임
+)
+
 private val PlaceholderEmotions = listOf(
     Emotion(keyword = "일상", percentage = 50.0),
     Emotion(keyword = "기록", percentage = 30.0),
     Emotion(keyword = "마음", percentage = 20.0),
     Emotion(keyword = "추억", percentage = 10.0)
-)
-
-// 데이터가 없을 때 사용할 차분한 회색 톤의 그라데이션
-private val PlaceholderGradients = listOf(
-    listOf(Color(0xFFF2F2F2), Color(0xFFE0E0E0)),
-    listOf(Color(0xFFF8F8F8), Color(0xFFECECEC)),
-    listOf(Color(0xFFF2F2F2), Color(0xFFF8F8F8)),
-    listOf(Color(0xFFE0E0E0), Color(0xFFF2F2F2))
 )
 
 @Composable
@@ -64,52 +66,55 @@ fun EmotionBubbleReport(
     userName: String = "박서연",
     emotionResponse: EmotionResponse
 ) {
-    // 데이터 유무 확인
-    val isEmpty = emotionResponse.emotions.isEmpty()
-    val emotions = if (isEmpty) PlaceholderEmotions else emotionResponse.emotions.take(4)
+    val isEmpty = emotionResponse.emotions.isNullOrEmpty()
+    // null-safe 처리 추가
+    val emotions = if (isEmpty) PlaceholderEmotions else (emotionResponse.emotions ?: emptyList()).take(4)
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // BoxWithConstraints를 사용하여 부모의 크기를 측정
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(280.dp),
-            contentAlignment = Alignment.Center
+            // 내부 요소들이 겹칠 수 있도록 TopStart 기준 정렬
+            contentAlignment = Alignment.TopStart
         ) {
-            val maxWidth = constraints.maxWidth.toFloat()
-            val maxHeight = constraints.maxHeight.toFloat()
+            val containerWidth = maxWidth
+            val containerHeight = maxHeight
 
             emotions.forEachIndexed { index, emotion ->
                 val preset = BubblePresets.getOrElse(index) { BubblePosition(0.5f, 0.5f) }
 
-                // 데이터가 없을 때는 Placeholder용 그라데이션 사용
                 val colors = if (isEmpty) {
                     PlaceholderGradients.getOrElse(index) { PlaceholderGradients[0] }
                 } else {
                     BubbleGradients.getOrElse(index) { BubbleGradients[0] }
                 }
 
-                val bubbleSize = (80 + (emotion.percentage * 0.6)).coerceAtMost(140.0).dp
+                val bubbleSize = (80 + (emotion.percentage ?: 0.0) * 0.6).coerceAtMost(140.0).dp
+
+                // [Logic Update] 4방향 분산 로직 (화면 크기 * 비율 - 버블 반경)
+                // 버블의 중심점이 해당 비율 좌표에 오도록 계산
+                val offsetX = (containerWidth * preset.xRate) - (bubbleSize / 2)
+                val offsetY = (containerHeight * preset.yRate) - (bubbleSize / 2)
 
                 EmotionBubble(
-                    keyword = emotion.keyword,
+                    keyword = emotion.keyword ?: "",
                     size = bubbleSize,
                     gradient = Brush.linearGradient(colors),
-                    isPlaceholder = isEmpty, // 상태 전달
-                    modifier = Modifier.offset(
-                        x = (preset.xRate * maxWidth / 3).dp - (bubbleSize / 2),
-                        y = (preset.yRate * maxHeight / 3).dp - (bubbleSize / 2)
-                    )
+                    isPlaceholder = isEmpty,
+                    modifier = Modifier.offset(x = offsetX, y = offsetY)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 요약 텍스트는 그대로 유지하여 기록을 유도
-        EmotionSummaryText(emotionResponse.summary)
+        // summary가 null일 경우 대비
+        EmotionSummaryText(if (isEmpty) "기록을 남기면 마음의 지도를 그려드릴게요." else (emotionResponse.summary ?: ""))
     }
 }
 
@@ -133,16 +138,16 @@ private fun EmotionBubble(
             text = keyword,
             fontSize = (size.value / 6).sp,
             fontWeight = FontWeight.Bold,
-            // 플레이스홀더일 때는 글자 색상을 연하게 조절
-            color = if (isPlaceholder) Color(0xFFAAAAAA) else Color(0xFF444444),
+            // 더미 데이터일 때 텍스트 색상을 더 연하게 하여 부드러운 느낌 강조
+            color = if (isPlaceholder) Color(0xFFC0C0C0) else Color(0xFF444444),
             textAlign = TextAlign.Center,
             fontFamily = Sansneo
         )
     }
 }
+
 @Composable
 private fun EmotionSummaryText(summary: String) {
-
     Text(
         text = summary,
         fontSize = 18.sp,
