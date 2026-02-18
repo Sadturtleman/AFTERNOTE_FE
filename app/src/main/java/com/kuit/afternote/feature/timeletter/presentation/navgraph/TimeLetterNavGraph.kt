@@ -118,7 +118,10 @@ fun NavGraphBuilder.timeLetterNavGraph(
             showRegisteredPopUp = uiState.showRegisteredPopUp,
             showDraftSavePopUp = uiState.showDraftSavePopUp,
             showWaitingAgainPopUp = uiState.showWaitingAgainPopUp,
-            onBackCLick = {navController.popBackStack()}
+            onBackCLick = { navController.popBackStack() },
+            selectedImageUriStrings = uiState.selectedImageUriStrings,
+            onAddImages = viewModel::addImageUris,
+            onRemoveImage = viewModel::removeImageUri
         )
     }
 

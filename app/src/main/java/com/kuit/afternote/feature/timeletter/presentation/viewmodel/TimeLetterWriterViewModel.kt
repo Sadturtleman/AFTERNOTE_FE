@@ -1,16 +1,19 @@
 package com.kuit.afternote.feature.timeletter.presentation.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterMediaType
 import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterStatus
-import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTimeLetterUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.UpdateTimeLetterUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.UploadTimeLetterImageUseCase
+import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterWriterUiState
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
@@ -42,12 +45,14 @@ class TimeLetterWriterViewModel
         private val updateTimeLetterUseCase: UpdateTimeLetterUseCase,
         private val getTimeLetterUseCase: GetTimeLetterUseCase,
         private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
+        private val uploadTimeLetterImageUseCase: UploadTimeLetterImageUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
         private companion object {
             private const val TAG = "TimeLetterWriterVM"
             private const val WAITING_AGAIN_POPUP_DURATION_MS = 2000L
+            private const val MAX_IMAGE_COUNT = 6
         }
         private val draftIdFromRoute: Long? =
             savedStateHandle.toRoute<TimeLetterRoute.TimeLetterWriterRoute>().draftId
@@ -73,6 +78,9 @@ class TimeLetterWriterViewModel
                 getTimeLetterUseCase(timeLetterId)
                     .onSuccess { letter ->
                         val (date, time) = parseSendAtToDateAndTime(letter.sendAt)
+                        val existingUrls = letter.mediaList
+                            .filter { it.mediaType == TimeLetterMediaType.IMAGE }
+                            .map { it.mediaUrl }
                         _uiState.update {
                             it.copy(
                                 draftId = letter.id,
@@ -80,6 +88,8 @@ class TimeLetterWriterViewModel
                                 content = letter.content ?: "",
                                 sendDate = date,
                                 sendTime = time,
+                                existingMediaUrls = existingUrls,
+                                selectedImageUriStrings = emptyList(),
                                 isLoading = false
                             )
                         }
@@ -172,6 +182,31 @@ class TimeLetterWriterViewModel
         fun updateContent(content: String) {
             _uiState.update { it.copy(content = content) }
             validateSaveEnabled()
+        }
+
+        /**
+         * 첨부 이미지 추가. 최대 [MAX_IMAGE_COUNT]장까지 (기존 + 새로 추가 합계).
+         *
+         * @param uris 갤러리에서 선택한 이미지 URI 목록
+         */
+        fun addImageUris(uris: List<Uri>) {
+            val newStrings = uris.map { it.toString() }
+            _uiState.update { state ->
+                val current = state.selectedImageUriStrings + state.existingMediaUrls
+                val toAdd = newStrings.take((MAX_IMAGE_COUNT - current.size).coerceAtLeast(0))
+                state.copy(selectedImageUriStrings = state.selectedImageUriStrings + toAdd)
+            }
+        }
+
+        /**
+         * 첨부 이미지 1장 제거
+         *
+         * @param uriString 제거할 이미지 URI 문자열
+         */
+        fun removeImageUri(uriString: String) {
+            _uiState.update {
+                it.copy(selectedImageUriStrings = it.selectedImageUriStrings - uriString)
+            }
         }
 
         /**
@@ -279,6 +314,24 @@ class TimeLetterWriterViewModel
         }
 
         /**
+         * 현재 상태 기준으로 mediaList 구성. 선택 이미지 업로드 후 기존 URL + 새 URL을 (IMAGE, url) 쌍으로 반환.
+         * 이미지가 하나도 없으면 null 반환.
+         */
+        private suspend fun buildMediaList(state: TimeLetterWriterUiState): Result<List<Pair<TimeLetterMediaType, String>>?> {
+            val existing = state.existingMediaUrls
+            val pending = state.selectedImageUriStrings
+            if (existing.isEmpty() && pending.isEmpty()) return Result.success(null)
+            val newUrls = mutableListOf<String>()
+            for (uriString in pending) {
+                uploadTimeLetterImageUseCase(uriString)
+                    .onSuccess { newUrls.add(it) }
+                    .onFailure { return Result.failure(it) }
+            }
+            val allUrls = existing + newUrls
+            return Result.success(allUrls.map { TimeLetterMediaType.IMAGE to it })
+        }
+
+        /**
          * 등록 버튼 클릭 시: 등록 완료 팝업을 잠깐 보여준 뒤 실제 타임레터 정식등록을 수행합니다.
          *
          * @param onSuccess 저장 성공 시 콜백
@@ -304,26 +357,32 @@ class TimeLetterWriterViewModel
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
                 hideWaitingAgainPopUp()
-                val result = if (state.draftId != null) {
-                    updateTimeLetterUseCase(
-                        timeLetterId = state.draftId,
-                        title = state.title.ifBlank { null },
-                        content = state.content.ifBlank { null },
-                        sendAt = sendAt,
-                        status = TimeLetterStatus.SCHEDULED,
-                        mediaList = null
-                    )
-                } else {
-                    createTimeLetterUseCase(
-                        title = state.title.ifBlank { null },
-                        content = state.content.ifBlank { null },
-                        sendAt = sendAt,
-                        status = TimeLetterStatus.SCHEDULED,
-                        mediaList = null,
-                        receiverIds = state.receiverIds,
-                        deliveredAt = sendAt
-                    )
-                }
+                val mediaListResult = buildMediaList(state)
+                val result = mediaListResult.fold(
+                    onSuccess = { mediaList ->
+                        if (state.draftId != null) {
+                            updateTimeLetterUseCase(
+                                timeLetterId = state.draftId,
+                                title = state.title.ifBlank { null },
+                                content = state.content.ifBlank { null },
+                                sendAt = sendAt,
+                                status = TimeLetterStatus.SCHEDULED,
+                                mediaList = mediaList
+                            )
+                        } else {
+                            createTimeLetterUseCase(
+                                title = state.title.ifBlank { null },
+                                content = state.content.ifBlank { null },
+                                sendAt = sendAt,
+                                status = TimeLetterStatus.SCHEDULED,
+                                mediaList = mediaList,
+                                receiverIds = state.receiverIds,
+                                deliveredAt = sendAt
+                            )
+                        }
+                    },
+                    onFailure = { Result.failure(it) }
+                )
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess { _ ->
                     Log.d(TAG, "saveTimeLetter onSuccess")
@@ -357,26 +416,32 @@ class TimeLetterWriterViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
-                val result = if (state.draftId != null) {
-                    updateTimeLetterUseCase(
-                        timeLetterId = state.draftId,
-                        title = state.title.ifBlank { null },
-                        content = state.content.ifBlank { null },
-                        sendAt = sendAt,
-                        status = TimeLetterStatus.DRAFT,
-                        mediaList = null
-                    )
-                } else {
-                    createTimeLetterUseCase(
-                        title = state.title.ifBlank { null },
-                        content = state.content.ifBlank { null },
-                        sendAt = sendAt,
-                        status = TimeLetterStatus.DRAFT,
-                        mediaList = null,
-                        receiverIds = state.receiverIds,
-                        deliveredAt = sendAt
-                    )
-                }
+                val mediaListResult = buildMediaList(state)
+                val result = mediaListResult.fold(
+                    onSuccess = { mediaList ->
+                        if (state.draftId != null) {
+                            updateTimeLetterUseCase(
+                                timeLetterId = state.draftId,
+                                title = state.title.ifBlank { null },
+                                content = state.content.ifBlank { null },
+                                sendAt = sendAt,
+                                status = TimeLetterStatus.DRAFT,
+                                mediaList = mediaList
+                            )
+                        } else {
+                            createTimeLetterUseCase(
+                                title = state.title.ifBlank { null },
+                                content = state.content.ifBlank { null },
+                                sendAt = sendAt,
+                                status = TimeLetterStatus.DRAFT,
+                                mediaList = mediaList,
+                                receiverIds = state.receiverIds,
+                                deliveredAt = sendAt
+                            )
+                        }
+                    },
+                    onFailure = { Result.failure(it) }
+                )
                 _uiState.update { it.copy(isLoading = false) }
                 result.onSuccess { _ ->
                     refreshDraftCount()
