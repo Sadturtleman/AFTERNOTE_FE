@@ -52,11 +52,11 @@ fun ReceiverTimeLetterListScreen(
                 onBackClick = onBackClick
             )
         }
-    ) { paddingValues ->
+    ) { contentPadding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(contentPadding),
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

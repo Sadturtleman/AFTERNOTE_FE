@@ -9,16 +9,12 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItemParams
+import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryDateSectionParams
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * 애프터노트 일기 기록하기 화면
@@ -32,56 +28,40 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun RecordDiaryScreen(
     modifier: Modifier = Modifier,
-    onLeftClick: () -> Unit,
-
-    title: String,
-    content: String,
-    onTitleChange: (String) -> Unit,
-    onContentChange: (String) -> Unit,
-
-    //발송시간
-    onDateClick: () -> Unit,
-    sendDate: String,
-    showDatePicker: Boolean,
-    onDatePickerDismiss: () -> Unit,
-
-    //등록 버튼
-    onRegisterClick: () -> Unit,
+    params: RecordDiaryScreenParams
 ) {
-//    var title by remember { mutableStateOf("") }
-//    var content by remember { mutableStateOf("") }
-    var sendDate by remember { mutableStateOf("") }
-    var showDatePicker by remember { mutableStateOf(false) }
-    val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
-    Scaffold { paddingValues ->
+    val content = params.contentState
+    val date = params.dateState
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
             item {
                 RecordSubTopbar(
                     text = "일기 기록하기",
-                    onLeftClock = onLeftClick,
-                    onRightClick = onRegisterClick
+                    onLeftClock = params.onLeftClick,
+                    onRightClick = params.onRegisterClick
                 )
             }
 
             item {
                 RecordDiaryContentItem(
-                    standard = "일기 기록하기",
-                    onDateSelected = { year, month, day ->
-                        val selectedDate = LocalDate.of(year, month, day)
-                        sendDate = selectedDate.format(formatter)   // 원하는 형식으로 변환
-                        showDatePicker = false
-                    } ,
-                    title = title,
-                    onTitleChange = onTitleChange,
-                    content = content,
-                    onContentChange = onContentChange,
-                    onDateClick = { showDatePicker = true },                    sendDate = sendDate,
-                    showDatePicker = showDatePicker,
-                    onDatePickerDismiss = onDatePickerDismiss,
+                    params = RecordDiaryContentItemParams(
+                        standard = "일기 기록하기",
+                        onDateSelected = date.onDateSelected,
+                        title = content.title,
+                        onTitleChange = content.onTitleChange,
+                        content = content.content,
+                        onContentChange = content.onContentChange,
+                        dateSection = RecordDiaryDateSectionParams(
+                            onDateClick = date.onDateClick,
+                            sendDate = date.sendDate,
+                            showDatePicker = date.showDatePicker,
+                            onDatePickerDismiss = date.onDatePickerDismiss
+                        )
+                    )
                 )
             }
         }

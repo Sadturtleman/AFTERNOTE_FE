@@ -44,8 +44,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.afternot
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountSection
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InfoMethodSection
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.InformationProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
@@ -379,6 +377,10 @@ private fun CategoryContent(
                     funeralVideoUrl = state.funeralVideoUrl,
                     funeralThumbnailUrl = state.funeralThumbnailUrl,
                     customLastWishText = state.customLastWishText,
+                    recipientSection = AfternoteEditReceiverSection(
+                        afternoteEditReceivers = state.afternoteEditReceivers,
+                        callbacks = state.galleryAfternoteEditReceiverCallbacks
+                    ),
                     onSongAddClick = onNavigateToAddSong,
                     onLastWishSelected = state::onLastWishSelected,
                     onCustomLastWishChanged = state::onCustomLastWishChanged,
@@ -394,21 +396,10 @@ private fun CategoryContent(
                 bottomPadding = bottomPadding,
                 params = GalleryAndFileEditContentParams(
                     messageState = state.messageState,
-                    infoMethodSection = InfoMethodSection(
-                        selectedMethod = state.selectedInformationProcessingMethod,
-                        onMethodSelected = state::onInformationProcessingMethodSelected
+                    recipientSection = AfternoteEditReceiverSection(
+                        afternoteEditReceivers = state.afternoteEditReceivers,
+                        callbacks = state.galleryAfternoteEditReceiverCallbacks
                     ),
-                    afternoteEditReceiverSection = if (
-                        state.selectedInformationProcessingMethod ==
-                        InformationProcessingMethod.TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER
-                    ) {
-                        AfternoteEditReceiverSection(
-                            afternoteEditReceivers = state.afternoteEditReceivers,
-                            callbacks = state.galleryAfternoteEditReceiverCallbacks
-                        )
-                    } else {
-                        null
-                    },
                     processingMethodSection = ProcessingMethodSection(
                         items = state.galleryProcessingMethods,
                         callbacks = state.galleryProcessingCallbacks
@@ -427,6 +418,10 @@ private fun CategoryContent(
                         passwordState = state.passwordState,
                         selectedMethod = state.selectedProcessingMethod,
                         onMethodSelected = state::onProcessingMethodSelected
+                    ),
+                    recipientSection = AfternoteEditReceiverSection(
+                        afternoteEditReceivers = state.afternoteEditReceivers,
+                        callbacks = state.galleryAfternoteEditReceiverCallbacks
                     ),
                     processingMethodSection = ProcessingMethodSection(
                         items = state.processingMethods,

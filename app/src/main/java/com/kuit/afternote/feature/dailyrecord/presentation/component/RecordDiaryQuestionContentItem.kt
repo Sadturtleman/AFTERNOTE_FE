@@ -20,6 +20,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun RecordDiaryQuestionContentItem(
     modifier: Modifier = Modifier,
+    questionText: String,
     title: String,
     onTitleChange: (String) -> Unit,
     content: String,
@@ -33,7 +34,7 @@ fun RecordDiaryQuestionContentItem(
                 .padding(start = 8.dp, bottom = 8.dp)
         ) {
             Text(
-                text = "오늘 하루, 누구에게 가장 고마웠나요?",
+                text = questionText.ifBlank { "질문을 불러오는 중..." },
                 color = Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Normal,
@@ -41,6 +42,7 @@ fun RecordDiaryQuestionContentItem(
             )
         }
         HorizontalDivider(color = Color.LightGray, thickness = 0.8.dp)
+
         BasicTextField(
             value = title,
             onValueChange = onTitleChange,
@@ -69,7 +71,6 @@ fun RecordDiaryQuestionContentItem(
         BasicTextField(
             value = content,
             onValueChange = onContentChange,
-            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 40.dp),

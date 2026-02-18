@@ -64,6 +64,9 @@ fun MemorialGuidelineEditContent(
                     )
                 )
             },
+            recipientContent = {
+                params.recipientSection?.let { RecipientDesignationSection(section = it) }
+            },
             videoContent = {
                 FuneralVideoUpload(
                     videoUrl = params.funeralVideoUrl,

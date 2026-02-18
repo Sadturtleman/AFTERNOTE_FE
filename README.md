@@ -63,7 +63,10 @@ KAKAO_NATIVE_APP_KEY=your_native_app_key_here
 ```
 
 **배포 빌드(Firebase App Distribution 등):**  
-CI에서 빌드하는 APK에서도 카카오 로그인이 동작하게 하려면, GitHub 저장소 **Settings → Secrets and variables → Actions**에 `KAKAO_NATIVE_APP_KEY` 시크릿을 추가하세요. 워크플로에서 이 값을 `local.properties`에 넣어 빌드합니다.
+1. GitHub **Settings → Secrets and variables → Actions**에 `KAKAO_NATIVE_APP_KEY` 시크릿을 추가하세요.  
+2. **키 해시(SHA-1) 등록:** 배포용 APK는 CI에서 사용하는 디버그 키스토어로 서명됩니다. Kakao 로그인이 "카카오 로그인에 실패했습니다"로 끝나면, [Kakao Developers](https://developers.kakao.com) **앱 설정 → 플랫폼 → Android → 키 해시**에 해당 빌드의 SHA-1을 등록해야 합니다.  
+   - CI 워크플로의 **Print debug keystore SHA-1 for Kakao** 단계 로그에 출력된 SHA-1 값을 복사해 Kakao 콘솔에 등록하세요.  
+   - 로컬 디버그 빌드용 SHA-1도 필요하면: `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android` 로 확인 후 등록할 수 있습니다.
 
 > **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다. 따라서 각 개발자/빌드 환경에서 위 값들을 직접 설정해야 합니다.
 

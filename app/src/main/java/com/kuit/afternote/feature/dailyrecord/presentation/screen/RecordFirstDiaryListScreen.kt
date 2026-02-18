@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
@@ -45,17 +46,23 @@ import java.time.LocalDate
 @Composable
 fun RecordFirstDiaryListScreen(
     modifier: Modifier = Modifier,
+    listMode: String = "DIARY",
     onBackClick: () -> Unit,
     onPlusRecordClick: () -> Unit,
     onEditClick: (Long) -> Unit,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    viewModel: MindRecordViewModel // ViewModel 주입
+    viewModel: MindRecordViewModel
 ) {
     val today = LocalDate.now()
-    val records by viewModel.records.collectAsState() // UIModel 구독
+    val records by viewModel.records.collectAsState()
+    val markedDates by viewModel.markedDates.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.loadRecords()
+    LaunchedEffect(key1 = listMode) {
+        if (listMode == "DEEP_THOUGHT") {
+            viewModel.loadRecords("DEEP_THOUGHT")
+        } else {
+            viewModel.loadRecordsForDiaryList()
+        }
     }
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -100,18 +107,31 @@ fun RecordFirstDiaryListScreen(
             modifier = Modifier.padding(paddingValues)
         ) {
             TopBar(
-                title = "일기",
+                title = if (listMode == "DEEP_THOUGHT") "깊은 생각" else "일기",
                 onBackClick = onBackClick,
             )
             LazyColumn {
                 item {
-                    RecordListSort(today = today)
+                    RecordListSort(
+                        today = today,
+                        markedDates = markedDates
+                    )
                 }
                 items(records) { record ->
                     RecordListItem(
                         record = record,
-                        onDeleteClick ={
-                            viewModel.deleteRecord(record.id)
+                        onDeleteClick = {
+                            viewModel.deleteRecord(
+                                recordId = record.id,
+                                recordType = record.type ?: listMode,
+                                onReload = {
+                                    if (listMode == "DEEP_THOUGHT") {
+                                        viewModel.loadRecords("DEEP_THOUGHT")
+                                    } else {
+                                        viewModel.loadRecordsForDiaryList()
+                                    }
+                                }
+                            )
                         },
                         onEditClick = { recordId ->
                             onEditClick(recordId)

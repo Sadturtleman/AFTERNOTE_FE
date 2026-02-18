@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.afternote.presentation.component.edit.content
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountSection
+import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
 
 /**
@@ -12,5 +13,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Pr
 data class SocialNetworkEditContentParams(
     val messageState: TextFieldState,
     val accountSection: AccountSection,
+    val recipientSection: AfternoteEditReceiverSection? = null,
     val processingMethodSection: ProcessingMethodSection = ProcessingMethodSection()
 )

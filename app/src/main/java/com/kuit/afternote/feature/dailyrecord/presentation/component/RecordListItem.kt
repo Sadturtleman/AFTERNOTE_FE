@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -18,17 +17,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.list.RecordQnAListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
-import java.time.LocalDate
 
 /**
  * 미리보기 창
@@ -42,8 +38,8 @@ fun RecordListItem(
     var expanded by remember { mutableStateOf(false) }
 
     RecordQnAListItem(
-        question = record.title,
-        answer = record.draftLabel,
+        question = record.title.ifBlank { "-" },
+        answer = (record.content ?: record.title).ifBlank { "-" },
         dateText = record.formattedDate,
         trailing = {
             Row(

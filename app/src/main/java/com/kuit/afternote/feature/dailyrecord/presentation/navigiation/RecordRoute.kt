@@ -19,7 +19,7 @@ sealed interface RecordRoute {
     data object QuestionRouteList : RecordRoute
 
     @Serializable
-    data object ListRoute : RecordRoute
+    data class ListRoute(val listMode: String = "DIARY") : RecordRoute
 
     @Serializable
     data object WeekendReportRoute : RecordRoute

@@ -1,9 +1,6 @@
 package com.kuit.afternote.core.ui.screen.afternotedetail
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -36,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialogContent
+import com.kuit.afternote.core.ui.component.detail.DeleteConfirmDialog
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
 import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
@@ -175,60 +170,14 @@ private fun GalleryDetailContent(
                 )
             }
 
-            GalleryDetailDeleteDialog(
-                showDialog = uiState.showDeleteDialog,
-                serviceName = detailState.serviceName,
-                onDismiss = uiState::hideDeleteDialog,
-                onConfirm = {
-                    uiState.hideDeleteDialog()
-                    callbacks.onDeleteConfirm()
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun GalleryDetailDeleteDialog(
-    showDialog: Boolean,
-    serviceName: String,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    if (!showDialog) return
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // 배경 오버레이 (반투명 검은색)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onDismiss() }
-        )
-
-        // 다이얼로그 컨텐츠 - 피그마 비율에 맞게 weight 사용
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        ) {
-            // 피그마 기준: 네비게이션 바로부터 247dp 비율에 맞게 weight 적용
-            Spacer(modifier = Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-            ) {
-                DeleteConfirmDialogContent(
-                    serviceName = serviceName,
-                    onDismiss = onDismiss,
-                    onConfirm = onConfirm
+            if (uiState.showDeleteDialog) {
+                DeleteConfirmDialog(
+                    serviceName = detailState.serviceName,
+                    onDismiss = uiState::hideDeleteDialog,
+                    onConfirm = {
+                        uiState.hideDeleteDialog()
+                        callbacks.onDeleteConfirm()
+                    }
                 )
             }
         }

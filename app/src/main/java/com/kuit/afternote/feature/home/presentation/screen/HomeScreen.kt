@@ -78,7 +78,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         profileViewModel.loadProfile()
-        recordViewModel.loadRecords()
+        recordViewModel.loadRecordsForDiaryList()
 
 
         content = content.copy(

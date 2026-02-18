@@ -2,17 +2,11 @@ package com.kuit.afternote.feature.dailyrecord.presentation.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,20 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryContentItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordDiaryQuestionContentItem
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
-import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordSubTopbar
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.CreateRecordParams
+import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.EditRecordParams
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
-import com.kuit.afternote.ui.theme.Gray1
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,26 +30,73 @@ fun RecordQuestionScreen(
     record: MindRecordUiModel?,
     modifier: Modifier = Modifier,
     onLeftClick: () -> Unit,
-    viewModel: MindRecordViewModel // ViewModel 주입
+    viewModel: MindRecordViewModel
 ) {
-    var title by remember { mutableStateOf("") }
-    var content by remember { mutableStateOf("") }
-    Scaffold { paddingValues ->
+    val uiState by viewModel.uiState.collectAsState()
+    val questionText = uiState.dailyQuestionText ?: ""
+    var title by remember { mutableStateOf(record?.title ?: "") }
+    var content by remember { mutableStateOf(record?.content ?: "") }
+
+    LaunchedEffect(record) {
+        if (record == null) {
+            viewModel.loadDailyQuestion()
+        } else {
+            title = record.title ?: ""
+            content = record.content ?: ""
+        }
+    }
+
+    LaunchedEffect(questionText) {
+        if (record == null && questionText.isNotBlank() && title.isEmpty()) {
+            title = questionText
+        }
+    }
+
+    fun onSaveClick() {
+        if (record != null) {
+            viewModel.editRecord(
+                params = EditRecordParams(
+                    recordId = record.id,
+                    title = title.ifBlank { questionText },
+                    content = content,
+                    date = record.originalDate,
+                    type = record.type ?: "DAILY_QUESTION",
+                    category = record.category,
+                    isDraft = false
+                ),
+                onSuccess = onLeftClick
+            )
+        } else {
+            viewModel.onCreateRecord(
+                params = CreateRecordParams(
+                    type = "DAILY_QUESTION",
+                    title = title.ifBlank { questionText },
+                    content = content,
+                    date = LocalDate.now().toString(),
+                    isDraft = false
+                ),
+                onSuccess = onLeftClick
+            )
+        }
+    }
+
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
             item {
                 RecordSubTopbar(
                     text = "데일리 질문 답변",
                     onLeftClock = onLeftClick,
-                    onRightClick = {}
+                    onRightClick = { onSaveClick() }
                 )
             }
 
             item {
                 RecordDiaryQuestionContentItem(
+                    questionText = record?.title?.ifBlank { questionText } ?: questionText,
                     title = title,
                     onTitleChange = { title = it },
                     content = content,

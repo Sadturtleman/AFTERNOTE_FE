@@ -20,6 +20,7 @@ data class MemorialGuidelineSlots(
     val photoContent: @Composable () -> Unit,
     val playlistContent: @Composable () -> Unit,
     val lastWishContent: @Composable () -> Unit,
+    val recipientContent: @Composable () -> Unit = {},
     val videoContent: @Composable () -> Unit
 )
 
@@ -48,6 +49,8 @@ fun MemorialGuidelineContent(
         Spacer(modifier = Modifier.height(sectionSpacing))
         slots.lastWishContent()
         Spacer(modifier = Modifier.height(sectionSpacing))
+        slots.recipientContent()
+        Spacer(modifier = Modifier.height(sectionSpacing))
         slots.videoContent()
         if (trailingSpacerHeight > 0.dp) {
             Spacer(modifier = Modifier.height(trailingSpacerHeight))
@@ -65,6 +68,7 @@ private fun MemorialGuidelineContentPreview() {
                 photoContent = { },
                 playlistContent = { },
                 lastWishContent = { },
+                recipientContent = { },
                 videoContent = { }
             )
         )
