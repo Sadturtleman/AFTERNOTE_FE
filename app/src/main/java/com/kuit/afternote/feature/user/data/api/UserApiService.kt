@@ -1,8 +1,6 @@
 package com.kuit.afternote.feature.user.data.api
 
 import com.kuit.afternote.data.remote.ApiResponse
-import com.kuit.afternote.feature.user.data.dto.DeliveryConditionRequestDto
-import com.kuit.afternote.feature.user.data.dto.DeliveryConditionResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
@@ -103,25 +101,4 @@ interface UserApiService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): ApiResponse<ReceiverDailyQuestionsResponseDto?>
-
-    /**
-     * 전달 조건 조회.
-     * GET /users/delivery-condition — 로그인한 사용자의 전달 조건 설정을 조회합니다.
-     *
-     * @return data: conditionType, inactivityPeriodDays, specificDate, conditionFulfilled, conditionMet
-     */
-    @GET("users/delivery-condition")
-    suspend fun getDeliveryCondition(): ApiResponse<DeliveryConditionResponseDto?>
-
-    /**
-     * 전달 조건 수정.
-     * PATCH /users/delivery-condition — 로그인한 사용자의 전달 조건을 설정하거나 변경합니다.
-     *
-     * @param body conditionType, inactivityPeriodDays, specificDate
-     * @return data: 동일한 DeliveryConditionResponseDto
-     */
-    @PATCH("users/delivery-condition")
-    suspend fun updateDeliveryCondition(
-        @Body body: DeliveryConditionRequestDto
-    ): ApiResponse<DeliveryConditionResponseDto?>
 }

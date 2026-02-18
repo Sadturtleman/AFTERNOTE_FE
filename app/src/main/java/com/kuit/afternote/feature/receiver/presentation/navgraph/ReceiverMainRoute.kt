@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,6 +73,9 @@ fun ReceiverMainRoute(
     albumCovers: List<AlbumCover>,
     receiverAuthSessionHolder: ReceiverAuthSessionHolder
 ) {
+    DisposableEffect(receiverAuthSessionHolder) {
+        onDispose { receiverAuthSessionHolder.clearAuthCode() }
+    }
     var selectedBottomNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
     var showMindRecordDetail by remember { mutableStateOf(false) }
     var mindRecordSelectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -96,7 +100,6 @@ fun ReceiverMainRoute(
                 showTimeLetterList = false
             }
             selectedBottomNavItem == BottomNavItem.HOME -> {
-                receiverAuthSessionHolder.clearAuthCode()
                 navController.popBackStack()
             }
             else -> {

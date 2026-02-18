@@ -17,5 +17,4 @@ interface VerifySelfViewModelContract {
     fun goToNextStep()
     fun goToPreviousStep(): VerifyStep?
     fun clearVerifyError()
-    fun submitDocuments(deathCertUri: String?, familyCertUri: String?)
 }

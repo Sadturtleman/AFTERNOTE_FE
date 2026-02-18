@@ -3,7 +3,6 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.receiver.domain.usecase.GetAfterNotesByAuthCodeUseCase
-import com.kuit.afternote.feature.receiver.domain.usecase.GetSenderMessageUseCase
 import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
 import com.kuit.afternote.feature.receiver.domain.usecase.GetTimeLettersByAuthCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,9 +17,8 @@ import javax.inject.Inject
 /**
  * 수신자 HOME에서 콘텐츠 개수(마음의 기록, 타임레터, 애프터노트) 및 leaveMessage를 로드하는 ViewModel.
  *
- * [loadHomeSummary]로 네 API를 병렬 호출하여 totalCount와 leaveMessage를 수집합니다.
- * leaveMessage는 GET /api/receiver-auth/message의 message 필드에서 가져옵니다.
- * [loadAfterNotes]는 "애프터노트 확인하러 가기" 버튼 클릭 시 afternoteTotalCount 갱신용으로 호출됩니다.
+ * [loadHomeSummary]로 세 API를 병렬 호출하여 totalCount를 수집합니다.
+ * [loadAfterNotes]는 "애프터노트 확인하러 가기" 버튼 클릭 시 leaveMessage 갱신용으로 호출됩니다.
  */
 @HiltViewModel
 class ReceiverAfternoteTriggerViewModel
@@ -28,8 +26,7 @@ class ReceiverAfternoteTriggerViewModel
     constructor(
         private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase,
         private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase,
-        private val getTimeLettersByAuthCodeUseCase: GetTimeLettersByAuthCodeUseCase,
-        private val getSenderMessageUseCase: GetSenderMessageUseCase
+        private val getTimeLettersByAuthCodeUseCase: GetTimeLettersByAuthCodeUseCase
     ) : ViewModel() {
 
     private val _leaveMessage = MutableStateFlow<String?>(null)
@@ -54,18 +51,12 @@ class ReceiverAfternoteTriggerViewModel
             val afternotesDeferred = async { getAfterNotesByAuthCodeUseCase(authCode) }
             val mindRecordsDeferred = async { getMindRecordsByAuthCodeUseCase(authCode) }
             val timeLettersDeferred = async { getTimeLettersByAuthCodeUseCase(authCode) }
-            val messageDeferred = async { getSenderMessageUseCase(authCode) }
-            awaitAll(
-                afternotesDeferred,
-                mindRecordsDeferred,
-                timeLettersDeferred,
-                messageDeferred
-            )
+            awaitAll(afternotesDeferred, mindRecordsDeferred, timeLettersDeferred)
 
-            messageDeferred.await().onSuccess { message ->
-                _leaveMessage.value = message?.takeIf { it.isNotBlank() }
-            }
             afternotesDeferred.await().onSuccess { result ->
+                val first =
+                    result.items.firstOrNull { it.leaveMessage?.isNotBlank() == true }
+                _leaveMessage.value = first?.leaveMessage
                 _afternoteTotalCount.value = result.totalCount
             }
             mindRecordsDeferred.await().onSuccess { result ->
@@ -87,6 +78,9 @@ class ReceiverAfternoteTriggerViewModel
         viewModelScope.launch {
             getAfterNotesByAuthCodeUseCase(authCode)
                 .onSuccess { result ->
+                    val first =
+                        result.items.firstOrNull { it.leaveMessage?.isNotBlank() == true }
+                    _leaveMessage.value = first?.leaveMessage
                     _afternoteTotalCount.value = result.totalCount
                 }
         }

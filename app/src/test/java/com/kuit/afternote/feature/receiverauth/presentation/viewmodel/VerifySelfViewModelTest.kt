@@ -1,10 +1,6 @@
 package com.kuit.afternote.feature.receiverauth.presentation.viewmodel
 
-import com.kuit.afternote.feature.receiverauth.domain.entity.DeliveryVerificationStatus
 import com.kuit.afternote.feature.receiverauth.domain.entity.ReceiverAuthVerifyResult
-import com.kuit.afternote.feature.receiverauth.domain.usecase.GetDeliveryVerificationStatusUseCase
-import com.kuit.afternote.feature.receiverauth.domain.usecase.SubmitDeliveryVerificationUseCase
-import com.kuit.afternote.feature.receiverauth.domain.usecase.UploadReceiverDocumentUseCase
 import com.kuit.afternote.feature.receiverauth.domain.usecase.VerifyReceiverAuthUseCase
 import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 import com.kuit.afternote.util.MainCoroutineRule
@@ -32,23 +28,12 @@ class VerifySelfViewModelTest {
     val mainRule = MainCoroutineRule()
 
     private lateinit var verifyReceiverAuthUseCase: VerifyReceiverAuthUseCase
-    private lateinit var uploadReceiverDocumentUseCase: UploadReceiverDocumentUseCase
-    private lateinit var submitDeliveryVerificationUseCase: SubmitDeliveryVerificationUseCase
-    private lateinit var getDeliveryVerificationStatusUseCase: GetDeliveryVerificationStatusUseCase
     private lateinit var viewModel: VerifySelfViewModel
 
     @Before
     fun setUp() {
         verifyReceiverAuthUseCase = mockk()
-        uploadReceiverDocumentUseCase = mockk()
-        submitDeliveryVerificationUseCase = mockk()
-        getDeliveryVerificationStatusUseCase = mockk()
-        viewModel = VerifySelfViewModel(
-            verifyReceiverAuthUseCase = verifyReceiverAuthUseCase,
-            uploadReceiverDocumentUseCase = uploadReceiverDocumentUseCase,
-            submitDeliveryVerificationUseCase = submitDeliveryVerificationUseCase,
-            getDeliveryVerificationStatusUseCase = getDeliveryVerificationStatusUseCase
-        )
+        viewModel = VerifySelfViewModel(verifyReceiverAuthUseCase)
     }
 
     @Test
@@ -126,75 +111,5 @@ class VerifySelfViewModelTest {
         val previous = viewModel.goToPreviousStep()
         assertEquals(VerifyStep.MASTER_KEY_AUTH, previous)
         assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
-    }
-
-    @Test
-    fun submitDocuments_whenDeathUriNull_setsSubmitErrorRequired() {
-        viewModel.updateMasterKey("auth-code")
-        viewModel.submitDocuments(null, "content://family")
-
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Required)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-    }
-
-    @Test
-    fun submitDocuments_whenFamilyUriNull_setsSubmitErrorRequired() {
-        viewModel.updateMasterKey("auth-code")
-        viewModel.submitDocuments("content://death", null)
-
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Required)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-    }
-
-    @Test
-    fun submitDocuments_whenSuccess_advancesToEndAndLoadsStatus() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.success("https://file1.pdf")
-        coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
-            Result.success(Unit)
-        val status = DeliveryVerificationStatus(
-            id = 1L,
-            status = "PENDING",
-            adminNote = null,
-            createdAt = "2025-01-01T00:00:00"
-        )
-        coEvery { getDeliveryVerificationStatusUseCase(any()) } returns Result.success(status)
-
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
-
-        assertEquals(VerifyStep.END, viewModel.uiState.value.currentStep)
-        assertNull(viewModel.uiState.value.submitError)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-        assertEquals(status, viewModel.uiState.value.deliveryVerificationStatus)
-    }
-
-    @Test
-    fun submitDocuments_whenUploadFails_setsSubmitError() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.failure(IOException("Network error"))
-
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Network)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-    }
-
-    @Test
-    fun submitDocuments_whenSubmitFails_setsSubmitError() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.success("https://file1.pdf")
-        coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
-            Result.failure(com.kuit.afternote.data.remote.ApiException(400, 400, "Invalid URL"))
-
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Server)
-        assertFalse(viewModel.uiState.value.isSubmitting)
     }
 }

@@ -1,27 +1,15 @@
 package com.kuit.afternote.feature.receiverauth.data.di
 
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfternoteDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfterNotesByAuthCodeRepository
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetSenderMessageRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetMindRecordsByAuthCodeRepository
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetTimeLetterDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetTimeLettersByAuthCodeRepository
 import com.kuit.afternote.feature.receiverauth.data.api.ReceiverAuthApiService
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.GetDeliveryVerificationStatusRepositoryImpl
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthAfternoteDetailRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthAfternoteRepositoryImpl
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthMessageRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthMindRecordRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthRepositoryImpl
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthTimeLetterDetailRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverAuthTimeLetterRepositoryImpl
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.ReceiverDocumentUploadRepositoryImpl
-import com.kuit.afternote.feature.receiverauth.data.repository.impl.SubmitDeliveryVerificationRepositoryImpl
 import com.kuit.afternote.feature.receiverauth.data.repository.iface.ReceiverAuthRepository
-import com.kuit.afternote.feature.receiverauth.domain.repository.iface.GetDeliveryVerificationStatusRepository
 import com.kuit.afternote.feature.receiverauth.domain.repository.iface.ReceiverAuthRepository as DomainReceiverAuthRepository
-import com.kuit.afternote.feature.receiverauth.domain.repository.iface.SubmitDeliveryVerificationRepository
-import com.kuit.afternote.feature.receiverauth.domain.repository.iface.UploadReceiverDocumentRepository
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.Binds
 import dagger.Module
@@ -49,12 +37,6 @@ abstract class ReceiverAuthModule {
 
     @Binds
     @Singleton
-    abstract fun bindGetTimeLetterDetailByAuthCodeRepository(
-        impl: ReceiverAuthTimeLetterDetailRepositoryImpl
-    ): GetTimeLetterDetailByAuthCodeRepository
-
-    @Binds
-    @Singleton
     abstract fun bindGetTimeLettersByAuthCodeRepository(
         impl: ReceiverAuthTimeLetterRepositoryImpl
     ): GetTimeLettersByAuthCodeRepository
@@ -70,36 +52,6 @@ abstract class ReceiverAuthModule {
     abstract fun bindGetAfterNotesByAuthCodeRepository(
         impl: ReceiverAuthAfternoteRepositoryImpl
     ): GetAfterNotesByAuthCodeRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindGetAfternoteDetailByAuthCodeRepository(
-        impl: ReceiverAuthAfternoteDetailRepositoryImpl
-    ): GetAfternoteDetailByAuthCodeRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindGetSenderMessageRepository(
-        impl: ReceiverAuthMessageRepositoryImpl
-    ): GetSenderMessageRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindUploadReceiverDocumentRepository(
-        impl: ReceiverDocumentUploadRepositoryImpl
-    ): UploadReceiverDocumentRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindSubmitDeliveryVerificationRepository(
-        impl: SubmitDeliveryVerificationRepositoryImpl
-    ): SubmitDeliveryVerificationRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindGetDeliveryVerificationStatusRepository(
-        impl: GetDeliveryVerificationStatusRepositoryImpl
-    ): GetDeliveryVerificationStatusRepository
 
     companion object {
         @Provides

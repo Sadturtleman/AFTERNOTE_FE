@@ -48,22 +48,3 @@ data class ReceiverDailyQuestionsResult(
     val items: List<DailyQuestionAnswerItem>,
     val hasNext: Boolean
 )
-
-// --- Delivery condition (GET/PATCH /users/delivery-condition) ---
-
-/** 전달 조건 타입 - 콘텐츠가 수신자에게 전달되는 조건. */
-enum class DeliveryConditionType {
-    NONE,
-    DEATH_CERTIFICATE,
-    INACTIVITY,
-    SPECIFIC_DATE
-}
-
-/** 전달 조건 설정 (조회/수정 응답). */
-data class DeliveryCondition(
-    val conditionType: DeliveryConditionType,
-    val inactivityPeriodDays: Int?,
-    val specificDate: String?,
-    val conditionFulfilled: Boolean,
-    val conditionMet: Boolean
-)

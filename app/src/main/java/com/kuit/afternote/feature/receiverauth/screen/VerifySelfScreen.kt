@@ -7,15 +7,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
@@ -36,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.button.SignUpContentButton
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.receiverauth.component.MasterKeyInputContent
@@ -140,12 +136,9 @@ fun VerifySelfScreen(
                 VerifyStep.UPLOAD_PDF_AUTH -> VerifySelfPdfStep(
                     deathCertificate = deathCertificate,
                     familyRelationCertificate = familyRelationCertificate,
-                    deathCertificateUriState = deathCertificateUriState,
-                    familyCertificateUriState = familyCertificateUriState,
                     pendingDocumentTargetState = pendingDocumentTargetState,
                     imagePickerLauncher = imagePickerLauncher,
                     filePickerLauncher = filePickerLauncher,
-                    uiState = uiState,
                     viewModel = viewModel
                 )
                 VerifyStep.END -> VerifySelfEndStep(
@@ -200,19 +193,15 @@ private fun VerifySelfMasterKeyStep(
 private fun VerifySelfPdfStep(
     deathCertificate: TextFieldState,
     familyRelationCertificate: TextFieldState,
-    deathCertificateUriState: MutableState<Uri?>,
-    familyCertificateUriState: MutableState<Uri?>,
     pendingDocumentTargetState: MutableState<PendingDocumentTarget?>,
     imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>,
     filePickerLauncher: ActivityResultLauncher<String>,
-    uiState: VerifySelfUiState,
     viewModel: VerifySelfViewModelContract
 ) {
-    val deathUri = deathCertificateUriState.value
-    val familyUri = familyCertificateUriState.value
-    val bothSelected = deathUri != null && familyUri != null
-
-    Column(modifier = Modifier.fillMaxSize()) {
+    SignUpContentButton(
+        onNextClick = { viewModel.goToNextStep() },
+        contentSpacing = 64.dp
+    ) {
         PdfInputContent(
             deadPdf = deathCertificate,
             familyPdf = familyRelationCertificate,
@@ -241,45 +230,6 @@ private fun VerifySelfPdfStep(
                 filePickerLauncher.launch("*/*")
             }
         )
-        if (uiState.submitError != null) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = when (val err = uiState.submitError) {
-                    is VerifyErrorType.Required ->
-                        stringResource(R.string.receiver_verify_documents_required)
-                    is VerifyErrorType.Network ->
-                        stringResource(R.string.receiver_verify_error_network)
-                    is VerifyErrorType.Server -> err.message
-                    VerifyErrorType.Unknown ->
-                        stringResource(R.string.receiver_verify_error_unknown)
-                    null -> ""
-                },
-                color = Red
-            )
-        }
-        if (uiState.isSubmitting) {
-            Spacer(modifier = Modifier.height(16.dp))
-            CircularProgressIndicator(
-                modifier = Modifier.padding(16.dp),
-                color = B3
-            )
-        }
-        Spacer(modifier = Modifier.height(64.dp))
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            ClickButton(
-                title = stringResource(R.string.receiver_verify_next_button),
-                onButtonClick = {
-                    viewModel.submitDocuments(
-                        deathUri?.toString(),
-                        familyUri?.toString()
-                    )
-                },
-                isTrue = bothSelected
-            )
-        }
     }
 }
 
@@ -297,9 +247,7 @@ private fun VerifySelfEndStep(
         },
         buttonTitle = stringResource(R.string.receiver_verify_complete_confirm)
     ) {
-        ReceiveEndContent(
-            deliveryVerificationStatus = uiState.deliveryVerificationStatus
-        )
+        ReceiveEndContent()
     }
 }
 
@@ -331,9 +279,6 @@ private class FakeVerifySelfViewModel : VerifySelfViewModelContract {
     }
     override fun goToPreviousStep(): VerifyStep? = null
     override fun clearVerifyError() {
-        // Fake: no-op for Preview.
-    }
-    override fun submitDocuments(deathCertUri: String?, familyCertUri: String?) {
         // Fake: no-op for Preview.
     }
 }

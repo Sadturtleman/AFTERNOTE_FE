@@ -1,13 +1,11 @@
 package com.kuit.afternote.feature.afternote.data.di
 
 import com.kuit.afternote.data.upload.MemorialThumbnailUploadRepositoryImpl
-import com.kuit.afternote.data.upload.MemorialVideoUploadRepositoryImpl
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.api.MusicApiService
 import com.kuit.afternote.feature.afternote.data.repository.AfternoteRepositoryImpl
 import com.kuit.afternote.feature.afternote.data.repository.MusicSearchRepositoryImpl
 import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialVideoUploadRepository
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import com.kuit.afternote.feature.afternote.domain.repository.iface.MusicSearchRepository
 import dagger.Binds
@@ -50,13 +48,6 @@ abstract class AfternoteRepositoryModule {
     abstract fun bindMemorialThumbnailUploadRepository(
         impl: MemorialThumbnailUploadRepositoryImpl
     ): MemorialThumbnailUploadRepository
-
-    @Suppress("unused")
-    @Binds
-    @Singleton
-    abstract fun bindMemorialVideoUploadRepository(
-        impl: MemorialVideoUploadRepositoryImpl
-    ): MemorialVideoUploadRepository
 
     companion object {
         @Provides

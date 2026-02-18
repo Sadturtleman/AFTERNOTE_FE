@@ -392,7 +392,7 @@ private fun ReceiverAfternoteListRouteContent(
         val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
         val serviceName = stringResource(stringResId)
         AfternoteListDisplayItem(
-            id = item.id.toString(),
+            id = item.sourceType,
             serviceName = serviceName,
             date = item.lastUpdatedAt,
             iconResId = iconResId

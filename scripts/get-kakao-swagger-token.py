@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
 """
-Get a backend JWT for Swagger by applying the Kakao token to POST /auth/social/login.
+Automation to get a token for Swagger "Available authorizations".
 
 Flow:
 1. Starts a local server on http://localhost:3000 to catch the OAuth redirect.
 2. Opens the Kakao authorize URL in the default browser.
 3. You log in with Kakao if prompted; redirect brings the code to this script.
-4. Script exchanges the code for a Kakao access_token.
-5. Applies that token to POST /auth/social/login with body:
-   { "provider": "KAKAO", "accessToken": "<kakao_access_token>" }
-6. Reads the response accessToken (and optionally refreshToken, newUser).
-7. Prints the service JWT accessToken for pasting into Swagger Authorize.
-
-API: POST /auth/social/login
-  Request:  { "provider": "KAKAO", "accessToken": "..." }
-  Response: { "status", "code", "message", "data": { "accessToken", "refreshToken", "newUser" } }
+4. Script exchanges the code for a Kakao access_token, then calls the backend
+   POST /auth/social/login to get the token used for Swagger.
+5. Prints the backend token (and Kakao access_token) for pasting into Swagger.
 
 Usage:
   python3 scripts/get-kakao-swagger-token.py
@@ -25,10 +19,8 @@ Requires: Python 3 (stdlib only). Port 3000 must be free.
 import json
 import urllib.parse
 import urllib.request
-import urllib.error
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread
-from typing import Tuple
 import webbrowser
 
 # OAuth / backend config (from your flow)
@@ -96,11 +88,7 @@ def exchange_code_for_token(code: str) -> str:
     return data.get("access_token", "")
 
 
-def backend_social_login(kakao_access_token: str) -> Tuple[dict, int]:
-    """
-    POST /auth/social/login with provider KAKAO and the Kakao accessToken.
-    Returns (parsed_response_json, http_status_code).
-    """
+def backend_social_login(kakao_access_token: str) -> dict:
     body = json.dumps({
         "provider": "KAKAO",
         "accessToken": kakao_access_token,
@@ -111,15 +99,8 @@ def backend_social_login(kakao_access_token: str) -> Tuple[dict, int]:
         method="POST",
         headers={"Content-Type": "application/json"},
     )
-    try:
-        with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read().decode()), resp.status
-    except urllib.error.HTTPError as e:
-        body = e.read().decode() if e.fp else ""
-        try:
-            return json.loads(body), e.code
-        except json.JSONDecodeError:
-            return {"message": body, "status": e.code}, e.code
+    with urllib.request.urlopen(req) as resp:
+        return json.loads(resp.read().decode())
 
 
 def main():
@@ -141,39 +122,30 @@ def main():
     if not kakao_token:
         print("Failed to get Kakao access token.")
         return 1
-    print("Calling backend POST /auth/social/login with Kakao accessToken...")
+    print("Calling backend POST /auth/social/login ...")
     try:
-        backend, status = backend_social_login(kakao_token)
+        backend = backend_social_login(kakao_token)
     except Exception as e:
-        print(f"Backend login request failed: {e}")
+        print(f"Backend login failed: {e}")
         print("Kakao access_token (for manual use):")
         print(kakao_token)
         return 1
-    if status != 200:
-        print(f"Backend returned HTTP {status}:")
-        print(json.dumps(backend, indent=2))
-        return 1
-    # Response: { "status", "code", "message", "data": { "accessToken", "refreshToken", "newUser" } }
-    data = backend.get("data") or {}
-    access_token = (
+    # Common response shapes: { "data": { "accessToken": "..." } } or { "accessToken": "..." }
+    data = backend.get("data", backend)
+    swagger_token = (
         data.get("accessToken")
         or data.get("access_token")
         or backend.get("accessToken")
         or backend.get("access_token")
     )
-    if access_token:
-        print("\n--- Service JWT accessToken (for Swagger Authorize) ---")
-        print(access_token)
+    if swagger_token:
+        print("\n--- Token for Swagger (Available authorizations) ---")
+        print(swagger_token)
         print("---")
-        refresh_token = data.get("refreshToken") or data.get("refresh_token")
-        new_user = data.get("newUser")
-        if refresh_token or new_user is not None:
-            print("(refreshToken and newUser are in the response; use accessToken above in Swagger.)")
         print("In Swagger UI: Authorize → paste the token (or Bearer <token> if required).")
     else:
-        print("Backend response (no accessToken in data):")
+        print("Backend response (no accessToken found):")
         print(json.dumps(backend, indent=2))
-        return 1
     return 0
 
 

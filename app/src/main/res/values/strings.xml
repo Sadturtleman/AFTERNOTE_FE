@@ -74,18 +74,6 @@
     <string name="receiver_verify_error_network">네트워크 연결을 확인해주세요.</string>
     <string name="receiver_verify_error_unknown">마스터 키 검증에 실패했습니다.</string>
     <string name="receiver_verify_complete_confirm">확인</string>
-    <string name="receiver_verify_documents_required">사망진단서와 가족관계증명서를 모두 업로드해주세요.</string>
-    <string name="receiver_verify_complete_title">열람 요청 완료</string>
-    <string name="receiver_verify_status_pending">현재 서류 확인중입니다.\n빠르게 처리하여 열람하실 수 있도록 하겠습니다.</string>
-    <string name="receiver_verify_status_approved">승인되었습니다. 열람이 가능합니다.</string>
-    <string name="receiver_verify_status_rejected">제출하신 서류 검토 결과 거절되었습니다. 다시 제출해 주세요.</string>
-    <string name="receiver_verify_document_upload_title">증빙 서류 업로드</string>
-    <string name="receiver_verify_document_upload_description">사망진단서와 가족관계증명서를 업로드 해주세요.\n담당자의 확인 후 승인됩니다.</string>
-    <string name="receiver_verify_death_cert_title">사망진단서 업로드</string>
-    <string name="receiver_verify_family_cert_title">가족관계증명서 업로드</string>
-    <string name="receiver_verify_document_input_label">서류 촬영 또는 파일 첨부</string>
-    <string name="receiver_verify_add_image">이미지 추가</string>
-    <string name="receiver_verify_add_file">파일 추가</string>
 
     <string name="login_kakao_button">카카오로 로그인</string>
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
