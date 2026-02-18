@@ -143,6 +143,9 @@ class TimeLetterViewModel
             val audioUrls = t.mediaList
                 .filter { it.mediaType == TimeLetterMediaType.AUDIO }
                 .map { it.mediaUrl }
+            val linkUrls = t.mediaList
+                .filter { it.mediaType == TimeLetterMediaType.DOCUMENT }
+                .map { it.mediaUrl }
             return TimeLetterItem(
                 id = t.id.toString(),
                 receivername = resolveReceiverDisplayText(t.receiverIds, receivers),
@@ -153,7 +156,8 @@ class TimeLetterViewModel
                 theme = themes[index % themes.size],
                 createDate = formatSendAtForDisplay(t.createdAt),
                 mediaUrls = imageUrls,
-                audioUrls = audioUrls
+                audioUrls = audioUrls,
+                linkUrls = linkUrls
             )
         }
 
