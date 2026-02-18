@@ -13,7 +13,8 @@ enum class TimeLetterStatus {
 enum class TimeLetterMediaType {
     IMAGE,
     VIDEO,
-    AUDIO
+    AUDIO,
+    DOCUMENT
 }
 
 data class TimeLetterMedia(

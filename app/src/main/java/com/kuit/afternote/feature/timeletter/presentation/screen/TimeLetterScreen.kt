@@ -49,6 +49,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
+import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItemCallbacks
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
@@ -181,14 +182,12 @@ fun TimeLetterScreen(
                                     key = { it.id }
                                 ) { letter ->
                                     TimeLetterListItem(
-                                        receiverName = letter.receivername,
-                                        sendDate = letter.sendDate,
-                                        title = letter.title,
-                                        content = letter.content,
-                                        imageResId = letter.imageResId,
-                                        onClick = { onLetterClick(letter) },
-                                        onEditClick = { onEditLetter(letter) },
-                                        onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
+                                        timeLetter = letter,
+                                        callbacks = TimeLetterListItemCallbacks(
+                                            onClick = { onLetterClick(letter) },
+                                            onEditClick = { onEditLetter(letter) },
+                                            onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
+                                        )
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
@@ -356,12 +355,7 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                                     key = { it.id }
                                 ) { letter ->
                                     TimeLetterListItem(
-                                        receiverName = letter.receivername,
-                                        sendDate = letter.sendDate,
-                                        title = letter.title,
-                                        content = letter.content,
-                                        imageResId = letter.imageResId,
-                                        onDeleteClick = {}
+                                        timeLetter = letter
                                     )
                                     Spacer(modifier = Modifier.height(18.dp))
                                 }
