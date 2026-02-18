@@ -162,7 +162,6 @@ class VerifySelfViewModel
                 .onSuccess {
                     _uiState.update {
                         it.copy(
-                            currentStep = VerifyStep.END,
                             isSubmitting = false,
                             submitError = null
                         )
@@ -186,7 +185,10 @@ class VerifySelfViewModel
             getDeliveryVerificationStatusUseCase(authCode)
                 .onSuccess { status ->
                     _uiState.update {
-                        it.copy(deliveryVerificationStatus = status)
+                        it.copy(
+                            deliveryVerificationStatus = status,
+                            currentStep = if (status.status == "APPROVED") VerifyStep.END else it.currentStep
+                        )
                     }
                 }
                 .onFailure { e ->

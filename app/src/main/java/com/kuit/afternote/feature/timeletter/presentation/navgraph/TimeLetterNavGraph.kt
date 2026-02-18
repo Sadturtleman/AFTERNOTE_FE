@@ -15,9 +15,8 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetai
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreen
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
+import com.kuit.afternote.feature.timeletter.presentation.navgraph.SELECTED_RECEIVER_ID_KEY
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
-
-private const val SELECTED_RECEIVER_ID_KEY = "selected_receiver_id"
 
 /**
  * 타임레터 기능의 네비게이션 그래프
@@ -34,7 +33,12 @@ fun NavGraphBuilder.timeLetterNavGraph(
             onBackClick = { navController.popBackStack() },
             onNavItemSelected = onNavItemSelected,
             onAddClick = { navController.navigate(TimeLetterRoute.TimeLetterWriterRoute()) },
-            onShowAllClick = { navController.navigate(TimeLetterRoute.ReceiveListRoute) },
+            onShowAllClick = {
+                navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.remove<Long>(SELECTED_RECEIVER_ID_KEY)
+                navController.navigate(TimeLetterRoute.ReceiveListRoute)
+            },
             onLetterClick = { letter ->
                 navController.navigate(
                     TimeLetterRoute.TimeLetterDetailRoute(
