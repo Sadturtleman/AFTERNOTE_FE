@@ -26,4 +26,14 @@ interface MindRecordRepository {
     suspend fun editMindRecord(recordId: Long, request: PostMindRecordRequest): MindRecordDetailResponse
 
     suspend fun getEmotions(): EmotionResponse
+
+    /**
+     * PATCH mind-records/{recordId}/receivers/{receiverId}
+     * 해당 마음의 기록을 해당 수신인에게 전달할지 여부를 설정합니다.
+     */
+    suspend fun setMindRecordReceiverEnabled(
+        recordId: Long,
+        receiverId: Long,
+        enabled: Boolean
+    )
 }

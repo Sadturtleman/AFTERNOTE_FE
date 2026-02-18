@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.receiver.domain.usecase.GetAfterNotesByAuthCodeUseCase
 import com.kuit.afternote.feature.receiver.domain.usecase.GetAfternoteDetailByAuthCodeUseCase
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverMemorialPlaylistUiState
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
@@ -18,8 +19,8 @@ import javax.inject.Inject
 /**
  * 수신자 추모 플레이리스트 화면 ViewModel.
  *
- * GET /api/receiver-auth/after-notes/{afternoteId} (X-Auth-Code)로 상세를 조회한 뒤
- * playlist.songs를 [PlaylistSongDisplay]로 변환하여 표시합니다.
+ * GET /api/receiver-auth/after-notes (X-Auth-Code)로 목록 조회 후 첫 항목으로 상세를 조회하거나,
+ * afternoteId가 있으면 해당 ID로 상세를 조회하여 playlist.songs를 [PlaylistSongDisplay]로 표시합니다.
  */
 @HiltViewModel
 class ReceiverMemorialPlaylistViewModel
@@ -27,6 +28,7 @@ class ReceiverMemorialPlaylistViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase,
         private val getAfternoteDetailByAuthCodeUseCase: GetAfternoteDetailByAuthCodeUseCase
     ) : ViewModel() {
 
@@ -46,15 +48,36 @@ class ReceiverMemorialPlaylistViewModel
                     )
                 }
             }
-            afternoteId == null -> {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "애프터노트 정보를 찾을 수 없습니다."
-                    )
+            afternoteId != null -> loadPlaylist(authCode = authCode, afternoteId = afternoteId)
+            else -> resolveFirstAfternoteAndLoad(authCode = authCode)
+        }
+    }
+
+    private fun resolveFirstAfternoteAndLoad(authCode: String) {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            getAfterNotesByAuthCodeUseCase(authCode)
+                .onSuccess { result ->
+                    val firstId = result.items.firstOrNull()?.id
+                    if (firstId == null) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "애프터노트 정보를 찾을 수 없습니다."
+                            )
+                        }
+                    } else {
+                        loadPlaylist(authCode = authCode, afternoteId = firstId)
+                    }
                 }
-            }
-            else -> loadPlaylist(authCode = authCode, afternoteId = afternoteId)
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message ?: "플레이리스트를 불러오는데 실패했습니다."
+                        )
+                    }
+                }
         }
     }
 

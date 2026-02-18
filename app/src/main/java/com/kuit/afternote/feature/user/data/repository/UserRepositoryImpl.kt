@@ -192,14 +192,16 @@ class UserRepositoryImpl
         override suspend fun updateDeliveryCondition(
             conditionType: DeliveryConditionType,
             inactivityPeriodDays: Int?,
-            specificDate: String?
+            specificDate: String?,
+            leaveMessage: String?
         ): Result<DeliveryCondition> =
             runCatching {
                 Log.d(TAG, "updateDeliveryCondition: conditionType=$conditionType")
                 val body = UserMapper.toDeliveryConditionRequestDto(
                     conditionType = conditionType,
                     inactivityPeriodDays = inactivityPeriodDays,
-                    specificDate = specificDate
+                    specificDate = specificDate,
+                    leaveMessage = leaveMessage
                 )
                 val response = api.updateDeliveryCondition(body)
                 Log.d(TAG, "updateDeliveryCondition: response=$response")
