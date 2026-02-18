@@ -41,6 +41,14 @@ interface UserRepository {
 
     suspend fun getReceiverDetail(receiverId: Long): Result<ReceiverDetail>
 
+    suspend fun updateReceiver(
+        receiverId: Long,
+        name: String,
+        relation: String,
+        phone: String?,
+        email: String?
+    ): Result<Unit>
+
     suspend fun getReceiverDailyQuestions(
         receiverId: Long,
         page: Int,

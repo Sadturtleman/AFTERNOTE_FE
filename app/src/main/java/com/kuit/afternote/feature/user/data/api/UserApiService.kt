@@ -86,6 +86,16 @@ interface UserApiService {
     ): ApiResponse<ReceiverDetailResponseDto?>
 
     /**
+     * 수신인 수정.
+     * PATCH /users/receivers/{receiverId} — 특정 수신인 정보를 수정합니다.
+     */
+    @PATCH("users/receivers/{receiverId}")
+    suspend fun updateReceiver(
+        @Path("receiverId") receiverId: Long,
+        @Body body: RegisterReceiverRequestDto
+    ): ApiResponse<Unit?>
+
+    /**
      * 수신인별 데일리 질문 답변 목록 조회 (페이지네이션).
      * GET /users/receivers/{receiverId}/daily-questions
      *
