@@ -86,11 +86,18 @@ data class MindRecordDetail(
 
 /**
  * 데일리 질문 조회 응답 (GET /daily-question)
- * 오늘 날짜 기준으로 서버가 1개의 질문을 반환합니다.
- * API 스펙: { questionId, content }
+ * API 응답: { status, code, message, data: { questionId, content } }
  */
 @Serializable
 data class DailyQuestionResponse(
+    val status: Int,
+    val code: Int,
+    val message: String,
+    val data: DailyQuestionDataDto?
+)
+
+@Serializable
+data class DailyQuestionDataDto(
     val questionId: Long,
     val content: String
 )
