@@ -26,9 +26,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Create local.properties
+        env:
+          KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
         run: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           echo "sdk.dir=$ANDROID_SDK_ROOT" > app/local.properties
+          if [ -n "$KAKAO_NATIVE_APP_KEY" ]; then
+            echo "KAKAO_NATIVE_APP_KEY=$KAKAO_NATIVE_APP_KEY" >> local.properties
+          fi
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
