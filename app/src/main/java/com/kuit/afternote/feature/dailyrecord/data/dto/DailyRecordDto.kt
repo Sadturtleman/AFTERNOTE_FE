@@ -1,7 +1,8 @@
 package com.kuit.afternote.feature.dailyrecord.data.dto
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-
+import kotlinx.serialization.json.JsonNames
 
 /**
  * 마음의 기록 API DTOs. (스웨거 기준)
@@ -27,7 +28,7 @@ data class MindRecordListResponse(
  */
 @Serializable
 data class MindRecordListData(
-    /** 기록 요약 리스트 */
+    /** 기록 요약 리스트 (각 항목에 content 포함) */
     val records: List<MindRecordSummary>,
     /** 표시된 날짜들 (달력 하이라이트용) */
     val markedDates: List<String>? = emptyList()
@@ -35,21 +36,23 @@ data class MindRecordListData(
 
 /**
  * 기록 요약 정보
+ * DAILY_QUESTION 타입은 API에서 question 필드로 질문 내용을 반환할 수 있음.
  */
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class MindRecordSummary(
     /** 기록 고유 ID */
     val recordId: Long,
     /** 기록 타입 (예: DIARY, LETTER 등) */
     val type: String,
-    /** 기록 제목 */
-    val title: String,
+    /** 기록 제목 (API: title 또는 question) */
+    @JsonNames("question", "title") val title: String? = null,
     /** 기록 날짜 (yyyy-MM-dd) */
     val date: String,
     /** 임시 저장 여부 */
     val isDraft: Boolean,
-    /** 기록 내용 (목록 API에서 제공 시). 없으면 null */
-    val content: String? = null
+    /** 기록 내용 (API: content 또는 answer). DAILY_QUESTION은 answer로 반환될 수 있음. */
+    @JsonNames("answer", "content") val content: String? = null
 )
 
 /**

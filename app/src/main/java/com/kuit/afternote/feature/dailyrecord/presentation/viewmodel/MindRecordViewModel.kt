@@ -120,7 +120,7 @@ class MindRecordViewModel @Inject constructor(
                 _records.value = domainRecords.map { summary ->
                     MindRecordUiModel(
                         id = summary.recordId,
-                        title = summary.title,
+                        title = summary.title ?: "",
                         formattedDate = runCatching { formatDate(summary.date) }
                             .getOrElse { summary.date },
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
@@ -151,7 +151,7 @@ class MindRecordViewModel @Inject constructor(
                 _records.value = sorted.map { summary ->
                     MindRecordUiModel(
                         id = summary.recordId,
-                        title = summary.title,
+                        title = summary.title ?: "",
                         formattedDate = runCatching { formatDate(summary.date) }
                             .getOrElse { summary.date },
                         draftLabel = if (summary.isDraft) "임시저장" else "완료",
