@@ -221,9 +221,9 @@ fun TimeLetterWriterScreen(
                         navigationIcon = {
                             IconButton(onClick = { keyboardController?.hide() }) {
                                 Image(
-                                    painter = painterResource(R.drawable.img_writing),
-                                    contentDescription = "키보드 숨기기",
-                                    modifier = Modifier.size(width = 20.dp, height = 22.dp)
+                                    painter = painterResource(R.drawable.ic_arrow_back),
+                                    contentDescription = "뒤로가기",
+                                    modifier = Modifier.size(width = 6.dp, height = 12.dp)
                                 )
                             }
                         },
