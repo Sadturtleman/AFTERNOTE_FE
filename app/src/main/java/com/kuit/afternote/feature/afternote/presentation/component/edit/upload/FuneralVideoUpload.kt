@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.afternote.presentation.component.edit.upload
 
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,6 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9
@@ -49,6 +54,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+private const val TAG = "FuneralVideoUpload"
+
 /**
  * 장례식에 남길 영상 추가 컴포넌트
  *
@@ -57,12 +64,15 @@ import kotlinx.coroutines.withContext
  * - 라벨과 버튼 간 간격: 6dp
  * - 큰 원형 버튼: B3 (#BDE0FF), 120dp
  * - 플러스 아이콘: 중앙에 위치, 24dp
+ *
+ * @param thumbnailUrl When set (e.g. from API when loading for edit), shown as thumbnail instead of extracting from video.
  */
 @Composable
 fun FuneralVideoUpload(
     modifier: Modifier = Modifier,
     label: String = "장례식에 남길 영상",
     videoUrl: String? = null,
+    thumbnailUrl: String? = null,
     onAddVideoClick: () -> Unit,
     onThumbnailBytesReady: (ByteArray?) -> Unit = {},
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -74,6 +84,11 @@ fun FuneralVideoUpload(
 
     LaunchedEffect(videoUrl) {
         if (videoUrl.isNullOrBlank()) {
+            thumbnailBitmap = null
+            onThumbnailBytesReady(null)
+            return@LaunchedEffect
+        }
+        if (!videoUrl.startsWith("content://")) {
             thumbnailBitmap = null
             onThumbnailBytesReady(null)
             return@LaunchedEffect
@@ -140,7 +155,7 @@ fun FuneralVideoUpload(
                 }
             }
         } else {
-            // 업로드 후 상태: 썸네일 또는 그라데이션 배경 + 재생 아이콘
+            // 업로드 후 상태: 썸네일(URL 또는 로컬 프레임) 또는 그라데이션 배경 + 재생 아이콘
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,15 +173,40 @@ fun FuneralVideoUpload(
                     )
                     .clickable(onClick = onAddVideoClick)
             ) {
-                if (thumbnailBitmap != null) {
-                    Image(
-                        bitmap = thumbnailBitmap!!,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                when {
+                    !thumbnailUrl.isNullOrBlank() -> {
+                        AsyncImage(
+                            model =
+                                ImageRequest.Builder(context)
+                                    .data(thumbnailUrl)
+                                    .httpHeaders(
+                                        NetworkHeaders.Builder().apply {
+                                            this["User-Agent"] = "Afternote Android App"
+                                        }.build()
+                                    )
+                                    .build(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.ic_add_circle),
+                            onError = { state ->
+                                Log.e(
+                                    TAG,
+                                    "Thumbnail load failed: url=$thumbnailUrl",
+                                    state.result.throwable
+                                )
+                            }
+                        )
+                    }
+                    thumbnailBitmap != null -> {
+                        Image(
+                            bitmap = thumbnailBitmap!!,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
-                // 중앙 재생 아이콘 (썸네일 위 또는 그라데이션 위)
                 Image(
                     painter = painterResource(R.drawable.ic_playback),
                     contentDescription = stringResource(R.string.content_description_video_play),

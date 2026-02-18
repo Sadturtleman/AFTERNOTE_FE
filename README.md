@@ -55,7 +55,17 @@ TEST_EMAIL=your_test_email@example.com
 TEST_PASSWORD=your_test_password
 ```
 
-> **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다.
+**카카오 로그인 사용 시 (필수):**  
+카카오 로그인을 쓰려면 [Kakao Developers](https://developers.kakao.com)에서 앱의 **네이티브 앱 키**를 발급받은 뒤, 같은 `local.properties`에 다음을 추가하세요. 없으면 앱에서 "카카오 SDK가 초기화되지 않았습니다" 메시지가 표시됩니다.
+
+```properties
+KAKAO_NATIVE_APP_KEY=your_native_app_key_here
+```
+
+**배포 빌드(Firebase App Distribution 등):**  
+CI에서 빌드하는 APK에서도 카카오 로그인이 동작하게 하려면, GitHub 저장소 **Settings → Secrets and variables → Actions**에 `KAKAO_NATIVE_APP_KEY` 시크릿을 추가하세요. 워크플로에서 이 값을 `local.properties`에 넣어 빌드합니다.
+
+> **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다. 따라서 각 개발자/빌드 환경에서 위 값들을 직접 설정해야 합니다.
 
 ### ⚠️ 중요: OS별 경로 하드코딩 금지
 

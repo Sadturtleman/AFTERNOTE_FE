@@ -93,6 +93,41 @@ data class ReceiverDailyQuestionsResponseDto(
     val hasNext: Boolean
 )
 
+// --- GET /users/delivery-condition, PATCH /users/delivery-condition (전달 조건) ---
+
+/**
+ * 전달 조건 타입 - 콘텐츠가 수신자에게 전달되는 조건.
+ */
+@Serializable
+enum class DeliveryConditionTypeDto {
+    NONE,
+    DEATH_CERTIFICATE,
+    INACTIVITY,
+    SPECIFIC_DATE
+}
+
+/**
+ * GET /users/delivery-condition 응답 data. 전달 조건 설정 응답.
+ */
+@Serializable
+data class DeliveryConditionResponseDto(
+    val conditionType: DeliveryConditionTypeDto,
+    val inactivityPeriodDays: Int? = null,
+    val specificDate: String? = null,
+    val conditionFulfilled: Boolean,
+    val conditionMet: Boolean
+)
+
+/**
+ * PATCH /users/delivery-condition 요청 body.
+ */
+@Serializable
+data class DeliveryConditionRequestDto(
+    val conditionType: DeliveryConditionTypeDto,
+    val inactivityPeriodDays: Int? = null,
+    val specificDate: String? = null
+)
+
 // --- File API (POST /files/presigned-url) ---
 
 /** Request for S3 presigned URL. directory: e.g. profiles, afternotes. extension: e.g. jpg, png. */

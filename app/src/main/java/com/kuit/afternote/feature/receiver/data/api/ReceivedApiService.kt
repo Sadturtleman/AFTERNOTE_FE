@@ -4,13 +4,10 @@ import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.receiver.data.dto.CreateMindRecordReceiverRequestDto
 import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequestDto
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 
 /**
  * 수신자(Received) API 서비스. (스웨거 기준)
- *
  * - POST /api/received/time-letters: 타임레터 수신자 등록
  * - POST /api/received/mind-records: 마인드레코드 수신자 등록
  */

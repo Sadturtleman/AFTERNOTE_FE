@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.data.remote.ApiException
+import com.kuit.afternote.feature.receiverauth.domain.usecase.GetDeliveryVerificationStatusUseCase
+import com.kuit.afternote.feature.receiverauth.domain.usecase.SubmitDeliveryVerificationUseCase
+import com.kuit.afternote.feature.receiverauth.domain.usecase.UploadReceiverDocumentUseCase
 import com.kuit.afternote.feature.receiverauth.domain.usecase.VerifyReceiverAuthUseCase
 import com.kuit.afternote.feature.receiverauth.uimodel.VerifyStep
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +27,10 @@ import javax.inject.Inject
 class VerifySelfViewModel
     @Inject
     constructor(
-        private val verifyReceiverAuthUseCase: VerifyReceiverAuthUseCase
+        private val verifyReceiverAuthUseCase: VerifyReceiverAuthUseCase,
+        private val uploadReceiverDocumentUseCase: UploadReceiverDocumentUseCase,
+        private val submitDeliveryVerificationUseCase: SubmitDeliveryVerificationUseCase,
+        private val getDeliveryVerificationStatusUseCase: GetDeliveryVerificationStatusUseCase
     ) : ViewModel(), VerifySelfViewModelContract {
 
     private val _uiState = MutableStateFlow(VerifySelfUiState())
@@ -107,6 +113,86 @@ class VerifySelfViewModel
      */
     override fun clearVerifyError() {
         _uiState.update { it.copy(verifyError = null) }
+    }
+
+    /**
+     * 증빙 서류(사망진단서, 가족관계증명서) 업로드 후 delivery-verification 제출.
+     *
+     * 두 URI가 모두 있을 때만 업로드·제출하고, 성공 시 END 단계로 이동한 뒤 인증 상태를 조회합니다.
+     */
+    override fun submitDocuments(deathCertUri: String?, familyCertUri: String?) {
+        if (deathCertUri.isNullOrBlank() || familyCertUri.isNullOrBlank()) {
+            _uiState.update {
+                it.copy(submitError = VerifyErrorType.Required)
+            }
+            return
+        }
+        val authCode = _uiState.value.masterKeyInput.trim()
+        if (authCode.isBlank()) {
+            _uiState.update { it.copy(submitError = VerifyErrorType.Unknown) }
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isSubmitting = true, submitError = null)
+            }
+            val deathUrlResult = uploadReceiverDocumentUseCase(authCode, deathCertUri)
+            val deathUrl = deathUrlResult.getOrElse { e ->
+                Log.e(TAG, "Upload death certificate failed", e)
+                _uiState.update {
+                    it.copy(
+                        isSubmitting = false,
+                        submitError = mapVerifyErrorToType(e)
+                    )
+                }
+                return@launch
+            }
+            val familyUrlResult = uploadReceiverDocumentUseCase(authCode, familyCertUri)
+            val familyUrl = familyUrlResult.getOrElse { e ->
+                Log.e(TAG, "Upload family relation certificate failed", e)
+                _uiState.update {
+                    it.copy(
+                        isSubmitting = false,
+                        submitError = mapVerifyErrorToType(e)
+                    )
+                }
+                return@launch
+            }
+            submitDeliveryVerificationUseCase(authCode, deathUrl, familyUrl)
+                .onSuccess {
+                    _uiState.update {
+                        it.copy(
+                            currentStep = VerifyStep.END,
+                            isSubmitting = false,
+                            submitError = null
+                        )
+                    }
+                    loadDeliveryVerificationStatus(authCode)
+                }
+                .onFailure { e ->
+                    Log.e(TAG, "Submit delivery verification failed", e)
+                    _uiState.update {
+                        it.copy(
+                            isSubmitting = false,
+                            submitError = mapVerifyErrorToType(e)
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun loadDeliveryVerificationStatus(authCode: String) {
+        viewModelScope.launch {
+            getDeliveryVerificationStatusUseCase(authCode)
+                .onSuccess { status ->
+                    _uiState.update {
+                        it.copy(deliveryVerificationStatus = status)
+                    }
+                }
+                .onFailure { e ->
+                    Log.e(TAG, "Load delivery verification status failed", e)
+                }
+        }
     }
 
     private fun mapVerifyErrorToType(e: Throwable): VerifyErrorType {

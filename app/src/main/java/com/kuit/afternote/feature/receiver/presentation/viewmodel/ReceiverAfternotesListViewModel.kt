@@ -43,6 +43,7 @@ class ReceiverAfternotesListViewModel
                             it.copy(
                                 items = data.items.map { item ->
                                     ReceivedAfternoteListItemUi(
+                                        id = item.id,
                                         sourceType = item.sourceType.orEmpty(),
                                         lastUpdatedAt = item.lastUpdatedAt.orEmpty()
                                     )
