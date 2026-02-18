@@ -100,7 +100,7 @@ data class AfternoteNavGraphParams(
     val onItemsUpdated: (List<AfternoteItem>) -> Unit,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
-    val userName: String,
+    val userNameProvider: () -> String,
     val editStateHandling: AfternoteEditStateHandling,
     val listRefresh: AfternoteListRefreshParams? = null,
     val onNavigateToSelectReceiver: () -> Unit = {}
@@ -728,7 +728,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }
@@ -737,7 +737,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteGalleryDetailRouteContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }
@@ -762,7 +762,7 @@ fun NavGraphBuilder.afternoteNavGraph(
         AfternoteMemorialGuidelineDetailContent(
             backStackEntry = backStackEntry,
             navController = navController,
-            userName = params.userName,
+            userName = params.userNameProvider(),
             onAfternoteDeleted = onAfternoteDeleted
         )
     }
