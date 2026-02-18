@@ -11,6 +11,7 @@ import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
  * @property sendDate 발송 날짜 (yyyy. MM. dd 형식)
  * @property sendTime 발송 시간 (HH:mm 형식)
  * @property selectedImageUriStrings 첨부할 이미지 URI 문자열 목록 (업로드 대기)
+ * @property selectedVoiceUriStrings 첨부할 음성/오디오 URI 문자열 목록 (업로드 대기)
  * @property existingMediaUrls draft 로드 시 기존 미디어 URL 목록 (IMAGE 타입만)
  * @property isLoading 로딩 상태
  * @property isSaveEnabled 저장 버튼 활성화 여부
@@ -24,6 +25,7 @@ import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
  * @property showDraftSavePopUp 임시저장 완료 팝업 표시 여부
  * @property showWaitingAgainPopUp 입력값 재확인 안내 팝업 표시 여부
  * @property draftId 수정 중인 임시저장 레터 ID (null이면 신규 작성)
+ * @property errorMessage 저장 실패 시 표시할 에러 메시지 (null이면 없음)
  */
 data class TimeLetterWriterUiState(
     val receiverIds: List<Long> = emptyList(),
@@ -32,6 +34,7 @@ data class TimeLetterWriterUiState(
     val sendDate: String = "",
     val sendTime: String = "",
     val selectedImageUriStrings: List<String> = emptyList(),
+    val selectedVoiceUriStrings: List<String> = emptyList(),
     val existingMediaUrls: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val isSaveEnabled: Boolean = false,
@@ -44,5 +47,6 @@ data class TimeLetterWriterUiState(
     val showRegisteredPopUp: Boolean = false,
     val showDraftSavePopUp: Boolean = false,
     val showWaitingAgainPopUp: Boolean = false,
-    val draftId: Long? = null
+    val draftId: Long? = null,
+    val errorMessage: String? = null
 )
