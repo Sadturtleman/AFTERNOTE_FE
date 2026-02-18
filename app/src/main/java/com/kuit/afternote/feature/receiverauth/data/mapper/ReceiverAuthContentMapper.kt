@@ -1,10 +1,15 @@
 package com.kuit.afternote.feature.receiverauth.data.mapper
 
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternoteDetail
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternotePlaylist
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
+import com.kuit.afternote.feature.receiver.domain.entity.ReceivedPlaylistSong
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetterMedia
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteAuthResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteDetailAuthResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteSongInfoDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedMindRecordAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterDetailAuthResponseDto
@@ -61,7 +66,28 @@ fun ReceivedMindRecordAuthResponseDto.toReceivedMindRecord(): ReceivedMindRecord
 
 fun ReceivedAfternoteAuthResponseDto.toReceivedAfternote(): ReceivedAfternote =
     ReceivedAfternote(
+        id = id,
         sourceType = category.orEmpty(),
         lastUpdatedAt = createdAt.orEmpty(),
         leaveMessage = leaveMessage
+    )
+
+fun ReceivedAfternoteSongInfoDto.toReceivedPlaylistSong(): ReceivedPlaylistSong =
+    ReceivedPlaylistSong(
+        title = title.orEmpty(),
+        artist = artist.orEmpty(),
+        coverUrl = coverUrl
+    )
+
+fun ReceivedAfternoteDetailAuthResponseDto.toReceivedAfternoteDetail(): ReceivedAfternoteDetail =
+    ReceivedAfternoteDetail(
+        id = id,
+        category = category,
+        title = title,
+        playlist = playlist?.let { p ->
+            ReceivedAfternotePlaylist(
+                atmosphere = p.atmosphere,
+                songs = p.songs.map { it.toReceivedPlaylistSong() }
+            )
+        }
     )

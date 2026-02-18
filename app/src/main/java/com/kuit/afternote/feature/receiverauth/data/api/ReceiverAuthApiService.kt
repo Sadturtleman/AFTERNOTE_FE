@@ -3,6 +3,8 @@ package com.kuit.afternote.feature.receiverauth.data.api
 import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthPresignedUrlRequestDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthPresignedUrlResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthVerifyRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthVerifyResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverMessageResponseDto
@@ -22,6 +24,7 @@ import retrofit2.http.POST
  * 수신자 인증번호 기반 콘텐츠 조회 API 서비스. (스웨거 기준)
  *
  * - POST /api/receiver-auth/verify: 인증번호 검증
+ * - POST /api/receiver-auth/presigned-url: 수신자 파일 업로드용 Presigned URL 생성
  * - POST /api/receiver-auth/delivery-verification: 사망확인 서류 제출
  * - GET /api/receiver-auth/delivery-verification/status: 사망확인 인증 상태 조회
  * - GET /api/receiver-auth/message: 발신자 메시지 조회
@@ -44,6 +47,21 @@ interface ReceiverAuthApiService {
     suspend fun verify(
         @Body body: ReceiverAuthVerifyRequestDto
     ): ApiResponse<ReceiverAuthVerifyResponseDto?>
+
+    /**
+     * 수신자 파일 업로드용 Presigned URL을 생성합니다.
+     *
+     * 수신자가 사망확인 서류(PDF, 이미지)를 S3에 업로드하기 위한 Presigned URL을 생성합니다.
+     *
+     * @param authCode 수신자 인증번호 (UUID, X-Auth-Code 헤더)
+     * @param body extension (예: pdf, jpg, png)
+     * @return presignedUrl, fileUrl, contentType
+     */
+    @POST("api/receiver-auth/presigned-url")
+    suspend fun getPresignedUrl(
+        @Header("X-Auth-Code") authCode: String,
+        @Body body: ReceiverAuthPresignedUrlRequestDto
+    ): ApiResponse<ReceiverAuthPresignedUrlResponseDto?>
 
     /**
      * 사망확인 서류(사망진단서, 가족관계증명서)를 제출합니다.

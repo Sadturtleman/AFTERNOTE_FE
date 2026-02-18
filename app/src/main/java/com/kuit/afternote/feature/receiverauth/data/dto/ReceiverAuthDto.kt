@@ -211,6 +211,34 @@ data class ReceivedAfternoteDetailAuthResponseDto(
     val playlist: ReceivedAfternotePlaylistInfoDto? = null
 )
 
+// --- POST /api/receiver-auth/presigned-url (수신자 파일 업로드용 Presigned URL 생성) ---
+
+/**
+ * 수신자 파일 업로드용 Presigned URL 요청.
+ *
+ * 수신자가 사망확인 서류(PDF, 이미지)를 S3에 업로드하기 위한 Presigned URL을 생성합니다.
+ *
+ * @param extension 파일 확장자 (예: pdf, jpg, png)
+ */
+@Serializable
+data class ReceiverAuthPresignedUrlRequestDto(
+    val extension: String
+)
+
+/**
+ * 수신자 파일 업로드용 Presigned URL 응답.
+ *
+ * @param presignedUrl S3 Presigned PUT URL (파일 업로드용)
+ * @param fileUrl 업로드 완료 후 사용할 파일 URL
+ * @param contentType PUT 요청 시 사용할 Content-Type 헤더 값
+ */
+@Serializable
+data class ReceiverAuthPresignedUrlResponseDto(
+    val presignedUrl: String,
+    val fileUrl: String,
+    val contentType: String
+)
+
 // --- POST /api/receiver-auth/delivery-verification (사망확인 서류 제출) ---
 
 /**

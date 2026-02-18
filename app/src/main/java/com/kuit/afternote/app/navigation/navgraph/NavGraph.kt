@@ -19,6 +19,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
@@ -31,6 +33,7 @@ import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
 import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
 import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
@@ -58,12 +61,15 @@ import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRou
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMemorialPlaylistRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
 import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
+import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
@@ -138,32 +144,42 @@ private fun FingerprintLoginRouteContent(
 
 @Composable
 private fun ReceiverAfternoteListRouteContent(navHostController: NavHostController) {
-    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     BackHandler { navHostController.popBackStack() }
-    val afternoteItems = remember(receiverProvider) {
-        receiverProvider.getAfternoteListSeedsForReceiverList().map { seed ->
-            AfternoteListDisplayItem(
-                id = seed.id,
-                serviceName = seed.serviceNameLiteral ?: "",
-                date = seed.date,
-                iconResId = seed.iconResId
-            )
-        }
+    val viewModel: ReceiverAfternotesListViewModel = hiltViewModel()
+    val afterNotesState by viewModel.uiState.collectAsStateWithLifecycle()
+    val afternoteItems = afterNotesState.items.map { item ->
+        val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
+        val serviceName = stringResource(stringResId)
+        AfternoteListDisplayItem(
+            id = item.id.toString(),
+            serviceName = serviceName,
+            date = item.lastUpdatedAt,
+            iconResId = iconResId
+        )
     }
-    var listState by remember {
-        mutableStateOf(ReceiverAfternoteListUiState(items = afternoteItems))
+    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
+    var selectedBottomNavItem by remember {
+        mutableStateOf(BottomNavItem.AFTERNOTE)
     }
+    val listState = ReceiverAfternoteListUiState(
+        selectedTab = selectedTab,
+        selectedBottomNavItem = selectedBottomNavItem,
+        items = afternoteItems
+    )
     ReceiverAfternoteListRoute(
         uiState = listState,
         onEvent = { event ->
-            listState = when (event) {
-                is ReceiverAfternoteListEvent.SelectTab ->
-                    listState.copy(selectedTab = event.tab)
+            when (event) {
+                is ReceiverAfternoteListEvent.SelectTab -> selectedTab = event.tab
                 is ReceiverAfternoteListEvent.SelectBottomNav ->
-                    listState.copy(selectedBottomNavItem = event.navItem)
+                    selectedBottomNavItem = event.navItem
                 is ReceiverAfternoteListEvent.ClickItem -> {
-                    navHostController.navigate("receiver_afternote_detail/${event.itemId}")
-                    listState
+                    val item = afterNotesState.items.find { it.id.toString() == event.itemId }
+                    if (item?.sourceType == "PLAYLIST") {
+                        navHostController.navigate("receiver_afternote_playlist/${event.itemId}")
+                    } else {
+                        navHostController.navigate("receiver_afternote_detail/${event.itemId}")
+                    }
                 }
             }
         }
@@ -424,6 +440,12 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverAfternoteDetailContent(
                 navHostController = navHostController,
                 itemId = backStackEntry.arguments?.getString("itemId")
+            )
+        }
+
+        composable("receiver_afternote_playlist/{afternoteId}") {
+            ReceiverMemorialPlaylistRoute(
+                onBackClick = { navHostController.popBackStack() }
             )
         }
 

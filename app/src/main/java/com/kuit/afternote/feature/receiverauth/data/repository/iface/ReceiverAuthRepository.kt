@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.receiverauth.data.repository.iface
 
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationResponseDto
+import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverAuthPresignedUrlResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceiverMessageResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteDetailAuthResponseDto
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteListAuthResponseDto
@@ -16,6 +17,20 @@ import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedTimeLetterListAu
  * 인증번호 검증(verify)은 Domain [com.kuit.afternote.feature.receiverauth.domain.repository.iface.ReceiverAuthRepository]를 사용합니다.
  */
 interface ReceiverAuthRepository {
+
+    /**
+     * 수신자 파일 업로드용 Presigned URL을 생성합니다.
+     *
+     * 수신자가 사망확인 서류(PDF, 이미지)를 S3에 업로드하기 위한 Presigned URL을 생성합니다.
+     *
+     * @param authCode 수신자 인증번호 (UUID)
+     * @param extension 파일 확장자 (예: pdf, jpg, png)
+     * @return presignedUrl, fileUrl, contentType
+     */
+    suspend fun getPresignedUrl(
+        authCode: String,
+        extension: String
+    ): Result<ReceiverAuthPresignedUrlResponseDto>
 
     /**
      * 사망확인 서류(사망진단서, 가족관계증명서)를 제출합니다.
