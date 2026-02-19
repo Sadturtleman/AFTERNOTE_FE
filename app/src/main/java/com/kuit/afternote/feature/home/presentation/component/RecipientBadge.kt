@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
+import com.kuit.afternote.ui.theme.Gray2
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
 
@@ -33,7 +34,7 @@ fun RecipientBadge(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
-        color = B3,
+        color = if (showCheckIcon) B3 else Gray2,
         onClick = onCLick
     ) {
         Row(
@@ -48,15 +49,31 @@ fun RecipientBadge(
                     modifier = Modifier.size(12.dp),
                     tint = androidx.compose.ui.graphics.Color.Unspecified
                 )
+                Text(
+                    text = text,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    color = Gray9
+                )
             }
-            Text(
-                text = text,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
-                color = Gray9
-            )
+            else {
+                Icon(
+                    painter = painterResource(R.drawable.unchecked),
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp),
+                    tint = androidx.compose.ui.graphics.Color.Unspecified
+                )
+                Text(
+                    text = "수신인 지정 미완료",
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    color = Gray9
+                )
+            }
         }
     }
 }
