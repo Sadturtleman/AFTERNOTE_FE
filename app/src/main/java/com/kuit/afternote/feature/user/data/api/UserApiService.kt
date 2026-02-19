@@ -14,6 +14,7 @@ import com.kuit.afternote.feature.user.data.dto.UserResponse
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
 import com.kuit.afternote.feature.user.data.dto.UserUpdatePushSettingRequest
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -23,7 +24,7 @@ import retrofit2.http.Query
 /**
  * User API 서비스. (스웨거 기준)
  *
- * - GET /users/me, PATCH /users/me
+ * - GET /users/me, PATCH /users/me, DELETE /users/me (회원 탈퇴)
  * - GET /users/push-settings, PATCH /users/push-settings
  * - GET /users/receivers, POST /users/receivers, GET /users/receivers/{receiverId}
  * - GET /users/receivers/{receiverId}/daily-questions
@@ -39,6 +40,14 @@ interface UserApiService {
         @Query("userId") userId: Long,
         @Body body: UserUpdateProfileRequest
     ): ApiResponse<UserResponse?>
+
+    /**
+     * DELETE /users/me — 회원 탈퇴. 로그인한 사용자의 계정을 삭제합니다. 모든 데이터가 영구 삭제되며 복구할 수 없습니다.
+     *
+     * @return 200 OK, data: {}
+     */
+    @DELETE("users/me")
+    suspend fun withdrawAccount(): ApiResponse<Unit?>
 
     /**
      * 푸시 알림 설정 조회.

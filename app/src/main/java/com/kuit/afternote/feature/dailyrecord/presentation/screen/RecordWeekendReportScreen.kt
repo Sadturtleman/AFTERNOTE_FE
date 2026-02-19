@@ -61,7 +61,6 @@ fun RecordWeekendReportScreen(
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
     mindRecordViewModel: MindRecordViewModel = hiltViewModel()
 ) {
-
     val weekState = mindRecordViewModel.totalSummary.collectAsStateWithLifecycle()
     val dailyState = mindRecordViewModel.dailyQuestionSummary.collectAsStateWithLifecycle()
     val afternoteState = mindRecordViewModel.afternoteSummary.collectAsStateWithLifecycle()
@@ -99,36 +98,6 @@ fun RecordWeekendReportScreen(
                     onBottomNavTabSelected(item)
                 }
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { },
-                modifier = Modifier.size(56.dp),
-                containerColor = Color.Transparent,
-                contentColor = Color.White,
-                shape = CircleShape
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFFBDE0FF), // B3
-                                    Color(0xFFFFE1CC) // 주황색 계열
-                                )
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "새 애프터노트 추가",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
         }
     ) { paddingValues ->
         LazyColumn(

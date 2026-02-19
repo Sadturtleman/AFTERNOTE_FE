@@ -235,7 +235,9 @@ fun PostDeliveryConditionScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 ClickButton(
                     color = B3,
-                    onButtonClick = { viewModel.onSaveLastGreeting() },
+                    onButtonClick = {
+                        viewModel.onSaveLastGreeting(lastGreetingTextFieldState.text.toString())
+                    },
                     title = stringResource(R.string.post_delivery_confirm),
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
@@ -354,7 +356,7 @@ private class FakePostDeliveryConditionViewModel : PostDeliveryConditionViewMode
         // No-op: Fake for Preview only; no persistence.
     }
 
-    override fun onSaveLastGreeting() {
+    override fun onSaveLastGreeting(lastGreetingText: String) {
         // No-op: Fake for Preview only; no persistence.
     }
 }

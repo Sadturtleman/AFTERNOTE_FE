@@ -12,6 +12,7 @@ import com.kuit.afternote.feature.timeletter.domain.usecase.CreateTimeLetterUseC
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTimeLetterUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.GetTemporaryTimeLettersUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.UpdateTimeLetterUseCase
+import com.kuit.afternote.feature.timeletter.domain.usecase.UploadTimeLetterAudioUseCase
 import com.kuit.afternote.feature.timeletter.domain.usecase.UploadTimeLetterImageUseCase
 import com.kuit.afternote.feature.timeletter.presentation.mapper.toTimeLetterReceivers
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
@@ -46,6 +47,7 @@ class TimeLetterWriterViewModel
         private val getTimeLetterUseCase: GetTimeLetterUseCase,
         private val getTemporaryTimeLettersUseCase: GetTemporaryTimeLettersUseCase,
         private val uploadTimeLetterImageUseCase: UploadTimeLetterImageUseCase,
+        private val uploadTimeLetterAudioUseCase: UploadTimeLetterAudioUseCase,
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase
     ) : ViewModel() {
@@ -81,6 +83,9 @@ class TimeLetterWriterViewModel
                         val existingUrls = letter.mediaList
                             .filter { it.mediaType == TimeLetterMediaType.IMAGE }
                             .map { it.mediaUrl }
+                        val existingLinks = letter.mediaList
+                            .filter { it.mediaType == TimeLetterMediaType.DOCUMENT }
+                            .map { it.mediaUrl }
                         _uiState.update {
                             it.copy(
                                 draftId = letter.id,
@@ -89,7 +94,9 @@ class TimeLetterWriterViewModel
                                 sendDate = date,
                                 sendTime = time,
                                 existingMediaUrls = existingUrls,
+                                addedLinks = existingLinks,
                                 selectedImageUriStrings = emptyList(),
+                                selectedVoiceUriStrings = emptyList(),
                                 isLoading = false
                             )
                         }
@@ -210,6 +217,38 @@ class TimeLetterWriterViewModel
         }
 
         /**
+         * 첨부 음성/오디오 추가
+         *
+         * @param uris 문서 선택기에서 선택한 오디오 URI 목록
+         */
+        fun addVoiceUris(uris: List<Uri>) {
+            val newStrings = uris.map { it.toString() }
+            _uiState.update { state ->
+                state.copy(selectedVoiceUriStrings = state.selectedVoiceUriStrings + newStrings)
+            }
+        }
+
+        /**
+         * 첨부 음성/오디오 1개 제거
+         *
+         * @param uriString 제거할 오디오 URI 문자열
+         */
+        fun removeVoiceUri(uriString: String) {
+            _uiState.update {
+                it.copy(selectedVoiceUriStrings = it.selectedVoiceUriStrings - uriString)
+            }
+        }
+
+        /**
+         * 첨부 링크 목록 업데이트 (mediaList DOCUMENT로 전송됨)
+         *
+         * @param links 링크 URL 목록
+         */
+        fun updateAddedLinks(links: List<String>) {
+            _uiState.update { it.copy(addedLinks = links) }
+        }
+
+        /**
          * 발송 날짜 업데이트
          *
          * @param date 발송 날짜 (yyyy. MM. dd 형식)
@@ -314,21 +353,37 @@ class TimeLetterWriterViewModel
         }
 
         /**
-         * 현재 상태 기준으로 mediaList 구성. 선택 이미지 업로드 후 기존 URL + 새 URL을 (IMAGE, url) 쌍으로 반환.
-         * 이미지가 하나도 없으면 null 반환.
+         * 현재 상태 기준으로 mediaList 구성. 선택 이미지·오디오 업로드 후 (타입, url) 쌍 목록 반환.
+         * 링크는 URL 그대로 DOCUMENT 타입으로 추가. 이미지·오디오·링크가 하나도 없으면 null 반환.
          */
         private suspend fun buildMediaList(state: TimeLetterWriterUiState): Result<List<Pair<TimeLetterMediaType, String>>?> {
-            val existing = state.existingMediaUrls
-            val pending = state.selectedImageUriStrings
-            if (existing.isEmpty() && pending.isEmpty()) return Result.success(null)
-            val newUrls = mutableListOf<String>()
-            for (uriString in pending) {
+            val existingImages = state.existingMediaUrls
+            val pendingImages = state.selectedImageUriStrings
+            val pendingVoices = state.selectedVoiceUriStrings
+            val links = state.addedLinks
+            if (existingImages.isEmpty() && pendingImages.isEmpty() && pendingVoices.isEmpty() && links.isEmpty()) {
+                return Result.success(null)
+            }
+            val mediaList = mutableListOf<Pair<TimeLetterMediaType, String>>()
+
+            val newImageUrls = mutableListOf<String>()
+            for (uriString in pendingImages) {
                 uploadTimeLetterImageUseCase(uriString)
-                    .onSuccess { newUrls.add(it) }
+                    .onSuccess { newImageUrls.add(it) }
                     .onFailure { return Result.failure(it) }
             }
-            val allUrls = existing + newUrls
-            return Result.success(allUrls.map { TimeLetterMediaType.IMAGE to it })
+            val allImageUrls = existingImages + newImageUrls
+            mediaList.addAll(allImageUrls.map { TimeLetterMediaType.IMAGE to it })
+
+            for (uriString in pendingVoices) {
+                uploadTimeLetterAudioUseCase(uriString)
+                    .onSuccess { url -> mediaList.add(TimeLetterMediaType.AUDIO to url) }
+                    .onFailure { return Result.failure(it) }
+            }
+
+            mediaList.addAll(links.map { TimeLetterMediaType.DOCUMENT to it })
+
+            return Result.success(mediaList.ifEmpty { null })
         }
 
         /**
@@ -353,7 +408,7 @@ class TimeLetterWriterViewModel
             onSuccess: () -> Unit
         ) {
             viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true) }
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
                 hideWaitingAgainPopUp()
@@ -396,10 +451,14 @@ class TimeLetterWriterViewModel
                         onSuccess()
                     }
                 }
-                result.onFailure {
-                    Log.e(TAG, "saveTimeLetter failed", it)
+                result.onFailure { error ->
+                    Log.e(TAG, "saveTimeLetter failed", error)
                     showWaitingAgainPopUp()
-                    // TODO: 에러 메시지 UiState에 반영
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = error.message ?: error.localizedMessage ?: "저장에 실패했습니다."
+                        )
+                    }
                 }
             }
         }
@@ -413,7 +472,7 @@ class TimeLetterWriterViewModel
          */
         fun saveDraft(onSuccess: () -> Unit) {
             viewModelScope.launch {
-                _uiState.update { it.copy(isLoading = true) }
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 val state = _uiState.value
                 val sendAt = buildSendAt(state.sendDate, state.sendTime)
                 val mediaListResult = buildMediaList(state)
@@ -450,8 +509,12 @@ class TimeLetterWriterViewModel
                     _uiState.update { it.copy(showDraftSavePopUp = false) }
                     onSuccess()
                 }
-                result.onFailure {
-                    // TODO: 에러 메시지 UiState에 반영
+                result.onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = error.message ?: error.localizedMessage ?: "임시저장에 실패했습니다."
+                        )
+                    }
                 }
             }
         }

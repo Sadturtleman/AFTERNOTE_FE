@@ -45,6 +45,7 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+    <string name="receiver_memorial_video_no_app">영상을 재생할 수 있는 앱이 없습니다.</string>
 
     <string name="receiver_sender_record_title">故 %1$s님이 남기신 기록</string>
     <string name="receiver_afternote_section_count">%1$d개의 애프터노트가 있습니다.</string>
@@ -108,7 +109,8 @@
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
-    <string name="withdrawal_password_error">비밀번호가 맞지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_sentence_mismatch">문장이 일치하지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_confirmation_sentence">탈퇴하겠습니다.</string>
     <string name="withdrawal_complete_line1">회원 탈퇴가 완료되었습니다.</string>
     <string name="withdrawal_complete_line2">애프터노트를 이용해 주셔서 감사합니다.</string>
     <string name="withdrawal_complete_confirm">확인하기</string>
@@ -133,6 +135,7 @@
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
     <string name="time_letter_detail_delivery_date">발송 일자: %1$s</string>
     <string name="time_letter_detail_created_at">작성 일자: %1$s</string>
+    <string name="time_letter_voice_file_label">음성 녹음 파일 %1$d</string>
     <string name="time_letter_detail_recipient_label">수신인:</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
     <string name="time_letter_recipients_count">%d명에게</string>
@@ -141,4 +144,5 @@
 
     <string name="post_delivery_last_greeting_placeholder">마지막 인사말을 입력해주세요</string>
     <string name="post_delivery_confirm">확인</string>
+    <string name="retry">재시도</string>
 </resources>

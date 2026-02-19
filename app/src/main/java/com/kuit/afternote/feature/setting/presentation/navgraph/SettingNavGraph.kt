@@ -21,6 +21,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.ConfirmationPopup
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
@@ -195,8 +196,8 @@ private fun WithdrawalPasswordRouteContent(navController: NavController) {
     } else {
         ""
     }
-    val passwordError = if (withdrawalPasswordState.showPasswordError) {
-        stringResource(R.string.withdrawal_password_error)
+    val sentenceError = if (withdrawalPasswordState.showSentenceError) {
+        stringResource(R.string.withdrawal_sentence_mismatch)
     } else {
         null
     }
@@ -212,16 +213,16 @@ private fun WithdrawalPasswordRouteContent(navController: NavController) {
     }
     WithdrawalPasswordScreen(
         accountDisplay = accountDisplay,
-        passwordError = passwordError,
+        sentenceError = sentenceError,
         callbacks = WithdrawalPasswordCallbacks(
             onBackClick = { navController.popBackStack() },
-            onWithdrawClick = { password ->
-                withdrawalPasswordViewModel.submitWithdrawal(password)
-                Log.d(TAG_SETTING_NAV, "Withdrawal password confirmed")
+            onWithdrawClick = { confirmationText ->
+                withdrawalPasswordViewModel.submitWithdrawal(confirmationText)
+                Log.d(TAG_SETTING_NAV, "Withdrawal sentence submitted")
             },
             onGoBackClick = { navController.popBackStack() },
-            onPasswordChanged = { withdrawalPasswordViewModel.clearPasswordError() }
-        )
+            onInputChanged = { withdrawalPasswordViewModel.clearSentenceError() },
+        ),
     )
 }
 
@@ -301,6 +302,13 @@ private fun ReceiverDetailRouteContent(
 ) {
     val detailViewModel: ReceiverDetailViewModel = hiltViewModel(backStackEntry)
     val detailState by detailViewModel.uiState.collectAsStateWithLifecycle()
+
+    val isCurrentDestination = navController.currentBackStackEntry == backStackEntry
+    LaunchedEffect(isCurrentDestination) {
+        if (isCurrentDestination) {
+            route.receiverId.toLongOrNull()?.let { detailViewModel.loadReceiverDetail(it) }
+        }
+    }
 
     val phoneNumberState = rememberTextFieldState()
     val emailState = rememberTextFieldState()
@@ -486,11 +494,12 @@ private fun ReceiverAfternoteListRouteContent(
     val afterNotesViewModel: ReceiverAfternotesListViewModel = hiltViewModel()
     val afterNotesState by afterNotesViewModel.uiState.collectAsStateWithLifecycle()
     val afternoteItems = afterNotesState.items.map { item ->
-        val (stringResId, iconResId) = getAfternoteDisplayRes(item.sourceType)
-        val serviceName = stringResource(stringResId)
+        val iconResId =
+            if (item.title.isNotBlank()) getIconResForServiceName(item.title)
+            else getAfternoteDisplayRes(item.sourceType).second
         AfternoteListDisplayItem(
             id = item.id.toString(),
-            serviceName = serviceName,
+            serviceName = item.title,
             date = item.lastUpdatedAt,
             iconResId = iconResId
         )

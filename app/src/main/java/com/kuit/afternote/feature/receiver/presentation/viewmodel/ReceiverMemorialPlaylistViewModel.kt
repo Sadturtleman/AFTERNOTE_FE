@@ -89,7 +89,8 @@ class ReceiverMemorialPlaylistViewModel
                 afternoteId = afternoteId
             )
                 .onSuccess { detail ->
-                    val songs = detail.playlist?.songs?.mapIndexed { index, song ->
+                    val playlist = detail.playlist
+                    val songs = playlist?.songs?.mapIndexed { index, song ->
                         PlaylistSongDisplay(
                             id = index.toString(),
                             title = song.title,
@@ -100,6 +101,8 @@ class ReceiverMemorialPlaylistViewModel
                     _uiState.update {
                         it.copy(
                             songs = songs,
+                            memorialVideoUrl = playlist?.memorialVideoUrl,
+                            memorialThumbnailUrl = playlist?.memorialThumbnailUrl,
                             isLoading = false,
                             errorMessage = null
                         )
