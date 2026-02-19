@@ -4,6 +4,7 @@ import com.kuit.afternote.data.remote.ApiResponse
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionRequestDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverMindRecordsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
@@ -96,6 +97,22 @@ interface UserApiService {
         @Path("receiverId") receiverId: Long,
         @Body body: RegisterReceiverRequestDto
     ): ApiResponse<Unit?>
+
+    /**
+     * 수신인별 마음의 기록 전체 조회 (일기, 깊은 생각, 데일리 질문 답변).
+     * GET /users/receivers/{receiverId}/mind-records
+     *
+     * @param receiverId 수신인 식별자 (path, required)
+     * @param page 페이지 번호 (0부터 시작)
+     * @param size 페이지 당 조회 개수
+     * @return data: items, hasNext
+     */
+    @GET("users/receivers/{receiverId}/mind-records")
+    suspend fun getReceiverMindRecords(
+        @Path("receiverId") receiverId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): ApiResponse<ReceiverMindRecordsResponseDto?>
 
     /**
      * 수신인별 데일리 질문 답변 목록 조회 (페이지네이션).

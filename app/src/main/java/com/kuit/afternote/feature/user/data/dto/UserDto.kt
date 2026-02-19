@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.user.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 /**
  * User API DTOs. (스웨거 기준)
@@ -49,7 +51,8 @@ data class UserUpdatePushSettingRequest(
 data class ReceiverItemDto(
     val receiverId: Long,
     val name: String,
-    val relation: String
+    val relation: String,
+    val mindRecordDeliveryEnabled: Boolean = true
 )
 
 @Serializable
@@ -79,18 +82,43 @@ data class ReceiverDetailResponseDto(
 
 // --- GET /users/receivers/{receiverId}/daily-questions (time-letters, after-notes are in Received API) ---
 
+// --- GET /users/receivers/{receiverId}/mind-records (일기, 깊은 생각, 데일리 질문 답변 통합 조회) ---
+
+/**
+ * 수신인별 마음의 기록 항목 DTO.
+ * type: DIARY, DEEP_THOUGHT, DAILY_QUESTION
+ * DAILY_QUESTION: question, answer, createdAt
+ * DIARY/DEEP_THOUGHT: title, content, date
+ */
+@Serializable
+data class ReceiverMindRecordItemDto(
+    val recordId: Long,
+    val type: String,
+    @JsonNames("question", "title") val titleOrQuestion: String? = null,
+    @JsonNames("answer", "content") val contentOrAnswer: String? = null,
+    @JsonNames("createdAt", "date") val recordDate: String
+)
+
+@Serializable
+data class ReceiverMindRecordsResponseDto(
+    val items: List<ReceiverMindRecordItemDto> = emptyList(),
+    val hasNext: Boolean = false
+)
+
+// --- daily-questions (기존) ---
+
 @Serializable
 data class DailyQuestionAnswerItemDto(
     val dailyQuestionAnswerId: Long,
     val question: String,
     val answer: String,
-    val recordDate: String
+    @SerialName("createdAt") val recordDate: String
 )
 
 @Serializable
 data class ReceiverDailyQuestionsResponseDto(
-    val items: List<DailyQuestionAnswerItemDto>,
-    val hasNext: Boolean
+    val items: List<DailyQuestionAnswerItemDto> = emptyList(),
+    val hasNext: Boolean = false
 )
 
 // --- GET /users/delivery-condition, PATCH /users/delivery-condition (전달 조건) ---

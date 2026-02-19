@@ -82,3 +82,18 @@ data class ReceiverDailyQuestionsUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
+
+data class ReceiverMindRecordItemUi(
+    val recordId: Long,
+    val type: String,
+    val titleOrQuestion: String,
+    val contentOrAnswer: String,
+    val recordDate: String
+)
+
+data class ReceiverMindRecordsUiState(
+    val items: List<ReceiverMindRecordItemUi> = emptyList(),
+    val hasNext: Boolean = false,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)

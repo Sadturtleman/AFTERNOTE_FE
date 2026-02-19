@@ -29,6 +29,7 @@ import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAftern
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverMindRecordsViewModel
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerScreen
 import com.kuit.afternote.feature.setting.presentation.screen.main.SettingMainScreen
 import com.kuit.afternote.feature.setting.presentation.screen.notice.NoticeItemUiModel
@@ -59,7 +60,6 @@ import com.kuit.afternote.feature.setting.presentation.viewmodel.WithdrawalPassw
 import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
-import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDailyQuestionsViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverDetailViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.EditReceiverViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
@@ -130,7 +130,11 @@ fun NavGraphBuilder.settingNavGraph(
         )
     }
     composable<SettingRoute.DailyAnswerRoute> { backStackEntry ->
-        DailyAnswerRouteContent(navController, backStackEntry.toRoute())
+        DailyAnswerRouteContent(
+            navController = navController,
+            backStackEntry = backStackEntry,
+            route = backStackEntry.toRoute()
+        )
     }
     composable<SettingRoute.ReceiverAfternoteListRoute> { backStackEntry ->
         ReceiverAfternoteListRouteContent(navController, backStackEntry.toRoute())
@@ -435,24 +439,44 @@ private fun ReceiverEditRouteContent(
 @Composable
 private fun DailyAnswerRouteContent(
     navController: NavController,
+    backStackEntry: NavBackStackEntry,
     route: SettingRoute.DailyAnswerRoute
 ) {
-    val dailyQuestionsViewModel: ReceiverDailyQuestionsViewModel = hiltViewModel()
-    val dailyState by dailyQuestionsViewModel.uiState.collectAsStateWithLifecycle()
-    val items = dailyState.items.map { item ->
+    val mindRecordsViewModel: ReceiverMindRecordsViewModel = hiltViewModel(backStackEntry)
+    val mindRecordsState by mindRecordsViewModel.uiState.collectAsStateWithLifecycle()
+    val receiverDetailBackStackEntry = navController.previousBackStackEntry
+    val receiverDetailViewModel: ReceiverDetailViewModel? =
+        receiverDetailBackStackEntry?.let { hiltViewModel(it) }
+    val items = mindRecordsState.items.map { item ->
         DailyAnswerItemUiModel(
-            question = item.question,
-            answer = item.answer,
-            dateText = item.recordDate
+            question = item.titleOrQuestion,
+            answer = item.contentOrAnswer,
+            dateText = item.recordDate,
+            typeLabel = when (item.type) {
+                "DIARY" -> stringResource(R.string.receiver_mindrecord_type_diary)
+                "DEEP_THOUGHT" -> stringResource(R.string.receiver_mindrecord_type_deep_thought)
+                "DAILY_QUESTION" -> stringResource(R.string.receiver_mindrecord_type_daily_question)
+                else -> ""
+            }
         )
     }
     val receiverName = route.receiverName.ifBlank { "수신인" }
     DailyAnswerScreen(
         receiverName = receiverName,
         items = items,
-        onBackClick = { navController.popBackStack() }
+        isLoading = mindRecordsState.isLoading,
+        errorMessage = mindRecordsState.errorMessage,
+        showAllMindRecordTypes = true,
+        onBackClick = {
+            route.receiverId.toLongOrNull()?.let { receiverId ->
+                receiverDetailViewModel?.loadReceiverDetail(receiverId)
+            }
+            navController.popBackStack()
+        },
+        onErrorDismiss = { mindRecordsViewModel.clearError() }
     )
 }
+
 
 @Composable
 private fun ReceiverAfternoteListRouteContent(

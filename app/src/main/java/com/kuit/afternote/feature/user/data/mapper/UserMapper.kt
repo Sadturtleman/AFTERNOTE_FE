@@ -1,6 +1,8 @@
 package com.kuit.afternote.feature.user.data.mapper
 
+import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordSummary
 import com.kuit.afternote.feature.user.data.dto.DailyQuestionAnswerItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverMindRecordItemDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionRequestDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionResponseDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionTypeDto
@@ -9,10 +11,12 @@ import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
 import com.kuit.afternote.feature.user.data.dto.UserResponse
 import com.kuit.afternote.feature.user.domain.model.DailyQuestionAnswerItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverMindRecordItem
 import com.kuit.afternote.feature.user.domain.model.DeliveryCondition
 import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
+import com.kuit.afternote.feature.user.domain.model.ReceiverMindRecordsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
@@ -40,7 +44,8 @@ object UserMapper {
         ReceiverListItem(
             receiverId = dto.receiverId,
             name = dto.name,
-            relation = dto.relation
+            relation = dto.relation,
+            mindRecordDeliveryEnabled = dto.mindRecordDeliveryEnabled
         )
 
     fun toReceiverDetail(dto: ReceiverDetailResponseDto): ReceiverDetail =
@@ -68,6 +73,41 @@ object UserMapper {
         hasNext: Boolean
     ): ReceiverDailyQuestionsResult =
         ReceiverDailyQuestionsResult(items = items, hasNext = hasNext)
+
+    fun toReceiverMindRecordItem(dto: ReceiverMindRecordItemDto): ReceiverMindRecordItem =
+        ReceiverMindRecordItem(
+            recordId = dto.recordId,
+            type = dto.type,
+            titleOrQuestion = dto.titleOrQuestion.orEmpty().ifBlank { "-" },
+            contentOrAnswer = dto.contentOrAnswer.orEmpty().ifBlank { "-" },
+            recordDate = dto.recordDate
+        )
+
+    fun toReceiverMindRecordsResult(
+        items: List<ReceiverMindRecordItem>,
+        hasNext: Boolean
+    ): ReceiverMindRecordsResult =
+        ReceiverMindRecordsResult(items = items, hasNext = hasNext)
+
+    /** daily-questions 결과를 mind-records 형식으로 변환 (fallback용). */
+    fun dailyQuestionToMindRecord(item: DailyQuestionAnswerItem): ReceiverMindRecordItem =
+        ReceiverMindRecordItem(
+            recordId = item.dailyQuestionAnswerId,
+            type = "DAILY_QUESTION",
+            titleOrQuestion = item.question,
+            contentOrAnswer = item.answer,
+            recordDate = item.recordDate
+        )
+
+    /** GET /mind-records 응답을 ReceiverMindRecordItem으로 변환 (fallback용). */
+    fun mindRecordSummaryToReceiverMindRecordItem(summary: MindRecordSummary): ReceiverMindRecordItem =
+        ReceiverMindRecordItem(
+            recordId = summary.recordId,
+            type = summary.type,
+            titleOrQuestion = summary.title.orEmpty().ifBlank { "-" },
+            contentOrAnswer = summary.content.orEmpty().ifBlank { "-" },
+            recordDate = summary.date
+        )
 
     fun toDeliveryCondition(dto: DeliveryConditionResponseDto): DeliveryCondition =
         DeliveryCondition(

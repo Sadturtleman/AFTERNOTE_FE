@@ -3,6 +3,8 @@ package com.kuit.afternote.feature.user.data.repository
 import android.util.Log
 import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
+import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordSummary
 import com.kuit.afternote.feature.user.data.api.UserApiService
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
@@ -12,6 +14,7 @@ import com.kuit.afternote.feature.user.domain.model.DeliveryCondition
 import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
+import com.kuit.afternote.feature.user.domain.model.ReceiverMindRecordsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
@@ -24,7 +27,8 @@ import javax.inject.Inject
 class UserRepositoryImpl
     @Inject
     constructor(
-        private val api: UserApiService
+        private val api: UserApiService,
+        private val dailyRecordApi: DailyRecordApiService
     ) : UserRepository {
         override suspend fun getMyProfile(userId: Long): Result<UserProfile> =
             runCatching {
@@ -180,6 +184,37 @@ class UserRepositoryImpl
                 val items = body.items.map(UserMapper::toDailyQuestionAnswerItem)
                 UserMapper.toReceiverDailyQuestionsResult(items = items, hasNext = body.hasNext)
             }
+
+        override suspend fun getReceiverMindRecords(
+            receiverId: Long,
+            page: Int,
+            size: Int
+        ): Result<ReceiverMindRecordsResult> =
+            runCatching {
+                Log.d(TAG, "getReceiverMindRecords: receiverId=$receiverId, using GET /mind-records")
+                fetchMindRecordsFromOwnApi()
+            }
+
+        /**
+         * GET /mind-records (배포된 API)로 내 기록 전체 조회.
+         * 수신인별 API 미배포 시 fallback으로 사용.
+         */
+        private suspend fun fetchMindRecordsFromOwnApi(): ReceiverMindRecordsResult {
+            val types = listOf("DIARY", "DEEP_THOUGHT", "DAILY_QUESTION")
+            val allRecords = mutableListOf<MindRecordSummary>()
+            for (type in types) {
+                runCatching {
+                    val response = dailyRecordApi.getMindRecords(type = type, view = "LIST")
+                    if (response.status == 200) {
+                        response.data?.records?.let { allRecords.addAll(it) }
+                    }
+                }
+            }
+            val items = allRecords
+                .sortedByDescending { it.date }
+                .map(UserMapper::mindRecordSummaryToReceiverMindRecordItem)
+            return UserMapper.toReceiverMindRecordsResult(items = items, hasNext = false)
+        }
 
         override suspend fun getDeliveryCondition(): Result<DeliveryCondition> =
             runCatching {
