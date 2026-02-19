@@ -15,6 +15,7 @@ import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
+import com.kuit.afternote.feature.user.domain.model.ReceiverMindRecordsResult
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 import com.kuit.afternote.feature.user.domain.repository.UserRepository
 import javax.inject.Inject
@@ -22,7 +23,7 @@ import javax.inject.Inject
 /**
  * UserRepository 구현체. (스웨거 기준)
  */
-abstract class UserRepositoryImpl
+class UserRepositoryImpl
     @Inject
     constructor(
         private val api: UserApiService
@@ -189,6 +190,24 @@ abstract class UserRepositoryImpl
                 val body = response.requireData()
                 val items = body.items.map(UserMapper::toDailyQuestionAnswerItem)
                 UserMapper.toReceiverDailyQuestionsResult(items = items, hasNext = body.hasNext)
+            }
+
+        override suspend fun getReceiverMindRecords(
+            receiverId: Long,
+            page: Int,
+            size: Int
+        ): Result<ReceiverMindRecordsResult> =
+            runCatching {
+                Log.d(TAG, "getReceiverMindRecords: receiverId=$receiverId, page=$page, size=$size")
+                val response = api.getReceiverMindRecords(
+                    receiverId = receiverId,
+                    page = page,
+                    size = size
+                )
+                Log.d(TAG, "getReceiverMindRecords: response=$response")
+                val body = response.requireData()
+                val items = (body?.items ?: emptyList()).map(UserMapper::toReceiverMindRecordItem)
+                UserMapper.toReceiverMindRecordsResult(items = items, hasNext = body?.hasNext ?: false)
             }
 
         override suspend fun getDeliveryCondition(): Result<DeliveryCondition> =
