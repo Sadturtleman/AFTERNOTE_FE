@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternoteDetail
@@ -18,6 +19,8 @@ import javax.inject.Inject
  *
  * GET /api/receiver-auth/after-notes/{afternoteId} (X-Auth-Code)로 상세를 조회합니다.
  */
+private const val TAG = "ReceiverAfternoteDetailVM"
+
 @HiltViewModel
 class ReceiverAfternoteDetailViewModel
     @Inject
@@ -30,7 +33,9 @@ class ReceiverAfternoteDetailViewModel
     val uiState: StateFlow<ReceiverAfternoteDetailUiState> = _uiState.asStateFlow()
 
     fun loadDetail(itemId: String?) {
+        Log.d(TAG, "loadDetail called: itemId=$itemId")
         if (itemId.isNullOrBlank()) {
+            Log.d(TAG, "loadDetail: early return (itemId null or blank)")
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -41,6 +46,7 @@ class ReceiverAfternoteDetailViewModel
         }
         val afternoteId = itemId.toLongOrNull()
         if (afternoteId == null) {
+            Log.d(TAG, "loadDetail: early return (afternoteId parse failed for itemId=$itemId)")
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -51,6 +57,7 @@ class ReceiverAfternoteDetailViewModel
         }
         val authCode = receiverAuthSessionHolder.getAuthCode()
         if (authCode.isNullOrBlank()) {
+            Log.d(TAG, "loadDetail: early return (authCode null or blank)")
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -59,6 +66,7 @@ class ReceiverAfternoteDetailViewModel
             }
             return
         }
+        Log.d(TAG, "loadDetail: calling API authCode=*** afternoteId=$afternoteId")
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             getAfternoteDetailByAuthCodeUseCase(authCode, afternoteId)

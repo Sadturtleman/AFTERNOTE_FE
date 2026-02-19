@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.navgraph
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,8 @@ import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAftern
  * GET /api/receiver-auth/after-notes/{afternoteId}로 상세를 조회하고,
  * 발신자 상세와 동일한 화면(Social/Gallery/MemorialGuideline)에 title→serviceName, senderName→userName으로 표시합니다.
  */
+private const val TAG = "ReceiverAfternoteDetailRoute"
+
 @Composable
 fun ReceiverAfternoteDetailRoute(
     navHostController: NavHostController,
@@ -45,7 +48,9 @@ fun ReceiverAfternoteDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    Log.d(TAG, "ReceiverAfternoteDetailRoute composed: itemId=$itemId")
     LaunchedEffect(itemId) {
+        Log.d(TAG, "LaunchedEffect(itemId) running: itemId=$itemId")
         viewModel.loadDetail(itemId)
     }
 

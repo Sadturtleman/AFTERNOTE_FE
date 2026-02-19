@@ -440,9 +440,11 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("receiver_afternote_detail/{itemId}") { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId")
+            Log.d("NavGraph", "receiver_afternote_detail: itemId=$itemId, route=${backStackEntry.destination.route}")
             ReceiverAfternoteDetailRoute(
                 navHostController = navHostController,
-                itemId = backStackEntry.arguments?.getString("itemId")
+                itemId = itemId
             )
         }
 
