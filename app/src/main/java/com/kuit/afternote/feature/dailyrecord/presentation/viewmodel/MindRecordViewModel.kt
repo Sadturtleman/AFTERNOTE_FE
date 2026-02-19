@@ -431,3 +431,4 @@ fun AfternoteItem.toMindRecordUiModel(): MindRecordUiModel {
         originalDate = originalDateStr
     )
 }
+

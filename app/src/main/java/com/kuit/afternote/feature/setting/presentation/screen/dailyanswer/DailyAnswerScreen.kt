@@ -1,6 +1,9 @@
 package com.kuit.afternote.feature.setting.presentation.screen.dailyanswer
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,7 +41,8 @@ import com.kuit.afternote.ui.theme.Sansneo
 data class DailyAnswerItemUiModel(
     val question: String,
     val answer: String,
-    val dateText: String
+    val dateText: String,
+    val typeLabel: String? = null
 )
 
 @Composable
@@ -44,47 +50,94 @@ fun DailyAnswerScreen(
     modifier: Modifier = Modifier,
     receiverName: String,
     items: List<DailyAnswerItemUiModel>,
-    onBackClick: () -> Unit
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
+    showAllMindRecordTypes: Boolean = false,
+    onBackClick: () -> Unit,
+    onErrorDismiss: () -> Unit = {}
 ) {
     BackHandler(onBack = onBackClick)
     Scaffold(
         containerColor = Gray1,
         topBar = {
             TopBar(
-                title = stringResource(R.string.daily_answer_title),
+                title = if (showAllMindRecordTypes) {
+                    stringResource(R.string.receiver_mindrecord_title)
+                } else {
+                    stringResource(R.string.daily_answer_title)
+                },
                 onBackClick = onBackClick
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        Box(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
         ) {
-            item(key = "intro") {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row {
-                    Spacer(Modifier.width(16.dp))
-                    DailyAnswerIntro(
-                        receiverName = receiverName
-                    )
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+                errorMessage != null -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = errorMessage,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9
+                            )
+                        )
+                    }
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                    ) {
+                        item(key = "intro") {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row {
+                                Spacer(Modifier.width(16.dp))
+                                DailyAnswerIntro(
+                                    receiverName = receiverName,
+                                    showAllMindRecordTypes = showAllMindRecordTypes
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
 
-            itemsIndexed(
-                items = items,
-                key = { index, _ -> "daily_answer_$index" }
-            ) { index, item ->
-                RecordQnAListItem(
-                    question = item.question,
-                    answer = item.answer,
-                    dateText = item.dateText
-                )
+                        itemsIndexed(
+                            items = items,
+                            key = { index, _ -> "mind_record_$index" }
+                        ) { index, item ->
+                            RecordQnAListItem(
+                                question = item.typeLabel?.let { "[$it] ${item.question}" }
+                                    ?: item.question,
+                                answer = item.answer,
+                                dateText = item.dateText
+                            )
 
-                if (index != items.lastIndex) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                            if (index != items.lastIndex) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -92,7 +145,15 @@ fun DailyAnswerScreen(
 }
 
 @Composable
-private fun DailyAnswerIntro(receiverName: String) {
+private fun DailyAnswerIntro(
+    receiverName: String,
+    showAllMindRecordTypes: Boolean = false
+) {
+    val introLine2 = if (showAllMindRecordTypes) {
+        stringResource(R.string.receiver_mindrecord_intro_line2)
+    } else {
+        stringResource(R.string.daily_answer_intro_line2)
+    }
     Text(
         text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = B1)) {
@@ -101,7 +162,7 @@ private fun DailyAnswerIntro(receiverName: String) {
             append(" ")
             append(stringResource(R.string.daily_answer_intro_line1_suffix))
             append("\n")
-            append(stringResource(R.string.daily_answer_intro_line2))
+            append(introLine2)
         },
         style = TextStyle(
             fontSize = 18.sp,

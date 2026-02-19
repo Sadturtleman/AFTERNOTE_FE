@@ -159,7 +159,8 @@ data class CreateMindRecordRequest(
     val isDraft: Boolean,
     val questionId: Long? = null,
     val category: String? = null,
-    val imageList: List<MindRecordImageItem>? = emptyList()  // 추가
+    val imageList: List<MindRecordImageItem>? = emptyList(),
+    val receiverIds: List<Long>? = null
 )
 
 @Serializable

@@ -154,8 +154,9 @@ fun ReceiverDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 DeliveryCountRow(
-                    title = "데일리 질문 답변",
+                    title = stringResource(R.string.receiver_delivery_row_mind_records),
                     countText = "${params.dailyQuestionCount}건",
+                    enabled = params.mindRecordDeliveryEnabled,
                     onClick = callbacks.onDailyQuestionClick
                 )
 
@@ -336,13 +337,20 @@ private fun DeliveryCountRow(
     modifier: Modifier = Modifier,
     title: String,
     countText: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
+    val contentColor = if (enabled) Gray9 else Gray4
+    val countColor = if (enabled) B1 else Gray4
+    val arrowColor = if (enabled) B1 else Gray4
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(color = White, shape = RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
+            .then(
+                if (enabled) Modifier.clickable(onClick = onClick) else Modifier
+            )
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -354,7 +362,7 @@ private fun DeliveryCountRow(
                 lineHeight = 22.sp,
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Medium,
-                color = Gray9
+                color = contentColor
             )
         )
 
@@ -369,14 +377,14 @@ private fun DeliveryCountRow(
                     lineHeight = 22.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Medium,
-                    color = B1
+                    color = countColor
                 )
             )
 
             Box(
                 modifier = Modifier
                     .size(16.dp)
-                    .background(color = B1, shape = CircleShape),
+                    .background(color = arrowColor, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
