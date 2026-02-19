@@ -1,7 +1,13 @@
 package com.kuit.afternote.feature.receiver.presentation.screen.afternote
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,17 +34,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
 import com.kuit.afternote.R
 import com.kuit.afternote.core.ui.component.LastWishesRadioGroup
 import com.kuit.afternote.core.ui.component.ProfileImage
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.ui.component.content.MemorialGuidelineSlots
+import com.kuit.afternote.core.ui.component.detail.InfoCard
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
@@ -54,10 +69,13 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun ReceiverAfterNoteMainScreen(
     senderName: String,
     onNavigateToFullList: () -> Unit = {},
+    onNavigateToPlaylist: () -> Unit = {},
     onBackClick: () -> Unit = {},
     profileImageResId: Int? = null,
     albumCovers: List<AlbumCover>,
     songCount: Int = 16,
+    memorialVideoUrl: String? = null,
+    memorialThumbnailUrl: String? = null,
     showBottomBar: Boolean = true
 ) {
     Log.d(TAG_RECEIVER_AFTERNOTE_MAIN, "ReceiverAfterNoteMainScreen received senderName='$senderName'")
@@ -119,7 +137,8 @@ fun ReceiverAfterNoteMainScreen(
                                 label = "추모 플레이리스트",
                                 songCount = songCount,
                                 albumCovers = albumCovers,
-                                onAddSongClick = null
+                                onAddSongClick = null,
+                                onPlaylistClick = onNavigateToPlaylist
                             )
                         },
                         lastWishContent = {
@@ -128,7 +147,10 @@ fun ReceiverAfterNoteMainScreen(
                             )
                         },
                         videoContent = {
-                            ReceiverVideoSection()
+                            ReceiverVideoSection(
+                                memorialVideoUrl = memorialVideoUrl,
+                                memorialThumbnailUrl = memorialThumbnailUrl
+                            )
                         }
                     ),
                     sectionSpacing = 32.dp
@@ -152,28 +174,105 @@ private const val TAG_RECEIVER_AFTERNOTE_MAIN = "ReceiverAfterNoteMain"
 private const val LABEL_VIDEO_SECTION = "장례식에 남길 영상"
 
 @Composable
-private fun ReceiverVideoSection() {
+private fun ReceiverVideoSection(
+    memorialVideoUrl: String? = null,
+    memorialThumbnailUrl: String? = null
+) {
+    val context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         ReceiverSectionHeader()
         Spacer(modifier = Modifier.height(12.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.LightGray),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play",
-                tint = Color.White,
+        if (!memorialVideoUrl.isNullOrBlank()) {
+            val videoUrl = memorialVideoUrl
+            InfoCard(
                 modifier = Modifier
-                    .size(48.dp)
-                    .background(Color.Black.copy(alpha = 0.3f), CircleShape)
-                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                        if (context.packageManager.resolveActivity(
+                                intent,
+                                PackageManager.MATCH_DEFAULT_ONLY
+                            ) != null
+                        ) {
+                            context.startActivity(intent)
+                        } else {
+                            Toast
+                                .makeText(
+                                    context,
+                                    context.getString(R.string.receiver_memorial_video_no_app),
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+                        }
+                    }
+            ) {
+                ReceiverMemorialVideoThumbnail(thumbnailUrl = memorialThumbnailUrl)
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "Play",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(Color.Black.copy(alpha = 0.3f), CircleShape)
+                        .padding(8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReceiverMemorialVideoThumbnail(thumbnailUrl: String?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(183.dp)
+            .clip(RoundedCornerShape(16.dp))
+    ) {
+        if (!thumbnailUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(thumbnailUrl)
+                    .httpHeaders(
+                        NetworkHeaders.Builder()
+                            .set("User-Agent", "Afternote Android App")
+                            .build()
+                    )
+                    .build(),
+                contentDescription = "장례식에 남길 영상 썸네일",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x99757575),
+                            Color(0x99222222)
+                        )
+                    )
+                )
+        )
+        Image(
+            painter = painterResource(R.drawable.ic_playback),
+            contentDescription = "영상 재생",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp)
+        )
     }
 }
 

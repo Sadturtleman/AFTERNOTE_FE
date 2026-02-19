@@ -24,6 +24,7 @@
     <string name="content_description_profile_image">프로필 이미지</string>
     <string name="content_description_profile_edit_button">프로필 수정 버튼</string>
     <string name="content_description_album_cover">앨범 커버</string>
+    <string name="content_description_time_letter_media">타임레터 첨부 이미지</string>
 
     <string name="daily_answer_title">나의 모든 기록</string>
     <string name="daily_answer_intro_line1_suffix">님에게 전달 될</string>
@@ -39,6 +40,7 @@
     <string name="receiver_afternote_item_gallery">갤러리</string>
     <string name="receiver_afternote_item_memorial_guideline">추모 가이드라인</string>
     <string name="receiver_afternote_item_naver_mail">네이버 메일</string>
+    <string name="receiver_memorial_video_no_app">영상을 재생할 수 있는 앱이 없습니다.</string>
 
     <string name="receiver_sender_record_title">故 %1$s님이 남기신 기록</string>
     <string name="receiver_afternote_section_count">%1$d개의 애프터노트가 있습니다.</string>
@@ -59,6 +61,7 @@
     <string name="receiver_mindrecord_confirm">확인하기</string>
     <string name="receiver_mindrecord_no_record_yet">이 기록은 아직 확인할 수 없어요</string>
     <string name="receiver_mindrecord_today_empty">오늘의 기록이 없어요</string>
+    <string name="receiver_mindrecord_card_logo">오늘의 기록 카드 로고</string>
     <string name="afternote_category_social_network">소셜 네트워크</string>
 
     <string name="receiver_verify_title">수신자 인증</string>
@@ -86,6 +89,7 @@
     <string name="receiver_verify_document_input_label">서류 촬영 또는 파일 첨부</string>
     <string name="receiver_verify_add_image">이미지 추가</string>
     <string name="receiver_verify_add_file">파일 추가</string>
+    <string name="receiver_verify_wait_for_approval">인증이 완료된 후에 이용 가능합니다.</string>
 
     <string name="login_kakao_button">카카오로 로그인</string>
     <string name="login_kakao_backend_not_ready">카카오 토큰을 발급받았습니다. 서버 연동(/auth/kakao) 대기 중입니다.</string>
@@ -100,12 +104,14 @@
     <string name="setting_menu_not_connected">이 메뉴는 아직 연결되지 않았습니다.</string>
     <string name="setting_logout">로그아웃</string>
     <string name="setting_logout_confirm_message">애프터노트를 로그아웃하시겠습니까?</string>
-    <string name="withdrawal_password_error">비밀번호가 맞지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_sentence_mismatch">문장이 일치하지 않습니다. 재입력해 주세요.</string>
+    <string name="withdrawal_confirmation_sentence">탈퇴하겠습니다.</string>
     <string name="withdrawal_complete_line1">회원 탈퇴가 완료되었습니다.</string>
     <string name="withdrawal_complete_line2">애프터노트를 이용해 주셔서 감사합니다.</string>
     <string name="withdrawal_complete_confirm">확인하기</string>
 
     <string name="design_pending">디자인 예정</string>
+    <string name="afternote_detail_receivers_label">수신자</string>
     <string name="afternote_detail_invalid_id">잘못된 항목 ID입니다.</string>
     <string name="afternote_detail_load_error">상세 정보를 불러오지 못했습니다.</string>
     <string name="afternote_edit_item_not_found">항목을 찾을 수 없습니다.</string>
@@ -116,16 +122,22 @@
     <string name="afternote_validation_social_process_method_required">계정 처리 방법을 선택해 주세요.</string>
     <string name="afternote_validation_social_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
     <string name="afternote_validation_gallery_actions_required">처리 방법을 한 가지 이상 추가해 주세요.</string>
-    <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요.</string>
+    <string name="afternote_validation_gallery_receivers_required">수신자를 한 명 이상 등록해 주세요. 설정에서 수신자를 등록해 주세요.</string>
+    <string name="afternote_validation_receivers_required">수신자를 한 명 이상 선택해 주세요.</string>
     <string name="afternote_validation_playlist_songs_required">플레이리스트에 노래를 한 곡 이상 추가해 주세요.</string>
     <string name="afternote_default_playlist_song_title">추모 플레이리스트 곡</string>
 
     <string name="time_letter_detail_send_date">발송 예정일: %1$s</string>
     <string name="time_letter_detail_delivery_date">발송 일자: %1$s</string>
     <string name="time_letter_detail_created_at">작성 일자: %1$s</string>
+    <string name="time_letter_voice_file_label">음성 녹음 파일 %1$d</string>
     <string name="time_letter_detail_recipient_label">수신인:</string>
     <string name="time_letter_detail_receiver_to">%1$s님께</string>
     <string name="time_letter_recipients_count">%d명에게</string>
     <string name="content_description_expand_down">아래로</string>
     <string name="content_description_video_play">영상 재생</string>
+
+    <string name="post_delivery_last_greeting_placeholder">마지막 인사말을 입력해주세요</string>
+    <string name="post_delivery_confirm">확인</string>
+    <string name="retry">재시도</string>
 </resources>

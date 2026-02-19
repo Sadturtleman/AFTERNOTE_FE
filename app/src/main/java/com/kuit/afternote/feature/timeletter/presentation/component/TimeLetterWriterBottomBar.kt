@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,74 +27,73 @@ import androidx.compose.ui.window.PopupProperties
 import com.kuit.afternote.R
 
 /**
+ * Parameters for [TimeLetterWriterBottomBar].
+ */
+data class TimeLetterWriterBottomBarParams(
+    val draftCount: Int,
+    val onLinkClick: () -> Unit,
+    val onAddClick: () -> Unit,
+    val onSaveDraftClick: () -> Unit,
+    val onDraftCountClick: () -> Unit,
+    val isMenuOpen: Boolean,
+    val onMenuDismiss: () -> Unit,
+    val onImageAddClick: () -> Unit,
+    val onFileAddClick: () -> Unit,
+    val onVoiceAddClick: () -> Unit,
+    val onLinkAddClick: () -> Unit
+)
+
+/**
  * 타임레터 작성 화면 하단 바
  *
- * @param draftCount 임시저장된 레터 개수
- * @param onLinkClick 링크 클릭 콜백
- * @param onAddClick 추가 클릭 콜백
- * @param onSaveDraftClick 임시저장 클릭 콜백
- * @param onDraftCountClick 임시저장 개수 클릭 콜백 (DraftLetterScreen으로 이동)
+ * @param params [TimeLetterWriterBottomBarParams]
  * @param modifier Modifier
  */
-
-
 @Composable
 fun TimeLetterWriterBottomBar(
-    draftCount: Int,
-    onLinkClick: () -> Unit,
-    onAddClick: () -> Unit,
-    onSaveDraftClick: () -> Unit,
-    onDraftCountClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isMenuOpen: Boolean,
-    onMenuDismiss: () -> Unit,
-    onImageAddClick: () -> Unit,
-    onFileAddClick: () -> Unit,
-    onVoiceAddClick: () -> Unit,
-    onLinkAddClick: () -> Unit
+    params: TimeLetterWriterBottomBarParams
 ) {
+    val p = params
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal=24.dp)
+            .padding(horizontal = 24.dp)
             .height(88.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-        ) {
+        Box {
             Image(
                 painter = painterResource(R.drawable.ic_link),
                 contentDescription = "링크",
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { onLinkClick() }
+                    .clickable { p.onLinkClick() }
             )
         }
         Spacer(Modifier.width(16.dp))
-        Box(){
+        Box {
             Image(
-                painterResource(R.drawable.ic_additional),
+                painter = painterResource(R.drawable.ic_additional),
                 contentDescription = "더보기",
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { onAddClick() } // 클릭 이벤트 연결
+                    .clickable { p.onAddClick() }
             )
-            if (isMenuOpen) {
+            if (p.isMenuOpen) {
                 Popup(
-                    // 아이콘 위로 16dp 정도 띄워서 표시
                     popupPositionProvider = DropUpPositionProvider(yOffset = 16),
-                    onDismissRequest = onMenuDismiss,
-                    properties = PopupProperties(focusable = true) // 외부 클릭 시 닫힘
+                    onDismissRequest = p.onMenuDismiss,
+                    properties = PopupProperties(focusable = true)
                 ) {
-                    // 사용자 정의 메뉴 컴포넌트
                     WritingPlusMenu(
                         onImageClick = {
-                            onMenuDismiss()
-                            onImageAddClick()
+                            p.onMenuDismiss()
+                            p.onImageAddClick()
                         },
-                        onVoiceClick = { onVoiceAddClick() },
-                        onFileClick = { onFileAddClick() },
-                        onLinkClick = { onLinkAddClick() }
+                        onVoiceClick = p.onVoiceAddClick,
+                        onFileClick = p.onFileAddClick,
+                        onLinkClick = p.onLinkAddClick
                     )
                 }
             }
@@ -105,7 +103,7 @@ fun TimeLetterWriterBottomBar(
         Text(
             text = "임시저장",
             modifier = Modifier
-                .clickable { onSaveDraftClick() },
+                .clickable { p.onSaveDraftClick() },
             fontSize = 16.sp,
             fontWeight = FontWeight.W500,
             fontFamily = FontFamily(Font(R.font.sansneoregular)),
@@ -120,9 +118,9 @@ fun TimeLetterWriterBottomBar(
         )
         Spacer(Modifier.width(16.dp))
         Text(
-            text = draftCount.toString(),
+            text = p.draftCount.toString(),
             modifier = Modifier
-                .clickable { onDraftCountClick() },
+                .clickable { p.onDraftCountClick() },
             fontSize = 16.sp,
             fontWeight = FontWeight.W500,
             fontFamily = FontFamily(Font(R.font.sansneoregular)),
@@ -136,16 +134,18 @@ fun TimeLetterWriterBottomBar(
 @Composable
 private fun TimeLetterWriterBottomBarPreview() {
     TimeLetterWriterBottomBar(
-        draftCount = 3,
-        onAddClick = {},
-        onLinkClick = {},
-        onSaveDraftClick = {},
-        onDraftCountClick = {},
-        isMenuOpen = false,
-        onMenuDismiss = {},
-        onImageAddClick = {},
-        onFileAddClick = {},
-        onVoiceAddClick = {},
-        onLinkAddClick = {}
+        params = TimeLetterWriterBottomBarParams(
+            draftCount = 3,
+            onLinkClick = {},
+            onAddClick = {},
+            onSaveDraftClick = {},
+            onDraftCountClick = {},
+            isMenuOpen = false,
+            onMenuDismiss = {},
+            onImageAddClick = {},
+            onFileAddClick = {},
+            onVoiceAddClick = {},
+            onLinkAddClick = {}
         )
+    )
 }

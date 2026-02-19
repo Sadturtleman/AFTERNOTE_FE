@@ -48,7 +48,8 @@ class AfternoteRepositoryImpl
         actions: List<String>,
         leaveMessage: String?,
         credentialsId: String?,
-        credentialsPassword: String?
+        credentialsPassword: String?,
+        receiverIds: List<Long>
     ): Result<Long> = runCatching {
         val body = AfternoteCreateSocialRequestDto(
             category = "SOCIAL",
@@ -62,7 +63,8 @@ class AfternoteRepositoryImpl
                     password = credentialsPassword
                 )
                 else -> null
-            }
+            },
+            receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) }
         )
         Log.d(
             TAG,
@@ -139,12 +141,14 @@ class AfternoteRepositoryImpl
      */
     override suspend fun createPlaylist(
         title: String,
-        playlist: AfternotePlaylistDto
+        playlist: AfternotePlaylistDto,
+        receiverIds: List<Long>
     ): Result<Long> = runCatching {
         val body = AfternoteCreatePlaylistRequestDto(
             category = "PLAYLIST",
             title = title,
-            playlist = playlist
+            playlist = playlist,
+            receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) }
         )
         Log.d(
             TAG,

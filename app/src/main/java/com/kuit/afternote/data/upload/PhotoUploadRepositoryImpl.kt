@@ -1,11 +1,10 @@
-package com.kuit.afternote.feature.user.data.repository
+package com.kuit.afternote.data.upload
 
 import android.content.Context
 import android.net.Uri
 import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.user.data.api.ImageApiService
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
-import com.kuit.afternote.feature.user.domain.repository.ProfileImageUploadRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -16,28 +15,28 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Named
 
-private const val DIRECTORY_PROFILES = "profiles"
 private const val DEFAULT_EXTENSION = "jpg"
 
 /**
- * Presigned URL을 받아 프로필 이미지를 S3에 업로드하고 fileUrl을 반환합니다.
+ * Shared implementation: uploads image from content URI to the given directory
+ * via POST /files/presigned-url and S3 PUT. Used for profile photo, memorial photo, etc.
  */
-class ProfileImageUploadRepositoryImpl
+class PhotoUploadRepositoryImpl
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
         private val imageApi: ImageApiService,
         @Named("S3Upload") private val okHttpClient: OkHttpClient,
         @Named("IoDispatcher") private val ioDispatcher: CoroutineDispatcher
-    ) : ProfileImageUploadRepository {
+    ) : PhotoUploadRepository {
 
-    override suspend fun uploadProfileImage(uriString: String): Result<String> =
+    override suspend fun upload(uriString: String, directory: String): Result<String> =
         runCatching {
             val uri = Uri.parse(uriString)
             val extension = extensionFromUri(uri)
             val presigned = imageApi.getPresignedUrl(
                 PresignedUrlRequestDto(
-                    directory = DIRECTORY_PROFILES,
+                    directory = directory,
                     extension = extension
                 )
             ).requireData()

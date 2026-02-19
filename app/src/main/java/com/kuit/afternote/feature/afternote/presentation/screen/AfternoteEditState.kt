@@ -147,6 +147,9 @@ class AfternoteEditState(
     /** Memorial video thumbnail URL when available (e.g. from API on edit or future upload). */
     var funeralThumbnailUrl by mutableStateOf<String?>(null)
         private set
+    /** Memorial(PLAYLIST) only: 영정 사진 URL from API (when editing). Sent as playlist.memorialPhotoUrl on save. */
+    var memorialPhotoUrl by mutableStateOf<String?>(null)
+        private set
     var playlistSongCount by mutableIntStateOf(16)
         private set
 
@@ -374,6 +377,20 @@ class AfternoteEditState(
         afternoteEditReceivers = afternoteEditReceivers.filter { it.id != afternoteEditReceiverId }
     }
 
+    /**
+     * Adds a receiver from the receiver selection screen (e.g. Time Letter 수신자 목록).
+     * Call when returning from navigation with a selected receiver.
+     */
+    fun addReceiverFromSelection(receiverId: Long, name: String, relation: String) {
+        if (afternoteEditReceivers.any { it.id == receiverId.toString() }) return
+        val newReceiver = AfternoteEditReceiver(
+            id = receiverId.toString(),
+            name = name,
+            label = relation
+        )
+        afternoteEditReceivers = afternoteEditReceivers + newReceiver
+    }
+
     fun onAfternoteEditReceiverItemAdded(text: String) {
         val newAfternoteEditReceiver = AfternoteEditReceiver(
             id = (afternoteEditReceivers.size + 1).toString(),
@@ -416,8 +433,14 @@ class AfternoteEditState(
         }
 
         if (params.informationProcessingMethodName.isNotEmpty()) {
+            val infoMethodName =
+                when (params.informationProcessingMethodName) {
+                    "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                    "ADDITIONAL" -> "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
+                    else -> params.informationProcessingMethodName
+                }
             selectedInformationProcessingMethod = runCatching {
-                InformationProcessingMethod.valueOf(params.informationProcessingMethodName)
+                InformationProcessingMethod.valueOf(infoMethodName)
             }.getOrDefault(InformationProcessingMethod.TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER)
         }
 
@@ -449,6 +472,7 @@ class AfternoteEditState(
         // Memorial only: 장례식에 남길 영상 URL and thumbnail from API.
         funeralVideoUrl = params.memorialVideoUrl
         funeralThumbnailUrl = params.memorialThumbnailUrl
+        memorialPhotoUrl = params.memorialPhotoUrl
     }
 }
 
@@ -461,6 +485,7 @@ class AfternoteEditState(
  *        not matching a default option, edit screen selects "기타(직접 입력)" and shows this text.
  * @param memorialVideoUrl Memorial(PLAYLIST) only: playlist memorial video URL from API (장례식에 남길 영상).
  * @param memorialThumbnailUrl Memorial(PLAYLIST) only: playlist memorial thumbnail URL from API.
+ * @param memorialPhotoUrl Memorial(PLAYLIST) only: playlist 영정 사진 URL from API.
  */
 data class LoadFromExistingParams(
     val itemId: String,
@@ -475,7 +500,8 @@ data class LoadFromExistingParams(
     val galleryProcessingMethodsList: List<ProcessingMethodItem>,
     val atmosphere: String? = null,
     val memorialVideoUrl: String? = null,
-    val memorialThumbnailUrl: String? = null
+    val memorialThumbnailUrl: String? = null,
+    val memorialPhotoUrl: String? = null
 )
 
 @Composable

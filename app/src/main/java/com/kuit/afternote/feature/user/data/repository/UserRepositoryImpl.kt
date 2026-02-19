@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.user.data.repository
 import android.util.Log
 import com.kuit.afternote.data.remote.ApiException
 import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.remote.requireSuccess
 import com.kuit.afternote.feature.user.data.api.UserApiService
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
@@ -55,6 +56,15 @@ class UserRepositoryImpl
                 )
                 Log.d(TAG, "updateMyProfile: response=$response")
                 UserMapper.toUserProfile(response.requireData())
+            }
+
+        override suspend fun withdrawAccount(): Result<Unit> =
+            runCatching {
+                Log.d(TAG, "withdrawAccount: request")
+                val response = api.withdrawAccount()
+                response.requireSuccess()
+                Log.d(TAG, "withdrawAccount: success")
+                Unit
             }
 
         override suspend fun getMyPushSettings(userId: Long): Result<PushSettings> =
@@ -192,14 +202,16 @@ class UserRepositoryImpl
         override suspend fun updateDeliveryCondition(
             conditionType: DeliveryConditionType,
             inactivityPeriodDays: Int?,
-            specificDate: String?
+            specificDate: String?,
+            leaveMessage: String?
         ): Result<DeliveryCondition> =
             runCatching {
                 Log.d(TAG, "updateDeliveryCondition: conditionType=$conditionType")
                 val body = UserMapper.toDeliveryConditionRequestDto(
                     conditionType = conditionType,
                     inactivityPeriodDays = inactivityPeriodDays,
-                    specificDate = specificDate
+                    specificDate = specificDate,
+                    leaveMessage = leaveMessage
                 )
                 val response = api.updateDeliveryCondition(body)
                 Log.d(TAG, "updateDeliveryCondition: response=$response")

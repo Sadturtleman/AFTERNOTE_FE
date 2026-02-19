@@ -12,19 +12,31 @@ import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -33,22 +45,16 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
-import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
+import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetailState
+import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
+import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
+import com.kuit.afternote.feature.user.presentation.viewmodel.CurrentUserNameViewModel
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
 import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
@@ -59,16 +65,19 @@ import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
 import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.onboardingNavGraph
+import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverAfternoteListRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverMainRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterDetailRoute
 import com.kuit.afternote.feature.receiver.presentation.navgraph.ReceiverTimeLetterRoute
 import com.kuit.afternote.feature.receiver.presentation.screen.afternote.ReceiverAfternoteListEvent
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverAfternoteListUiState
+import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
 import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
+import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
 import dagger.hilt.android.EntryPointAccessors
@@ -183,101 +192,81 @@ private fun FingerprintLoginRouteContent(
 
 @Composable
 private fun ReceiverAfternoteListRouteContent(navHostController: NavHostController) {
-    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     BackHandler { navHostController.popBackStack() }
-    val afternoteItems = remember(receiverProvider) {
-        receiverProvider.getAfternoteListSeedsForReceiverList().map { seed ->
-            AfternoteListDisplayItem(
-                id = seed.id,
-                serviceName = seed.serviceNameLiteral ?: "",
-                date = seed.date,
-                iconResId = seed.iconResId
-            )
+    val viewModel: ReceiverAfternotesListViewModel = hiltViewModel()
+    val afterNotesState by viewModel.uiState.collectAsStateWithLifecycle()
+    var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
+    val filteredItems = remember(afterNotesState.items, selectedTab) {
+        val list = afterNotesState.items
+        when (selectedTab) {
+            AfternoteTab.ALL -> list
+            AfternoteTab.SOCIAL_NETWORK -> list.filter {
+                it.sourceType.equals("SOCIAL", ignoreCase = true)
+            }
+            AfternoteTab.GALLERY_AND_FILES -> list.filter {
+                it.sourceType.equals("GALLERY", ignoreCase = true)
+            }
+            AfternoteTab.MEMORIAL -> list.filter {
+                it.sourceType.equals("PLAYLIST", ignoreCase = true)
+            }
         }
     }
-    var listState by remember {
-        mutableStateOf(ReceiverAfternoteListUiState(items = afternoteItems))
+    val displayItems = filteredItems.map { item ->
+        val iconResId =
+            if (item.title.isNotBlank()) getIconResForServiceName(item.title)
+            else getAfternoteDisplayRes(item.sourceType).second
+        AfternoteListDisplayItem(
+            id = item.id.toString(),
+            serviceName = item.title,
+            date = item.lastUpdatedAt,
+            iconResId = iconResId
+        )
     }
-    ReceiverAfternoteListRoute(
-        uiState = listState,
-        onEvent = { event ->
-            listState = when (event) {
-                is ReceiverAfternoteListEvent.SelectTab ->
-                    listState.copy(selectedTab = event.tab)
-                is ReceiverAfternoteListEvent.SelectBottomNav ->
-                    listState.copy(selectedBottomNavItem = event.navItem)
-                is ReceiverAfternoteListEvent.ClickItem -> {
-                    navHostController.navigate("receiver_afternote_detail/${event.itemId}")
-                    listState
+    val listState = ReceiverAfternoteListUiState(
+        items = displayItems,
+        selectedTab = selectedTab,
+        selectedBottomNavItem = selectedBottomNavItem
+    )
+    when {
+        afterNotesState.isLoading && displayItems.isEmpty() -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        afterNotesState.errorMessage != null && displayItems.isEmpty() -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(PaddingValues(24.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = afterNotesState.errorMessage!!)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { viewModel.retry() }) {
+                    Text(stringResource(R.string.retry))
                 }
             }
         }
-    )
-}
-
-private enum class ReceiverDetailCategory { GALLERY, MEMORIAL_GUIDELINE, SOCIAL }
-
-@Composable
-private fun ReceiverAfternoteDetailContent(
-    navHostController: NavHostController,
-    itemId: String?
-) {
-    val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
-    val seed =
-        remember(receiverProvider, itemId) {
-            receiverProvider
-                .getAfternoteListSeedsForReceiverList()
-                .firstOrNull { it.id == itemId }
-                ?: receiverProvider.getAfternoteListSeedsForReceiverList().firstOrNull()
+        else -> {
+            ReceiverAfternoteListRoute(
+                uiState = listState,
+                onEvent = { event ->
+                    when (event) {
+                        is ReceiverAfternoteListEvent.SelectTab ->
+                            selectedTab = event.tab
+                        is ReceiverAfternoteListEvent.SelectBottomNav ->
+                            selectedBottomNavItem = event.navItem
+                        is ReceiverAfternoteListEvent.ClickItem ->
+                            navHostController.navigate("receiver_afternote_detail/${event.itemId}")
+                    }
+                }
+            )
         }
-    val category = receiverDetailCategoryFromSeed(seed)
-    val serviceName = seed?.serviceNameLiteral ?: ""
-    val userName = receiverProvider.getDefaultReceiverTitle()
-    val defaultState = rememberAfternoteDetailState(
-        defaultBottomNavItem = BottomNavItem.AFTERNOTE
-    )
-    when (category) {
-        ReceiverDetailCategory.GALLERY -> GalleryDetailScreen(
-            detailState = GalleryDetailState(
-                serviceName = serviceName.ifEmpty { "갤러리" },
-                userName = userName,
-                finalWriteDate = seed?.date ?: ""
-            ),
-            callbacks = GalleryDetailCallbacks(
-                onBackClick = { navHostController.popBackStack() },
-                onEditClick = {}
-            ),
-            isEditable = false,
-            uiState = defaultState
-        )
-        ReceiverDetailCategory.MEMORIAL_GUIDELINE -> MemorialGuidelineDetailScreen(
-            detailState = MemorialGuidelineDetailState(
-                userName = userName,
-                finalWriteDate = seed?.date ?: ""
-            ),
-            callbacks = MemorialGuidelineDetailCallbacks(
-                onBackClick = { navHostController.popBackStack() }
-            ),
-            isEditable = false,
-            uiState = defaultState
-        )
-        ReceiverDetailCategory.SOCIAL -> SocialNetworkDetailScreen(
-            content = SocialNetworkDetailContent(
-                serviceName = serviceName,
-                userName = userName
-            ),
-            isEditable = false,
-            onBackClick = { navHostController.popBackStack() },
-            state = defaultState
-        )
-    }
-}
-
-private fun receiverDetailCategoryFromSeed(seed: AfternoteListItemSeed?): ReceiverDetailCategory {
-    return when (seed?.serviceNameLiteral) {
-        "갤러리" -> ReceiverDetailCategory.GALLERY
-        "추모 가이드라인" -> ReceiverDetailCategory.MEMORIAL_GUIDELINE
-        else -> ReceiverDetailCategory.SOCIAL
     }
 }
 
@@ -329,6 +318,13 @@ fun NavGraph(navHostController: NavHostController) {
 
     val afternoteProvider = DataProviderLocals.LocalAfternoteEditDataProvider.current
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
+    val currentUserNameViewModel: CurrentUserNameViewModel = hiltViewModel()
+    val currentUserName by currentUserNameViewModel.userName.collectAsStateWithLifecycle(
+        initialValue = ""
+    )
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn == true) currentUserNameViewModel.loadUserName()
+    }
     var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
@@ -402,7 +398,7 @@ fun NavGraph(navHostController: NavHostController) {
                 },
                 playlistStateHolder = playlistStateHolder,
                 afternoteProvider = afternoteProvider,
-                userName = receiverProvider.getDefaultReceiverTitle(),
+                userNameProvider = { currentUserName },
                 editStateHandling = AfternoteEditStateHandling(
                     holder = afternoteEditStateHolder,
                     onClear = { afternoteEditStateHolder.value = null }
@@ -411,7 +407,10 @@ fun NavGraph(navHostController: NavHostController) {
                     listRefreshRequestedProvider = { listRefreshRequested },
                     onListRefreshConsumed = { listRefreshRequested = false },
                     onAfternoteDeleted = { listRefreshRequested = true }
-                )
+                ),
+                onNavigateToSelectReceiver = {
+                    navHostController.navigate(ReceiverRoute.ReceiverListRoute)
+                }
             ),
             onBottomNavTabSelected = onBottomNavTabSelected
         )
@@ -441,7 +440,7 @@ fun NavGraph(navHostController: NavHostController) {
         }
 
         composable("receiver_afternote_detail/{itemId}") { backStackEntry ->
-            ReceiverAfternoteDetailContent(
+            ReceiverAfternoteDetailRoute(
                 navHostController = navHostController,
                 itemId = backStackEntry.arguments?.getString("itemId")
             )

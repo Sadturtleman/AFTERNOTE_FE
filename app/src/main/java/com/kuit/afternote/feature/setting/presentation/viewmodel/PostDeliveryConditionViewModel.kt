@@ -9,13 +9,13 @@ import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.usecase.GetDeliveryConditionUseCase
 import com.kuit.afternote.feature.user.domain.usecase.UpdateDeliveryConditionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import javax.inject.Inject
 
 private const val CODE_AUTOMATIC_TRANSFER = "AUTOMATIC_TRANSFER"
 private const val CODE_RECEIVER_APPROVAL = "RECEIVER_APPROVAL_TRANSFER"
@@ -29,6 +29,7 @@ data class PostDeliveryConditionState(
     val selectedTriggerCondition: TriggerConditionOption = TriggerConditionOption.AppInactivity,
     val selectedDate: LocalDate? = null,
     val inactivityPeriodDays: Int? = null,
+    val lastGreetingMessage: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -41,6 +42,8 @@ interface PostDeliveryConditionViewModelContract {
     fun onDeliveryMethodSelected(option: DeliveryMethodOption)
     fun onTriggerConditionSelected(option: TriggerConditionOption)
     fun onDateSelected(date: LocalDate?)
+    fun onLastGreetingChanged(text: String)
+    fun onSaveLastGreeting(lastGreetingText: String)
 }
 
 /**
@@ -73,6 +76,7 @@ constructor(
                         selectedTriggerCondition = conditionTypeToTriggerOption(condition.conditionType),
                         selectedDate = condition.specificDate?.let { iso -> LocalDate.parse(iso) },
                         inactivityPeriodDays = condition.inactivityPeriodDays,
+                        lastGreetingMessage = condition.leaveMessage ?: "",
                         isLoading = false,
                         errorMessage = null
                     )
@@ -114,6 +118,15 @@ constructor(
         viewModelScope.launch { updateDeliveryConditionApi() }
     }
 
+    override fun onLastGreetingChanged(text: String) {
+        _state.update { it.copy(lastGreetingMessage = text) }
+    }
+
+    override fun onSaveLastGreeting(lastGreetingText: String) {
+        _state.update { it.copy(lastGreetingMessage = lastGreetingText) }
+        viewModelScope.launch { updateDeliveryConditionApi() }
+    }
+
     private suspend fun updateDeliveryConditionApi() {
         val s = _state.value
         val conditionType = triggerOptionToConditionType(s.selectedTriggerCondition)
@@ -128,7 +141,8 @@ constructor(
         updateDeliveryConditionUseCase(
             conditionType = conditionType,
             inactivityPeriodDays = inactivityPeriodDays,
-            specificDate = specificDate
+            specificDate = specificDate,
+            leaveMessage = s.lastGreetingMessage.ifBlank { null }
         )
             .onSuccess { condition ->
                 _state.update {
@@ -203,5 +217,5 @@ constructor(
             CODE_SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
             CODE_RECEIVER_REQUEST -> TriggerConditionOption.ReceiverRequest
             else -> TriggerConditionOption.AppInactivity
-        }g
+        }
 }

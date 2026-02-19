@@ -61,7 +61,7 @@ object AfternoteItemMapper {
      *   processing=["게시물 내리기","추모 게시물 올리기","추모 계정으로 전환하기"],
      *   message="이 계정에는 우리 가족 여행 사진이 많아.…"
      *
-     * GalleryDetailScreen: infoMethod=TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER,
+     * GalleryDetailScreen: infoMethod=TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER,
      *   galleryProcessing=["'엽사' 폴더 박선호에게 전송","'흑역사' 폴더 삭제"],
      *   message="" (없음)
      */
@@ -83,7 +83,7 @@ object AfternoteItemMapper {
         when (type) {
             AfternoteServiceType.SOCIAL_NETWORK -> defaultSocialOrBusinessDummyFields()
             AfternoteServiceType.GALLERY_AND_FILES -> DummyItemFields(
-                informationProcessingMethod = "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+                informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
                 galleryProcessingMethods = listOf(
                     AfternoteProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
                     AfternoteProcessingMethod("2", "'흑역사' 폴더 삭제")

@@ -25,7 +25,6 @@ import com.kuit.afternote.ui.theme.Gray9
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
-    onProfileClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
     Row(
@@ -37,7 +36,7 @@ fun HomeHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.logo_blue),
+            painter = painterResource(R.drawable.ic_home_topbar_logo),
             contentDescription = "AFTERNOTE",
             modifier = Modifier.height(16.dp)
         )

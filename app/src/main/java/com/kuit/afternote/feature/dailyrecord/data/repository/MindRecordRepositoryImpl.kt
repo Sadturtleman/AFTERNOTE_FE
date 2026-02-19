@@ -9,6 +9,7 @@ import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordDetailResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.MindRecordListResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordResponse
+import com.kuit.afternote.feature.dailyrecord.data.dto.ReceiverEnabledRequest
 import com.kuit.afternote.feature.dailyrecord.domain.model.DailyQuestionData
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -56,6 +57,21 @@ class MindRecordRepositoryImpl @Inject constructor(
 
     override suspend fun getEmotions(): EmotionResponse {
         return apiService.getEmotions().body()!!
+    }
+
+    override suspend fun setMindRecordReceiverEnabled(
+        recordId: Long,
+        receiverId: Long,
+        enabled: Boolean
+    ) {
+        val response = apiService.setMindRecordReceiverEnabled(
+            recordId = recordId,
+            receiverId = receiverId,
+            request = ReceiverEnabledRequest(enabled = enabled)
+        )
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
     }
 }
 

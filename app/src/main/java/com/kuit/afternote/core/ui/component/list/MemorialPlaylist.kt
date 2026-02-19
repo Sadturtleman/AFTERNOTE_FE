@@ -128,6 +128,7 @@ private fun MemorialPlaylistAddButton(
  * 앨범 행: albumCovers를 사용. albumItemContent를 넘기면 해당 슬롯으로 그리며, null이면 각 앨범을 회색 박스로 표시.
  *
  * @param onAddSongClick null이면 view 모드(버튼·편집 UI 없음), non-null이면 edit 모드
+ * @param onPlaylistClick view 모드에서 카드(오른쪽 화살표 영역 포함) 클릭 시 호출. null이면 클릭 비활성화
  * @param albumItemContent 앨범 셀 커스텀; null이면 기본 회색 박스 (view/placeholder용)
  */
 @Composable
@@ -137,9 +138,16 @@ fun MemorialPlaylist(
     songCount: Int = 0,
     albumCovers: List<AlbumCover> = emptyList(),
     onAddSongClick: (() -> Unit)? = null,
+    onPlaylistClick: (() -> Unit)? = null,
     albumItemContent: (@Composable (album: AlbumCover, index: Int) -> Unit)? = null
 ) {
     val isEditMode = onAddSongClick != null
+    val cardModifier = when {
+        !isEditMode && onPlaylistClick != null -> modifier
+            .fillMaxWidth()
+            .clickable(onClick = onPlaylistClick)
+        else -> modifier.fillMaxWidth()
+    }
     Column(
         verticalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
@@ -154,8 +162,7 @@ fun MemorialPlaylist(
             )
         )
         Column(
-            modifier = modifier
-                .fillMaxWidth()
+            modifier = cardModifier
                 .background(color = White, shape = RoundedCornerShape(size = 16.dp))
                 .padding(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(space = 8.dp)

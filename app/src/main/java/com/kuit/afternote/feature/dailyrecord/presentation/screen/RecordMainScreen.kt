@@ -5,13 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -59,6 +56,9 @@ fun RecordMainScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Gray1,
+        topBar = {
+            TopBar(title = "나의 모든 기록")
+        },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
@@ -103,12 +103,7 @@ fun RecordMainScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
-                .windowInsetsPadding(WindowInsets.statusBars) // 상태바 만큼 패딩을 줘서 겹치지 않도록
         ) {
-            // 샹단 제목
-            TopBar(
-                title = "나의 모든 기록"
-            )
             // 리스트
             val allItems = listOf(
                 "데일리 질문답변" to "매일 다른 질문들에 나를 남겨보세요",

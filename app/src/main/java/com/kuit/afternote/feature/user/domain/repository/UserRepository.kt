@@ -21,6 +21,11 @@ interface UserRepository {
         profileImageUrl: String?
     ): Result<UserProfile>
 
+    /**
+     * DELETE /users/me — 회원 탈퇴. 로그인한 사용자의 계정을 삭제합니다. 모든 데이터가 영구 삭제되며 복구할 수 없습니다.
+     */
+    suspend fun withdrawAccount(): Result<Unit>
+
     /** GET /users/push-settings — 푸시 알림 설정 조회. */
     suspend fun getMyPushSettings(userId: Long): Result<PushSettings>
 
@@ -68,10 +73,12 @@ interface UserRepository {
      * @param conditionType 전달 조건 타입
      * @param inactivityPeriodDays 비활동 기간(일), INACTIVITY일 때 사용
      * @param specificDate 특정 날짜(yyyy-MM-dd), SPECIFIC_DATE일 때 사용
+     * @param leaveMessage 마지막 인사말 (수신자에게 전달되는 메시지)
      */
     suspend fun updateDeliveryCondition(
         conditionType: DeliveryConditionType,
         inactivityPeriodDays: Int?,
-        specificDate: String?
+        specificDate: String?,
+        leaveMessage: String? = null
     ): Result<DeliveryCondition>
 }

@@ -44,6 +44,7 @@ data class AfternoteDetailReceiver(
 data class AfternotePlaylistDetail(
     val profilePhoto: String?,
     val atmosphere: String?,
+    val memorialPhotoUrl: String?,
     val songs: List<AfternoteDetailSong>,
     val memorialVideoUrl: String?,
     val memorialThumbnailUrl: String?

@@ -141,7 +141,9 @@ fun TimeLetterScreen(
                 }
 
                 is TimeLetterUiState.Success -> {
-                    val letters = (uiState as TimeLetterUiState.Success).letters
+                    val successState = uiState as TimeLetterUiState.Success
+                    val letters = successState.letters
+                    val filterLabel = successState.selectedReceiverName ?: "전체보기"
 
                     // 필터 + 토글 Row (좌우 패딩은 ScaffoldContentWithOptionalFab contentPadding에서 적용됨)
                     Row(
@@ -153,7 +155,7 @@ fun TimeLetterScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "전체보기",
+                                text = filterLabel,
                                 fontFamily = FontFamily(Font(R.font.sansneomedium)),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium

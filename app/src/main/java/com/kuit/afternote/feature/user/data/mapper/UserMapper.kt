@@ -74,6 +74,7 @@ object UserMapper {
             conditionType = dto.conditionType.toDomain(),
             inactivityPeriodDays = dto.inactivityPeriodDays,
             specificDate = dto.specificDate,
+            leaveMessage = dto.leaveMessage,
             conditionFulfilled = dto.conditionFulfilled,
             conditionMet = dto.conditionMet
         )
@@ -81,12 +82,14 @@ object UserMapper {
     fun toDeliveryConditionRequestDto(
         conditionType: DeliveryConditionType,
         inactivityPeriodDays: Int?,
-        specificDate: String?
+        specificDate: String?,
+        leaveMessage: String? = null
     ): DeliveryConditionRequestDto =
         DeliveryConditionRequestDto(
             conditionType = conditionType.toDto(),
             inactivityPeriodDays = inactivityPeriodDays,
-            specificDate = specificDate
+            specificDate = specificDate,
+            leaveMessage = leaveMessage
         )
 
     private fun DeliveryConditionTypeDto.toDomain(): DeliveryConditionType =
