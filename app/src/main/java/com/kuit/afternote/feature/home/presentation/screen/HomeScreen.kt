@@ -40,6 +40,7 @@ import com.kuit.afternote.feature.home.presentation.component.WeeklyCalendarStri
 import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel
+import com.kuit.afternote.feature.user.presentation.viewmodel.ReceiverListViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray5
@@ -75,21 +76,26 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     event: HomeScreenEvent = EmptyHomeScreenEvent,
     profileViewModel: ProfileEditViewModelContract = hiltViewModel<ProfileViewModel>(),
-    recordViewModel: MindRecordHomeContract = hiltViewModel<MindRecordViewModel>()
+    recordViewModel: MindRecordHomeContract = hiltViewModel<MindRecordViewModel>(),
+    mindRecordViewModel: MindRecordViewModel = hiltViewModel(),
+    receiverListViewModel: ReceiverListViewModel = hiltViewModel()
 ) {
     var content by remember { mutableStateOf(HomeScreenContent()) }
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
     val recordUiState = recordViewModel.calendarDays.collectAsStateWithLifecycle()
+    val receiverState = receiverListViewModel.uiState.collectAsStateWithLifecycle()
 
+    val dailyState = mindRecordViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         profileViewModel.loadProfile()
         recordViewModel.loadRecordsForDiaryList()
-
-
+        mindRecordViewModel.loadDailyQuestion()
+        receiverListViewModel.loadReceivers()
         content = content.copy(
             userName = uiState.value.name,
             dailyQuestionDate = LocalDate.now().format(DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)),
-            calendarDays = recordUiState.value
+            calendarDays = recordUiState.value,
+            dailyQuestion = dailyState.value.dailyQuestionText ?: "오늘 하루,\n누구에게 가장 고마웠나요?"
         )
     }
 
@@ -121,7 +127,8 @@ fun HomeScreen(
 
             // Recipient badge
             RecipientBadge(
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(horizontal = 20.dp),
+                showCheckIcon = !receiverState.value.receivers.isEmpty()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
