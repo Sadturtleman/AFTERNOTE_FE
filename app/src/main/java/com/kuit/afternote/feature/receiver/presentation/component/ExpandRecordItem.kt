@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.component
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -31,13 +32,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import com.kuit.afternote.R
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
 import com.kuit.afternote.ui.theme.Sansneo
+
+private const val TAG = "ExpandableRecordItem"
 
 @Composable
 fun ExpandableRecordItem(
@@ -45,7 +57,8 @@ fun ExpandableRecordItem(
     tags: String,
     question: String,
     content: String,
-    hasImage: Boolean
+    hasImage: Boolean,
+    imageUrl: String? = null
 ) {
     // 상태 관리: 펼쳐짐/닫힘
     var expanded by remember { mutableStateOf(false) }
@@ -109,35 +122,33 @@ fun ExpandableRecordItem(
         if (expanded) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (hasImage) {
-                // 1. 이미지 카드 형태
+            if (hasImage && !imageUrl.isNullOrBlank()) {
+                val context = LocalContext.current
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.LightGray) // 실제 이미지가 없을 경우 회색 배경
+                        .background(Color.LightGray)
                 ) {
-                    // 실제 이미지 사용 시:
-                    // Image(painter = painterResource(id = R.drawable.sample_img), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-
-                    // 예시용 플레이스홀더 (그라데이션 효과 흉내)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFF555555)) // 이미지 대신 어두운 배경
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(imageUrl)
+                            .httpHeaders(
+                                NetworkHeaders.Builder()
+                                    .set("User-Agent", "Afternote Android App")
+                                    .build()
+                            )
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        error = painterResource(R.drawable.img_time_letter_placeholder),
+                        onError = { state: AsyncImagePainter.State.Error ->
+                            Log.e(TAG, "Coil load failed: url=$imageUrl", state.result.throwable)
+                        }
                     )
                 }
-            } else {
-                // 2. 빈 박스 형태 (일기장)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .border(1.dp, B3, RoundedCornerShape(12.dp)) // 파란 테두리
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

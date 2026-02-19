@@ -5,6 +5,8 @@ import java.time.LocalDate
 /**
  * 마음의 기록 상세(날짜별) 화면 한 건 UI 모델.
  * ExpandableRecordItem에 바인딩합니다.
+ *
+ * @param imageUrl imageList에서 첫 번째 이미지 URL (표시용)
  */
 data class MindRecordItemUiModel(
     val mindRecordId: Long,
@@ -12,7 +14,8 @@ data class MindRecordItemUiModel(
     val tags: String,
     val question: String,
     val content: String,
-    val hasImage: Boolean
+    val hasImage: Boolean,
+    val imageUrl: String? = null
 )
 
 /**
