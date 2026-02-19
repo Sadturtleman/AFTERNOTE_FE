@@ -22,7 +22,8 @@ data class PushSettings(
 data class ReceiverListItem(
     val receiverId: Long,
     val name: String,
-    val relation: String
+    val relation: String,
+    val mindRecordDeliveryEnabled: Boolean = true
 )
 
 data class ReceiverDetail(
@@ -46,6 +47,21 @@ data class DailyQuestionAnswerItem(
 /** Paginated result for GET /users/receivers/{receiverId}/daily-questions. */
 data class ReceiverDailyQuestionsResult(
     val items: List<DailyQuestionAnswerItem>,
+    val hasNext: Boolean
+)
+
+/** 수신인별 마음의 기록 항목 (일기, 깊은 생각, 데일리 질문 답변). */
+data class ReceiverMindRecordItem(
+    val recordId: Long,
+    val type: String,
+    val titleOrQuestion: String,
+    val contentOrAnswer: String,
+    val recordDate: String
+)
+
+/** Paginated result for GET /users/receivers/{receiverId}/mind-records. */
+data class ReceiverMindRecordsResult(
+    val items: List<ReceiverMindRecordItem>,
     val hasNext: Boolean
 )
 

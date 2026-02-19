@@ -5,6 +5,7 @@ import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
 import com.kuit.afternote.feature.user.domain.model.PushSettings
 import com.kuit.afternote.feature.user.domain.model.ReceiverDetail
 import com.kuit.afternote.feature.user.domain.model.ReceiverDailyQuestionsResult
+import com.kuit.afternote.feature.user.domain.model.ReceiverMindRecordsResult
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.model.UserProfile
 
@@ -61,6 +62,16 @@ interface UserRepository {
         page: Int,
         size: Int
     ): Result<ReceiverDailyQuestionsResult>
+
+    /**
+     * 수신인별 마음의 기록 전체 조회 (일기, 깊은 생각, 데일리 질문 답변).
+     * GET /users/receivers/{receiverId}/mind-records
+     */
+    suspend fun getReceiverMindRecords(
+        receiverId: Long,
+        page: Int,
+        size: Int
+    ): Result<ReceiverMindRecordsResult>
 
     /**
      * GET /users/delivery-condition — 로그인한 사용자의 전달 조건 설정 조회.

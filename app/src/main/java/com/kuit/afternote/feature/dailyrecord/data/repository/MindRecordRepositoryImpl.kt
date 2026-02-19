@@ -1,7 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.data.repository
 
-import android.util.Log
-import com.kuit.afternote.data.remote.requireData
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import com.kuit.afternote.feature.dailyrecord.data.dto.CreateMindRecordRequest
 import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
@@ -26,6 +24,14 @@ class MindRecordRepositoryImpl @Inject constructor(
         null
     }
 
+    override suspend fun getEmotions(): EmotionResponse {
+        val response = apiService.getEmotions()
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
+        return response.body() ?: throw IllegalStateException("EmotionResponse body is null")
+    }
+
     override suspend fun getMindRecords(
         type: String,
         view: String,
@@ -47,16 +53,18 @@ class MindRecordRepositoryImpl @Inject constructor(
     }
     override suspend fun getMindRecord(recordId: Long): MindRecordDetailResponse {
         val response = apiService.getMindRecord(recordId)
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
         return response.body() ?: throw IllegalStateException("Response body is null")
     }
 
     override suspend fun editMindRecord(recordId: Long, request: PostMindRecordRequest): MindRecordDetailResponse {
         val response = apiService.editMindRecord(recordId, request)
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
         return response.body() ?: throw IllegalStateException("Response body is null")
-    }
-
-    override suspend fun getEmotions(): EmotionResponse {
-        return apiService.getEmotions().body()!!
     }
 
     override suspend fun setMindRecordReceiverEnabled(
@@ -65,9 +73,9 @@ class MindRecordRepositoryImpl @Inject constructor(
         enabled: Boolean
     ) {
         val response = apiService.setMindRecordReceiverEnabled(
-            recordId = recordId,
-            receiverId = receiverId,
-            request = ReceiverEnabledRequest(enabled = enabled)
+            recordId,
+            receiverId,
+            ReceiverEnabledRequest(enabled = enabled)
         )
         if (!response.isSuccessful) {
             throw HttpException(response)

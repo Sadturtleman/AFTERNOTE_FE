@@ -22,7 +22,7 @@ import javax.inject.Inject
 /**
  * UserRepository 구현체. (스웨거 기준)
  */
-class UserRepositoryImpl
+abstract class UserRepositoryImpl
     @Inject
     constructor(
         private val api: UserApiService
