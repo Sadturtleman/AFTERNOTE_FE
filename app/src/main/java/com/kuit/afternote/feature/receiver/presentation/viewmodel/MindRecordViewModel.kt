@@ -98,8 +98,10 @@ class MindRecordViewModel
     private fun loadTodayRecordImage(authCode: String, mindRecordId: Long) {
         viewModelScope.launch {
             getMindRecordDetailByAuthCodeUseCase(authCode, mindRecordId)
-                .onSuccess { url ->
-                    _uiState.update { it.copy(todayRecordImageUrl = url) }
+                .onSuccess { detail ->
+                    _uiState.update {
+                        it.copy(todayRecordImageUrl = detail.imageUrls.firstOrNull())
+                    }
                 }
         }
     }
@@ -142,7 +144,7 @@ class MindRecordViewModel
     private fun toMindRecordItemUiModel(record: ReceivedMindRecord): MindRecordItemUiModel {
         val dateDisplay = formatRecordDate(record.recordDate)
         val tags = record.sourceType?.let { "#$it" }.orEmpty()
-        val question = record.sourceType.orEmpty()
+        val question = record.content.orEmpty()
         return MindRecordItemUiModel(
             mindRecordId = record.mindRecordId,
             date = dateDisplay,

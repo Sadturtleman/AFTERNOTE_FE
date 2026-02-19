@@ -162,7 +162,8 @@ fun MindRecordDetailScreen(
                             tags = item.tags,
                             question = item.question,
                             content = item.content,
-                            hasImage = item.hasImage
+                            hasImage = item.hasImage,
+                            imageUrl = item.imageUrl
                         )
                         HorizontalDivider(
                             color = Gray6,
