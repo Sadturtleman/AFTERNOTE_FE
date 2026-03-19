@@ -31,36 +31,36 @@ interface AfternoteApiService {
         @Query("category") category: String? = null,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 10,
-    ): BaseResponse<AfternoteListResponse?>
+    ): BaseResponse<AfternoteListResponse>
 
     @GET("api/afternotes/{afternoteId}")
     suspend fun getAfternoteDetail(
         @Path("afternoteId") afternoteId: Long,
-    ): BaseResponse<AfternoteDetailResponse?>
+    ): BaseResponse<AfternoteDetailResponse>
 
     @POST("api/afternotes")
     suspend fun createAfternoteSocial(
         @Body body: AfternoteCreateSocialRequest,
-    ): BaseResponse<AfternoteIdResponse?>
+    ): BaseResponse<AfternoteIdResponse>
 
     @POST("api/afternotes")
     suspend fun createAfternoteGallery(
         @Body body: AfternoteCreateGalleryRequest,
-    ): BaseResponse<AfternoteIdResponse?>
+    ): BaseResponse<AfternoteIdResponse>
 
     @POST("api/afternotes")
     suspend fun createAfternotePlaylist(
         @Body body: AfternoteCreatePlaylistRequest,
-    ): BaseResponse<AfternoteIdResponse?>
+    ): BaseResponse<AfternoteIdResponse>
 
     @PATCH("api/afternotes/{afternoteId}")
     suspend fun updateAfternote(
         @Path("afternoteId") afternoteId: Long,
         @Body body: AfternoteUpdateRequest,
-    ): BaseResponse<AfternoteIdResponse?>
+    ): BaseResponse<AfternoteIdResponse>
 
     @DELETE("api/afternotes/{afternoteId}")
     suspend fun deleteAfternote(
         @Path("afternoteId") afternoteId: Long,
-    ): BaseResponse<AfternoteIdResponse?>
+    ): BaseResponse<AfternoteIdResponse>
 }
