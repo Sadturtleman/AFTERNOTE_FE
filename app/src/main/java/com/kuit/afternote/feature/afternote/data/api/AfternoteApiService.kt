@@ -1,13 +1,13 @@
 package com.kuit.afternote.feature.afternote.data.api
 
 import com.kuit.afternote.data.BaseResponse
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponseDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteIdResponseDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteListResponseDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponse
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteIdResponse
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteListResponse
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -31,36 +31,36 @@ interface AfternoteApiService {
         @Query("category") category: String? = null,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 10,
-    ): BaseResponse<AfternoteListResponseDto?>
+    ): BaseResponse<AfternoteListResponse?>
 
     @GET("api/afternotes/{afternoteId}")
     suspend fun getAfternoteDetail(
         @Path("afternoteId") afternoteId: Long,
-    ): BaseResponse<AfternoteDetailResponseDto?>
+    ): BaseResponse<AfternoteDetailResponse?>
 
     @POST("api/afternotes")
     suspend fun createAfternoteSocial(
-        @Body body: AfternoteCreateSocialRequestDto,
-    ): BaseResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreateSocialRequest,
+    ): BaseResponse<AfternoteIdResponse?>
 
     @POST("api/afternotes")
     suspend fun createAfternoteGallery(
-        @Body body: AfternoteCreateGalleryRequestDto,
-    ): BaseResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreateGalleryRequest,
+    ): BaseResponse<AfternoteIdResponse?>
 
     @POST("api/afternotes")
     suspend fun createAfternotePlaylist(
-        @Body body: AfternoteCreatePlaylistRequestDto,
-    ): BaseResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreatePlaylistRequest,
+    ): BaseResponse<AfternoteIdResponse?>
 
     @PATCH("api/afternotes/{afternoteId}")
     suspend fun updateAfternote(
         @Path("afternoteId") afternoteId: Long,
-        @Body body: AfternoteUpdateRequestDto,
-    ): BaseResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteUpdateRequest,
+    ): BaseResponse<AfternoteIdResponse?>
 
     @DELETE("api/afternotes/{afternoteId}")
     suspend fun deleteAfternote(
         @Path("afternoteId") afternoteId: Long,
-    ): BaseResponse<AfternoteIdResponseDto?>
+    ): BaseResponse<AfternoteIdResponse?>
 }

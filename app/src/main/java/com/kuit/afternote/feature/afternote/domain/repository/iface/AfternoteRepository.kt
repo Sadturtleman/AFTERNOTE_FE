@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.repository.iface
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 
@@ -16,11 +16,10 @@ import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
  * - DELETE /afternotes/{afternoteId} (삭제)
  */
 interface AfternoteRepository {
-
     suspend fun getAfternotes(
         category: String?,
         page: Int,
-        size: Int
+        size: Int,
     ): Result<PagedAfternotes>
 
     suspend fun createSocial(
@@ -30,7 +29,7 @@ interface AfternoteRepository {
         leaveMessage: String?,
         credentialsId: String?,
         credentialsPassword: String?,
-        receiverIds: List<Long> = emptyList()
+        receiverIds: List<Long> = emptyList(),
     ): Result<Long>
 
     suspend fun createGallery(
@@ -38,22 +37,21 @@ interface AfternoteRepository {
         processMethod: String,
         actions: List<String>,
         leaveMessage: String?,
-        receiverIds: List<Long>
+        receiverIds: List<Long>,
     ): Result<Long>
 
     suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail>
 
     suspend fun createPlaylist(
         title: String,
-        playlist: AfternotePlaylistDto,
-        receiverIds: List<Long> = emptyList()
+        playlist: AfternotePlaylist,
+        receiverIds: List<Long> = emptyList(),
     ): Result<Long>
 
     suspend fun updateAfternote(
         afternoteId: Long,
-        body: AfternoteUpdateRequestDto
+        body: AfternoteUpdateRequest,
     ): Result<Long>
 
     suspend fun deleteAfternote(afternoteId: Long): Result<Unit>
 }
-

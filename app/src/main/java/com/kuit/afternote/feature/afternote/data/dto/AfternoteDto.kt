@@ -9,22 +9,22 @@ import kotlinx.serialization.json.JsonNames
  * Matches API: data.content[], page, size, hasNext.
  */
 @Serializable
-data class AfternoteListResponseDto(
-    val content: List<AfternoteListItemDto> = emptyList(),
+data class AfternoteListResponse(
+    val content: List<AfternoteListItem> = emptyList(),
     val page: Int = 0,
     val size: Int = 10,
-    val hasNext: Boolean = false
+    val hasNext: Boolean = false,
 )
 
 /**
  * Single item in list response. Server form: afternoteId, title, category, createdAt.
  */
 @Serializable
-data class AfternoteListItemDto(
+data class AfternoteListItem(
     val afternoteId: Long,
     val title: String,
     val category: String,
-    val createdAt: String
+    val createdAt: String,
 )
 
 /**
@@ -32,14 +32,14 @@ data class AfternoteListItemDto(
  * Matches API: category, title, processMethod, actions, leaveMessage, credentials, receivers.
  */
 @Serializable
-data class AfternoteCreateSocialRequestDto(
+data class AfternoteCreateSocialRequest(
     val category: String = "SOCIAL",
     val title: String,
     val processMethod: String,
     val actions: List<String>,
     val leaveMessage: String? = null,
-    val credentials: AfternoteCredentialsDto? = null,
-    val receivers: List<AfternoteReceiverRefDto> = emptyList()
+    val credentials: AfternoteCredentials? = null,
+    val receivers: List<AfternoteReceiverRef> = emptyList(),
 )
 
 /**
@@ -47,27 +47,27 @@ data class AfternoteCreateSocialRequestDto(
  * receivers: 수신자 목록 (모든 카테고리에서 가능).
  */
 @Serializable
-data class AfternoteCreateGalleryRequestDto(
+data class AfternoteCreateGalleryRequest(
     val category: String = "GALLERY",
     val title: String,
     val processMethod: String,
     val actions: List<String>,
     val leaveMessage: String? = null,
-    val receivers: List<AfternoteReceiverRefDto>
+    val receivers: List<AfternoteReceiverRef>,
 )
 
 @Serializable
-data class AfternoteCredentialsDto(
+data class AfternoteCredentials(
     val id: String? = null,
-    val password: String? = null
+    val password: String? = null,
 )
 
 /**
  * 수신자 참조 (API ReceiverRequest). 수신자 목록은 모든 카테고리에서 사용 가능.
  */
 @Serializable
-data class AfternoteReceiverRefDto(
-    val receiverId: Long
+data class AfternoteReceiverRef(
+    val receiverId: Long,
 )
 
 /**
@@ -76,8 +76,8 @@ data class AfternoteReceiverRefDto(
  */
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class AfternoteIdResponseDto(
-    @JsonNames("afternote_id") val afternoteId: Long
+data class AfternoteIdResponse(
+    @JsonNames("afternote_id") val afternoteId: Long,
 )
 
 // --- GET /afternotes/{afternoteId} (detail) ---
@@ -88,18 +88,18 @@ data class AfternoteIdResponseDto(
  */
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class AfternoteDetailResponseDto(
+data class AfternoteDetailResponse(
     val afternoteId: Long,
     val category: String,
     val title: String,
     @JsonNames("created_at", "createdAt") val createdAt: String = "",
     @JsonNames("updated_at", "updatedAt") val updatedAt: String = "",
-    val credentials: AfternoteCredentialsDto? = null,
-    val receivers: List<AfternoteDetailReceiverDto>? = null,
+    val credentials: AfternoteCredentials? = null,
+    val receivers: List<AfternoteDetailReceiver>? = null,
     val processMethod: String? = null,
     val actions: List<String>? = null,
     val leaveMessage: String? = null,
-    val playlist: AfternotePlaylistDto? = null
+    val playlist: AfternotePlaylist? = null,
 )
 
 /**
@@ -109,34 +109,34 @@ data class AfternoteDetailResponseDto(
  */
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
-data class AfternoteDetailReceiverDto(
+data class AfternoteDetailReceiver(
     @JsonNames("receiver_id") val receiverId: Long? = null,
     @JsonNames("receiverName", "receiver_name") val name: String? = null,
     @JsonNames("receiverRelation", "receiver_relation", "relationship") val relation: String? = null,
-    @JsonNames("receiverPhone", "receiver_phone", "phoneNumber", "phone_number") val phone: String? = null
+    @JsonNames("receiverPhone", "receiver_phone", "phoneNumber", "phone_number") val phone: String? = null,
 )
 
 @Serializable
-data class AfternotePlaylistDto(
+data class AfternotePlaylist(
     val profilePhoto: String? = null,
     val atmosphere: String? = null,
     val memorialPhotoUrl: String? = null,
-    val songs: List<AfternoteSongDto> = emptyList(),
-    val memorialVideo: AfternoteMemorialVideoDto? = null
+    val songs: List<AfternoteSong> = emptyList(),
+    val memorialVideo: AfternoteMemorialVideo? = null,
 )
 
 @Serializable
-data class AfternoteSongDto(
+data class AfternoteSong(
     val id: Long? = null,
     val title: String,
     val artist: String,
-    val coverUrl: String? = null
+    val coverUrl: String? = null,
 )
 
 @Serializable
-data class AfternoteMemorialVideoDto(
+data class AfternoteMemorialVideo(
     val videoUrl: String? = null,
-    val thumbnailUrl: String? = null
+    val thumbnailUrl: String? = null,
 )
 
 // --- POST /afternotes (PLAYLIST category) ---
@@ -146,11 +146,11 @@ data class AfternoteMemorialVideoDto(
  * receivers: 수신자 목록 (모든 카테고리에서 가능).
  */
 @Serializable
-data class AfternoteCreatePlaylistRequestDto(
+data class AfternoteCreatePlaylistRequest(
     val category: String = "PLAYLIST",
     val title: String,
-    val playlist: AfternotePlaylistDto,
-    val receivers: List<AfternoteReceiverRefDto> = emptyList()
+    val playlist: AfternotePlaylist,
+    val receivers: List<AfternoteReceiverRef> = emptyList(),
 )
 
 // --- PATCH /afternotes/{afternoteId} (partial update) ---
@@ -160,13 +160,13 @@ data class AfternoteCreatePlaylistRequestDto(
  * Send only fields valid for the afternote's category (SOCIAL: credentials, etc.; GALLERY: receivers; PLAYLIST: playlist).
  */
 @Serializable
-data class AfternoteUpdateRequestDto(
+data class AfternoteUpdateRequest(
     val category: String,
     val title: String,
     val processMethod: String? = null,
     val actions: List<String>? = null,
     val leaveMessage: String? = null,
-    val credentials: AfternoteCredentialsDto? = null,
-    val receivers: List<AfternoteReceiverRefDto>? = null,
-    val playlist: AfternotePlaylistDto? = null
+    val credentials: AfternoteCredentials? = null,
+    val receivers: List<AfternoteReceiverRef>? = null,
+    val playlist: AfternotePlaylist? = null,
 )

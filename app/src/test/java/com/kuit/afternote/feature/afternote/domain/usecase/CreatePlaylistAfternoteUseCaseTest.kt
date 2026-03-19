@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteSongDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteSong
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -13,7 +13,6 @@ import org.junit.Before
 import org.junit.Test
 
 class CreatePlaylistAfternoteUseCaseTest {
-
     private lateinit var repository: AfternoteRepository
     private lateinit var useCase: CreatePlaylistAfternoteUseCase
 
@@ -27,17 +26,17 @@ class CreatePlaylistAfternoteUseCaseTest {
     fun invoke_whenSuccess_returnsId() =
         runTest {
             val playlist =
-                AfternotePlaylistDto(
+                AfternotePlaylist(
                     profilePhoto = null,
                     atmosphere = "차분하게",
-                    songs = listOf(AfternoteSongDto(id = null, title = "보고싶다", artist = "김범수", coverUrl = "https://example.com")),
-                    memorialVideo = null
+                    songs = listOf(AfternoteSong(id = null, title = "보고싶다", artist = "김범수", coverUrl = "https://example.com")),
+                    memorialVideo = null,
                 )
             coEvery {
                 repository.createPlaylist(
                     title = any(),
                     playlist = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.success(7L)
 
@@ -49,7 +48,7 @@ class CreatePlaylistAfternoteUseCaseTest {
                 repository.createPlaylist(
                     title = "마지막 플레이리스트",
                     playlist = playlist,
-                    receiverIds = emptyList()
+                    receiverIds = emptyList(),
                 )
             }
         }
@@ -58,17 +57,17 @@ class CreatePlaylistAfternoteUseCaseTest {
     fun invoke_whenFailure_returnsFailure() =
         runTest {
             val playlist =
-                AfternotePlaylistDto(
+                AfternotePlaylist(
                     profilePhoto = null,
                     atmosphere = null,
                     songs = emptyList(),
-                    memorialVideo = null
+                    memorialVideo = null,
                 )
             coEvery {
                 repository.createPlaylist(
                     title = any(),
                     playlist = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(RuntimeException("Validation failed"))
 

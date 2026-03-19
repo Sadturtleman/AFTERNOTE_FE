@@ -4,13 +4,13 @@ import android.util.Log
 import com.kuit.afternote.data.requireData
 import com.kuit.afternote.data.requireSuccess
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequestDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentialsDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylistDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRefDto
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequest
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
@@ -53,7 +53,7 @@ class AfternoteRepositoryImpl
         ): Result<Long> =
             runCatching {
                 val body =
-                    AfternoteCreateSocialRequestDto(
+                    AfternoteCreateSocialRequest(
                         category = "SOCIAL",
                         title = title,
                         processMethod = processMethod,
@@ -62,7 +62,7 @@ class AfternoteRepositoryImpl
                         credentials =
                             when {
                                 credentialsId != null || credentialsPassword != null -> {
-                                    AfternoteCredentialsDto(
+                                    AfternoteCredentials(
                                         id = credentialsId,
                                         password = credentialsPassword,
                                     )
@@ -72,7 +72,7 @@ class AfternoteRepositoryImpl
                                     null
                                 }
                             },
-                        receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) },
+                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 Log.d(
                     TAG,
@@ -106,13 +106,13 @@ class AfternoteRepositoryImpl
         ): Result<Long> =
             runCatching {
                 val body =
-                    AfternoteCreateGalleryRequestDto(
+                    AfternoteCreateGalleryRequest(
                         category = "GALLERY",
                         title = title,
                         processMethod = processMethod,
                         actions = actions,
                         leaveMessage = leaveMessage,
-                        receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) },
+                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 Log.d(
                     TAG,
@@ -151,16 +151,16 @@ class AfternoteRepositoryImpl
          */
         override suspend fun createPlaylist(
             title: String,
-            playlist: AfternotePlaylistDto,
+            playlist: AfternotePlaylist,
             receiverIds: List<Long>,
         ): Result<Long> =
             runCatching {
                 val body =
-                    AfternoteCreatePlaylistRequestDto(
+                    AfternoteCreatePlaylistRequest(
                         category = "PLAYLIST",
                         title = title,
                         playlist = playlist,
-                        receivers = receiverIds.map { AfternoteReceiverRefDto(receiverId = it) },
+                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 Log.d(
                     TAG,
@@ -184,7 +184,7 @@ class AfternoteRepositoryImpl
          */
         override suspend fun updateAfternote(
             afternoteId: Long,
-            body: AfternoteUpdateRequestDto,
+            body: AfternoteUpdateRequest,
         ): Result<Long> =
             runCatching {
                 Log.d(
