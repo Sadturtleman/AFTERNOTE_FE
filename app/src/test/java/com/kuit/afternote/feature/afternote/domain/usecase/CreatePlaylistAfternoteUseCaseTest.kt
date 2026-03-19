@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.domain.usecase
 
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSong
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

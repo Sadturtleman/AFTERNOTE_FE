@@ -1,7 +1,8 @@
-package com.kuit.afternote.feature.afternote.domain.repository.iface
+package com.kuit.afternote.feature.afternote.domain.repository
 
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteListResponse
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 

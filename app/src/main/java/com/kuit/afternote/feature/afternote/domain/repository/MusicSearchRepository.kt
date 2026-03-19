@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.domain.repository.iface
+package com.kuit.afternote.feature.afternote.domain.repository
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 
@@ -7,7 +7,6 @@ import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
  * API: GET /music/search?keyword= — 200 success, 400 when keyword is missing.
  */
 fun interface MusicSearchRepository {
-
     /**
      * Searches for tracks by keyword. Call only when [keyword] is non-blank (API returns 400 otherwise).
      *

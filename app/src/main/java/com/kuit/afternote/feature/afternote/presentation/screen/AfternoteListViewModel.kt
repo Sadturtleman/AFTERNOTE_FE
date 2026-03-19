@@ -2,10 +2,10 @@ package com.kuit.afternote.feature.afternote.presentation.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,9 +26,8 @@ import javax.inject.Inject
 class AfternoteListViewModel
     @Inject
     constructor(
-        private val getAfternotesUseCase: GetAfternotesUseCase
+        private val getAfternotesUseCase: GetAfternotesUseCase,
     ) : ViewModel() {
-
         private val _uiState = MutableStateFlow(AfternoteListUiState())
         val uiState: StateFlow<AfternoteListUiState> = _uiState.asStateFlow()
 
@@ -61,12 +60,11 @@ class AfternoteListViewModel
                                 isLoading = false,
                                 loadError = null,
                                 hasNext = paged.hasNext,
-                                isLoadingMore = false
+                                isLoadingMore = false,
                             )
                         }
                         updateFilteredItems(_uiState.value.selectedTab)
-                    }
-                    .onFailure { e ->
+                    }.onFailure { e ->
                         allItems = emptyList()
                         currentPage = 0
                         hasNextPage = false
@@ -76,7 +74,7 @@ class AfternoteListViewModel
                                 items = emptyList(),
                                 loadError = e.message ?: "애프터노트 목록을 불러오지 못했습니다.",
                                 hasNext = false,
-                                isLoadingMore = false
+                                isLoadingMore = false,
                             )
                         }
                     }
@@ -102,8 +100,7 @@ class AfternoteListViewModel
                             it.copy(isLoadingMore = false, hasNext = paged.hasNext)
                         }
                         updateFilteredItems(_uiState.value.selectedTab)
-                    }
-                    .onFailure {
+                    }.onFailure {
                         _uiState.update { it.copy(isLoadingMore = false) }
                     }
             }
@@ -126,9 +123,18 @@ class AfternoteListViewModel
          */
         fun onEvent(event: AfternoteListEvent) {
             when (event) {
-                is AfternoteListEvent.SelectTab -> updateTab(event.tab)
-                is AfternoteListEvent.SelectBottomNav -> updateBottomNav(event.navItem)
-                is AfternoteListEvent.ClickItem -> handleItemClick(event.itemId)
+                is AfternoteListEvent.SelectTab -> {
+                    updateTab(event.tab)
+                }
+
+                is AfternoteListEvent.SelectBottomNav -> {
+                    updateBottomNav(event.navItem)
+                }
+
+                is AfternoteListEvent.ClickItem -> {
+                    handleItemClick(event.itemId)
+                }
+
                 is AfternoteListEvent.ClickAdd -> {
                     // 네비게이션은 Route에서 처리
                 }
@@ -147,12 +153,13 @@ class AfternoteListViewModel
          * 선택된 탭에 따라 아이템 필터링
          */
         private fun updateFilteredItems(tab: AfternoteTab) {
-            val filtered = when (tab) {
-                AfternoteTab.ALL -> allItems
-                AfternoteTab.SOCIAL_NETWORK -> allItems.filter { it.type == AfternoteServiceType.SOCIAL_NETWORK }
-                AfternoteTab.GALLERY_AND_FILES -> allItems.filter { it.type == AfternoteServiceType.GALLERY_AND_FILES }
-                AfternoteTab.MEMORIAL -> allItems.filter { it.type == AfternoteServiceType.MEMORIAL }
-            }
+            val filtered =
+                when (tab) {
+                    AfternoteTab.ALL -> allItems
+                    AfternoteTab.SOCIAL_NETWORK -> allItems.filter { it.type == AfternoteServiceType.SOCIAL_NETWORK }
+                    AfternoteTab.GALLERY_AND_FILES -> allItems.filter { it.type == AfternoteServiceType.GALLERY_AND_FILES }
+                    AfternoteTab.MEMORIAL -> allItems.filter { it.type == AfternoteServiceType.MEMORIAL }
+                }
 
             _uiState.update { it.copy(items = filtered) }
         }
@@ -169,7 +176,7 @@ class AfternoteListViewModel
          * 아이템 클릭 처리
          */
         private fun handleItemClick(
-            @Suppress("UNUSED_PARAMETER") itemId: String
+            @Suppress("UNUSED_PARAMETER") itemId: String,
         ) {
             // 네비게이션은 Route에서 처리
         }

@@ -14,7 +14,7 @@ import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
 private const val TAG = "AfternoteRepo"
@@ -54,7 +54,7 @@ class AfternoteRepositoryImpl
             receiverIds: List<Long>,
         ): Result<Long> =
             runCatching {
-                val body =
+                val request =
                     AfternoteCreateSocialRequest(
                         category = "SOCIAL",
                         title = title,
@@ -76,17 +76,7 @@ class AfternoteRepositoryImpl
                             },
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
-                Log.d(
-                    TAG,
-                    "createSocial: title=${body.title}, processMethod=${body.processMethod}, " +
-                        "actions=${body.actions}, hasCredentials=${body.credentials != null}",
-                )
-                val response = api.createAfternoteSocial(body)
-                Log.d(
-                    TAG,
-                    "createSocial response: status=${response.status}, code=${response.code}, " +
-                        "message=${response.message}, data=${response.data}",
-                )
+                val response = api.createAfternoteSocial(request)
                 response.requireData().afternoteId
             }.also { result ->
                 result.onFailure { e ->
@@ -194,7 +184,7 @@ class AfternoteRepositoryImpl
                     "updateAfternote: id=$afternoteId, title=${body.title}, " +
                         "processMethod=${body.processMethod}, actions=${body.actions}",
                 )
-                val response = api.updateAfternote(afternoteId = afternoteId, body = body)
+                val response = api.updateAfternote(afternoteId = afternoteId, request = body)
                 Log.d(
                     TAG,
                     "updateAfternote response: status=${response.status}, code=${response.code}, " +

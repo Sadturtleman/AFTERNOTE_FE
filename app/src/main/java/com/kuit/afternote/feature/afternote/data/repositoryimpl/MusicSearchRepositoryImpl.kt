@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.afternote.data.repositoryimpl
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.data.service.MusicApiService
 import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
-import com.kuit.afternote.feature.afternote.domain.repository.iface.MusicSearchRepository
+import com.kuit.afternote.feature.afternote.domain.repository.MusicSearchRepository
 import javax.inject.Inject
 
 /**

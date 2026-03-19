@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class DeleteAfternoteUseCaseTest {
-
     private lateinit var repository: AfternoteRepository
     private lateinit var useCase: DeleteAfternoteUseCase
 

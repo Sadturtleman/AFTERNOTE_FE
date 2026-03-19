@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
 /**

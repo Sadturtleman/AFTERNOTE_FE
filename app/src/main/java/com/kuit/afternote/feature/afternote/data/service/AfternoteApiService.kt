@@ -40,23 +40,23 @@ interface AfternoteApiService {
 
     @POST("api/afternotes")
     suspend fun createAfternoteSocial(
-        @Body body: AfternoteCreateSocialRequest,
+        @Body request: AfternoteCreateSocialRequest,
     ): BaseResponse<AfternoteIdResponse>
 
     @POST("api/afternotes")
     suspend fun createAfternoteGallery(
-        @Body body: AfternoteCreateGalleryRequest,
+        @Body request: AfternoteCreateGalleryRequest,
     ): BaseResponse<AfternoteIdResponse>
 
     @POST("api/afternotes")
     suspend fun createAfternotePlaylist(
-        @Body body: AfternoteCreatePlaylistRequest,
+        @Body request: AfternoteCreatePlaylistRequest,
     ): BaseResponse<AfternoteIdResponse>
 
     @PATCH("api/afternotes/{afternoteId}")
     suspend fun updateAfternote(
         @Path("afternoteId") afternoteId: Long,
-        @Body body: AfternoteUpdateRequest,
+        @Body request: AfternoteUpdateRequest,
     ): BaseResponse<AfternoteIdResponse>
 
     @DELETE("api/afternotes/{afternoteId}")
