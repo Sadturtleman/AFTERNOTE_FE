@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.receiver.data.dto.CreateMindRecordReceiverRequestDto
 import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequestDto
 import retrofit2.http.Body
@@ -12,7 +12,6 @@ import retrofit2.http.POST
  * - POST /api/received/mind-records: 마인드레코드 수신자 등록
  */
 interface ReceivedApiService {
-
     /**
      * 타임레터에 수신자를 등록합니다. 여러 수신자를 한 번에 등록할 수 있습니다.
      *
@@ -20,8 +19,8 @@ interface ReceivedApiService {
      */
     @POST("api/received/time-letters")
     suspend fun registerTimeLetterReceivers(
-        @Body body: CreateTimeLetterReceiverRequestDto
-    ): ApiResponse<List<Long>?>
+        @Body body: CreateTimeLetterReceiverRequestDto,
+    ): BaseResponse<List<Long>?>
 
     /**
      * 마인드레코드에 수신자를 등록합니다. 여러 수신자를 한 번에 등록할 수 있습니다.
@@ -30,7 +29,6 @@ interface ReceivedApiService {
      */
     @POST("api/received/mind-records")
     suspend fun registerMindRecordReceivers(
-        @Body body: CreateMindRecordReceiverRequestDto
-    ): ApiResponse<List<Long>?>
-
+        @Body body: CreateMindRecordReceiverRequestDto,
+    ): BaseResponse<List<Long>?>
 }

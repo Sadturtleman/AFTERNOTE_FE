@@ -1,5 +1,7 @@
-package com.kuit.afternote.data.remote
+package com.kuit.afternote.data.response
 
+import com.kuit.afternote.data.remote.ApiException
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,27 +12,27 @@ import kotlinx.serialization.Serializable
  * @param T `data` 필드의 타입. null인 경우 [Unit] 또는 [Nothing] 사용.
  */
 @Serializable
-data class ApiResponse<T>(
-    val status: Int,
-    val code: Int,
-    val message: String,
-    val data: T? = null
+data class BaseResponse<T>(
+    @SerialName("status") val status: Int,
+    @SerialName("message") val message: String,
+    @SerialName("data") val data: T? = null,
+    @SerialName("code") val code: Int,
 )
 
 /**
- * 응답 status가 200이 아니면 [ApiException]을 던지고, data가 null이면 [ApiException]을 던진다.
+ * 응답 status가 200이 아니면 [com.kuit.afternote.data.remote.ApiException]을 던지고, data가 null이면 [com.kuit.afternote.data.remote.ApiException]을 던진다.
  *
  * @return non-null data
- * @throws ApiException 서버가 에러 응답을 반환한 경우
+ * @throws com.kuit.afternote.data.remote.ApiException 서버가 에러 응답을 반환한 경우
  */
-fun <T> ApiResponse<T>.requireData(): T & Any {
+fun <T> BaseResponse<T>.requireData(): T & Any {
     if (status != 200) {
         throw ApiException(status = status, code = code, message = message)
     }
     return data ?: throw ApiException(
         status = status,
         code = code,
-        message = message.ifBlank { "data is null" }
+        message = message.ifBlank { "data is null" },
     )
 }
 
@@ -41,7 +43,7 @@ fun <T> ApiResponse<T>.requireData(): T & Any {
  *
  * @throws ApiException 서버가 에러 응답을 반환한 경우
  */
-fun ApiResponse<*>.requireSuccess() {
+fun BaseResponse<*>.requireSuccess() {
     if (status != 200) {
         throw ApiException(status = status, code = code, message = message)
     }

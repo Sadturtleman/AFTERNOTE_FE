@@ -1,7 +1,6 @@
 package com.kuit.afternote.feature.auth.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
-import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
@@ -11,6 +10,7 @@ import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpData
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
+import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
 import retrofit2.http.Body
@@ -26,41 +26,41 @@ import retrofit2.http.POST
 interface AuthApiService {
     @POST("auth/email/send")
     suspend fun sendEmailCode(
-        @Body body: SendEmailCodeRequest
-    ): ApiResponse<Unit?>
+        @Body body: SendEmailCodeRequest,
+    ): BaseResponse<Unit?>
 
     @POST("auth/email/verify")
     suspend fun verifyEmail(
-        @Body body: VerifyEmailRequest
-    ): ApiResponse<VerifyEmailData?>
+        @Body body: VerifyEmailRequest,
+    ): BaseResponse<VerifyEmailData?>
 
     @POST("auth/sign-up")
     suspend fun signUp(
-        @Body body: SignUpRequest
-    ): ApiResponse<SignUpData?>
+        @Body body: SignUpRequest,
+    ): BaseResponse<SignUpData?>
 
     @POST("auth/login")
     suspend fun login(
-        @Body body: LoginRequest
-    ): ApiResponse<LoginData?>
+        @Body body: LoginRequest,
+    ): BaseResponse<LoginData?>
 
     @POST("auth/social/login")
     suspend fun socialLogin(
-        @Body body: SocialLoginRequest
-    ): ApiResponse<LoginData?>
+        @Body body: SocialLoginRequest,
+    ): BaseResponse<LoginData?>
 
     @POST("auth/reissue")
     suspend fun reissue(
-        @Body body: ReissueRequest
-    ): ApiResponse<ReissueData?>
+        @Body body: ReissueRequest,
+    ): BaseResponse<ReissueData?>
 
     @POST("auth/logout")
     suspend fun logout(
-        @Body body: LogoutRequest
-    ): ApiResponse<Unit?>
+        @Body body: LogoutRequest,
+    ): BaseResponse<Unit?>
 
     @POST("auth/password/change")
     suspend fun passwordChange(
-        @Body body: PasswordChangeRequest
-    ): ApiResponse<Unit?>
+        @Body body: PasswordChangeRequest,
+    ): BaseResponse<Unit?>
 }

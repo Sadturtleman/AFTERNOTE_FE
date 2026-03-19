@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.admin.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.admin.data.dto.AdminVerificationResponseDto
 import com.kuit.afternote.feature.admin.data.dto.ApproveVerificationRequestDto
 import com.kuit.afternote.feature.admin.data.dto.RejectVerificationRequestDto
@@ -18,7 +18,6 @@ import retrofit2.http.Path
  * - POST /api/admin/verifications/{id}/reject: 인증 요청 거절
  */
 interface AdminApiService {
-
     /**
      * 대기 중인(PENDING) 사망확인 인증 요청 목록을 조회합니다.
      *
@@ -27,7 +26,7 @@ interface AdminApiService {
      * @return data: 인증 요청 목록 (발신자/수신자 정보, Presigned URL, 제출 일시, 관리자 메모)
      */
     @GET("api/admin/verifications")
-    suspend fun getPendingVerifications(): ApiResponse<List<AdminVerificationResponseDto>?>
+    suspend fun getPendingVerifications(): BaseResponse<List<AdminVerificationResponseDto>?>
 
     /**
      * 관리자가 특정 인증 요청의 상세 정보를 조회합니다.
@@ -39,7 +38,9 @@ interface AdminApiService {
      * @return data: 인증 요청 상세 (발신자/수신자 정보, Presigned URL, 상태, 관리자 메모, 생성일시)
      */
     @GET("api/admin/verifications/{id}")
-    suspend fun getVerificationDetail(@Path("id") id: Long): ApiResponse<AdminVerificationResponseDto?>
+    suspend fun getVerificationDetail(
+        @Path("id") id: Long,
+    ): BaseResponse<AdminVerificationResponseDto?>
 
     /**
      * 관리자가 사망확인 인증 요청을 승인합니다.
@@ -55,8 +56,8 @@ interface AdminApiService {
     @POST("api/admin/verifications/{id}/approve")
     suspend fun approveVerification(
         @Path("id") id: Long,
-        @Body body: ApproveVerificationRequestDto
-    ): ApiResponse<AdminVerificationResponseDto?>
+        @Body body: ApproveVerificationRequestDto,
+    ): BaseResponse<AdminVerificationResponseDto?>
 
     /**
      * 관리자가 사망확인 인증 요청을 거절합니다.
@@ -72,6 +73,6 @@ interface AdminApiService {
     @POST("api/admin/verifications/{id}/reject")
     suspend fun rejectVerification(
         @Path("id") id: Long,
-        @Body body: RejectVerificationRequestDto
-    ): ApiResponse<AdminVerificationResponseDto?>
+        @Body body: RejectVerificationRequestDto,
+    ): BaseResponse<AdminVerificationResponseDto?>
 }

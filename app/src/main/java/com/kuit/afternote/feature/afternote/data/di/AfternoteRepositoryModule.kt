@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.afternote.data.di
 
-import com.kuit.afternote.data.upload.MemorialThumbnailUploadRepositoryImpl
-import com.kuit.afternote.data.upload.PhotoUploadRepository
-import com.kuit.afternote.data.upload.PhotoUploadRepositoryImpl
-import com.kuit.afternote.data.upload.MemorialVideoUploadRepositoryImpl
+import com.kuit.afternote.data.repositoryimpl.MemorialThumbnailUploadRepositoryImpl
+import com.kuit.afternote.data.repositoryimpl.MemorialVideoUploadRepositoryImpl
+import com.kuit.afternote.data.repositoryimpl.PhotoUploadRepositoryImpl
+import com.kuit.afternote.domain.repository.PhotoUploadRepository
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.api.MusicApiService
 import com.kuit.afternote.feature.afternote.data.repository.AfternoteRepositoryImpl
@@ -30,52 +30,38 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AfternoteRepositoryModule {
-
     // 사용 위치가 Hilt가 생성하는 코드 안에만 있기 때문에 IDE에서 'never used'로 표시됩니다.
     @Suppress("unused")
     @Binds
     @Singleton
-    abstract fun bindAfternoteRepository(
-        impl: AfternoteRepositoryImpl
-    ): AfternoteRepository
+    abstract fun bindAfternoteRepository(impl: AfternoteRepositoryImpl): AfternoteRepository
 
     @Suppress("unused")
     @Binds
     @Singleton
-    abstract fun bindMusicSearchRepository(
-        impl: MusicSearchRepositoryImpl
-    ): MusicSearchRepository
+    abstract fun bindMusicSearchRepository(impl: MusicSearchRepositoryImpl): MusicSearchRepository
 
     @Suppress("unused")
     @Binds
     @Singleton
-    abstract fun bindMemorialThumbnailUploadRepository(
-        impl: MemorialThumbnailUploadRepositoryImpl
-    ): MemorialThumbnailUploadRepository
+    abstract fun bindMemorialThumbnailUploadRepository(impl: MemorialThumbnailUploadRepositoryImpl): MemorialThumbnailUploadRepository
 
     @Suppress("unused")
     @Binds
     @Singleton
-    abstract fun bindPhotoUploadRepository(
-        impl: PhotoUploadRepositoryImpl
-    ): PhotoUploadRepository
+    abstract fun bindPhotoUploadRepository(impl: PhotoUploadRepositoryImpl): PhotoUploadRepository
 
     @Binds
     @Singleton
-    abstract fun bindMemorialVideoUploadRepository(
-        impl: MemorialVideoUploadRepositoryImpl
-    ): MemorialVideoUploadRepository
+    abstract fun bindMemorialVideoUploadRepository(impl: MemorialVideoUploadRepositoryImpl): MemorialVideoUploadRepository
 
     companion object {
         @Provides
         @Singleton
-        fun provideAfternoteApiService(retrofit: Retrofit): AfternoteApiService =
-            retrofit.create(AfternoteApiService::class.java)
+        fun provideAfternoteApiService(retrofit: Retrofit): AfternoteApiService = retrofit.create(AfternoteApiService::class.java)
 
         @Provides
         @Singleton
-        fun provideMusicApiService(retrofit: Retrofit): MusicApiService =
-            retrofit.create(MusicApiService::class.java)
+        fun provideMusicApiService(retrofit: Retrofit): MusicApiService = retrofit.create(MusicApiService::class.java)
     }
 }
-

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.timeletter.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterCreateRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterDeleteRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterListResponse
@@ -23,32 +23,32 @@ import retrofit2.http.Path
  */
 interface TimeLetterApiService {
     @GET("time-letters")
-    suspend fun getTimeLetters(): ApiResponse<TimeLetterListResponse?>
+    suspend fun getTimeLetters(): BaseResponse<TimeLetterListResponse?>
 
     @POST("time-letters")
     suspend fun createTimeLetter(
-        @Body body: TimeLetterCreateRequest
-    ): ApiResponse<TimeLetterResponse?>
+        @Body body: TimeLetterCreateRequest,
+    ): BaseResponse<TimeLetterResponse?>
 
     @GET("time-letters/{timeLetterId}")
     suspend fun getTimeLetter(
-        @Path("timeLetterId") timeLetterId: Long
-    ): ApiResponse<TimeLetterResponse?>
+        @Path("timeLetterId") timeLetterId: Long,
+    ): BaseResponse<TimeLetterResponse?>
 
     @PATCH("time-letters/{timeLetterId}")
     suspend fun updateTimeLetter(
         @Path("timeLetterId") timeLetterId: Long,
-        @Body body: TimeLetterUpdateRequest
-    ): ApiResponse<TimeLetterResponse?>
+        @Body body: TimeLetterUpdateRequest,
+    ): BaseResponse<TimeLetterResponse?>
 
     @POST("time-letters/delete")
     suspend fun deleteTimeLetters(
-        @Body body: TimeLetterDeleteRequest
-    ): ApiResponse<Unit?>
+        @Body body: TimeLetterDeleteRequest,
+    ): BaseResponse<Unit?>
 
     @GET("time-letters/temporary")
-    suspend fun getTemporaryTimeLetters(): ApiResponse<TimeLetterListResponse?>
+    suspend fun getTemporaryTimeLetters(): BaseResponse<TimeLetterListResponse?>
 
     @DELETE("time-letters/temporary")
-    suspend fun deleteAllTemporary(): ApiResponse<Unit?>
+    suspend fun deleteAllTemporary(): BaseResponse<Unit?>
 }

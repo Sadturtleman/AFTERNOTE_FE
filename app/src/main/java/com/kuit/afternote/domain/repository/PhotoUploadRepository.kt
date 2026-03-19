@@ -1,4 +1,4 @@
-package com.kuit.afternote.data.upload
+package com.kuit.afternote.domain.repository
 
 /**
  * Core photo upload: content URI → presigned URL → S3 PUT → file URL.
@@ -11,5 +11,8 @@ fun interface PhotoUploadRepository {
      * @param directory target directory for the file (e.g. "profiles", "afternotes").
      * @return Success with image URL (https) or failure.
      */
-    suspend fun upload(uriString: String, directory: String): Result<String>
+    suspend fun upload(
+        uriString: String,
+        directory: String,
+    ): Result<String>
 }

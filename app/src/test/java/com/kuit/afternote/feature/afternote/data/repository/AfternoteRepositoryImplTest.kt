@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
@@ -32,7 +32,6 @@ import org.junit.Test
  * entrypoints are actually used and verified against the Retrofit service.
  */
 class AfternoteRepositoryImplTest {
-
     private lateinit var api: AfternoteApiService
     private lateinit var repository: AfternoteRepositoryImpl
 
@@ -53,15 +52,15 @@ class AfternoteRepositoryImplTest {
                                 afternoteId = 10L,
                                 title = "인스타그램",
                                 category = "SOCIAL",
-                                createdAt = "2025-11-26T14:30:00"
-                            )
+                                createdAt = "2025-11-26T14:30:00",
+                            ),
                         ),
                     page = 0,
                     size = 10,
-                    hasNext = false
+                    hasNext = false,
                 )
             coEvery { api.getAfternotes(category = null, page = 0, size = 10) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = listDto)
+                BaseResponse(status = 200, code = 0, message = "OK", data = listDto)
 
             val result = repository.getAfternotes(category = null, page = 0, size = 10)
 
@@ -77,7 +76,7 @@ class AfternoteRepositoryImplTest {
     fun createSocial_whenSuccess_returnsId() =
         runTest {
             coEvery { api.createAfternoteSocial(any()) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 3L))
+                BaseResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 3L))
 
             val result =
                 repository.createSocial(
@@ -86,7 +85,7 @@ class AfternoteRepositoryImplTest {
                     actions = listOf("게시물 내리기"),
                     leaveMessage = "감사했습니다",
                     credentialsId = "id",
-                    credentialsPassword = "pw"
+                    credentialsPassword = "pw",
                 )
 
             assertTrue(result.isSuccess)
@@ -100,8 +99,8 @@ class AfternoteRepositoryImplTest {
                         actions = listOf("게시물 내리기"),
                         leaveMessage = "감사했습니다",
                         credentials = AfternoteCredentialsDto(id = "id", password = "pw"),
-                        receivers = emptyList()
-                    )
+                        receivers = emptyList(),
+                    ),
                 )
             }
         }
@@ -110,7 +109,7 @@ class AfternoteRepositoryImplTest {
     fun createGallery_whenSuccess_returnsId() =
         runTest {
             coEvery { api.createAfternoteGallery(any()) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 5L))
+                BaseResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 5L))
 
             val result =
                 repository.createGallery(
@@ -118,7 +117,7 @@ class AfternoteRepositoryImplTest {
                     processMethod = "DELETE",
                     actions = listOf("사진 백업"),
                     leaveMessage = "소중한 추억들",
-                    receiverIds = listOf(1L, 2L)
+                    receiverIds = listOf(1L, 2L),
                 )
 
             assertTrue(result.isSuccess)
@@ -134,9 +133,9 @@ class AfternoteRepositoryImplTest {
                         receivers =
                             listOf(
                                 AfternoteReceiverRefDto(receiverId = 1L),
-                                AfternoteReceiverRefDto(receiverId = 2L)
-                            )
-                    )
+                                AfternoteReceiverRefDto(receiverId = 2L),
+                            ),
+                    ),
                 )
             }
         }
@@ -157,16 +156,16 @@ class AfternoteRepositoryImplTest {
                             AfternoteDetailReceiverDto(
                                 name = "수신인",
                                 relation = "친구",
-                                phone = "010-0000-0000"
-                            )
+                                phone = "010-0000-0000",
+                            ),
                         ),
                     processMethod = "MEMORIAL",
                     actions = listOf("게시물 내리기"),
                     leaveMessage = "감사했습니다",
-                    playlist = null
+                    playlist = null,
                 )
             coEvery { api.getAfternoteDetail(afternoteId = 10L) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = detail)
+                BaseResponse(status = 200, code = 0, message = "OK", data = detail)
 
             val result = repository.getAfternoteDetail(afternoteId = 10L)
 
@@ -180,7 +179,7 @@ class AfternoteRepositoryImplTest {
     fun createPlaylist_whenSuccess_returnsId() =
         runTest {
             coEvery { api.createAfternotePlaylist(any()) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 7L))
+                BaseResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 7L))
 
             val playlist =
                 AfternotePlaylistDto(
@@ -192,21 +191,21 @@ class AfternoteRepositoryImplTest {
                                 id = null,
                                 title = "보고싶다",
                                 artist = "김범수",
-                                coverUrl = "https://example.com"
-                            )
+                                coverUrl = "https://example.com",
+                            ),
                         ),
                     memorialVideo =
                         AfternoteMemorialVideoDto(
                             videoUrl = "https://video",
-                            thumbnailUrl = "https://thumb"
-                        )
+                            thumbnailUrl = "https://thumb",
+                        ),
                 )
 
             val result =
                 repository.createPlaylist(
                     title = "마지막 플레이리스트",
                     playlist = playlist,
-                    receiverIds = emptyList()
+                    receiverIds = emptyList(),
                 )
 
             assertTrue(result.isSuccess)
@@ -217,8 +216,8 @@ class AfternoteRepositoryImplTest {
                         category = "PLAYLIST",
                         title = "마지막 플레이리스트",
                         playlist = playlist,
-                        receivers = emptyList()
-                    )
+                        receivers = emptyList(),
+                    ),
                 )
             }
         }
@@ -227,7 +226,7 @@ class AfternoteRepositoryImplTest {
     fun updateAfternote_whenSuccess_returnsId() =
         runTest {
             coEvery { api.updateAfternote(any(), any()) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 10L))
+                BaseResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 10L))
 
             val body =
                 AfternoteUpdateRequestDto(
@@ -238,7 +237,7 @@ class AfternoteRepositoryImplTest {
                     leaveMessage = "수정된 메시지",
                     credentials = AfternoteCredentialsDto(id = null, password = "new_pw"),
                     receivers = null,
-                    playlist = null
+                    playlist = null,
                 )
 
             val result = repository.updateAfternote(afternoteId = 10L, body = body)
@@ -252,7 +251,7 @@ class AfternoteRepositoryImplTest {
     fun deleteAfternote_whenSuccess_returnsUnit() =
         runTest {
             coEvery { api.deleteAfternote(afternoteId = 10L) } returns
-                ApiResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 10L))
+                BaseResponse(status = 200, code = 0, message = "OK", data = AfternoteIdResponseDto(afternoteId = 10L))
 
             val result = repository.deleteAfternote(afternoteId = 10L)
 
@@ -260,4 +259,3 @@ class AfternoteRepositoryImplTest {
             coVerify(exactly = 1) { api.deleteAfternote(afternoteId = 10L) }
         }
 }
-

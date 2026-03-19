@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.response.BaseResponse
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequestDto
@@ -26,42 +26,41 @@ import retrofit2.http.Query
  * - DELETE /afternotes/{afternoteId} — delete
  */
 interface AfternoteApiService {
-
     @GET("api/afternotes")
     suspend fun getAfternotes(
         @Query("category") category: String? = null,
         @Query("page") page: Int = 0,
-        @Query("size") size: Int = 10
-    ): ApiResponse<AfternoteListResponseDto?>
+        @Query("size") size: Int = 10,
+    ): BaseResponse<AfternoteListResponseDto?>
 
     @GET("api/afternotes/{afternoteId}")
     suspend fun getAfternoteDetail(
-        @Path("afternoteId") afternoteId: Long
-    ): ApiResponse<AfternoteDetailResponseDto?>
+        @Path("afternoteId") afternoteId: Long,
+    ): BaseResponse<AfternoteDetailResponseDto?>
 
     @POST("api/afternotes")
     suspend fun createAfternoteSocial(
-        @Body body: AfternoteCreateSocialRequestDto
-    ): ApiResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreateSocialRequestDto,
+    ): BaseResponse<AfternoteIdResponseDto?>
 
     @POST("api/afternotes")
     suspend fun createAfternoteGallery(
-        @Body body: AfternoteCreateGalleryRequestDto
-    ): ApiResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreateGalleryRequestDto,
+    ): BaseResponse<AfternoteIdResponseDto?>
 
     @POST("api/afternotes")
     suspend fun createAfternotePlaylist(
-        @Body body: AfternoteCreatePlaylistRequestDto
-    ): ApiResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteCreatePlaylistRequestDto,
+    ): BaseResponse<AfternoteIdResponseDto?>
 
     @PATCH("api/afternotes/{afternoteId}")
     suspend fun updateAfternote(
         @Path("afternoteId") afternoteId: Long,
-        @Body body: AfternoteUpdateRequestDto
-    ): ApiResponse<AfternoteIdResponseDto?>
+        @Body body: AfternoteUpdateRequestDto,
+    ): BaseResponse<AfternoteIdResponseDto?>
 
     @DELETE("api/afternotes/{afternoteId}")
     suspend fun deleteAfternote(
-        @Path("afternoteId") afternoteId: Long
-    ): ApiResponse<AfternoteIdResponseDto?>
+        @Path("afternoteId") afternoteId: Long,
+    ): BaseResponse<AfternoteIdResponseDto?>
 }

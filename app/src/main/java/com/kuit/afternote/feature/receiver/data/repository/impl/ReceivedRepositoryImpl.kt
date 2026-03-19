@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.data.repository.impl
 
-import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.response.requireData
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.dto.CreateMindRecordReceiverRequestDto
 import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequestDto
@@ -15,38 +15,37 @@ import javax.inject.Inject
 class ReceivedRepositoryImpl
     @Inject
     constructor(
-        private val api: ReceivedApiService
+        private val api: ReceivedApiService,
     ) : ReceivedRepository {
+        override suspend fun registerTimeLetterReceivers(
+            timeLetterId: Long,
+            receiverIds: List<Long>,
+            deliveredAt: String?,
+        ): Result<List<Long>> =
+            runCatching {
+                val response =
+                    api.registerTimeLetterReceivers(
+                        CreateTimeLetterReceiverRequestDto(
+                            timeLetterId = timeLetterId,
+                            receiverIds = receiverIds,
+                            deliveredAt = deliveredAt,
+                        ),
+                    )
+                response.requireData()
+            }
 
-    override suspend fun registerTimeLetterReceivers(
-        timeLetterId: Long,
-        receiverIds: List<Long>,
-        deliveredAt: String?
-    ): Result<List<Long>> =
-        runCatching {
-            val response = api.registerTimeLetterReceivers(
-                CreateTimeLetterReceiverRequestDto(
-                    timeLetterId = timeLetterId,
-                    receiverIds = receiverIds,
-                    deliveredAt = deliveredAt
-                )
-            )
-            response.requireData()
-        }
-
-    override suspend fun registerMindRecordReceivers(
-        mindRecordId: Long,
-        receiverIds: List<Long>
-    ): Result<List<Long>> =
-        runCatching {
-            val response = api.registerMindRecordReceivers(
-                CreateMindRecordReceiverRequestDto(
-                    mindRecordId = mindRecordId,
-                    receiverIds = receiverIds
-                )
-            )
-            response.requireData()
-        }
-
-
-}
+        override suspend fun registerMindRecordReceivers(
+            mindRecordId: Long,
+            receiverIds: List<Long>,
+        ): Result<List<Long>> =
+            runCatching {
+                val response =
+                    api.registerMindRecordReceivers(
+                        CreateMindRecordReceiverRequestDto(
+                            mindRecordId = mindRecordId,
+                            receiverIds = receiverIds,
+                        ),
+                    )
+                response.requireData()
+            }
+    }
