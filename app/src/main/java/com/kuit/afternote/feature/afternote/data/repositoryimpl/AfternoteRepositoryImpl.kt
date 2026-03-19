@@ -17,8 +17,6 @@ import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
-private const val TAG = "AfternoteRepo"
-
 /**
  * Data layer: calls Afternote API, maps DTO → domain at boundary.
  *
@@ -29,6 +27,11 @@ class AfternoteRepositoryImpl
     constructor(
         private val api: AfternoteApiService,
     ) : AfternoteRepository {
+        private fun <T> Result<T>.logFailure() =
+            onFailure { error ->
+                Log.e("AfternoteRepository", error.message.toString())
+            }
+
         override suspend fun getAfternotes(
             category: String?,
             page: Int,
@@ -40,9 +43,7 @@ class AfternoteRepositoryImpl
                 val content = data.content
                 val hasNext = data.hasNext
                 PagedAfternotes(items = AfternoteMapper.toDomainList(content), hasNext = hasNext)
-            }.onFailure { error ->
-                Log.e("AfternoteRepository", error.message.toString())
-            }
+            }.logFailure()
 
         override suspend fun createSocial(
             title: String,
@@ -77,17 +78,9 @@ class AfternoteRepositoryImpl
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 val response = api.createAfternoteSocial(request)
-                response.requireData().afternoteId
-            }.also { result ->
-                result.onFailure { e ->
-                    if (e is retrofit2.HttpException) {
-                        val errorBody = e.response()?.errorBody()?.string()
-                        Log.e(TAG, "createSocial: FAILED ${e.code()} body=$errorBody", e)
-                    } else {
-                        Log.e(TAG, "createSocial: FAILED", e)
-                    }
-                }
-            }
+                val data = response.requireData()
+                data.afternoteId
+            }.logFailure()
 
         override suspend fun createGallery(
             title: String,
@@ -97,7 +90,7 @@ class AfternoteRepositoryImpl
             receiverIds: List<Long>,
         ): Result<Long> =
             runCatching {
-                val body =
+                val request =
                     AfternoteCreateGalleryRequest(
                         category = "GALLERY",
                         title = title,
@@ -106,28 +99,10 @@ class AfternoteRepositoryImpl
                         leaveMessage = leaveMessage,
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
-                Log.d(
-                    TAG,
-                    "createGallery: title=${body.title}, processMethod=${body.processMethod}, " +
-                        "actions=${body.actions}, receiverIds=$receiverIds",
-                )
-                val response = api.createAfternoteGallery(body)
-                Log.d(
-                    TAG,
-                    "createGallery response: status=${response.status}, code=${response.code}, " +
-                        "message=${response.message}, data=${response.data}",
-                )
-                response.requireData().afternoteId
-            }.also { result ->
-                result.onFailure { e ->
-                    if (e is retrofit2.HttpException) {
-                        val errorBody = e.response()?.errorBody()?.string()
-                        Log.e(TAG, "createGallery: FAILED ${e.code()} body=$errorBody", e)
-                    } else {
-                        Log.e(TAG, "createGallery: FAILED", e)
-                    }
-                }
-            }
+                val response = api.createAfternoteGallery(request)
+                val data = response.requireData()
+                data.afternoteId
+            }.logFailure()
 
         /**
          * GET /afternotes/{afternoteId} — 상세 조회. DTO → domain 매핑 포함.
@@ -135,8 +110,9 @@ class AfternoteRepositoryImpl
         override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail> =
             runCatching {
                 val response = api.getAfternoteDetail(afternoteId = afternoteId)
-                AfternoteMapper.toDetailDomain(response.requireData())
-            }
+                val data = response.requireData()
+                AfternoteMapper.toDetailDomain(data)
+            }.logFailure()
 
         /**
          * POST /afternotes (PLAYLIST category).
@@ -154,22 +130,9 @@ class AfternoteRepositoryImpl
                         playlist = playlist,
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
-                Log.d(
-                    TAG,
-                    "createPlaylist: title=${body.title}, songsCount=${playlist.songs.size}",
-                )
                 val response = api.createAfternotePlaylist(body)
-                Log.d(
-                    TAG,
-                    "createPlaylist response: status=${response.status}, code=${response.code}, " +
-                        "message=${response.message}, data=${response.data}",
-                )
                 response.requireData().afternoteId
-            }.also { result ->
-                result.onFailure { e ->
-                    Log.e(TAG, "createPlaylist: FAILED", e)
-                }
-            }
+            }.logFailure()
 
         /**
          * PATCH /afternotes/{afternoteId} — 부분 수정 (수정할 필드만 전송).
@@ -179,23 +142,9 @@ class AfternoteRepositoryImpl
             body: AfternoteUpdateRequest,
         ): Result<Long> =
             runCatching {
-                Log.d(
-                    TAG,
-                    "updateAfternote: id=$afternoteId, title=${body.title}, " +
-                        "processMethod=${body.processMethod}, actions=${body.actions}",
-                )
                 val response = api.updateAfternote(afternoteId = afternoteId, request = body)
-                Log.d(
-                    TAG,
-                    "updateAfternote response: status=${response.status}, code=${response.code}, " +
-                        "message=${response.message}, data=${response.data}",
-                )
                 response.requireData().afternoteId
-            }.also { result ->
-                result.onFailure { e ->
-                    Log.e(TAG, "updateAfternote: FAILED, id=$afternoteId", e)
-                }
-            }
+            }.logFailure()
 
         /**
          * DELETE /afternotes/{afternoteId}.
@@ -203,5 +152,5 @@ class AfternoteRepositoryImpl
         override suspend fun deleteAfternote(afternoteId: Long): Result<Unit> =
             runCatching {
                 api.deleteAfternote(afternoteId = afternoteId).requireStatus()
-            }
+            }.logFailure()
     }
