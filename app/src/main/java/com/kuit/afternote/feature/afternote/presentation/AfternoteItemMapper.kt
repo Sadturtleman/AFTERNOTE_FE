@@ -2,7 +2,9 @@ package com.kuit.afternote.feature.afternote.presentation
 
 import com.kuit.afternote.core.domain.model.AfternoteServiceCatalog
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteAccount
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteItemProcessing
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
 
 /**
@@ -24,13 +26,19 @@ object AfternoteItemMapper {
                 serviceName = serviceName,
                 date = date,
                 type = serviceType,
-                accountId = dummyData.accountId,
-                password = dummyData.password,
-                message = dummyData.message,
-                accountProcessingMethod = dummyData.accountProcessingMethod,
-                informationProcessingMethod = dummyData.informationProcessingMethod,
-                processingMethods = dummyData.processingMethods,
-                galleryProcessingMethods = dummyData.galleryProcessingMethods,
+                account =
+                    AfternoteAccount(
+                        id = dummyData.accountId,
+                        password = dummyData.password,
+                    ),
+                processing =
+                    AfternoteItemProcessing(
+                        message = dummyData.message,
+                        accountMethod = dummyData.accountProcessingMethod,
+                        informationMethod = dummyData.informationProcessingMethod,
+                        methods = dummyData.processingMethods,
+                        galleryMethods = dummyData.galleryProcessingMethods,
+                    ),
             )
         }
 

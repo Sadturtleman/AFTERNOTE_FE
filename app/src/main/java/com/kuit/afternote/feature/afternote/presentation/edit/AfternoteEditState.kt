@@ -19,14 +19,7 @@ import com.kuit.afternote.core.ui.component.LastWishOption
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.ProcessingMethodManager
-import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.SelectionDropdownState
-import com.kuit.afternote.feature.afternote.presentation.edit.model.AccountProcessingMethod
-import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
-import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiverCallbacks
-import com.kuit.afternote.feature.afternote.presentation.edit.model.InformationProcessingMethod
-import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodCallbacks
 import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem
-import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 
 /**
  * 추모 플레이리스트 상태 홀더
@@ -436,37 +429,37 @@ class AfternoteEditState(
             TAG,
             "loadFromExisting: itemId=${params.itemId}, serviceName=${params.serviceName}, " +
                 "category=${params.categoryDisplayString}, " +
-                "accountPM=${params.accountProcessingMethodName}, infoPM=${params.informationProcessingMethodName}, " +
-                "processingMethods=${params.processingMethodsList.size}, " +
-                "galleryProcessingMethods=${params.galleryProcessingMethodsList.size}",
+                "accountPM=${params.processing.accountMethodName}, infoPM=${params.processing.informationMethodName}, " +
+                "processingMethods=${params.processing.methods.size}, " +
+                "galleryProcessingMethods=${params.processing.galleryMethods.size}",
         )
         loadedItemId = params.itemId
         selectedService = params.serviceName
         selectedCategory = params.categoryDisplayString
 
-        idState.edit { replace(0, length, params.accountId) }
-        passwordState.edit { replace(0, length, params.password) }
-        messageState.edit { replace(0, length, params.message) }
+        idState.edit { replace(0, length, params.account.id) }
+        passwordState.edit { replace(0, length, params.account.password) }
+        messageState.edit { replace(0, length, params.processing.message) }
 
-        if (params.accountProcessingMethodName.isNotEmpty()) {
+        if (params.processing.accountMethodName.isNotEmpty()) {
             selectedProcessingMethod =
                 runCatching {
                     _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AccountProcessingMethod.valueOf(
-                        params.accountProcessingMethodName,
+                        params.processing.accountMethodName,
                     )
                 }.getOrDefault(
                     _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AccountProcessingMethod.MEMORIAL_ACCOUNT,
                 )
         }
 
-        if (params.informationProcessingMethodName.isNotEmpty()) {
+        if (params.processing.informationMethodName.isNotEmpty()) {
             val infoMethodName =
-                when (params.informationProcessingMethodName) {
+                when (params.processing.informationMethodName) {
                     "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
                     "ADDITIONAL",
                     -> "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER"
 
-                    else -> params.informationProcessingMethodName
+                    else -> params.processing.informationMethodName
                 }
             selectedInformationProcessingMethod =
                 runCatching {
@@ -478,8 +471,8 @@ class AfternoteEditState(
                 )
         }
 
-        processingMethodManager.replaceProcessingMethods(params.processingMethodsList)
-        processingMethodManager.replaceGalleryProcessingMethods(params.galleryProcessingMethodsList)
+        processingMethodManager.replaceProcessingMethods(params.processing.methods)
+        processingMethodManager.replaceGalleryProcessingMethods(params.processing.galleryMethods)
 
         // Memorial only: when atmosphere does not match a default option, select "기타(직접 입력)" and show saved text.
         params.atmosphere?.let { atmosphereValue ->
@@ -528,17 +521,25 @@ data class LoadFromExistingParams(
     val itemId: String,
     val serviceName: String,
     val categoryDisplayString: String,
-    val accountId: String,
-    val password: String,
-    val message: String,
-    val accountProcessingMethodName: String,
-    val informationProcessingMethodName: String,
-    val processingMethodsList: List<com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem>,
-    val galleryProcessingMethodsList: List<com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem>,
+    val account: LoadFromExistingAccountParams = LoadFromExistingAccountParams(),
+    val processing: LoadFromExistingProcessingParams = LoadFromExistingProcessingParams(),
     val atmosphere: String? = null,
     val memorialVideoUrl: String? = null,
     val memorialThumbnailUrl: String? = null,
     val memorialPhotoUrl: String? = null,
+)
+
+data class LoadFromExistingAccountParams(
+    val id: String = "",
+    val password: String = "",
+)
+
+data class LoadFromExistingProcessingParams(
+    val message: String = "",
+    val accountMethodName: String = "",
+    val informationMethodName: String = "",
+    val methods: List<ProcessingMethodItem> = emptyList(),
+    val galleryMethods: List<ProcessingMethodItem> = emptyList(),
 )
 
 @Composable

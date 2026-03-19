@@ -259,12 +259,12 @@ private fun AfternoteDetailRouteContent(
                     SocialNetworkDetailContent(
                         serviceName = detail.title,
                         userName = userName,
-                        accountId = detail.credentialsId ?: "",
-                        password = detail.credentialsPassword ?: "",
-                        accountProcessingMethod = detail.processMethod ?: "",
-                        processingMethods = detail.actions,
-                        message = detail.leaveMessage ?: "",
-                        finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
+                        accountId = detail.credentials?.id ?: "",
+                        password = detail.credentials?.password ?: "",
+                        accountProcessingMethod = detail.processing?.method ?: "",
+                        processingMethods = detail.processing?.actions ?: emptyList(),
+                        message = detail.processing?.leaveMessage ?: "",
+                        finalWriteDate = detail.timestamps.updatedAt.ifEmpty { detail.timestamps.createdAt },
                         afternoteEditReceivers =
                             detail.receivers.map { r ->
                                 AfternoteEditReceiver(
@@ -329,7 +329,7 @@ private fun AfternoteGalleryDetailRouteContent(
                     GalleryDetailState(
                         serviceName = detail.title,
                         userName = userName,
-                        finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
+                        finalWriteDate = detail.timestamps.updatedAt.ifEmpty { detail.timestamps.createdAt },
                         afternoteEditReceivers =
                             detail.receivers.map { r ->
                                 AfternoteEditReceiver(
@@ -338,9 +338,9 @@ private fun AfternoteGalleryDetailRouteContent(
                                     label = r.relation,
                                 )
                             },
-                        informationProcessingMethod = detail.processMethod ?: "",
-                        processingMethods = detail.actions,
-                        message = detail.leaveMessage ?: "",
+                        informationProcessingMethod = detail.processing?.method ?: "",
+                        processingMethods = detail.processing?.actions ?: emptyList(),
+                        message = detail.processing?.leaveMessage ?: "",
                     ),
                 callbacks =
                     GalleryDetailCallbacks(
@@ -399,8 +399,8 @@ private fun AfternoteMemorialGuidelineDetailContent(
                 detailState =
                     MemorialGuidelineDetailState(
                         userName = userName,
-                        finalWriteDate = detail.updatedAt.ifEmpty { detail.createdAt },
-                        profileImageUri = detail.playlist?.memorialPhotoUrl ?: detail.playlist?.profilePhoto,
+                        finalWriteDate = detail.timestamps.updatedAt.ifEmpty { detail.timestamps.createdAt },
+                        profileImageUri = detail.playlist?.playlistDetailMemorialMedia?.photoUrl,
                         afternoteEditReceivers =
                             detail.receivers.map { r ->
                                 AfternoteEditReceiver(
@@ -420,8 +420,8 @@ private fun AfternoteMemorialGuidelineDetailContent(
                         songCount = detail.playlist?.songs?.size ?: 0,
                         // Memorial only: "남기고 싶은 당부" comes from playlist.atmosphere; other categories use leaveMessage.
                         lastWish = detail.playlist?.atmosphere ?: "",
-                        memorialVideoUrl = detail.playlist?.memorialVideoUrl,
-                        memorialThumbnailUrl = detail.playlist?.memorialThumbnailUrl,
+                        memorialVideoUrl = detail.playlist?.playlistDetailMemorialMedia?.videoUrl,
+                        memorialThumbnailUrl = detail.playlist?.playlistDetailMemorialMedia?.thumbnailUrl,
                     ),
                 callbacks =
                     MemorialGuidelineDetailCallbacks(

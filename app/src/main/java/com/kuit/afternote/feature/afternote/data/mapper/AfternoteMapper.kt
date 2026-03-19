@@ -5,11 +5,15 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItem
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteDetailResponse
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteListResponse
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailCredentials
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailProcessing
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailSong
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailTimestamps
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternotePlaylistDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
+import com.kuit.afternote.feature.afternote.domain.model.PlaylistDetailMemorialMedia
 
 /**
  * Maps server DTOs to domain models at the boundary only.
@@ -23,8 +27,6 @@ object AfternoteMapper {
             serviceName = dto.title,
             date = formatDateFromServer(dto.createdAt),
             type = categoryToServiceType(dto.category),
-            processingMethods = emptyList(),
-            galleryProcessingMethods = emptyList(),
         )
 
     fun toDomainList(dtos: List<AfternoteListItem>): List<AfternoteItem> = dtos.map { toDomain(it) }
@@ -36,11 +38,17 @@ object AfternoteMapper {
             id = dto.afternoteId,
             category = dto.category,
             title = dto.title,
-            createdAt = formatDateFromServer(dto.createdAt),
-            updatedAt = formatDateFromServer(dto.updatedAt),
+            timestamps =
+                AfternoteDetailTimestamps(
+                    createdAt = formatDateFromServer(dto.createdAt),
+                    updatedAt = formatDateFromServer(dto.createdAt),
+                ),
             type = categoryToServiceType(dto.category),
-            credentialsId = dto.credentials?.id,
-            credentialsPassword = dto.credentials?.password,
+            credentials =
+                AfternoteDetailCredentials(
+                    id = dto.credentials?.id,
+                    password = dto.credentials?.password,
+                ),
             receivers =
                 dto.receivers?.map { r ->
                     AfternoteDetailReceiver(
@@ -50,15 +58,17 @@ object AfternoteMapper {
                         phone = r.phone ?: "",
                     )
                 } ?: emptyList(),
-            processMethod = dto.processMethod,
-            actions = dto.actions ?: emptyList(),
-            leaveMessage = dto.leaveMessage,
+            processing =
+                AfternoteDetailProcessing(
+                    method = dto.processMethod,
+                    actions = dto.actions ?: emptyList(),
+                    leaveMessage = dto.leaveMessage,
+                ),
             playlist =
                 dto.playlist?.let { p ->
                     AfternotePlaylistDetail(
                         profilePhoto = p.profilePhoto,
                         atmosphere = p.atmosphere,
-                        memorialPhotoUrl = p.memorialPhotoUrl ?: p.profilePhoto,
                         songs =
                             p.songs.map { s ->
                                 AfternoteDetailSong(
@@ -68,8 +78,12 @@ object AfternoteMapper {
                                     coverUrl = s.coverUrl,
                                 )
                             },
-                        memorialVideoUrl = p.memorialVideo?.videoUrl,
-                        memorialThumbnailUrl = p.memorialVideo?.thumbnailUrl,
+                        playlistDetailMemorialMedia =
+                            PlaylistDetailMemorialMedia(
+                                photoUrl = p.memorialPhotoUrl ?: p.profilePhoto,
+                                videoUrl = p.memorialVideo?.videoUrl,
+                                thumbnailUrl = p.memorialVideo?.thumbnailUrl,
+                            ),
                     )
                 },
         )

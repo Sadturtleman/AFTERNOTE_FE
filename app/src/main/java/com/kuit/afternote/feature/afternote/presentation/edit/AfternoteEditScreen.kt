@@ -138,25 +138,31 @@ fun AfternoteEditScreen(
                     itemId = item.id,
                     serviceName = item.serviceName,
                     categoryDisplayString = AfternoteItemMapper.categoryStringForEditScreen(item.type),
-                    accountId = item.accountId,
-                    password = item.password,
-                    message = item.message,
-                    accountProcessingMethodName = item.accountProcessingMethod,
-                    informationProcessingMethodName = item.informationProcessingMethod,
-                    processingMethodsList =
-                        item.processingMethods.map {
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem(
-                                it.id,
-                                it.text,
-                            )
-                        },
-                    galleryProcessingMethodsList =
-                        item.galleryProcessingMethods.map {
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem(
-                                it.id,
-                                it.text,
-                            )
-                        },
+                    account =
+                        LoadFromExistingAccountParams(
+                            id = item.account.id,
+                            password = item.account.password,
+                        ),
+                    processing =
+                        LoadFromExistingProcessingParams(
+                            message = item.processing.message,
+                            accountMethodName = item.processing.accountMethod,
+                            informationMethodName = item.processing.informationMethod,
+                            methods =
+                                item.processing.methods.map {
+                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem(
+                                        it.id,
+                                        it.text,
+                                    )
+                                },
+                            galleryMethods =
+                                item.processing.galleryMethods.map {
+                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem(
+                                        it.id,
+                                        it.text,
+                                    )
+                                },
+                        ),
                 ),
             )
         }

@@ -393,13 +393,13 @@ class AfternoteEditViewModel
 
         private fun buildLoadFromExistingParams(detail: AfternoteDetail): LoadFromExistingParams {
             val actionItems =
-                detail.actions.mapIndexed { index, text ->
+                detail.processing?.actions?.mapIndexed { index, text ->
                     _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem(
                         id = (index + 1).toString(),
                         text = text,
                     )
-                }
-            val processMethod = detail.processMethod ?: ""
+                } ?: emptyList()
+            val processMethod = detail.processing?.method ?: ""
             val categoryUpper = detail.category.uppercase()
             val isGalleryCategory = categoryUpper == "GALLERY"
             val isSocialCategory = categoryUpper == "SOCIAL"
@@ -419,17 +419,23 @@ class AfternoteEditViewModel
                 itemId = detail.id.toString(),
                 serviceName = detail.title,
                 categoryDisplayString = serverCategoryToEditScreenCategory(detail.category),
-                accountId = detail.credentialsId ?: "",
-                password = detail.credentialsPassword ?: "",
-                message = detail.leaveMessage ?: "",
-                accountProcessingMethodName = accountProcessingMethodName,
-                informationProcessingMethodName = informationProcessingMethodName,
-                processingMethodsList = if (!isGalleryCategory) actionItems else emptyList(),
-                galleryProcessingMethodsList = if (isGalleryCategory) actionItems else emptyList(),
+                account =
+                    LoadFromExistingAccountParams(
+                        id = detail.credentials?.id ?: "",
+                        password = detail.credentials?.password ?: "",
+                    ),
+                processing =
+                    LoadFromExistingProcessingParams(
+                        message = detail.processing?.leaveMessage ?: "",
+                        accountMethodName = accountProcessingMethodName,
+                        informationMethodName = informationProcessingMethodName,
+                        methods = if (!isGalleryCategory) actionItems else emptyList(),
+                        galleryMethods = if (isGalleryCategory) actionItems else emptyList(),
+                    ),
                 atmosphere = detail.playlist?.atmosphere,
-                memorialVideoUrl = detail.playlist?.memorialVideoUrl,
-                memorialThumbnailUrl = detail.playlist?.memorialThumbnailUrl,
-                memorialPhotoUrl = detail.playlist?.memorialPhotoUrl ?: detail.playlist?.profilePhoto,
+                memorialVideoUrl = detail.playlist?.playlistDetailMemorialMedia?.videoUrl,
+                memorialThumbnailUrl = detail.playlist?.playlistDetailMemorialMedia?.thumbnailUrl,
+                memorialPhotoUrl = detail.playlist?.playlistDetailMemorialMedia?.photoUrl,
             )
         }
 
