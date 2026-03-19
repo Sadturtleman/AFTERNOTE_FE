@@ -40,7 +40,8 @@ class AfternoteRepositoryImpl
                 val content = data.content
                 val hasNext = data.hasNext
                 PagedAfternotes(items = AfternoteMapper.toDomainList(content), hasNext = hasNext)
-            }.onFailure {
+            }.onFailure { error ->
+                Log.e("AfternoteRepository", error.message.toString())
             }
 
         override suspend fun createSocial(
