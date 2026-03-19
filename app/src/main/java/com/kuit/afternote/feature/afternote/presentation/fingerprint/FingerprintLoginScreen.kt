@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.presentation
+package com.kuit.afternote.feature.afternote.presentation.fingerprint
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.component.fingerprint.FingerprintAuthContent
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 
 /**

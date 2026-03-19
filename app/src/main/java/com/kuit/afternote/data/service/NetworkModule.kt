@@ -1,5 +1,6 @@
 package com.kuit.afternote.data.service
 
+import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import dagger.Module
 import dagger.Provides
@@ -81,6 +82,14 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
+
+    @Provides
+    @Singleton
+    fun provideAfternoteApiService(retrofit: Retrofit): AfternoteApiService = retrofit.create(AfternoteApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMusicApiService(retrofit: Retrofit): MusicApiService = retrofit.create(MusicApiService::class.java)
 
     @Provides
     @Singleton

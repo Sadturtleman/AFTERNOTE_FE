@@ -16,15 +16,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-/**
- * Afternote API (Swagger / API spec).
- *
- * - GET /afternotes — list (category, page, size)
- * - GET /afternotes/{afternoteId} — detail
- * - POST /afternotes — create (SOCIAL / GALLERY / PLAYLIST)
- * - PATCH /afternotes/{afternoteId} — update
- * - DELETE /afternotes/{afternoteId} — delete
- */
 interface AfternoteApiService {
     @GET("api/afternotes")
     suspend fun getAfternotes(

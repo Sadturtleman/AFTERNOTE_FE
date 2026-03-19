@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.presentation.component.fingerprint
+package com.kuit.afternote.feature.afternote.presentation.fingerprint
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -34,27 +34,29 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun FingerprintAuthContent(
     modifier: Modifier = Modifier,
-    onFingerprintAuthClick: () -> Unit = {}
+    onFingerprintAuthClick: () -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
         // 안내 텍스트
         Text(
             text = "사용자 인증 후 조회가 가능합니다.",
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9,
-                textAlign = TextAlign.Center
-            )
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                    textAlign = TextAlign.Center,
+                ),
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -62,12 +64,12 @@ fun FingerprintAuthContent(
         // 지문 아이콘
         Box(
             modifier = Modifier.size(100.dp, 114.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_fingerprint),
                 contentDescription = "지문 인증",
-                modifier = Modifier.size(100.dp, 114.dp)
+                modifier = Modifier.size(100.dp, 114.dp),
             )
         }
 
@@ -78,7 +80,7 @@ fun FingerprintAuthContent(
             title = "지문 인증하기",
             onButtonClick = onFingerprintAuthClick,
             color = B3,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.weight(1f))

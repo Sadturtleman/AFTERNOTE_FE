@@ -53,7 +53,7 @@ import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.presentation.FingerprintLoginScreen
+import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.edit.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.edit.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling

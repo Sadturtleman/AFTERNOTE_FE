@@ -4,20 +4,16 @@ import com.kuit.afternote.data.repositoryimpl.MemorialThumbnailUploadRepositoryI
 import com.kuit.afternote.data.repositoryimpl.MemorialVideoUploadRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.MusicSearchRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.PhotoUploadRepositoryImpl
-import com.kuit.afternote.data.service.MusicApiService
 import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
 import com.kuit.afternote.domain.repository.MemorialVideoUploadRepository
 import com.kuit.afternote.domain.repository.MusicSearchRepository
 import com.kuit.afternote.domain.repository.PhotoUploadRepository
 import com.kuit.afternote.feature.afternote.data.repositoryimpl.AfternoteRepositoryImpl
-import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 /**
@@ -51,17 +47,8 @@ abstract class AfternoteRepositoryModule {
     @Singleton
     abstract fun bindPhotoUploadRepository(impl: PhotoUploadRepositoryImpl): PhotoUploadRepository
 
+    @Suppress("unused")
     @Binds
     @Singleton
     abstract fun bindMemorialVideoUploadRepository(impl: MemorialVideoUploadRepositoryImpl): MemorialVideoUploadRepository
-
-    companion object {
-        @Provides
-        @Singleton
-        fun provideAfternoteApiService(retrofit: Retrofit): AfternoteApiService = retrofit.create(AfternoteApiService::class.java)
-
-        @Provides
-        @Singleton
-        fun provideMusicApiService(retrofit: Retrofit): MusicApiService = retrofit.create(MusicApiService::class.java)
-    }
 }

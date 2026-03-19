@@ -50,7 +50,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.presentation.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.AfternoteSaveState
 import com.kuit.afternote.feature.afternote.presentation.AfternoteValidationError
-import com.kuit.afternote.feature.afternote.presentation.FingerprintLoginScreen
+import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.MemorialPlaylistRouteScreen
 import com.kuit.afternote.feature.afternote.presentation.RegisterAfternotePayload
 import com.kuit.afternote.feature.afternote.presentation.addsong.AddSongCallbacks

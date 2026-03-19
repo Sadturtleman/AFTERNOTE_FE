@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.presentation.component.list
+package com.kuit.afternote.feature.afternote.presentation.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,49 +52,52 @@ import com.kuit.afternote.ui.theme.White
 fun AfternoteListItem(
     modifier: Modifier = Modifier,
     item: AfternoteItem,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     val imageRes = getIconResForServiceName(item.serviceName)
     val shape = RoundedCornerShape(16.dp)
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(74.dp)
-            .dropShadow(
-                shape = shape,
-                color = ShadowBlack,
-                blur = 5.dp,
-                offsetY = 2.dp,
-                offsetX = 0.dp,
-                spread = 0.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(74.dp)
+                .dropShadow(
+                    shape = shape,
+                    color = ShadowBlack,
+                    blur = 5.dp,
+                    offsetY = 2.dp,
+                    offsetX = 0.dp,
+                    spread = 0.dp,
+                ),
         shape = shape,
         color = White,
-        onClick = onClick
+        onClick = onClick,
     ) {
         Box(
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier.padding(horizontal = 20.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 // 왼쪽: 아이콘/이미지 영역
                 Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.Transparent),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Transparent),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Image(
                         painter = painterResource(imageRes),
                         contentDescription = null,
                         modifier = Modifier.size(40.dp),
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.FillBounds,
                     )
                 }
 
@@ -102,8 +105,9 @@ fun AfternoteListItem(
 
                 // 중간: 텍스트 영역
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier =
+                        Modifier
+                            .weight(1f),
                 ) {
                     Text(
                         text = item.serviceName,
@@ -112,7 +116,7 @@ fun AfternoteListItem(
                         fontFamily = Sansneo,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -122,7 +126,7 @@ fun AfternoteListItem(
                         fontFamily = Sansneo,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
 
@@ -130,17 +134,19 @@ fun AfternoteListItem(
 
                 // 오른쪽: 화살표 버튼
                 Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(B2)
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(B2),
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_arrow_forward_b2),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(6.dp, 12.dp)
-                            .offset(x = 9.9.dp, y = 6.dp)
+                        modifier =
+                            Modifier
+                                .size(6.dp, 12.dp)
+                                .offset(x = 9.9.dp, y = 6.dp),
                     )
                 }
             }
@@ -153,21 +159,23 @@ fun AfternoteListItem(
 private fun AfternoteListItemPreview() {
     Column {
         AfternoteListItem(
-            item = AfternoteItem(
-                id = "1",
-                serviceName = "인스타그램",
-                date = "2023.11.24",
-                type = AfternoteServiceType.SOCIAL_NETWORK
-            )
+            item =
+                AfternoteItem(
+                    id = "1",
+                    serviceName = "인스타그램",
+                    date = "2023.11.24",
+                    type = AfternoteServiceType.SOCIAL_NETWORK,
+                ),
         )
         Spacer(modifier = Modifier.height(8.dp))
         AfternoteListItem(
-            item = AfternoteItem(
-                id = "2",
-                serviceName = "갤러리",
-                date = "2023.11.25",
-                type = AfternoteServiceType.GALLERY_AND_FILES
-            )
+            item =
+                AfternoteItem(
+                    id = "2",
+                    serviceName = "갤러리",
+                    date = "2023.11.25",
+                    type = AfternoteServiceType.GALLERY_AND_FILES,
+                ),
         )
     }
 }

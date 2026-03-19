@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.presentation.component.list
+package com.kuit.afternote.feature.afternote.presentation.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -27,31 +27,33 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun EmptyAfternoteContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
         Image(
             painter = painterResource(R.drawable.img_empty_state),
             contentDescription = "빈 애프터노트",
-            modifier = Modifier
-                .width(106.dp)
-                .height(109.dp)
-                .alpha(0.6f)
+            modifier =
+                Modifier
+                    .width(106.dp)
+                    .height(109.dp)
+                    .alpha(0.6f),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "아직 등록된 애프터노트가 없어요.\n등록하여 계정을 보호하세요.",
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray4,
-                textAlign = TextAlign.Center
-            )
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray4,
+                    textAlign = TextAlign.Center,
+                ),
         )
 
         Spacer(modifier = Modifier.weight(1f))
