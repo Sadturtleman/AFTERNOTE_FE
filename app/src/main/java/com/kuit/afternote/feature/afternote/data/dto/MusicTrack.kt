@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,7 +8,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MusicTrack(
-    val artist: String,
-    val title: String,
-    val albumImageUrl: String? = null,
+    @SerialName("artist") val artist: String,
+    @SerialName("title") val title: String,
+    @SerialName("albumImageUrl") val albumImageUrl: String? = null,
 )

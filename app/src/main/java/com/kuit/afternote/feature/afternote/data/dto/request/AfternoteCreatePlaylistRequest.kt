@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.afternote.data.dto.request
 
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -10,8 +11,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AfternoteCreatePlaylistRequest(
-    val category: String = "PLAYLIST",
-    val title: String,
-    val playlist: AfternotePlaylist,
-    val receivers: List<AfternoteReceiverRef> = emptyList(),
+    @SerialName("category") val category: String = "PLAYLIST",
+    @SerialName("title") val title: String,
+    @SerialName("playlist") val playlist: AfternotePlaylist,
+    @SerialName("receivers") val receivers: List<AfternoteReceiverRef> = emptyList(),
 )

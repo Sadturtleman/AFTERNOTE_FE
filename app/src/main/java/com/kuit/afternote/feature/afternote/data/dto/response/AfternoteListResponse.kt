@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.data.dto.response
 
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItem
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,8 +10,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AfternoteListResponse(
-    val content: List<AfternoteListItem> = emptyList(),
-    val page: Int = 0,
-    val size: Int = 10,
-    val hasNext: Boolean = false,
+    @SerialName("content") val content: List<AfternoteListItem> = emptyList(),
+    @SerialName("page") val page: Int = 0,
+    @SerialName("size") val size: Int = 10,
+    @SerialName("hasNext") val hasNext: Boolean = false,
 )

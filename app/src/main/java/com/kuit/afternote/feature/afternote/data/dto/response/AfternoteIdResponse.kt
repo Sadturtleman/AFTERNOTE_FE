@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.data.dto.response
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.JsonNames
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class AfternoteIdResponse(
+    @SerialName("afternoteId")
     @JsonNames("afternote_id") val afternoteId: Long,
 )
 

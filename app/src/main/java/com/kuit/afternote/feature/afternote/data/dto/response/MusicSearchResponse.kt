@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.data.dto.response
 
 import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,5 +10,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MusicSearchResponse(
-    val tracks: List<MusicTrack> = emptyList(),
+    @SerialName("tracks") val tracks: List<MusicTrack> = emptyList(),
 )

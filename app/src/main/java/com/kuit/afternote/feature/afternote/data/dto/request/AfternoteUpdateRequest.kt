@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.afternote.data.dto.request
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -11,12 +12,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AfternoteUpdateRequest(
-    val category: String,
-    val title: String,
-    val processMethod: String? = null,
-    val actions: List<String>? = null,
-    val leaveMessage: String? = null,
-    val credentials: AfternoteCredentials? = null,
-    val receivers: List<AfternoteReceiverRef>? = null,
-    val playlist: AfternotePlaylist? = null,
+    @SerialName("category") val category: String,
+    @SerialName("title") val title: String,
+    @SerialName("processMethod") val processMethod: String? = null,
+    @SerialName("actions") val actions: List<String>? = null,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    @SerialName("credentials") val credentials: AfternoteCredentials? = null,
+    @SerialName("receivers") val receivers: List<AfternoteReceiverRef>? = null,
+    @SerialName("playlist") val playlist: AfternotePlaylist? = null,
 )

@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.data.dto.request
 
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,10 +10,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class AfternoteCreateGalleryRequest(
-    val category: String = "GALLERY",
-    val title: String,
-    val processMethod: String,
-    val actions: List<String>,
-    val leaveMessage: String? = null,
-    val receivers: List<AfternoteReceiverRef>,
+    @SerialName("category") val category: String = "GALLERY",
+    @SerialName("title") val title: String,
+    @SerialName("processMethod") val processMethod: String,
+    @SerialName("actions") val actions: List<String>,
+    @SerialName("leaveMessage") val leaveMessage: String? = null,
+    @SerialName("receivers") val receivers: List<AfternoteReceiverRef>,
 )
