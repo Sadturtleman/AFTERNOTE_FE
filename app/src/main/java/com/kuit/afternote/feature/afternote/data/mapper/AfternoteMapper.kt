@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.data.mapper
 
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponse
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItem
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteDetailResponse
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailSong

@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.data.repository
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.data.api.MusicApiService
-import com.kuit.afternote.feature.afternote.data.dto.MusicTrackDto
+import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
 import com.kuit.afternote.feature.afternote.domain.repository.iface.MusicSearchRepository
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class MusicSearchRepositoryImpl
                 response.tracks.mapIndexed { index, dto -> dto.toPlaylistSongDisplay(index) }
             }
 
-        private fun MusicTrackDto.toPlaylistSongDisplay(index: Int): PlaylistSongDisplay {
+        private fun MusicTrack.toPlaylistSongDisplay(index: Int): PlaylistSongDisplay {
             val id = "$artist|$title|$index"
             return PlaylistSongDisplay(
                 id = id,

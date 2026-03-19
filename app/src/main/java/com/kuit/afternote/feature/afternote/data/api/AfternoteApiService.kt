@@ -1,13 +1,13 @@
 package com.kuit.afternote.feature.afternote.data.api
 
 import com.kuit.afternote.data.BaseResponse
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequest
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequest
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequest
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteDetailResponse
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteIdResponse
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteListResponse
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteDetailResponse
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteListResponse
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

@@ -8,7 +8,7 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternoteMemorialVideo
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSong
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateGalleryAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfternoteUseCase

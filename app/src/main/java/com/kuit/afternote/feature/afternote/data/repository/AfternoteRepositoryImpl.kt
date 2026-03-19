@@ -4,13 +4,13 @@ import android.util.Log
 import com.kuit.afternote.data.requireData
 import com.kuit.afternote.data.requireSuccess
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequest
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequest
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
+import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes

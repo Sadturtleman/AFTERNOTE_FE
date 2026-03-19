@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.api
 
-import com.kuit.afternote.feature.afternote.data.dto.MusicSearchResponseDto
+import com.kuit.afternote.feature.afternote.data.dto.response.MusicSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,9 +11,8 @@ import retrofit2.http.Query
  * 400 when keyword is missing.
  */
 fun interface MusicApiService {
-
     @GET("music/search")
     suspend fun search(
-        @Query("keyword") keyword: String
-    ): MusicSearchResponseDto
+        @Query("keyword") keyword: String,
+    ): MusicSearchResponse
 }
