@@ -1,7 +1,7 @@
-package com.kuit.afternote.feature.afternote.data.repository
+package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.afternote.data.api.MusicApiService
+import com.kuit.afternote.data.service.MusicApiService
 import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
 import com.kuit.afternote.feature.afternote.domain.repository.iface.MusicSearchRepository
 import javax.inject.Inject

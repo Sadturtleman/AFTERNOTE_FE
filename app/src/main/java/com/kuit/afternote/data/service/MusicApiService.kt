@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.data.api
+package com.kuit.afternote.data.service
 
 import com.kuit.afternote.feature.afternote.data.dto.response.MusicSearchResponse
 import retrofit2.http.GET

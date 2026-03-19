@@ -1,7 +1,6 @@
-package com.kuit.afternote.feature.afternote.data.repository
+package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import com.kuit.afternote.data.dto.response.BaseResponse
-import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequest
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequest
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateSocialRequest
@@ -16,6 +15,7 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSong
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

@@ -1,9 +1,8 @@
-package com.kuit.afternote.feature.afternote.data.repository
+package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import android.util.Log
 import com.kuit.afternote.data.requireData
 import com.kuit.afternote.data.requireSuccess
-import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
@@ -12,6 +11,7 @@ import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlay
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
+import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
