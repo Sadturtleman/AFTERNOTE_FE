@@ -35,10 +35,10 @@ import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
 import com.kuit.afternote.core.ui.component.OutlineTextField
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
-import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
-import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
-import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.rememberSelectionDropdownState
+import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.DropdownMenuStyle
+import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.SelectionDropdown
+import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.SelectionDropdownLabelParams
+import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.rememberSelectionDropdownState
 import com.kuit.afternote.feature.user.presentation.viewmodel.EditReceiverViewModel
 import com.kuit.afternote.feature.user.presentation.viewmodel.RegisterReceiverViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme

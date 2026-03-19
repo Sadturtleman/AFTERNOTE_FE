@@ -1,7 +1,7 @@
 package com.kuit.afternote.domain.provider
 
 import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import javax.inject.Inject
 
@@ -11,7 +11,8 @@ import javax.inject.Inject
 class RealReceiverDataProvider
     @Inject
     constructor() : ReceiverDataProvider {
-        override fun getReceiverList(): List<AfternoteEditReceiver> = emptyList()
+        override fun getReceiverList(): List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> =
+            emptyList()
 
         override fun getDefaultReceiverTitle(): String = ""
 

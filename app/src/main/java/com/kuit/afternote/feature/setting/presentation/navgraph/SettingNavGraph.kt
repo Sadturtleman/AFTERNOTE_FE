@@ -23,7 +23,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel

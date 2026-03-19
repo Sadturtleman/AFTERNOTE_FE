@@ -8,6 +8,8 @@ import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUse
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
+import com.kuit.afternote.feature.afternote.presentation.RegisterAfternotePayload
+import com.kuit.afternote.feature.afternote.presentation.edit.AfternoteEditViewModel
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule
@@ -29,7 +31,6 @@ import retrofit2.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AfternoteEditViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -54,7 +55,7 @@ class AfternoteEditViewModelTest {
             accountProcessingMethod = "MEMORIAL",
             informationProcessingMethod = "",
             processingMethods = listOf(AfternoteProcessingMethod("1", "게시물 내리기")),
-            galleryProcessingMethods = emptyList()
+            galleryProcessingMethods = emptyList(),
         )
 
     @Before
@@ -79,7 +80,7 @@ class AfternoteEditViewModelTest {
                 getReceiversUseCase = getReceiversUseCase,
                 getUserIdUseCase = getUserIdUseCase,
                 uploadMemorialThumbnailUseCase = uploadMemorialThumbnailUseCase,
-                uploadMemorialVideoUseCase = uploadMemorialVideoUseCase
+                uploadMemorialVideoUseCase = uploadMemorialVideoUseCase,
             )
     }
 
@@ -94,7 +95,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.success(3L)
 
@@ -103,7 +104,7 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
@@ -119,7 +120,7 @@ class AfternoteEditViewModelTest {
             coEvery {
                 updateUseCase(
                     afternoteId = any(),
-                    body = any()
+                    body = any(),
                 )
             } returns Result.success(10L)
 
@@ -128,7 +129,7 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
@@ -140,8 +141,9 @@ class AfternoteEditViewModelTest {
     @Test
     fun saveAfternote_whenCreateSocial400BadRequest_setsError() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Bad request"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Bad request"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Long>(400, errorBody))
             coEvery {
                 createSocialUseCase(
@@ -151,7 +153,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(httpException)
 
@@ -160,20 +162,24 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
             assertFalse(viewModel.saveState.value.isSaving)
             assertFalse(viewModel.saveState.value.saveSuccess)
-            assertTrue(viewModel.saveState.value.error?.contains("400") == true)
+            assertTrue(
+                viewModel.saveState.value.error
+                    ?.contains("400") == true,
+            )
         }
 
     @Test
     fun saveAfternote_whenCreateSocial401Unauthorized_setsError() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Unauthorized"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Long>(401, errorBody))
             coEvery {
                 createSocialUseCase(
@@ -183,7 +189,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(httpException)
 
@@ -192,20 +198,24 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
             assertFalse(viewModel.saveState.value.isSaving)
             assertFalse(viewModel.saveState.value.saveSuccess)
-            assertTrue(viewModel.saveState.value.error?.contains("401") == true)
+            assertTrue(
+                viewModel.saveState.value.error
+                    ?.contains("401") == true,
+            )
         }
 
     @Test
     fun saveAfternote_whenCreateSocial404NotFound_setsError() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"Not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Long>(404, errorBody))
             coEvery {
                 createSocialUseCase(
@@ -215,7 +225,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(httpException)
 
@@ -224,20 +234,24 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
             assertFalse(viewModel.saveState.value.isSaving)
             assertFalse(viewModel.saveState.value.saveSuccess)
-            assertTrue(viewModel.saveState.value.error?.contains("404") == true)
+            assertTrue(
+                viewModel.saveState.value.error
+                    ?.contains("404") == true,
+            )
         }
 
     @Test
     fun saveAfternote_whenCreateSocial500ServerError_setsError() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Long>(500, errorBody))
             coEvery {
                 createSocialUseCase(
@@ -247,7 +261,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(httpException)
 
@@ -256,13 +270,16 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 
             assertFalse(viewModel.saveState.value.isSaving)
             assertFalse(viewModel.saveState.value.saveSuccess)
-            assertTrue(viewModel.saveState.value.error?.contains("500") == true)
+            assertTrue(
+                viewModel.saveState.value.error
+                    ?.contains("500") == true,
+            )
         }
 
     @Test
@@ -276,7 +293,7 @@ class AfternoteEditViewModelTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(java.io.IOException("Network unavailable"))
 
@@ -285,7 +302,7 @@ class AfternoteEditViewModelTest {
                 category = "소셜네트워크",
                 payload = socialPayload,
                 receivers = emptyList(),
-                playlistStateHolder = null
+                playlistStateHolder = null,
             )
             advanceUntilIdle()
 

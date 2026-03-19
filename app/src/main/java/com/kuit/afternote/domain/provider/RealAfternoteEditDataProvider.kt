@@ -2,8 +2,8 @@ package com.kuit.afternote.domain.provider
 
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 import javax.inject.Inject
 
 /**
@@ -12,9 +12,10 @@ import javax.inject.Inject
 class RealAfternoteEditDataProvider
     @Inject
     constructor() : AfternoteEditDataProvider {
-        override fun getSongs(): List<Song> = emptyList()
+        override fun getSongs(): List<com.kuit.afternote.feature.afternote.presentation.edit.model.Song> = emptyList()
 
-        override fun getAfternoteEditReceivers(): List<AfternoteEditReceiver> = emptyList()
+        override fun getAfternoteEditReceivers(): List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> =
+            emptyList()
 
         override fun getDefaultAfternoteItems(): List<Pair<String, String>> = emptyList()
 

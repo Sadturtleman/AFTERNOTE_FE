@@ -52,7 +52,7 @@ import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.B1
@@ -73,7 +73,7 @@ data class MemorialGuidelineDetailState(
     val albumCovers: List<AlbumCover> = emptyList(),
     val songCount: Int = 0,
     val lastWish: String = "",
-    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList(),
+    val afternoteEditReceivers: List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> = emptyList(),
     val memorialVideoUrl: String? = null,
     val memorialThumbnailUrl: String? = null,
 )
@@ -85,7 +85,7 @@ data class MemorialGuidelineDetailState(
 data class MemorialGuidelineDetailCallbacks(
     val onBackClick: () -> Unit,
     val onEditClick: () -> Unit = {},
-    val onDeleteConfirm: () -> Unit = {}
+    val onDeleteConfirm: () -> Unit = {},
 )
 
 private const val CATEGORY_NAME = "추모 가이드 라인"
@@ -108,7 +108,7 @@ fun MemorialGuidelineDetailScreen(
     detailState: MemorialGuidelineDetailState,
     callbacks: MemorialGuidelineDetailCallbacks,
     isEditable: Boolean = true,
-    uiState: AfternoteDetailState = rememberAfternoteDetailState()
+    uiState: AfternoteDetailState = rememberAfternoteDetailState(),
 ) {
     if (isEditable && uiState.showDeleteDialog) {
         DeleteConfirmDialog(
@@ -117,7 +117,7 @@ fun MemorialGuidelineDetailScreen(
             onConfirm = {
                 uiState.hideDeleteDialog()
                 callbacks.onDeleteConfirm()
-            }
+            },
         )
     }
 
@@ -127,41 +127,43 @@ fun MemorialGuidelineDetailScreen(
             if (isEditable) {
                 TopBar(
                     onBackClick = callbacks.onBackClick,
-                    onEditClick = uiState::toggleDropdownMenu
+                    onEditClick = uiState::toggleDropdownMenu,
                 )
             } else {
                 TopBar(
                     title = "",
-                    onBackClick = callbacks.onBackClick
+                    onBackClick = callbacks.onBackClick,
                 )
             }
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = uiState.selectedBottomNavItem,
-                onItemSelected = uiState::onBottomNavItemSelected
+                onItemSelected = uiState::onBottomNavItemSelected,
             )
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 MemorialGuidelineDetailScrollContent(detailState = detailState)
             }
             if (isEditable) {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(end = 20.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(end = 20.dp),
                 ) {
                     EditDropdownMenu(
                         expanded = uiState.showDropdownMenu,
                         onDismissRequest = uiState::hideDropdownMenu,
                         onEditClick = callbacks.onEditClick,
-                        onDeleteClick = { uiState.showDeleteDialog() }
+                        onDeleteClick = { uiState.showDeleteDialog() },
                     )
                 }
             }
@@ -170,14 +172,13 @@ fun MemorialGuidelineDetailScreen(
 }
 
 @Composable
-private fun MemorialGuidelineDetailScrollContent(
-    detailState: MemorialGuidelineDetailState
-) {
+private fun MemorialGuidelineDetailScrollContent(detailState: MemorialGuidelineDetailState) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         TitleSection(userName = detailState.userName)
@@ -189,19 +190,21 @@ private fun MemorialGuidelineDetailScrollContent(
 @Composable
 private fun TitleSection(userName: String) {
     Text(
-        text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) {
-                append(CATEGORY_NAME)
-            }
-            append("에 대한 ${userName}님의 기록")
-        },
-        style = TextStyle(
-            fontSize = 18.sp,
-            lineHeight = 24.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight.Bold,
-            color = Gray9
-        )
+        text =
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) {
+                    append(CATEGORY_NAME)
+                }
+                append("에 대한 ${userName}님의 기록")
+            },
+        style =
+            TextStyle(
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
+                color = Gray9,
+            ),
     )
 }
 
@@ -210,12 +213,12 @@ private fun CardSection(detailState: MemorialGuidelineDetailState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         PhotoCard(
             finalWriteDate = detailState.finalWriteDate,
-            profileImageUri = detailState.profileImageUri
+            profileImageUri = detailState.profileImageUri,
         )
         ReceiversCard(receivers = detailState.afternoteEditReceivers)
         PlaylistCard(
             albumCovers = detailState.albumCovers,
-            songCount = detailState.songCount
+            songCount = detailState.songCount,
         )
         LastWishCard(lastWish = detailState.lastWish)
         VideoCard(
@@ -228,7 +231,7 @@ private fun CardSection(detailState: MemorialGuidelineDetailState) {
 @Composable
 private fun PhotoCard(
     finalWriteDate: String,
-    profileImageUri: String?
+    profileImageUri: String?,
 ) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
@@ -236,27 +239,28 @@ private fun PhotoCard(
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "최종 작성일 $finalWriteDate",
                     modifier = Modifier.fillMaxWidth(),
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        lineHeight = 16.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray6
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray6,
+                        ),
                 )
                 ProfileImage(
                     fallbackImageRes = R.drawable.img_default_profile_deceased,
                     profileImageSize = 144.dp,
                     isEditable = false,
-                    displayImageUri = profileImageUri
+                    displayImageUri = profileImageUri,
                 )
             }
-        }
+        },
     )
 }
 
@@ -279,17 +283,18 @@ private fun VideoCard(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = "장례식에 남길 영상",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 VideoThumbnail(thumbnailUrl = thumbnailUrl)
             }
-        }
+        },
     )
 }
 
@@ -301,49 +306,57 @@ private fun VideoCard(
 @Composable
 private fun VideoThumbnail(thumbnailUrl: String?) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(183.dp)
-            .clip(RoundedCornerShape(16.dp))
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(183.dp)
+                .clip(RoundedCornerShape(16.dp)),
     ) {
         // 썸네일 이미지
         if (!thumbnailUrl.isNullOrBlank()) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(thumbnailUrl)
-                    .httpHeaders(
-                        NetworkHeaders.Builder().apply {
-                            this["User-Agent"] = "Afternote Android App"
-                        }.build()
-                    )
-                    .build(),
+                model =
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(thumbnailUrl)
+                        .httpHeaders(
+                            NetworkHeaders
+                                .Builder()
+                                .apply {
+                                    this["User-Agent"] = "Afternote Android App"
+                                }.build(),
+                        ).build(),
                 contentDescription = "장례식에 남길 영상 썸네일",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
         }
 
         // 다크 그라데이션 오버레이
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x99757575),
-                            Color(0x99222222)
-                        )
-                    )
-                )
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color(0x99757575),
+                                        Color(0x99222222),
+                                    ),
+                            ),
+                    ),
         )
 
         // 재생 아이콘
         Image(
             painter = painterResource(R.drawable.ic_playback),
             contentDescription = "영상 재생",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(32.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .size(32.dp),
         )
     }
 }
@@ -358,7 +371,7 @@ private fun VideoThumbnail(thumbnailUrl: String?) {
 @Composable
 private fun PlaylistCard(
     albumCovers: List<AlbumCover>,
-    songCount: Int
+    songCount: Int,
 ) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
@@ -366,13 +379,14 @@ private fun PlaylistCard(
             Column {
                 Text(
                     text = "추모 플레이리스트",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 Spacer(Modifier.height(7.dp))
                 if (albumCovers.isNotEmpty()) {
@@ -381,26 +395,28 @@ private fun PlaylistCard(
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = "현재 ${songCount}개의 노래가 담겨 있습니다.",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Black
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Black,
+                        ),
                 )
             }
-        }
+        },
     )
 }
 
 @Composable
 private fun PlaylistAlbumRow(albumCovers: List<AlbumCover>) {
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalFadingEdge(edgeWidth = 45.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .horizontalFadingEdge(edgeWidth = 45.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         itemsIndexed(albumCovers) { _, album ->
             AlbumCoverItem(album = album)
@@ -412,26 +428,30 @@ private fun PlaylistAlbumRow(albumCovers: List<AlbumCover>) {
 private fun AlbumCoverItem(album: AlbumCover) {
     if (!album.imageUrl.isNullOrBlank()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(album.imageUrl)
-                .httpHeaders(
-                    NetworkHeaders.Builder().apply {
-                        this["User-Agent"] = "Afternote Android App"
-                    }.build()
-                )
-                .build(),
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(album.imageUrl)
+                    .httpHeaders(
+                        NetworkHeaders
+                            .Builder()
+                            .apply {
+                                this["User-Agent"] = "Afternote Android App"
+                            }.build(),
+                    ).build(),
             contentDescription = album.title,
             modifier = Modifier.size(87.dp),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
     } else {
         Box(
-            modifier = Modifier
-                .size(87.dp)
-                .background(
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(8.dp)
-                )
+            modifier =
+                Modifier
+                    .size(87.dp)
+                    .background(
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(8.dp),
+                    ),
         )
     }
 }
@@ -447,47 +467,51 @@ private fun LastWishCard(lastWish: String) {
             Column {
                 Text(
                     text = "남기고 싶은 당부",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = displayText,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = textColor
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = textColor,
+                        ),
                 )
             }
-        }
+        },
     )
 }
 
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
 )
 @Composable
 private fun MemorialGuidelineDetailScreenPreview() {
     AfternoteLightTheme {
         MemorialGuidelineDetailScreen(
-            detailState = MemorialGuidelineDetailState(
-                songCount = 16,
-                albumCovers = AlbumDummies.list,
-                lastWish = "차분하고 조용하게 보내주세요."
-            ),
-            callbacks = MemorialGuidelineDetailCallbacks(
-                onBackClick = {},
-                onEditClick = {}
-            )
+            detailState =
+                MemorialGuidelineDetailState(
+                    songCount = 16,
+                    albumCovers = AlbumDummies.list,
+                    lastWish = "차분하고 조용하게 보내주세요.",
+                ),
+            callbacks =
+                MemorialGuidelineDetailCallbacks(
+                    onBackClick = {},
+                    onEditClick = {},
+                ),
         )
     }
 }
@@ -495,27 +519,30 @@ private fun MemorialGuidelineDetailScreenPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "Memorial Guideline Detail - Delete Dialog"
+    name = "Memorial Guideline Detail - Delete Dialog",
 )
 @Composable
 private fun MemorialGuidelineDetailScreenDeleteDialogPreview() {
     AfternoteLightTheme {
-        val stateWithDialog = remember {
-            AfternoteDetailState().apply {
-                showDeleteDialog()
+        val stateWithDialog =
+            remember {
+                AfternoteDetailState().apply {
+                    showDeleteDialog()
+                }
             }
-        }
         MemorialGuidelineDetailScreen(
-            detailState = MemorialGuidelineDetailState(
-                songCount = 16,
-                albumCovers = AlbumDummies.list,
-                lastWish = "차분하고 조용하게 보내주세요.1"
-            ),
-            callbacks = MemorialGuidelineDetailCallbacks(
-                onBackClick = {},
-                onEditClick = {}
-            ),
-            uiState = stateWithDialog
+            detailState =
+                MemorialGuidelineDetailState(
+                    songCount = 16,
+                    albumCovers = AlbumDummies.list,
+                    lastWish = "차분하고 조용하게 보내주세요.1",
+                ),
+            callbacks =
+                MemorialGuidelineDetailCallbacks(
+                    onBackClick = {},
+                    onEditClick = {},
+                ),
+            uiState = stateWithDialog,
         )
     }
 }
@@ -523,24 +550,27 @@ private fun MemorialGuidelineDetailScreenDeleteDialogPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "Memorial Guideline Detail - Receiver Mode"
+    name = "Memorial Guideline Detail - Receiver Mode",
 )
 @Composable
 private fun MemorialGuidelineDetailScreenReceiverModePreview() {
     AfternoteLightTheme {
         MemorialGuidelineDetailScreen(
-            detailState = MemorialGuidelineDetailState(
-                songCount = 16,
-                albumCovers = AlbumDummies.list,
-                lastWish = "차분하고 조용하게 보내주세요.2"
-            ),
-            callbacks = MemorialGuidelineDetailCallbacks(
-                onBackClick = {}
-            ),
+            detailState =
+                MemorialGuidelineDetailState(
+                    songCount = 16,
+                    albumCovers = AlbumDummies.list,
+                    lastWish = "차분하고 조용하게 보내주세요.2",
+                ),
+            callbacks =
+                MemorialGuidelineDetailCallbacks(
+                    onBackClick = {},
+                ),
             isEditable = false,
-            uiState = rememberAfternoteDetailState(
-                defaultBottomNavItem = BottomNavItem.AFTERNOTE
-            )
+            uiState =
+                rememberAfternoteDetailState(
+                    defaultBottomNavItem = BottomNavItem.AFTERNOTE,
+                ),
         )
     }
 }

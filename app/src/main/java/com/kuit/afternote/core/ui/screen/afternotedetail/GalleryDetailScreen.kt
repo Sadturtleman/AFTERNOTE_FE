@@ -31,7 +31,7 @@ import com.kuit.afternote.core.ui.component.detail.ProcessingMethodItem
 import com.kuit.afternote.core.ui.component.detail.ReceiversCard
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray5
@@ -47,10 +47,10 @@ data class GalleryDetailState(
     val serviceName: String = "갤러리",
     val userName: String = "서영",
     val finalWriteDate: String = "2025.11.26.",
-    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList(),
+    val afternoteEditReceivers: List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> = emptyList(),
     val informationProcessingMethod: String = "",
     val processingMethods: List<String> = emptyList(),
-    val message: String = ""
+    val message: String = "",
 )
 
 /**
@@ -60,7 +60,7 @@ data class GalleryDetailState(
 data class GalleryDetailCallbacks(
     val onBackClick: () -> Unit,
     val onEditClick: () -> Unit,
-    val onDeleteConfirm: () -> Unit = {}
+    val onDeleteConfirm: () -> Unit = {},
 )
 
 /**
@@ -82,14 +82,14 @@ fun GalleryDetailScreen(
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
     isEditable: Boolean = true,
-    uiState: AfternoteDetailState = rememberAfternoteDetailState()
+    uiState: AfternoteDetailState = rememberAfternoteDetailState(),
 ) {
     GalleryDetailScaffold(
         modifier = modifier,
         detailState = detailState,
         callbacks = callbacks,
         isEditable = isEditable,
-        uiState = uiState
+        uiState = uiState,
     )
 }
 
@@ -99,7 +99,7 @@ private fun GalleryDetailScaffold(
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
     isEditable: Boolean,
-    uiState: AfternoteDetailState
+    uiState: AfternoteDetailState,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -107,28 +107,28 @@ private fun GalleryDetailScaffold(
             if (isEditable) {
                 TopBar(
                     onBackClick = callbacks.onBackClick,
-                    onEditClick = uiState::toggleDropdownMenu
+                    onEditClick = uiState::toggleDropdownMenu,
                 )
             } else {
                 TopBar(
                     title = "",
-                    onBackClick = callbacks.onBackClick
+                    onBackClick = callbacks.onBackClick,
                 )
             }
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = uiState.selectedBottomNavItem,
-                onItemSelected = uiState::onBottomNavItemSelected
+                onItemSelected = uiState::onBottomNavItemSelected,
             )
-        }
+        },
     ) { paddingValues ->
         GalleryDetailContent(
             modifier = Modifier.padding(paddingValues),
             detailState = detailState,
             callbacks = callbacks,
             isEditable = isEditable,
-            uiState = uiState
+            uiState = uiState,
         )
     }
 }
@@ -139,10 +139,10 @@ private fun GalleryDetailContent(
     detailState: GalleryDetailState,
     callbacks: GalleryDetailCallbacks,
     isEditable: Boolean,
-    uiState: AfternoteDetailState
+    uiState: AfternoteDetailState,
 ) {
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             GalleryDetailScrollableContent(detailState = detailState)
@@ -150,15 +150,16 @@ private fun GalleryDetailContent(
 
         if (isEditable) {
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 20.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 20.dp),
             ) {
                 EditDropdownMenu(
                     expanded = uiState.showDropdownMenu,
                     onDismissRequest = uiState::hideDropdownMenu,
                     onEditClick = { callbacks.onEditClick() },
-                    onDeleteClick = { uiState.showDeleteDialog() }
+                    onDeleteClick = { uiState.showDeleteDialog() },
                 )
             }
 
@@ -169,7 +170,7 @@ private fun GalleryDetailContent(
                     onConfirm = {
                         uiState.hideDeleteDialog()
                         callbacks.onDeleteConfirm()
-                    }
+                    },
                 )
             }
         }
@@ -179,15 +180,16 @@ private fun GalleryDetailContent(
 @Composable
 private fun GalleryDetailScrollableContent(detailState: GalleryDetailState) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         TitleSection(
             serviceName = detailState.serviceName,
-            userName = detailState.userName
+            userName = detailState.userName,
         )
         Spacer(modifier = Modifier.height(24.dp))
         CardSection(detailState = detailState)
@@ -199,7 +201,7 @@ private fun CardSection(detailState: GalleryDetailState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         DateAndMethodCard(
             finalWriteDate = detailState.finalWriteDate,
-            informationProcessingMethod = detailState.informationProcessingMethod
+            informationProcessingMethod = detailState.informationProcessingMethod,
         )
         ReceiversCard(receivers = detailState.afternoteEditReceivers)
         ProcessingMethodsCard(processingMethods = detailState.processingMethods)
@@ -210,29 +212,31 @@ private fun CardSection(detailState: GalleryDetailState) {
 @Composable
 private fun TitleSection(
     serviceName: String,
-    userName: String
+    userName: String,
 ) {
     Text(
-        text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = B1)) {
-                append(serviceName)
-            }
-            append("에 대한 ${userName}님의 기록")
-        },
-        style = TextStyle(
-            fontSize = 18.sp,
-            lineHeight = 24.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight.Bold,
-            color = Gray9
-        )
+        text =
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = B1)) {
+                    append(serviceName)
+                }
+                append("에 대한 ${userName}님의 기록")
+            },
+        style =
+            TextStyle(
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Bold,
+                color = Gray9,
+            ),
     )
 }
 
 @Composable
 private fun DateAndMethodCard(
     finalWriteDate: String,
-    informationProcessingMethod: String
+    informationProcessingMethod: String,
 ) {
     InfoCard(
         modifier = Modifier.fillMaxWidth(),
@@ -240,19 +244,20 @@ private fun DateAndMethodCard(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = "최종 작성일 $finalWriteDate",
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        lineHeight = 16.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray6
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 10.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray6,
+                        ),
                 )
                 InformationProcessingMethodText(
-                    informationProcessingMethod = informationProcessingMethod
+                    informationProcessingMethod = informationProcessingMethod,
                 )
             }
-        }
+        },
     )
 }
 
@@ -267,23 +272,30 @@ private fun InformationProcessingMethodText(informationProcessingMethod: String)
             "TRANSFER",
             "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
             "ADDITIONAL",
-            "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER" -> buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-                append("에게 정보 전달")
+            "TRANSFER_TO_ADDITIONAL_AFTERNOTE_EDIT_RECEIVER",
+            -> {
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+                    append("에게 정보 전달")
+                }
             }
-            else -> buildAnnotatedString {
-                append(informationProcessingMethod)
+
+            else -> {
+                buildAnnotatedString {
+                    append(informationProcessingMethod)
+                }
             }
         }
     Text(
         text = annotatedText,
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight.Medium,
-            color = Gray9
-        )
+        style =
+            TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = Gray9,
+            ),
     )
 }
 
@@ -297,13 +309,14 @@ private fun ProcessingMethodsCard(processingMethods: List<String>) {
             Column {
                 Text(
                     text = "처리 방법",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 processingMethods.forEachIndexed { index, method ->
@@ -313,7 +326,7 @@ private fun ProcessingMethodsCard(processingMethods: List<String>) {
                     ProcessingMethodItem(text = method)
                 }
             }
-        }
+        },
     )
 }
 
@@ -328,46 +341,50 @@ private fun MessageCard(message: String) {
             Column {
                 Text(
                     text = "남기신 말씀",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = displayMessage,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = textColor
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = textColor,
+                        ),
                 )
             }
-        }
+        },
     )
 }
 
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
 )
 @Composable
 private fun GalleryDetailScreenPreview() {
     AfternoteLightTheme {
         GalleryDetailScreen(
-            detailState = GalleryDetailState(
-                informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
-                processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
-            ),
-            callbacks = GalleryDetailCallbacks(
-                onBackClick = {},
-                onEditClick = {}
-            )
+            detailState =
+                GalleryDetailState(
+                    informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
+                    processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제"),
+                ),
+            callbacks =
+                GalleryDetailCallbacks(
+                    onBackClick = {},
+                    onEditClick = {},
+                ),
         )
     }
 }
@@ -375,7 +392,7 @@ private fun GalleryDetailScreenPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "Gallery Detail Screen with Delete Dialog"
+    name = "Gallery Detail Screen with Delete Dialog",
 )
 @Composable
 private fun GalleryDetailScreenWithDialogPreview() {
@@ -384,15 +401,17 @@ private fun GalleryDetailScreenWithDialogPreview() {
         uiState.showDeleteDialog()
 
         GalleryDetailScreen(
-            detailState = GalleryDetailState(
-                informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
-                processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제")
-            ),
-            callbacks = GalleryDetailCallbacks(
-                onBackClick = {},
-                onEditClick = {}
-            ),
-            uiState = uiState
+            detailState =
+                GalleryDetailState(
+                    informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
+                    processingMethods = listOf("'엽사' 폴더 박선호에게 전송", "'흑역사' 폴더 삭제"),
+                ),
+            callbacks =
+                GalleryDetailCallbacks(
+                    onBackClick = {},
+                    onEditClick = {},
+                ),
+            uiState = uiState,
         )
     }
 }

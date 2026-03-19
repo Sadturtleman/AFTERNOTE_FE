@@ -5,8 +5,8 @@ import com.kuit.afternote.core.dummy.afternote.AfternoteListDummies
 import com.kuit.afternote.core.dummy.album.AlbumDummies
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Song
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 import javax.inject.Inject
 
 /**
@@ -16,9 +16,11 @@ import javax.inject.Inject
 class FakeAfternoteEditDataProvider
     @Inject
     constructor() : AfternoteEditDataProvider {
-        override fun getSongs(): List<Song> = AfternoteEditDummies.defaultSongs()
+        override fun getSongs(): List<com.kuit.afternote.feature.afternote.presentation.edit.model.Song> =
+            AfternoteEditDummies.defaultSongs()
 
-        override fun getAfternoteEditReceivers(): List<AfternoteEditReceiver> = emptyList()
+        override fun getAfternoteEditReceivers(): List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> =
+            emptyList()
 
         override fun getDefaultAfternoteItems(): List<Pair<String, String>> = AfternoteListDummies.defaultAfternoteList()
 
