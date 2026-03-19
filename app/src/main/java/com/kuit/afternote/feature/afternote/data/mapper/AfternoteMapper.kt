@@ -3,11 +3,13 @@ package com.kuit.afternote.feature.afternote.data.mapper
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItem
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteDetailResponse
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteListResponse
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailSong
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternotePlaylistDetail
+import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 
 /**
  * Maps server DTOs to domain models at the boundary only.
@@ -70,6 +72,12 @@ object AfternoteMapper {
                         memorialThumbnailUrl = p.memorialVideo?.thumbnailUrl,
                     )
                 },
+        )
+
+    fun toPagedNotes(data: AfternoteListResponse) =
+        PagedAfternotes(
+            items = toDomainList(data.content),
+            hasNext = data.hasNext,
         )
 
     // -- Internal helpers --

@@ -20,6 +20,6 @@ class UpdateAfternoteUseCase
         ): Result<Long> =
             repository.updateAfternote(
                 afternoteId = afternoteId,
-                body = body,
+                request = body,
             )
     }

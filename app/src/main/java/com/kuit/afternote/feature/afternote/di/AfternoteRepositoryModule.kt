@@ -23,6 +23,7 @@ import javax.inject.Singleton
  * - MusicSearchRepositoryImpl ↔ MusicSearchRepository
  * - Retrofit → AfternoteApiService, MusicApiService
  */
+@Suppress("kotlin:S1694")
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AfternoteRepositoryModule {

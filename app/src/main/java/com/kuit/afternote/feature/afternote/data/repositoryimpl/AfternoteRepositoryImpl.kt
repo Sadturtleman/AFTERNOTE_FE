@@ -10,6 +10,7 @@ import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGall
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
@@ -27,11 +28,6 @@ class AfternoteRepositoryImpl
     constructor(
         private val api: AfternoteApiService,
     ) : AfternoteRepository {
-        private fun <T> Result<T>.logFailure() =
-            onFailure { error ->
-                Log.e("AfternoteRepository", error.message.toString())
-            }
-
         override suspend fun getAfternotes(
             category: String?,
             page: Int,
@@ -40,9 +36,7 @@ class AfternoteRepositoryImpl
             runCatching {
                 val response = api.getAfternotes(category = category, page = page, size = size)
                 val data = response.requireData()
-                val content = data.content
-                val hasNext = data.hasNext
-                PagedAfternotes(items = AfternoteMapper.toDomainList(content), hasNext = hasNext)
+                AfternoteMapper.toPagedNotes(data)
             }.logFailure()
 
         override suspend fun createSocial(
@@ -62,24 +56,12 @@ class AfternoteRepositoryImpl
                         processMethod = processMethod,
                         actions = actions,
                         leaveMessage = leaveMessage,
-                        credentials =
-                            when {
-                                credentialsId != null || credentialsPassword != null -> {
-                                    AfternoteCredentials(
-                                        id = credentialsId,
-                                        password = credentialsPassword,
-                                    )
-                                }
-
-                                else -> {
-                                    null
-                                }
-                            },
+                        credentials = afternoteCredentials(credentialsId, credentialsPassword),
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 val response = api.createAfternoteSocial(request)
                 val data = response.requireData()
-                data.afternoteId
+                getAfternoteId(data)
             }.logFailure()
 
         override suspend fun createGallery(
@@ -101,7 +83,7 @@ class AfternoteRepositoryImpl
                     )
                 val response = api.createAfternoteGallery(request)
                 val data = response.requireData()
-                data.afternoteId
+                getAfternoteId(data)
             }.logFailure()
 
         /**
@@ -132,7 +114,7 @@ class AfternoteRepositoryImpl
                     )
                 val response = api.createAfternotePlaylist(request)
                 val data = response.requireData()
-                data.afternoteId
+                getAfternoteId(data)
             }.logFailure()
 
         /**
@@ -145,7 +127,7 @@ class AfternoteRepositoryImpl
             runCatching {
                 val response = api.updateAfternote(afternoteId = afternoteId, request = request)
                 val data = response.requireData()
-                data.afternoteId
+                getAfternoteId(data)
             }.logFailure()
 
         /**
@@ -157,3 +139,22 @@ class AfternoteRepositoryImpl
                 response.requireStatus()
             }.logFailure()
     }
+
+private fun getAfternoteId(data: AfternoteIdResponse) = data.afternoteId
+
+private fun <T> Result<T>.logFailure() =
+    onFailure { error ->
+        val message = error.message
+        val msg = message.toString()
+        Log.e("AfternoteRepository", msg)
+    }
+
+private fun afternoteCredentials(
+    credentialsId: String?,
+    credentialsPassword: String?,
+): AfternoteCredentials? {
+    if (credentialsId != null || credentialsPassword != null) {
+        return AfternoteCredentials(id = credentialsId, password = credentialsPassword)
+    }
+    return null
+}

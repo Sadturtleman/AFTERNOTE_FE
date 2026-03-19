@@ -38,7 +38,7 @@ class UpdateAfternoteUseCaseTest {
             coEvery {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = any(),
+                    request = any(),
                 )
             } returns Result.success(10L)
 
@@ -49,7 +49,7 @@ class UpdateAfternoteUseCaseTest {
             coVerify(exactly = 1) {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = body,
+                    request = body,
                 )
             }
         }
@@ -71,7 +71,7 @@ class UpdateAfternoteUseCaseTest {
             coEvery {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = any(),
+                    request = any(),
                 )
             } returns Result.failure(RuntimeException("404 Not found"))
 
