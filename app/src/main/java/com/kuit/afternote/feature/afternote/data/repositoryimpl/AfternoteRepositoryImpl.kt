@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import android.util.Log
 import com.kuit.afternote.data.requireData
-import com.kuit.afternote.data.requireSuccess
+import com.kuit.afternote.data.requireStatus
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
@@ -37,9 +37,10 @@ class AfternoteRepositoryImpl
             runCatching {
                 val response = api.getAfternotes(category = category, page = page, size = size)
                 val data = response.requireData()
-                val content = data?.content.orEmpty()
-                val hasNext = data?.hasNext ?: false
+                val content = data.content
+                val hasNext = data.hasNext
                 PagedAfternotes(items = AfternoteMapper.toDomainList(content), hasNext = hasNext)
+            }.onFailure {
             }
 
         override suspend fun createSocial(
@@ -210,6 +211,6 @@ class AfternoteRepositoryImpl
          */
         override suspend fun deleteAfternote(afternoteId: Long): Result<Unit> =
             runCatching {
-                api.deleteAfternote(afternoteId = afternoteId).requireSuccess()
+                api.deleteAfternote(afternoteId = afternoteId).requireStatus()
             }
     }

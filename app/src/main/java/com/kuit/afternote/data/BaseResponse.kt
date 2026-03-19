@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BaseResponse<T>(
     @SerialName("status") val status: Int,
-    @SerialName("message") val message: String,
+    @SerialName("message") val message: String?,
     @SerialName("data") val data: T? = null,
     @SerialName("code") val code: Int,
 )
@@ -26,13 +26,11 @@ data class BaseResponse<T>(
  * @throws ApiException 서버가 에러 응답을 반환한 경우
  */
 fun <T> BaseResponse<T>.requireData(): T & Any {
-    if (status != 200) {
-        throw ApiException(status = status, code = code, message = message)
-    }
+    requireStatus()
     return data ?: throw ApiException(
         status = status,
         code = code,
-        message = message.ifBlank { "data is null" },
+        message = message ?: "데이터 필드 없음",
     )
 }
 
@@ -43,8 +41,8 @@ fun <T> BaseResponse<T>.requireData(): T & Any {
  *
  * @throws ApiException 서버가 에러 응답을 반환한 경우
  */
-fun BaseResponse<*>.requireSuccess() {
+fun BaseResponse<*>.requireStatus() {
     if (status != 200) {
-        throw ApiException(status = status, code = code, message = message)
+        throw ApiException(status = status, code = code, message = message ?: "Status가 200이 아님")
     }
 }

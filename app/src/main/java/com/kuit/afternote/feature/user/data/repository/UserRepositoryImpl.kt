@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.user.data.repository
 
 import android.util.Log
 import com.kuit.afternote.data.requireData
-import com.kuit.afternote.data.requireSuccess
+import com.kuit.afternote.data.requireStatus
 import com.kuit.afternote.data.service.ApiException
 import com.kuit.afternote.feature.user.data.api.UserApiService
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
@@ -65,7 +65,7 @@ class UserRepositoryImpl
             runCatching {
                 Log.d(TAG, "withdrawAccount: request")
                 val response = api.withdrawAccount()
-                response.requireSuccess()
+                response.requireStatus()
                 Log.d(TAG, "withdrawAccount: success")
                 Unit
             }
@@ -127,19 +127,14 @@ class UserRepositoryImpl
                         ),
                     )
                 Log.d(TAG, "registerReceiver: response=$response")
-                if (response.status != 200 && response.status != 201) {
+                if (response.status != 201) {
                     throw ApiException(
                         status = response.status,
                         code = response.code,
-                        message = response.message,
+                        message = response.message ?: "Status 201 아님",
                     )
                 }
-                val data =
-                    response.data ?: throw ApiException(
-                        status = response.status,
-                        code = response.code,
-                        message = response.message.ifBlank { "data is null" },
-                    )
+                val data = response.requireData()
                 data.receiverId
             }
 
@@ -176,7 +171,7 @@ class UserRepositoryImpl
                     throw ApiException(
                         status = response.status,
                         code = response.code,
-                        message = response.message,
+                        message = response.message ?: "Status 200 이상 299 이하가 아님",
                     )
                 }
                 Unit
