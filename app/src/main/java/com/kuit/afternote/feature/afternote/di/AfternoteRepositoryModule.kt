@@ -3,11 +3,9 @@ package com.kuit.afternote.feature.afternote.di
 import com.kuit.afternote.data.repositoryimpl.MemorialThumbnailUploadRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.MemorialVideoUploadRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.MusicSearchRepositoryImpl
-import com.kuit.afternote.data.repositoryimpl.PhotoUploadRepositoryImpl
 import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
 import com.kuit.afternote.domain.repository.MemorialVideoUploadRepository
 import com.kuit.afternote.domain.repository.MusicSearchRepository
-import com.kuit.afternote.domain.repository.PhotoUploadRepository
 import com.kuit.afternote.feature.afternote.data.repositoryimpl.AfternoteRepositoryImpl
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import dagger.Binds
@@ -23,7 +21,6 @@ import javax.inject.Singleton
  * - MusicSearchRepositoryImpl ↔ MusicSearchRepository
  * - Retrofit → AfternoteApiService, MusicApiService
  */
-@Suppress("kotlin:S1694")
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AfternoteRepositoryModule {
@@ -42,11 +39,6 @@ abstract class AfternoteRepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMemorialThumbnailUploadRepository(impl: MemorialThumbnailUploadRepositoryImpl): MemorialThumbnailUploadRepository
-
-    @Suppress("unused")
-    @Binds
-    @Singleton
-    abstract fun bindPhotoUploadRepository(impl: PhotoUploadRepositoryImpl): PhotoUploadRepository
 
     @Suppress("unused")
     @Binds
