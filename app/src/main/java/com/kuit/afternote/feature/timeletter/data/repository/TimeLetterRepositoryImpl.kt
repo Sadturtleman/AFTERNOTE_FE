@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.timeletter.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.response.requireData
+import com.kuit.afternote.data.requireData
 import com.kuit.afternote.feature.timeletter.data.api.TimeLetterApiService
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterCreateRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterDeleteRequest

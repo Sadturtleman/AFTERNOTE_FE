@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
@@ -114,8 +114,9 @@ class LoginViewModelTest {
     @Test
     fun login_when404NotFound_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"User not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
             coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -124,7 +125,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("404") == true
+                    ?.contains("404") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -133,8 +134,9 @@ class LoginViewModelTest {
     @Test
     fun login_when401Unauthorized_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Invalid credentials"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Invalid credentials"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
             coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -143,7 +145,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("401") == true
+                    ?.contains("401") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
         }
@@ -151,8 +153,9 @@ class LoginViewModelTest {
     @Test
     fun login_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
             coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -161,7 +164,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
         }
@@ -169,8 +172,9 @@ class LoginViewModelTest {
     @Test
     fun login_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
             coEvery { loginUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -179,7 +183,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
         }
@@ -189,9 +193,10 @@ class LoginViewModelTest {
     @Test
     fun login_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { loginUseCase(any(), any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { loginUseCase(any(), any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.login("test@example.com", "password123!")
             advanceUntilIdle()
@@ -213,9 +218,10 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_whenSuccess_setsLoginSuccess() =
         runTest {
-            coEvery { kakaoLoginUseCase(any()) } returns Result.success(
-                LoginResult(accessToken = "at", refreshToken = "rt")
-            )
+            coEvery { kakaoLoginUseCase(any()) } returns
+                Result.success(
+                    LoginResult(accessToken = "at", refreshToken = "rt"),
+                )
 
             viewModel.kakaoLogin("kakaoAccessToken")
             advanceUntilIdle()
@@ -228,8 +234,9 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid access token"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid access token"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
             coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
 
@@ -238,7 +245,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -247,8 +254,9 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_when401Unauthorized_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Unauthorized"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
             coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
 
@@ -257,7 +265,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("401") == true
+                    ?.contains("401") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -266,8 +274,9 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_when404NotFound_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"Not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
             coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
 
@@ -276,7 +285,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("404") == true
+                    ?.contains("404") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -285,8 +294,9 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
             coEvery { kakaoLoginUseCase(any()) } returns Result.failure(httpException)
 
@@ -295,7 +305,7 @@ class LoginViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.loginSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -304,9 +314,10 @@ class LoginViewModelTest {
     @Test
     fun kakaoLogin_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { kakaoLoginUseCase(any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { kakaoLoginUseCase(any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.kakaoLogin("token")
             advanceUntilIdle()

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.admin.data.repository.impl
 
-import com.kuit.afternote.data.response.requireData
+import com.kuit.afternote.data.requireData
 import com.kuit.afternote.feature.admin.data.api.AdminApiService
 import com.kuit.afternote.feature.admin.data.dto.AdminVerificationResponseDto
 import com.kuit.afternote.feature.admin.data.dto.ApproveVerificationRequestDto

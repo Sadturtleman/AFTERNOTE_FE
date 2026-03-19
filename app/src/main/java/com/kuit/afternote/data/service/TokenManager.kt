@@ -1,4 +1,4 @@
-package com.kuit.afternote.data.local
+package com.kuit.afternote.data.service
 
 import android.content.Context
 import android.util.Log
@@ -26,7 +26,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class TokenManager
     @Inject
     constructor(
-        @ApplicationContext private val context: Context
+        @ApplicationContext private val context: Context,
     ) {
         private val accessTokenKey = stringPreferencesKey("access_token")
         private val refreshTokenKey = stringPreferencesKey("refresh_token")
@@ -35,30 +35,34 @@ class TokenManager
         /**
          * Access Token Flow.
          */
-        val accessTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-            preferences[accessTokenKey]
-        }
+        val accessTokenFlow: Flow<String?> =
+            context.dataStore.data.map { preferences ->
+                preferences[accessTokenKey]
+            }
 
         /**
          * Refresh Token Flow.
          */
-        val refreshTokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-            preferences[refreshTokenKey]
-        }
+        val refreshTokenFlow: Flow<String?> =
+            context.dataStore.data.map { preferences ->
+                preferences[refreshTokenKey]
+            }
 
         /**
          * User Email Flow.
          */
-        val userEmailFlow: Flow<String?> = context.dataStore.data.map { preferences ->
-            preferences[userEmailKey]
-        }
+        val userEmailFlow: Flow<String?> =
+            context.dataStore.data.map { preferences ->
+                preferences[userEmailKey]
+            }
 
         /**
          * 로그인 상태 Flow.
          */
-        val isLoggedInFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
-            !preferences[accessTokenKey].isNullOrEmpty()
-        }
+        val isLoggedInFlow: Flow<Boolean> =
+            context.dataStore.data.map { preferences ->
+                !preferences[accessTokenKey].isNullOrEmpty()
+            }
 
         /**
          * Access Token을 동기적으로 가져옵니다.
@@ -80,7 +84,7 @@ class TokenManager
         suspend fun saveTokens(
             accessToken: String,
             refreshToken: String,
-            email: String? = null
+            email: String? = null,
         ) {
             context.dataStore.edit { preferences ->
                 preferences[accessTokenKey] = accessToken
@@ -97,7 +101,7 @@ class TokenManager
          */
         suspend fun updateTokens(
             accessToken: String,
-            refreshToken: String
+            refreshToken: String,
         ) {
             context.dataStore.edit { preferences ->
                 preferences[accessTokenKey] = accessToken

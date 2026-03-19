@@ -1,6 +1,5 @@
-package com.kuit.afternote.data.remote
+package com.kuit.afternote.data.service
 
-import com.kuit.afternote.data.local.TokenManager
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import dagger.Module
 import dagger.Provides
@@ -41,14 +40,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-        val builder = OkHttpClient
-            .Builder()
-            .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
-            .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
-            .addInterceptor(authInterceptor)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
+        val builder =
+            OkHttpClient
+                .Builder()
+                .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
+                .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
+                .addInterceptor(authInterceptor)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+                )
 
         return builder.build()
     }
@@ -66,16 +66,14 @@ object NetworkModule {
             .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
             .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            )
-            .build()
-
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+            ).build()
 
     @Provides
     @Singleton
     fun provideRetrofit(
         json: Json,
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
     ): Retrofit =
         Retrofit
             .Builder()
@@ -86,8 +84,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideDailyRecordApiService(retrofit: Retrofit): DailyRecordApiService {
-        return retrofit.create(DailyRecordApiService::class.java)
-    }
+    fun provideDailyRecordApiService(retrofit: Retrofit): DailyRecordApiService = retrofit.create(DailyRecordApiService::class.java)
 }
-

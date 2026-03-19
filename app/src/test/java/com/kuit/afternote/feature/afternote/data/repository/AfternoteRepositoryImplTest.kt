@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
-import com.kuit.afternote.data.response.BaseResponse
+import com.kuit.afternote.data.dto.response.BaseResponse
 import com.kuit.afternote.feature.afternote.data.api.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreateGalleryRequestDto
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCreatePlaylistRequestDto

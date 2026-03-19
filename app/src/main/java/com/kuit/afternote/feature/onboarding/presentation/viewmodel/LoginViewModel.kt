@@ -3,8 +3,8 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.local.TokenManager
-import com.kuit.afternote.data.remote.ApiException
+import com.kuit.afternote.data.service.ApiException
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ class LoginViewModel
     constructor(
         private val loginUseCase: LoginUseCase,
         private val kakaoLoginUseCase: KakaoLoginUseCase,
-        private val tokenManager: TokenManager
+        private val tokenManager: TokenManager,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(LoginUiState())
         val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -42,7 +42,7 @@ class LoginViewModel
          */
         fun login(
             email: String,
-            password: String
+            password: String,
         ) {
             if (email.isBlank() || password.isBlank()) {
                 _uiState.update { it.copy(errorMessage = "이메일과 비밀번호를 입력하세요.") }
@@ -59,7 +59,7 @@ class LoginViewModel
                             tokenManager.saveTokens(
                                 accessToken = accessToken,
                                 refreshToken = refreshToken,
-                                email = email
+                                email = email,
                             )
                         }
                         _uiState.update {
@@ -95,7 +95,7 @@ class LoginViewModel
                         if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
                             tokenManager.saveTokens(
                                 accessToken = accessToken,
-                                refreshToken = refreshToken
+                                refreshToken = refreshToken,
                             )
                         }
                         _uiState.update {
@@ -107,7 +107,7 @@ class LoginViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = message.ifBlank { "카카오 로그인에 실패했습니다." }
+                                errorMessage = message.ifBlank { "카카오 로그인에 실패했습니다." },
                             )
                         }
                     }
@@ -119,12 +119,13 @@ class LoginViewModel
          * 빈 문자열이 되지 않도록 항상 기본 문구를 반환한다.
          */
         private fun mapLoginErrorToMessage(e: Throwable): String {
-            val raw = when (e) {
-                is ApiException -> e.message.ifBlank { null }
-                is HttpException -> parseLoginHttpError(e)
-                is IOException -> "네트워크 연결을 확인해주세요."
-                else -> e.message?.takeIf { it.isNotBlank() }
-            }
+            val raw =
+                when (e) {
+                    is ApiException -> e.message.ifBlank { null }
+                    is HttpException -> parseLoginHttpError(e)
+                    is IOException -> "네트워크 연결을 확인해주세요."
+                    else -> e.message?.takeIf { it.isNotBlank() }
+                }
             return raw?.takeIf { it.isNotBlank() } ?: "로그인에 실패했습니다."
         }
 
@@ -145,9 +146,13 @@ class LoginViewModel
         private fun mapLoginHttpCodeToMessage(code: Int): String =
             when (code) {
                 400,
-                401 -> "이메일 또는 비밀번호가 올바르지 않습니다."
+                401,
+                -> "이메일 또는 비밀번호가 올바르지 않습니다."
+
                 404 -> "등록되지 않은 이메일입니다."
+
                 500, 502, 503 -> "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+
                 else -> "로그인에 실패했습니다. (오류 코드: $code)"
             }
 
@@ -174,10 +179,11 @@ class LoginViewModel
 
         companion object {
             private const val TAG = "LoginViewModel"
-            private val json = Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-            }
+            private val json =
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
         }
     }
 
@@ -186,5 +192,5 @@ class LoginViewModel
 private data class LoginErrorResponse(
     val status: Int? = null,
     val code: Int? = null,
-    val message: String? = null
+    val message: String? = null,
 )

@@ -1,4 +1,4 @@
-package com.kuit.afternote.data.provider
+package com.kuit.afternote.domain.provider
 
 import dagger.Module
 import dagger.hilt.InstallIn

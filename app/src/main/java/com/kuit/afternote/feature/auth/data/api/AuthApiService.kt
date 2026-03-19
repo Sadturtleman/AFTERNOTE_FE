@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.auth.data.api
 
-import com.kuit.afternote.data.response.BaseResponse
+import com.kuit.afternote.data.BaseResponse
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest

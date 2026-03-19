@@ -27,7 +27,6 @@ import java.io.IOException
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class VerifySelfViewModelTest {
-
     @get:Rule
     val mainRule = MainCoroutineRule()
 
@@ -43,12 +42,13 @@ class VerifySelfViewModelTest {
         uploadReceiverDocumentUseCase = mockk()
         submitDeliveryVerificationUseCase = mockk()
         getDeliveryVerificationStatusUseCase = mockk()
-        viewModel = VerifySelfViewModel(
-            verifyReceiverAuthUseCase = verifyReceiverAuthUseCase,
-            uploadReceiverDocumentUseCase = uploadReceiverDocumentUseCase,
-            submitDeliveryVerificationUseCase = submitDeliveryVerificationUseCase,
-            getDeliveryVerificationStatusUseCase = getDeliveryVerificationStatusUseCase
-        )
+        viewModel =
+            VerifySelfViewModel(
+                verifyReceiverAuthUseCase = verifyReceiverAuthUseCase,
+                uploadReceiverDocumentUseCase = uploadReceiverDocumentUseCase,
+                submitDeliveryVerificationUseCase = submitDeliveryVerificationUseCase,
+                getDeliveryVerificationStatusUseCase = getDeliveryVerificationStatusUseCase,
+            )
     }
 
     @Test
@@ -61,47 +61,54 @@ class VerifySelfViewModelTest {
     }
 
     @Test
-    fun verifyMasterKey_whenSuccess_advancesToUploadPdfStep() = runTest {
-        coEvery { verifyReceiverAuthUseCase(any()) } returns Result.success(
-            ReceiverAuthVerifyResult(receiverId = 1L)
-        )
-        viewModel.updateMasterKey("valid-key")
-        viewModel.verifyMasterKey()
-        advanceUntilIdle()
+    fun verifyMasterKey_whenSuccess_advancesToUploadPdfStep() =
+        runTest {
+            coEvery { verifyReceiverAuthUseCase(any()) } returns
+                Result.success(
+                    ReceiverAuthVerifyResult(receiverId = 1L),
+                )
+            viewModel.updateMasterKey("valid-key")
+            viewModel.verifyMasterKey()
+            advanceUntilIdle()
 
-        assertEquals(VerifyStep.UPLOAD_PDF_AUTH, viewModel.uiState.value.currentStep)
-        assertNull(viewModel.uiState.value.verifyError)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
-
-    @Test
-    fun verifyMasterKey_when400BadRequest_setsVerifyErrorAndKeepsStep() = runTest {
-        coEvery { verifyReceiverAuthUseCase(any()) } returns Result.failure(
-            com.kuit.afternote.data.remote.ApiException(status = 400, code = 400, message = "잘못된 인증번호입니다.")
-        )
-        viewModel.updateMasterKey("wrong-key")
-        viewModel.verifyMasterKey()
-        advanceUntilIdle()
-
-        assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
-        assertTrue(viewModel.uiState.value.verifyError is VerifyErrorType.Server)
-        assertEquals("잘못된 인증번호입니다.", (viewModel.uiState.value.verifyError as VerifyErrorType.Server).message)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertEquals(VerifyStep.UPLOAD_PDF_AUTH, viewModel.uiState.value.currentStep)
+            assertNull(viewModel.uiState.value.verifyError)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
-    fun verifyMasterKey_whenNetworkError_setsVerifyErrorNetwork() = runTest {
-        coEvery { verifyReceiverAuthUseCase(any()) } returns Result.failure(
-            IOException("Network unavailable")
-        )
-        viewModel.updateMasterKey("key")
-        viewModel.verifyMasterKey()
-        advanceUntilIdle()
+    fun verifyMasterKey_when400BadRequest_setsVerifyErrorAndKeepsStep() =
+        runTest {
+            coEvery { verifyReceiverAuthUseCase(any()) } returns
+                Result.failure(
+                    com.kuit.afternote.data.service
+                        .ApiException(status = 400, code = 400, message = "잘못된 인증번호입니다."),
+                )
+            viewModel.updateMasterKey("wrong-key")
+            viewModel.verifyMasterKey()
+            advanceUntilIdle()
 
-        assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
-        assertTrue(viewModel.uiState.value.verifyError is VerifyErrorType.Network)
-        assertFalse(viewModel.uiState.value.isLoading)
-    }
+            assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
+            assertTrue(viewModel.uiState.value.verifyError is VerifyErrorType.Server)
+            assertEquals("잘못된 인증번호입니다.", (viewModel.uiState.value.verifyError as VerifyErrorType.Server).message)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun verifyMasterKey_whenNetworkError_setsVerifyErrorNetwork() =
+        runTest {
+            coEvery { verifyReceiverAuthUseCase(any()) } returns
+                Result.failure(
+                    IOException("Network unavailable"),
+                )
+            viewModel.updateMasterKey("key")
+            viewModel.verifyMasterKey()
+            advanceUntilIdle()
+
+            assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
+            assertTrue(viewModel.uiState.value.verifyError is VerifyErrorType.Network)
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
 
     @Test
     fun updateMasterKey_clearsVerifyError() {
@@ -114,19 +121,21 @@ class VerifySelfViewModelTest {
     }
 
     @Test
-    fun goToPreviousStep_fromUploadPdf_returnsMasterKeyStep() = runTest {
-        coEvery { verifyReceiverAuthUseCase(any()) } returns Result.success(
-            ReceiverAuthVerifyResult(receiverId = 1L)
-        )
-        viewModel.updateMasterKey("key")
-        viewModel.verifyMasterKey()
-        advanceUntilIdle()
+    fun goToPreviousStep_fromUploadPdf_returnsMasterKeyStep() =
+        runTest {
+            coEvery { verifyReceiverAuthUseCase(any()) } returns
+                Result.success(
+                    ReceiverAuthVerifyResult(receiverId = 1L),
+                )
+            viewModel.updateMasterKey("key")
+            viewModel.verifyMasterKey()
+            advanceUntilIdle()
 
-        assertEquals(VerifyStep.UPLOAD_PDF_AUTH, viewModel.uiState.value.currentStep)
-        val previous = viewModel.goToPreviousStep()
-        assertEquals(VerifyStep.MASTER_KEY_AUTH, previous)
-        assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
-    }
+            assertEquals(VerifyStep.UPLOAD_PDF_AUTH, viewModel.uiState.value.currentStep)
+            val previous = viewModel.goToPreviousStep()
+            assertEquals(VerifyStep.MASTER_KEY_AUTH, previous)
+            assertEquals(VerifyStep.MASTER_KEY_AUTH, viewModel.uiState.value.currentStep)
+        }
 
     @Test
     fun submitDocuments_whenDeathUriNull_setsSubmitErrorRequired() {
@@ -147,54 +156,61 @@ class VerifySelfViewModelTest {
     }
 
     @Test
-    fun submitDocuments_whenSuccess_advancesToEndAndLoadsStatus() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.success("https://file1.pdf")
-        coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
-            Result.success(Unit)
-        val status = DeliveryVerificationStatus(
-            id = 1L,
-            status = "PENDING",
-            adminNote = null,
-            createdAt = "2025-01-01T00:00:00"
-        )
-        coEvery { getDeliveryVerificationStatusUseCase(any()) } returns Result.success(status)
+    fun submitDocuments_whenSuccess_advancesToEndAndLoadsStatus() =
+        runTest {
+            viewModel.updateMasterKey("auth-code")
+            coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
+                Result.success("https://file1.pdf")
+            coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
+                Result.success(Unit)
+            val status =
+                DeliveryVerificationStatus(
+                    id = 1L,
+                    status = "PENDING",
+                    adminNote = null,
+                    createdAt = "2025-01-01T00:00:00",
+                )
+            coEvery { getDeliveryVerificationStatusUseCase(any()) } returns Result.success(status)
 
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
+            viewModel.submitDocuments("content://death", "content://family")
+            advanceUntilIdle()
 
-        assertEquals(VerifyStep.END, viewModel.uiState.value.currentStep)
-        assertNull(viewModel.uiState.value.submitError)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-        assertEquals(status, viewModel.uiState.value.deliveryVerificationStatus)
-    }
-
-    @Test
-    fun submitDocuments_whenUploadFails_setsSubmitError() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.failure(IOException("Network error"))
-
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
-
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Network)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-    }
+            assertEquals(VerifyStep.END, viewModel.uiState.value.currentStep)
+            assertNull(viewModel.uiState.value.submitError)
+            assertFalse(viewModel.uiState.value.isSubmitting)
+            assertEquals(status, viewModel.uiState.value.deliveryVerificationStatus)
+        }
 
     @Test
-    fun submitDocuments_whenSubmitFails_setsSubmitError() = runTest {
-        viewModel.updateMasterKey("auth-code")
-        coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
-            Result.success("https://file1.pdf")
-        coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
-            Result.failure(com.kuit.afternote.data.remote.ApiException(400, 400, "Invalid URL"))
+    fun submitDocuments_whenUploadFails_setsSubmitError() =
+        runTest {
+            viewModel.updateMasterKey("auth-code")
+            coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
+                Result.failure(IOException("Network error"))
 
-        viewModel.submitDocuments("content://death", "content://family")
-        advanceUntilIdle()
+            viewModel.submitDocuments("content://death", "content://family")
+            advanceUntilIdle()
 
-        assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Server)
-        assertFalse(viewModel.uiState.value.isSubmitting)
-    }
+            assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Network)
+            assertFalse(viewModel.uiState.value.isSubmitting)
+        }
+
+    @Test
+    fun submitDocuments_whenSubmitFails_setsSubmitError() =
+        runTest {
+            viewModel.updateMasterKey("auth-code")
+            coEvery { uploadReceiverDocumentUseCase(any(), any()) } returns
+                Result.success("https://file1.pdf")
+            coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
+                Result.failure(
+                    com.kuit.afternote.data.service
+                        .ApiException(400, 400, "Invalid URL"),
+                )
+
+            viewModel.submitDocuments("content://death", "content://family")
+            advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.submitError is VerifyErrorType.Server)
+            assertFalse(viewModel.uiState.value.isSubmitting)
+        }
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,13 +44,12 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.ScaffoldContentWithOptionalFab
 import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
-import com.kuit.afternote.data.provider.FakeReceiverDataProvider
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.feature.timeletter.presentation.component.LetterTheme
-import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItemCallbacks
+import com.kuit.afternote.domain.provider.FakeReceiverDataProvider
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
+import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItemCallbacks
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterUiState
@@ -81,7 +80,7 @@ fun TimeLetterScreen(
     onAddClick: () -> Unit = {},
     onShowAllClick: () -> Unit = {},
     onLetterClick: (TimeLetterItem) -> Unit = {},
-    onEditLetter: (TimeLetterItem) -> Unit = {}
+    onEditLetter: (TimeLetterItem) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val viewMode by viewModel.viewMode.collectAsStateWithLifecycle()
@@ -102,110 +101,112 @@ fun TimeLetterScreen(
                             Image(
                                 painter = painterResource(id = R.drawable.ic_vector),
                                 contentDescription = "뒤로가기",
-                                modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                                modifier = Modifier.size(width = 6.dp, height = 12.dp),
                             )
                         }
-                    }
+                    },
                 )
             }
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = BottomNavItem.TIME_LETTER,
-                onItemSelected = onNavItemSelected
+                onItemSelected = onNavItemSelected,
             )
-        }
+        },
     ) { innerPadding ->
         ScaffoldContentWithOptionalFab(
             paddingValues = innerPadding,
             showFab = true,
-            onFabClick = onAddClick
+            onFabClick = onAddClick,
         ) { contentModifier ->
             Column(
-                modifier = contentModifier.fillMaxWidth()
+                modifier = contentModifier.fillMaxWidth(),
             ) {
                 Spacer(modifier = Modifier.height(18.dp))
 
-            // 상태에 따른 조건부 렌더링
-            when (uiState) {
-                is TimeLetterUiState.Loading -> {
-                    // 로딩 상태 (필요시 로딩 인디케이터)
-                    Box(modifier = Modifier.weight(1f))
-                }
+                // 상태에 따른 조건부 렌더링
+                when (uiState) {
+                    is TimeLetterUiState.Loading -> {
+                        // 로딩 상태 (필요시 로딩 인디케이터)
+                        Box(modifier = Modifier.weight(1f))
+                    }
 
-                is TimeLetterUiState.Empty -> {
-                    // 빈 화면 (토글 없음)
-                    LetterEmptyContent(
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                is TimeLetterUiState.Success -> {
-                    val successState = uiState as TimeLetterUiState.Success
-                    val letters = successState.letters
-                    val filterLabel = successState.selectedReceiverName ?: "전체보기"
-
-                    // 필터 + 토글 Row (좌우 패딩은 ScaffoldContentWithOptionalFab contentPadding에서 적용됨)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            modifier = Modifier.clickable(onClick = onShowAllClick),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = filterLabel,
-                                fontFamily = FontFamily(Font(R.font.sansneomedium)),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Image(
-                                painterResource(R.drawable.ic_down_vector),
-                                contentDescription = "아래 열기",
-                                modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        ViewModeToggle(
-                            currentMode = viewMode,
-                            onModeChange = { viewModel.updateViewMode(it) }
+                    is TimeLetterUiState.Empty -> {
+                        // 빈 화면 (토글 없음)
+                        LetterEmptyContent(
+                            modifier = Modifier.weight(1f),
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(28.dp))
+                    is TimeLetterUiState.Success -> {
+                        val successState = uiState as TimeLetterUiState.Success
+                        val letters = successState.letters
+                        val filterLabel = successState.selectedReceiverName ?: "전체보기"
 
-                    // 리스트/블록 뷰
-                    when (viewMode) {
-                        ViewMode.LIST -> {
-                            LazyColumn(modifier = Modifier.weight(1f)) {
-                                items(
-                                    items = letters,
-                                    key = { it.id }
-                                ) { letter ->
-                                    TimeLetterListItem(
-                                        timeLetter = letter,
-                                        callbacks = TimeLetterListItemCallbacks(
-                                            onClick = { onLetterClick(letter) },
-                                            onEditClick = { onEditLetter(letter) },
-                                            onDeleteClick = { viewModel.deleteTimeLetter(letter.id) }
+                        // 필터 + 토글 Row (좌우 패딩은 ScaffoldContentWithOptionalFab contentPadding에서 적용됨)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Row(
+                                modifier = Modifier.clickable(onClick = onShowAllClick),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = filterLabel,
+                                    fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                Image(
+                                    painterResource(R.drawable.ic_down_vector),
+                                    contentDescription = "아래 열기",
+                                    modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            ViewModeToggle(
+                                currentMode = viewMode,
+                                onModeChange = { viewModel.updateViewMode(it) },
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(28.dp))
+
+                        // 리스트/블록 뷰
+                        when (viewMode) {
+                            ViewMode.LIST -> {
+                                LazyColumn(modifier = Modifier.weight(1f)) {
+                                    items(
+                                        items = letters,
+                                        key = { it.id },
+                                    ) { letter ->
+                                        TimeLetterListItem(
+                                            timeLetter = letter,
+                                            callbacks =
+                                                TimeLetterListItemCallbacks(
+                                                    onClick = { onLetterClick(letter) },
+                                                    onEditClick = { onEditLetter(letter) },
+                                                    onDeleteClick = { viewModel.deleteTimeLetter(letter.id) },
+                                                ),
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.height(18.dp))
+                                        Spacer(modifier = Modifier.height(18.dp))
+                                    }
                                 }
                             }
-                        }
-                        ViewMode.BLOCK -> {
-                            TimeLetterBlockList(
-                                modifier = Modifier.weight(1f),
-                                timeLetterItemList = letters,
-                                contentPadding = PaddingValues(bottom = 16.dp),
-                                onItemClick = onLetterClick
-                            )
+
+                            ViewMode.BLOCK -> {
+                                TimeLetterBlockList(
+                                    modifier = Modifier.weight(1f),
+                                    timeLetterItemList = letters,
+                                    contentPadding = PaddingValues(bottom = 16.dp),
+                                    onItemClick = onLetterClick,
+                                )
+                            }
                         }
                     }
                 }
-            }
             }
         }
     }
@@ -217,14 +218,15 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_time_letter_placeholder),
             contentDescription = "편지이미지",
-            modifier = Modifier
-                .width(88.dp)
-                .height(57.57.dp)
+            modifier =
+                Modifier
+                    .width(88.dp)
+                    .height(57.57.dp),
         )
         Spacer(modifier = Modifier.height(40.dp))
         Text(
@@ -233,7 +235,7 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.W400,
             fontFamily = FontFamily(Font(R.font.sansneoregular)),
             color = Color(0xFF9E9E9E),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -241,13 +243,13 @@ private fun LetterEmptyContent(modifier: Modifier = Modifier) {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "리스트형"
+    name = "리스트형",
 )
 @Composable
 private fun TimeLetterScreenListPreview() {
     AfternoteTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider(),
         ) {
             TimeLetterScreenPreviewContent(initialViewMode = ViewMode.LIST)
         }
@@ -257,13 +259,13 @@ private fun TimeLetterScreenListPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "블록형"
+    name = "블록형",
 )
 @Composable
 private fun TimeLetterScreenBlockPreview() {
     AfternoteTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider()
+            DataProviderLocals.LocalReceiverDataProvider provides FakeReceiverDataProvider(),
         ) {
             TimeLetterScreenPreviewContent(initialViewMode = ViewMode.BLOCK)
         }
@@ -289,91 +291,91 @@ private fun TimeLetterScreenPreviewContent(initialViewMode: ViewMode) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_vector),
                                 contentDescription = "뒤로가기",
-                                modifier = Modifier.size(width = 6.dp, height = 12.dp)
+                                modifier = Modifier.size(width = 6.dp, height = 12.dp),
                             )
                         }
-                    }
+                    },
                 )
             }
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = BottomNavItem.TIME_LETTER,
-                onItemSelected = {}
+                onItemSelected = {},
             )
-        }
+        },
     ) { innerPadding ->
         ScaffoldContentWithOptionalFab(
             paddingValues = innerPadding,
             showFab = true,
-            onFabClick = {}
+            onFabClick = {},
         ) { contentModifier ->
             Column(
-                modifier = contentModifier.fillMaxWidth()
+                modifier = contentModifier.fillMaxWidth(),
             ) {
                 Spacer(modifier = Modifier.height(18.dp))
 
                 when (uiState) {
-                is TimeLetterUiState.Loading -> {
-                    Box(modifier = Modifier.weight(1f))
-                }
-
-                is TimeLetterUiState.Empty -> {
-                    LetterEmptyContent(modifier = Modifier.weight(1f))
-                }
-
-                is TimeLetterUiState.Success -> {
-                    val letters = uiState.letters
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "전체보기",
-                            fontFamily = FontFamily(Font(R.font.sansneomedium)),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Image(
-                            painterResource(R.drawable.ic_down_vector),
-                            contentDescription = "아래 열기",
-                            modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        ViewModeToggle(
-                            currentMode = currentViewMode,
-                            onModeChange = { currentViewMode = it }
-                        )
+                    is TimeLetterUiState.Loading -> {
+                        Box(modifier = Modifier.weight(1f))
                     }
 
-                    Spacer(modifier = Modifier.height(28.dp))
+                    is TimeLetterUiState.Empty -> {
+                        LetterEmptyContent(modifier = Modifier.weight(1f))
+                    }
 
-                    when (currentViewMode) {
-                        ViewMode.LIST -> {
-                            LazyColumn(modifier = Modifier.weight(1f)) {
-                                items(
-                                    items = letters,
-                                    key = { it.id }
-                                ) { letter ->
-                                    TimeLetterListItem(
-                                        timeLetter = letter
-                                    )
-                                    Spacer(modifier = Modifier.height(18.dp))
-                                }
-                            }
-                        }
+                    is TimeLetterUiState.Success -> {
+                        val letters = uiState.letters
 
-                        ViewMode.BLOCK -> {
-                            TimeLetterBlockList(
-                                modifier = Modifier.weight(1f),
-                                timeLetterItemList = letters,
-                                contentPadding = PaddingValues(bottom = 16.dp)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "전체보기",
+                                fontFamily = FontFamily(Font(R.font.sansneomedium)),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            Image(
+                                painterResource(R.drawable.ic_down_vector),
+                                contentDescription = "아래 열기",
+                                modifier = Modifier.padding(start = 13.dp).width(12.dp).height(6.dp),
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            ViewModeToggle(
+                                currentMode = currentViewMode,
+                                onModeChange = { currentViewMode = it },
                             )
                         }
+
+                        Spacer(modifier = Modifier.height(28.dp))
+
+                        when (currentViewMode) {
+                            ViewMode.LIST -> {
+                                LazyColumn(modifier = Modifier.weight(1f)) {
+                                    items(
+                                        items = letters,
+                                        key = { it.id },
+                                    ) { letter ->
+                                        TimeLetterListItem(
+                                            timeLetter = letter,
+                                        )
+                                        Spacer(modifier = Modifier.height(18.dp))
+                                    }
+                                }
+                            }
+
+                            ViewMode.BLOCK -> {
+                                TimeLetterBlockList(
+                                    modifier = Modifier.weight(1f),
+                                    timeLetterItemList = letters,
+                                    contentPadding = PaddingValues(bottom = 16.dp),
+                                )
+                            }
+                        }
                     }
                 }
-            }
             }
         }
     }

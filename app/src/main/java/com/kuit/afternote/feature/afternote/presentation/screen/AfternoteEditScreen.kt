@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import android.util.Log
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,10 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.list.AlbumCover
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
+import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialog
+import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogCallbacks
+import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.content.GalleryAndFileEditContent
 import com.kuit.afternote.feature.afternote.presentation.component.edit.content.GalleryAndFileEditContentParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.content.MemorialGuidelineEditContent
@@ -40,9 +46,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.content.
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdown
 import com.kuit.afternote.feature.afternote.presentation.component.edit.dropdown.SelectionDropdownLabelParams
-import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialog
-import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogCallbacks
-import com.kuit.afternote.feature.afternote.presentation.component.edit.afternoteeditreceiver.AddAfternoteEditReceiverDialogParams
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AccountSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
@@ -51,9 +54,6 @@ import com.kuit.afternote.feature.afternote.presentation.component.edit.model.Pr
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialog
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialogCallbacks
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.CustomServiceDialogParams
-import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.expand.addFocusCleaner
 import java.text.SimpleDateFormat
@@ -73,14 +73,16 @@ data class AfternoteEditScreenCallbacks(
     val onNavigateToAddSong: () -> Unit = {},
     val onNavigateToSelectReceiver: () -> Unit = {},
     val onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    val onThumbnailBytesReady: (ByteArray?) -> Unit = {}
+    val onThumbnailBytesReady: (ByteArray?) -> Unit = {},
 )
 
 /**
  * Message to show when save fails (validation or API error).
  * When non-null, the screen shows a Snackbar with this text.
  */
-data class AfternoteEditSaveError(val message: String)
+data class AfternoteEditSaveError(
+    val message: String,
+)
 
 /**
  * 애프터노트 수정/작성 화면
@@ -101,7 +103,7 @@ fun AfternoteEditScreen(
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null,
     initialItem: com.kuit.afternote.feature.afternote.domain.model.AfternoteItem? = null,
-    saveError: AfternoteEditSaveError? = null
+    saveError: AfternoteEditSaveError? = null,
 ) {
     val focusManager = LocalFocusManager.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -110,20 +112,21 @@ fun AfternoteEditScreen(
         saveError?.let { err ->
             snackbarHostState.showSnackbar(
                 message = err.message,
-                withDismissAction = true
+                withDismissAction = true,
             )
         }
     }
 
     LaunchedEffect(initialItem?.id) {
-        val item = initialItem ?: run {
-            Log.d(TAG, "LaunchedEffect: initialItem is null, skipping loadFromExisting")
-            return@LaunchedEffect
-        }
+        val item =
+            initialItem ?: run {
+                Log.d(TAG, "LaunchedEffect: initialItem is null, skipping loadFromExisting")
+                return@LaunchedEffect
+            }
         Log.d(
             TAG,
             "LaunchedEffect: item.id=${item.id}, state.loadedItemId=${state.loadedItemId}, " +
-                "needsLoad=${state.loadedItemId != item.id}"
+                "needsLoad=${state.loadedItemId != item.id}",
         )
         if (state.loadedItemId != item.id) {
             state.loadFromExisting(
@@ -137,8 +140,8 @@ fun AfternoteEditScreen(
                     accountProcessingMethodName = item.accountProcessingMethod,
                     informationProcessingMethodName = item.informationProcessingMethod,
                     processingMethodsList = item.processingMethods.map { ProcessingMethodItem(it.id, it.text) },
-                    galleryProcessingMethodsList = item.galleryProcessingMethods.map { ProcessingMethodItem(it.id, it.text) }
-                )
+                    galleryProcessingMethodsList = item.galleryProcessingMethods.map { ProcessingMethodItem(it.id, it.text) },
+                ),
             )
         }
     }
@@ -180,19 +183,22 @@ fun AfternoteEditScreen(
                 onActionClick = {
                     val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
                     val date = dateFormat.format(Date())
-                    val processingMethods = state.processingMethods.map {
-                        AfternoteProcessingMethod(it.id, it.text)
-                    }
-                    val galleryProcessingMethods = state.galleryProcessingMethods.map {
-                        AfternoteProcessingMethod(it.id, it.text)
-                    }
+                    val processingMethods =
+                        state.processingMethods.map {
+                            AfternoteProcessingMethod(it.id, it.text)
+                        }
+                    val galleryProcessingMethods =
+                        state.galleryProcessingMethods.map {
+                            AfternoteProcessingMethod(it.id, it.text)
+                        }
                     callbacks.onRegisterClick(
                         RegisterAfternotePayload(
                             serviceName =
-                                if (state.selectedCategory == CATEGORY_MEMORIAL_GUIDELINE)
+                                if (state.selectedCategory == CATEGORY_MEMORIAL_GUIDELINE) {
                                     CATEGORY_MEMORIAL_GUIDELINE
-                                else
-                                    state.selectedService,
+                                } else {
+                                    state.selectedService
+                                },
                             date = date,
                             accountId = state.idState.text.toString(),
                             password = state.passwordState.text.toString(),
@@ -201,10 +207,10 @@ fun AfternoteEditScreen(
                             informationProcessingMethod = state.selectedInformationProcessingMethod.name,
                             processingMethods = processingMethods,
                             galleryProcessingMethods = galleryProcessingMethods,
-                            atmosphere = state.getAtmosphereForSave()
-                        )
+                            atmosphere = state.getAtmosphereForSave(),
+                        ),
                     )
-                }
+                },
             )
         },
         bottomBar = {
@@ -213,15 +219,16 @@ fun AfternoteEditScreen(
                 onItemSelected = { item ->
                     state.onBottomNavItemSelected(item)
                     callbacks.onBottomNavTabSelected(item)
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .addFocusCleaner(focusManager)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .addFocusCleaner(focusManager),
         ) {
             EditContent(
                 state = state,
@@ -229,16 +236,16 @@ fun AfternoteEditScreen(
                 onNavigateToSelectReceiver = callbacks.onNavigateToSelectReceiver,
                 onPhotoAddClick = {
                     memorialPhotoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
                     )
                 },
                 onVideoAddClick = {
                     memorialVideoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly),
                     )
                 },
                 onThumbnailBytesReady = callbacks.onThumbnailBytesReady,
-                bottomPadding = paddingValues
+                bottomPadding = paddingValues,
             )
 
             // Line 336 해결: 조건부 렌더링을 nullable로 변경
@@ -246,32 +253,36 @@ fun AfternoteEditScreen(
                 when (dialogType) {
                     DialogType.ADD_AFTERNOTE_EDIT_RECEIVER -> {
                         AddAfternoteEditReceiverDialog(
-                            params = AddAfternoteEditReceiverDialogParams(
-                                afternoteEditReceiverNameState = state.afternoteEditReceiverNameState,
-                                phoneNumberState = state.phoneNumberState,
-                                relationshipSelectedValue = state.relationshipSelectedValue,
-                                relationshipOptions = state.relationshipOptions,
-                                callbacks = AddAfternoteEditReceiverDialogCallbacks(
-                                    onDismiss = state::dismissDialog,
-                                    onAddClick = state::onAddAfternoteEditReceiver,
-                                    onRelationshipSelected = state::onRelationshipSelected,
-                                    onImportContactsClick = {
-                                        // 연락처 가져오기 기능은 추후 구현 예정
-                                    }
-                                )
-                            )
+                            params =
+                                AddAfternoteEditReceiverDialogParams(
+                                    afternoteEditReceiverNameState = state.afternoteEditReceiverNameState,
+                                    phoneNumberState = state.phoneNumberState,
+                                    relationshipSelectedValue = state.relationshipSelectedValue,
+                                    relationshipOptions = state.relationshipOptions,
+                                    callbacks =
+                                        AddAfternoteEditReceiverDialogCallbacks(
+                                            onDismiss = state::dismissDialog,
+                                            onAddClick = state::onAddAfternoteEditReceiver,
+                                            onRelationshipSelected = state::onRelationshipSelected,
+                                            onImportContactsClick = {
+                                                // 연락처 가져오기 기능은 추후 구현 예정
+                                            },
+                                        ),
+                                ),
                         )
                     }
 
                     DialogType.CUSTOM_SERVICE -> {
                         CustomServiceDialog(
-                            params = CustomServiceDialogParams(
-                                serviceNameState = state.customServiceNameState,
-                                callbacks = CustomServiceDialogCallbacks(
-                                    onDismiss = state::dismissDialog,
-                                    onAddClick = state::onAddCustomService
-                                )
-                            )
+                            params =
+                                CustomServiceDialogParams(
+                                    serviceNameState = state.customServiceNameState,
+                                    callbacks =
+                                        CustomServiceDialogCallbacks(
+                                            onDismiss = state::dismissDialog,
+                                            onAddClick = state::onAddCustomService,
+                                        ),
+                                ),
                         )
                     }
                 }
@@ -288,18 +299,19 @@ private fun EditContent(
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
     onThumbnailBytesReady: (ByteArray?) -> Unit,
-    bottomPadding: PaddingValues
+    bottomPadding: PaddingValues,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         // 메인 콘텐츠 (스크롤 가능, 남은 공간 차지)
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp),
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -309,11 +321,12 @@ private fun EditContent(
                 selectedValue = state.selectedCategory,
                 options = state.categories,
                 onValueSelected = state::onCategorySelected,
-                menuStyle = DropdownMenuStyle(
-                    shadowElevation = 10.dp,
-                    tonalElevation = 10.dp
-                ),
-                state = state.categoryDropdownState
+                menuStyle =
+                    DropdownMenuStyle(
+                        shadowElevation = 10.dp,
+                        tonalElevation = 10.dp,
+                    ),
+                state = state.categoryDropdownState,
             )
 
             // 서비스명 선택 (추모 가이드라인 선택 시 숨김)
@@ -325,11 +338,12 @@ private fun EditContent(
                     selectedValue = state.selectedService,
                     options = state.currentServiceOptions,
                     onValueSelected = state::onServiceSelected,
-                    menuStyle = DropdownMenuStyle(
-                        shadowElevation = 10.dp,
-                        tonalElevation = 10.dp
-                    ),
-                    state = state.serviceDropdownState
+                    menuStyle =
+                        DropdownMenuStyle(
+                            shadowElevation = 10.dp,
+                            tonalElevation = 10.dp,
+                        ),
+                    state = state.serviceDropdownState,
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -343,7 +357,7 @@ private fun EditContent(
                 onPhotoAddClick = onPhotoAddClick,
                 onVideoAddClick = onVideoAddClick,
                 onThumbnailBytesReady = onThumbnailBytesReady,
-                bottomPadding = bottomPadding
+                bottomPadding = bottomPadding,
             )
         }
     }
@@ -357,95 +371,108 @@ private fun CategoryContent(
     onPhotoAddClick: () -> Unit,
     onVideoAddClick: () -> Unit,
     onThumbnailBytesReady: (ByteArray?) -> Unit,
-    bottomPadding: PaddingValues
+    bottomPadding: PaddingValues,
 ) {
     when (state.selectedCategory) {
         CATEGORY_MEMORIAL_GUIDELINE -> {
-            val albumCoversFromPlaylist = state.playlistStateHolder?.songs?.let { songs ->
-                songs.mapIndexed { _, s ->
-                    AlbumCover(
-                        id = s.id,
-                        imageUrl = s.albumCoverUrl,
-                        title = s.title
-                    )
-                }
-            } ?: state.playlistAlbumCovers
+            val albumCoversFromPlaylist =
+                state.playlistStateHolder?.songs?.let { songs ->
+                    songs.mapIndexed { _, s ->
+                        AlbumCover(
+                            id = s.id,
+                            imageUrl = s.albumCoverUrl,
+                            title = s.title,
+                        )
+                    }
+                } ?: state.playlistAlbumCovers
             val livePlaylistSongCount =
                 state.playlistStateHolder?.songs?.size ?: state.playlistSongCount
             MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
-                params = MemorialGuidelineEditContentParams(
-                    displayMemorialPhotoUri = state.pickedMemorialPhotoUri ?: state.memorialPhotoUrl,
-                    playlistSongCount = livePlaylistSongCount,
-                    playlistAlbumCovers = albumCoversFromPlaylist,
-                    selectedLastWish = state.selectedLastWish,
-                    lastWishOptions = state.lastWishOptions,
-                    funeralVideoUrl = state.funeralVideoUrl,
-                    funeralThumbnailUrl = state.funeralThumbnailUrl,
-                    customLastWishText = state.customLastWishText,
-                    recipientSection = AfternoteEditReceiverSection(
-                        afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = AfternoteEditReceiverCallbacks(
-                            onAddClick = onNavigateToSelectReceiver,
-                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
-                            onItemAdded = state::onAfternoteEditReceiverItemAdded
-                        )
+                params =
+                    MemorialGuidelineEditContentParams(
+                        displayMemorialPhotoUri = state.pickedMemorialPhotoUri ?: state.memorialPhotoUrl,
+                        playlistSongCount = livePlaylistSongCount,
+                        playlistAlbumCovers = albumCoversFromPlaylist,
+                        selectedLastWish = state.selectedLastWish,
+                        lastWishOptions = state.lastWishOptions,
+                        funeralVideoUrl = state.funeralVideoUrl,
+                        funeralThumbnailUrl = state.funeralThumbnailUrl,
+                        customLastWishText = state.customLastWishText,
+                        recipientSection =
+                            AfternoteEditReceiverSection(
+                                afternoteEditReceivers = state.afternoteEditReceivers,
+                                callbacks =
+                                    AfternoteEditReceiverCallbacks(
+                                        onAddClick = onNavigateToSelectReceiver,
+                                        onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                                        onItemAdded = state::onAfternoteEditReceiverItemAdded,
+                                    ),
+                            ),
+                        onSongAddClick = onNavigateToAddSong,
+                        onLastWishSelected = state::onLastWishSelected,
+                        onCustomLastWishChanged = state::onCustomLastWishChanged,
+                        onPhotoAddClick = onPhotoAddClick,
+                        onVideoAddClick = onVideoAddClick,
+                        onThumbnailBytesReady = onThumbnailBytesReady,
                     ),
-                    onSongAddClick = onNavigateToAddSong,
-                    onLastWishSelected = state::onLastWishSelected,
-                    onCustomLastWishChanged = state::onCustomLastWishChanged,
-                    onPhotoAddClick = onPhotoAddClick,
-                    onVideoAddClick = onVideoAddClick,
-                    onThumbnailBytesReady = onThumbnailBytesReady
-                )
             )
         }
 
         CATEGORY_GALLERY_AND_FILE -> {
             GalleryAndFileEditContent(
                 bottomPadding = bottomPadding,
-                params = GalleryAndFileEditContentParams(
-                    messageState = state.messageState,
-                    recipientSection = AfternoteEditReceiverSection(
-                        afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = AfternoteEditReceiverCallbacks(
-                            onAddClick = onNavigateToSelectReceiver,
-                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
-                            onItemAdded = state::onAfternoteEditReceiverItemAdded
-                        )
+                params =
+                    GalleryAndFileEditContentParams(
+                        messageState = state.messageState,
+                        recipientSection =
+                            AfternoteEditReceiverSection(
+                                afternoteEditReceivers = state.afternoteEditReceivers,
+                                callbacks =
+                                    AfternoteEditReceiverCallbacks(
+                                        onAddClick = onNavigateToSelectReceiver,
+                                        onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                                        onItemAdded = state::onAfternoteEditReceiverItemAdded,
+                                    ),
+                            ),
+                        processingMethodSection =
+                            ProcessingMethodSection(
+                                items = state.galleryProcessingMethods,
+                                callbacks = state.galleryProcessingCallbacks,
+                            ),
                     ),
-                    processingMethodSection = ProcessingMethodSection(
-                        items = state.galleryProcessingMethods,
-                        callbacks = state.galleryProcessingCallbacks
-                    )
-                )
             )
         }
 
         else -> {
             SocialNetworkEditContent(
                 bottomPadding = bottomPadding,
-                params = SocialNetworkEditContentParams(
-                    messageState = state.messageState,
-                    accountSection = AccountSection(
-                        idState = state.idState,
-                        passwordState = state.passwordState,
-                        selectedMethod = state.selectedProcessingMethod,
-                        onMethodSelected = state::onProcessingMethodSelected
+                params =
+                    SocialNetworkEditContentParams(
+                        messageState = state.messageState,
+                        accountSection =
+                            AccountSection(
+                                idState = state.idState,
+                                passwordState = state.passwordState,
+                                selectedMethod = state.selectedProcessingMethod,
+                                onMethodSelected = state::onProcessingMethodSelected,
+                            ),
+                        recipientSection =
+                            AfternoteEditReceiverSection(
+                                afternoteEditReceivers = state.afternoteEditReceivers,
+                                callbacks =
+                                    AfternoteEditReceiverCallbacks(
+                                        onAddClick = onNavigateToSelectReceiver,
+                                        onItemDeleteClick = state::onAfternoteEditReceiverDelete,
+                                        onItemAdded = state::onAfternoteEditReceiverItemAdded,
+                                    ),
+                            ),
+                        processingMethodSection =
+                            ProcessingMethodSection(
+                                items = state.processingMethods,
+                                callbacks = state.socialProcessingCallbacks,
+                            ),
                     ),
-                    recipientSection = AfternoteEditReceiverSection(
-                        afternoteEditReceivers = state.afternoteEditReceivers,
-                        callbacks = AfternoteEditReceiverCallbacks(
-                            onAddClick = onNavigateToSelectReceiver,
-                            onItemDeleteClick = state::onAfternoteEditReceiverDelete,
-                            onItemAdded = state::onAfternoteEditReceiverItemAdded
-                        )
-                    ),
-                    processingMethodSection = ProcessingMethodSection(
-                        items = state.processingMethods,
-                        callbacks = state.socialProcessingCallbacks
-                    )
-                )
             )
         }
     }
@@ -453,16 +480,16 @@ private fun CategoryContent(
 
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
 )
 @Composable
 private fun AfternoteEditScreenPreview() {
     AfternoteLightTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider(),
         ) {
             AfternoteEditScreen(
-                callbacks = AfternoteEditScreenCallbacks(onBackClick = {})
+                callbacks = AfternoteEditScreenCallbacks(onBackClick = {}),
             )
         }
     }
@@ -471,20 +498,21 @@ private fun AfternoteEditScreenPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "갤러리 및 파일"
+    name = "갤러리 및 파일",
 )
 @Composable
 private fun AfternoteEditScreenGalleryAndFilePreview() {
     AfternoteLightTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider(),
         ) {
-            val state = rememberAfternoteEditState().apply {
-                onCategorySelected(CATEGORY_GALLERY_AND_FILE)
-            }
+            val state =
+                rememberAfternoteEditState().apply {
+                    onCategorySelected(CATEGORY_GALLERY_AND_FILE)
+                }
             AfternoteEditScreen(
                 callbacks = AfternoteEditScreenCallbacks(onBackClick = {}),
-                state = state
+                state = state,
             )
         }
     }
@@ -493,20 +521,21 @@ private fun AfternoteEditScreenGalleryAndFilePreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "추모 가이드라인"
+    name = "추모 가이드라인",
 )
 @Composable
 private fun AfternoteEditScreenMemorialGuidelinePreview() {
     AfternoteLightTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider(),
         ) {
-            val state = rememberAfternoteEditState().apply {
-                onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
-            }
+            val state =
+                rememberAfternoteEditState().apply {
+                    onCategorySelected(CATEGORY_MEMORIAL_GUIDELINE)
+                }
             AfternoteEditScreen(
                 callbacks = AfternoteEditScreenCallbacks(onBackClick = {}),
-                state = state
+                state = state,
             )
         }
     }

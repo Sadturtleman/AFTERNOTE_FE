@@ -1,6 +1,6 @@
-package com.kuit.afternote.data.response
+package com.kuit.afternote.data
 
-import com.kuit.afternote.data.remote.ApiException
+import com.kuit.afternote.data.service.ApiException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,10 +20,10 @@ data class BaseResponse<T>(
 )
 
 /**
- * 응답 status가 200이 아니면 [com.kuit.afternote.data.remote.ApiException]을 던지고, data가 null이면 [com.kuit.afternote.data.remote.ApiException]을 던진다.
+ * 응답 status가 200이 아니면 [ApiException]을 던지고, data가 null이면 [ApiException]을 던진다.
  *
  * @return non-null data
- * @throws com.kuit.afternote.data.remote.ApiException 서버가 에러 응답을 반환한 경우
+ * @throws ApiException 서버가 에러 응답을 반환한 경우
  */
 fun <T> BaseResponse<T>.requireData(): T & Any {
     if (status != 200) {

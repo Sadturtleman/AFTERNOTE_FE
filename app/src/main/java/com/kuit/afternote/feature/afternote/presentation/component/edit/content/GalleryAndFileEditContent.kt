@@ -15,16 +15,16 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.Label
 import com.kuit.afternote.core.ui.component.LabelStyle
 import com.kuit.afternote.core.ui.component.Multiline
 import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.ProcessingMethodSection
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodList
 import com.kuit.afternote.feature.afternote.presentation.component.edit.processingmethod.ProcessingMethodListParams
-import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 
 /**
@@ -34,7 +34,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun GalleryAndFileEditContent(
     modifier: Modifier = Modifier,
     bottomPadding: PaddingValues,
-    params: GalleryAndFileEditContentParams
+    params: GalleryAndFileEditContentParams,
 ) {
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
@@ -42,15 +42,16 @@ fun GalleryAndFileEditContent(
     val bottomPaddingDp = bottomPadding.calculateBottomPadding()
     // Viewport 높이 = 창 높이 - bottomPadding (네비게이션 바 상단까지의 높이)
     // 하단 여백은 네비게이션 바 상단까지의 Viewport 높이의 10%로 계산
-    val viewportHeight = with(density) {
-        windowInfo.containerSize.height.toDp() - bottomPaddingDp
-    }
+    val viewportHeight =
+        with(density) {
+            windowInfo.containerSize.height.toDp() - bottomPaddingDp
+        }
     val spacerHeight = viewportHeight * 0.1f
 
     GalleryAndFileEditContentBody(
         modifier = modifier,
         params = params,
-        spacerHeight = spacerHeight
+        spacerHeight = spacerHeight,
     )
 }
 
@@ -58,7 +59,7 @@ fun GalleryAndFileEditContent(
 private fun GalleryAndFileEditContentBody(
     modifier: Modifier = Modifier,
     params: GalleryAndFileEditContentParams,
-    spacerHeight: Dp
+    spacerHeight: Dp,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         RecipientDesignationSection(section = params.recipientSection)
@@ -69,19 +70,20 @@ private fun GalleryAndFileEditContentBody(
         Label(
             text = "처리 방법 리스트",
             isRequired = true,
-            style = LabelStyle(requiredDotOffsetY = 2.dp)
+            style = LabelStyle(requiredDotOffsetY = 2.dp),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         ProcessingMethodList(
-            params = ProcessingMethodListParams(
-                items = params.processingMethodSection.items,
-                onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
-                onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
-                onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged,
-                onItemEdited = params.processingMethodSection.callbacks.onItemEdited
-            )
+            params =
+                ProcessingMethodListParams(
+                    items = params.processingMethodSection.items,
+                    onItemDeleteClick = params.processingMethodSection.callbacks.onItemDeleteClick,
+                    onItemAdded = params.processingMethodSection.callbacks.onItemAdded,
+                    onTextFieldVisibilityChanged = params.processingMethodSection.callbacks.onTextFieldVisibilityChanged,
+                    onItemEdited = params.processingMethodSection.callbacks.onItemEdited,
+                ),
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -90,7 +92,7 @@ private fun GalleryAndFileEditContentBody(
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = params.messageState,
-            multiline = Multiline
+            multiline = Multiline,
         )
 
         // 갤러리 및 파일 탭 하단 여백 (Viewport 높이의 10%, 800dp 기준 약 80dp)
@@ -104,18 +106,20 @@ private fun GalleryAndFileEditContentBody(
 private fun GalleryAndFileEditContentPreview() {
     AfternoteTheme {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
         ) {
             // 첫 번째 옵션 선택됨 (파란 테두리), 두 번째는 선택 안 됨 (테두리 없음) 상태를 한 화면에 표시
             GalleryAndFileEditContent(
                 bottomPadding = PaddingValues(bottom = 88.dp),
-                params = GalleryAndFileEditContentParams(
-                    messageState = rememberTextFieldState(),
-                    recipientSection = AfternoteEditReceiverSection(),
-                    processingMethodSection = ProcessingMethodSection()
-                )
+                params =
+                    GalleryAndFileEditContentParams(
+                        messageState = rememberTextFieldState(),
+                        recipientSection = AfternoteEditReceiverSection(),
+                        processingMethodSection = ProcessingMethodSection(),
+                    ),
             )
         }
     }
@@ -126,22 +130,25 @@ private fun GalleryAndFileEditContentPreview() {
 private fun GalleryAndFileEditContentWithAfternoteEditReceiversPreview() {
     AfternoteTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider(),
         ) {
             val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
             ) {
                 GalleryAndFileEditContent(
                     bottomPadding = PaddingValues(bottom = 88.dp),
-                    params = GalleryAndFileEditContentParams(
-                        messageState = rememberTextFieldState(),
-                        recipientSection = AfternoteEditReceiverSection(
-                            afternoteEditReceivers = provider.getAfternoteEditReceivers()
-                        )
-                    )
+                    params =
+                        GalleryAndFileEditContentParams(
+                            messageState = rememberTextFieldState(),
+                            recipientSection =
+                                AfternoteEditReceiverSection(
+                                    afternoteEditReceivers = provider.getAfternoteEditReceivers(),
+                                ),
+                        ),
                 )
             }
         }

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.viewmodel
 
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.user.domain.usecase.WithdrawAccountUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
@@ -95,15 +95,19 @@ class WithdrawalPasswordViewModelTest {
     @Test
     fun submitWithdrawal_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Bad request"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Bad request"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(400, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
             viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage!!.contains("400"))
+            assertTrue(
+                viewModel.uiState.value.errorMessage!!
+                    .contains("400"),
+            )
             assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.showSentenceError)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -112,15 +116,19 @@ class WithdrawalPasswordViewModelTest {
     @Test
     fun submitWithdrawal_when401Unauthorized_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Unauthorized"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Unauthorized"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(401, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
             viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage!!.contains("401"))
+            assertTrue(
+                viewModel.uiState.value.errorMessage!!
+                    .contains("401"),
+            )
             assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -128,15 +136,19 @@ class WithdrawalPasswordViewModelTest {
     @Test
     fun submitWithdrawal_when404NotFound_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"Not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"Not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(404, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
             viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage!!.contains("404"))
+            assertTrue(
+                viewModel.uiState.value.errorMessage!!
+                    .contains("404"),
+            )
             assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -144,15 +156,19 @@ class WithdrawalPasswordViewModelTest {
     @Test
     fun submitWithdrawal_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(500, errorBody))
             coEvery { withdrawAccountUseCase() } returns Result.failure(httpException)
 
             viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
-            assertTrue(viewModel.uiState.value.errorMessage!!.contains("500"))
+            assertTrue(
+                viewModel.uiState.value.errorMessage!!
+                    .contains("500"),
+            )
             assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.isLoading)
         }
@@ -160,16 +176,18 @@ class WithdrawalPasswordViewModelTest {
     @Test
     fun submitWithdrawal_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { withdrawAccountUseCase() } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { withdrawAccountUseCase() } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.submitWithdrawal("탈퇴하겠습니다.")
             advanceUntilIdle()
 
             assertTrue(
-                viewModel.uiState.value.errorMessage!!.contains("Network") ||
-                    viewModel.uiState.value.errorMessage == "회원 탈퇴에 실패했습니다."
+                viewModel.uiState.value.errorMessage!!
+                    .contains("Network") ||
+                    viewModel.uiState.value.errorMessage == "회원 탈퇴에 실패했습니다.",
             )
             assertFalse(viewModel.uiState.value.withdrawalComplete)
             assertFalse(viewModel.uiState.value.isLoading)

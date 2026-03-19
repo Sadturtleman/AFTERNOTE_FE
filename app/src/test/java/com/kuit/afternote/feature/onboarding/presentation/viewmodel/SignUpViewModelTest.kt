@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
@@ -71,9 +71,10 @@ class SignUpViewModelTest {
     fun signUp_whenSuccess_thenLoginSuccess_setsSignUpSuccess() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
-            coEvery { loginUseCase(any(), any()) } returns Result.success(
-                LoginResult(accessToken = "access", refreshToken = "refresh")
-            )
+            coEvery { loginUseCase(any(), any()) } returns
+                Result.success(
+                    LoginResult(accessToken = "access", refreshToken = "refresh"),
+                )
             coJustRun { tokenManager.saveTokens(any(), any(), any()) }
 
             viewModel.signUp("a@b.com", "pwd1!", "name", null)
@@ -88,9 +89,10 @@ class SignUpViewModelTest {
     fun signUp_withProfileUrl_callsUseCaseWithProfileUrl() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(2L, "b@c.com"))
-            coEvery { loginUseCase(any(), any()) } returns Result.success(
-                LoginResult(accessToken = "a", refreshToken = "r")
-            )
+            coEvery { loginUseCase(any(), any()) } returns
+                Result.success(
+                    LoginResult(accessToken = "a", refreshToken = "r"),
+                )
             coJustRun { tokenManager.saveTokens(any(), any(), any()) }
 
             viewModel.signUp("b@c.com", "pwd2!", "nick", "https://img/p.jpg")
@@ -116,9 +118,10 @@ class SignUpViewModelTest {
     fun clearSignUpSuccess_resetsSignUpSuccess() =
         runTest {
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.success(SignUpResult(1L, "a@b.com"))
-            coEvery { loginUseCase(any(), any()) } returns Result.success(
-                LoginResult(accessToken = "a", refreshToken = "r")
-            )
+            coEvery { loginUseCase(any(), any()) } returns
+                Result.success(
+                    LoginResult(accessToken = "a", refreshToken = "r"),
+                )
             coJustRun { tokenManager.saveTokens(any(), any(), any()) }
             viewModel.signUp("a@b.com", "pwd", "n", null)
             advanceUntilIdle()
@@ -144,8 +147,9 @@ class SignUpViewModelTest {
     @Test
     fun signUp_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<SignUpResult>(400, errorBody))
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
 
@@ -154,7 +158,7 @@ class SignUpViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.signUpSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -163,8 +167,9 @@ class SignUpViewModelTest {
     @Test
     fun signUp_when409Conflict_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":409,"code":409,"message":"Email already exists"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":409,"code":409,"message":"Email already exists"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<SignUpResult>(409, errorBody))
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
 
@@ -173,7 +178,7 @@ class SignUpViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("409") == true
+                    ?.contains("409") == true,
             )
             assertFalse(viewModel.uiState.value.signUpSuccess)
         }
@@ -181,8 +186,9 @@ class SignUpViewModelTest {
     @Test
     fun signUp_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<SignUpResult>(500, errorBody))
             coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(httpException)
 
@@ -191,7 +197,7 @@ class SignUpViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.signUpSuccess)
         }
@@ -201,9 +207,10 @@ class SignUpViewModelTest {
     @Test
     fun signUp_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { signUpUseCase(any(), any(), any(), any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { signUpUseCase(any(), any(), any(), any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.signUp("a@b.com", "pwd1!", "name", null)
             advanceUntilIdle()

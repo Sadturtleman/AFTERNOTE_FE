@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
 import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ class SignUpViewModel
     constructor(
         private val signUpUseCase: SignUpUseCase,
         private val loginUseCase: LoginUseCase,
-        private val tokenManager: TokenManager
+        private val tokenManager: TokenManager,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SignUpUiState())
         val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
@@ -41,7 +41,7 @@ class SignUpViewModel
             email: String,
             password: String,
             name: String,
-            profileUrl: String?
+            profileUrl: String?,
         ) {
             when {
                 email.isBlank() -> _uiState.update { it.copy(errorMessage = "이메일을 입력하세요.") }
@@ -55,7 +55,7 @@ class SignUpViewModel
             email: String,
             password: String,
             name: String,
-            profileUrl: String?
+            profileUrl: String?,
         ) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -69,18 +69,17 @@ class SignUpViewModel
                                     tokenManager.saveTokens(
                                         accessToken = accessToken,
                                         refreshToken = refreshToken,
-                                        email = email
+                                        email = email,
                                     )
                                 }
                                 _uiState.update {
                                     it.copy(isLoading = false, errorMessage = null, signUpSuccess = true)
                                 }
-                            }
-                            .onFailure { e ->
+                            }.onFailure { e ->
                                 _uiState.update {
                                     it.copy(
                                         isLoading = false,
-                                        errorMessage = e.message ?: "회원가입은 완료되었습니다. 로그인해주세요."
+                                        errorMessage = e.message ?: "회원가입은 완료되었습니다. 로그인해주세요.",
                                     )
                                 }
                             }
@@ -88,7 +87,7 @@ class SignUpViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = e.message ?: "회원가입에 실패했습니다."
+                                errorMessage = e.message ?: "회원가입에 실패했습니다.",
                             )
                         }
                     }

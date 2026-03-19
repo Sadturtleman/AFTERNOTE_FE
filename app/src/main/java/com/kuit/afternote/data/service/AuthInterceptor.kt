@@ -1,7 +1,6 @@
-package com.kuit.afternote.data.remote
+package com.kuit.afternote.data.service
 
 import android.util.Log
-import com.kuit.afternote.data.local.TokenManager
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -23,7 +22,7 @@ import javax.inject.Inject
 class AuthInterceptor
     @Inject
     constructor(
-        private val tokenManager: TokenManager
+        private val tokenManager: TokenManager,
     ) : Interceptor {
         companion object {
             private const val TAG = "AuthInterceptor"
@@ -41,21 +40,23 @@ class AuthInterceptor
             /**
              * 인증이 필요 없는 경로 목록.
              */
-            private val NO_AUTH_PATHS = listOf(
-                "/auth/email/send",
-                "/auth/email/verify",
-                "/auth/sign-up",
-                "/auth/login",
-                "/auth/social/login",
-                "/auth/reissue"
-            )
+            private val NO_AUTH_PATHS =
+                listOf(
+                    "/auth/email/send",
+                    "/auth/email/verify",
+                    "/auth/sign-up",
+                    "/auth/login",
+                    "/auth/social/login",
+                    "/auth/reissue",
+                )
         }
 
-        private val json = Json {
-            ignoreUnknownKeys = true
-            encodeDefaults = true
-            isLenient = true
-        }
+        private val json =
+            Json {
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+                isLenient = true
+            }
 
         // 토큰 재발급용 별도 OkHttpClient (인터셉터 없이)
         private val refreshClient: OkHttpClient by lazy {
@@ -105,10 +106,11 @@ class AuthInterceptor
                 return proceedAndLog(chain, originalRequest)
             }
 
-            val authenticatedRequest = originalRequest
-                .newBuilder()
-                .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$accessToken")
-                .build()
+            val authenticatedRequest =
+                originalRequest
+                    .newBuilder()
+                    .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$accessToken")
+                    .build()
             Log.d(TAG, "Auth: TOKEN ADDED")
 
             val response = proceedAndLog(chain, authenticatedRequest)
@@ -145,10 +147,11 @@ class AuthInterceptor
                     // 다른 스레드가 이미 토큰을 갱신함 → refresh 없이 새 토큰으로 재시도
                     Log.d(TAG, "TokenRefresh: Already refreshed by another thread, retrying")
                     originalResponse.close()
-                    val newRequest = originalRequest
-                        .newBuilder()
-                        .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$currentAccessToken")
-                        .build()
+                    val newRequest =
+                        originalRequest
+                            .newBuilder()
+                            .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$currentAccessToken")
+                            .build()
                     return proceedAndLog(chain, newRequest)
                 }
 
@@ -171,16 +174,17 @@ class AuthInterceptor
                         runBlocking {
                             tokenManager.updateTokens(
                                 accessToken = newTokens.accessToken ?: "",
-                                refreshToken = newTokens.refreshToken ?: refreshToken
+                                refreshToken = newTokens.refreshToken ?: refreshToken,
                             )
                         }
 
                         originalResponse.close()
 
-                        val newRequest = originalRequest
-                            .newBuilder()
-                            .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX${newTokens.accessToken}")
-                            .build()
+                        val newRequest =
+                            originalRequest
+                                .newBuilder()
+                                .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX${newTokens.accessToken}")
+                                .build()
 
                         Log.d(TAG, "TokenRefresh: Retrying original request with new token")
                         proceedAndLog(chain, newRequest)
@@ -199,17 +203,19 @@ class AuthInterceptor
          * Refresh token을 사용하여 새 access token을 발급받습니다.
          */
         private fun refreshAccessToken(refreshToken: String): ReissueResponseData? {
-            val requestBody = json
-                .encodeToString(
-                    ReissueRequestBody.serializer(),
-                    ReissueRequestBody(refreshToken)
-                ).toRequestBody("application/json".toMediaType())
+            val requestBody =
+                json
+                    .encodeToString(
+                        ReissueRequestBody.serializer(),
+                        ReissueRequestBody(refreshToken),
+                    ).toRequestBody("application/json".toMediaType())
 
-            val request = Request
-                .Builder()
-                .url("$BASE_URL$REISSUE_ENDPOINT")
-                .post(requestBody)
-                .build()
+            val request =
+                Request
+                    .Builder()
+                    .url("$BASE_URL$REISSUE_ENDPOINT")
+                    .post(requestBody)
+                    .build()
 
             return try {
                 val response = refreshClient.newCall(request).execute()
@@ -231,7 +237,7 @@ class AuthInterceptor
 
         private fun proceedAndLog(
             chain: Interceptor.Chain,
-            request: Request
+            request: Request,
         ): Response {
             val response = chain.proceed(request)
             Log.d(TAG, "========== RESPONSE ==========")
@@ -248,7 +254,7 @@ class AuthInterceptor
  */
 @Serializable
 private data class ReissueRequestBody(
-    val refreshToken: String
+    val refreshToken: String,
 )
 
 /**
@@ -259,7 +265,7 @@ private data class ReissueApiResponse(
     val status: Int? = null,
     val code: Int? = null,
     val message: String? = null,
-    val data: ReissueResponseData? = null
+    val data: ReissueResponseData? = null,
 )
 
 /**
@@ -268,5 +274,5 @@ private data class ReissueApiResponse(
 @Serializable
 private data class ReissueResponseData(
     val accessToken: String? = null,
-    val refreshToken: String? = null
+    val refreshToken: String? = null,
 )

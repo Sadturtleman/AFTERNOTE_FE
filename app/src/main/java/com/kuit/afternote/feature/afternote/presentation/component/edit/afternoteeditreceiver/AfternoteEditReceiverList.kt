@@ -28,12 +28,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.ui.component.button.AddCircleButton
 import com.kuit.afternote.core.ui.component.detail.EditDropdownMenu
+import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiverCallbacks
-import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.data.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray9
@@ -53,7 +53,7 @@ fun AfternoteEditReceiverList(
     modifier: Modifier = Modifier,
     afternoteEditReceivers: List<AfternoteEditReceiver>,
     events: AfternoteEditReceiverCallbacks = AfternoteEditReceiverCallbacks(),
-    state: AfternoteEditReceiverListState = rememberAfternoteEditReceiverListState()
+    state: AfternoteEditReceiverListState = rememberAfternoteEditReceiverListState(),
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -63,11 +63,12 @@ fun AfternoteEditReceiverList(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = White, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(color = White, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         afternoteEditReceivers.forEachIndexed { _, receiver ->
             AfternoteEditReceiverItem(
@@ -81,7 +82,7 @@ fun AfternoteEditReceiverList(
                     state.expandedStates[receiver.id] = false
                 },
                 showEditItem = false,
-                onDeleteClick = { events.onItemDeleteClick(receiver.id) }
+                onDeleteClick = { events.onItemDeleteClick(receiver.id) },
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -94,7 +95,7 @@ fun AfternoteEditReceiverList(
             onClick = {
                 state.toggleTextField()
                 events.onAddClick()
-            }
+            },
         )
     }
 }
@@ -116,13 +117,14 @@ private fun AfternoteEditReceiverItem(
     onMoreClick: () -> Unit = {},
     onDismissDropdown: () -> Unit = {},
     showEditItem: Boolean = true,
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 아바타 (기본 프로필 이미지)
         Image(
@@ -137,23 +139,25 @@ private fun AfternoteEditReceiverItem(
         ) {
             Text(
                 text = receiver.name,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
+                style =
+                    TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9,
+                    ),
             )
             Text(
                 text = receiver.label,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray5
-                )
+                style =
+                    TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray5,
+                    ),
             )
         }
 
@@ -162,14 +166,15 @@ private fun AfternoteEditReceiverItem(
             Image(
                 painter = painterResource(R.drawable.ic_more_horizontal_1),
                 contentDescription = "더보기",
-                modifier = Modifier
-                    .clickable(onClick = onMoreClick)
+                modifier =
+                    Modifier
+                        .clickable(onClick = onMoreClick),
             )
             EditDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = onDismissDropdown,
                 showEditItem = showEditItem,
-                onDeleteClick = onDeleteClick
+                onDeleteClick = onDeleteClick,
             )
         }
     }
@@ -177,16 +182,15 @@ private fun AfternoteEditReceiverItem(
 
 @Preview(showBackground = true)
 @Composable
-
 private fun AfternoteEditReceiverListPreview() {
     AfternoteTheme {
         CompositionLocalProvider(
-            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider()
+            DataProviderLocals.LocalAfternoteEditDataProvider provides FakeAfternoteEditDataProvider(),
         ) {
             val provider = DataProviderLocals.LocalAfternoteEditDataProvider.current
             AfternoteEditReceiverList(
                 afternoteEditReceivers = provider.getAfternoteEditReceivers(),
-                events = AfternoteEditReceiverCallbacks()
+                events = AfternoteEditReceiverCallbacks(),
             )
         }
     }

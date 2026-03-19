@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ class LogoutViewModel
     @Inject
     constructor(
         private val logoutUseCase: LogoutUseCase,
-        private val tokenManager: TokenManager
+        private val tokenManager: TokenManager,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(LogoutUiState())
         val uiState: StateFlow<LogoutUiState> = _uiState.asStateFlow()
@@ -59,7 +59,7 @@ class LogoutViewModel
                             it.copy(
                                 isLoading = false,
                                 errorMessage = e.message ?: "로그아웃에 실패했습니다.",
-                                logoutSuccess = true
+                                logoutSuccess = true,
                             )
                         }
                     }
@@ -91,7 +91,7 @@ class LogoutViewModel
                             it.copy(
                                 isLoading = false,
                                 errorMessage = e.message ?: "로그아웃에 실패했습니다.",
-                                logoutSuccess = true
+                                logoutSuccess = true,
                             )
                         }
                     }

@@ -1,4 +1,4 @@
-package com.kuit.afternote.data.remote
+package com.kuit.afternote.data.service
 
 /**
  * API 오류 시 사용하는 예외.
@@ -12,5 +12,5 @@ package com.kuit.afternote.data.remote
 class ApiException(
     val status: Int? = null,
     val code: Int? = null,
-    override val message: String
+    override val message: String,
 ) : Exception(message)
