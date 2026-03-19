@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.domain.repository
+package com.kuit.afternote.domain.repository
 
 /**
  * Memorial (playlist) thumbnail upload via POST /files/presigned-url and S3 PUT.

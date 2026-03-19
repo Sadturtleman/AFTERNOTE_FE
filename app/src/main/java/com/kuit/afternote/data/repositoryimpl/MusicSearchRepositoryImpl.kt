@@ -1,13 +1,13 @@
-package com.kuit.afternote.feature.afternote.data.repositoryimpl
+package com.kuit.afternote.data.repositoryimpl
 
 import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.data.dto.MusicTrack
 import com.kuit.afternote.data.service.MusicApiService
-import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
-import com.kuit.afternote.feature.afternote.domain.repository.MusicSearchRepository
+import com.kuit.afternote.domain.repository.MusicSearchRepository
 import javax.inject.Inject
 
 /**
- * Data layer: calls music search API and maps DTO to [PlaylistSongDisplay].
+ * Data layer: calls music search API and maps DTO to [com.kuit.afternote.core.uimodel.PlaylistSongDisplay].
  * API returns raw { "tracks": [...] } (no BaseResponse wrapper).
  */
 class MusicSearchRepositoryImpl

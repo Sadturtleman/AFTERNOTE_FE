@@ -123,15 +123,16 @@ class AfternoteRepositoryImpl
             receiverIds: List<Long>,
         ): Result<Long> =
             runCatching {
-                val body =
+                val request =
                     AfternoteCreatePlaylistRequest(
                         category = "PLAYLIST",
                         title = title,
                         playlist = playlist,
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
-                val response = api.createAfternotePlaylist(body)
-                response.requireData().afternoteId
+                val response = api.createAfternotePlaylist(request)
+                val data = response.requireData()
+                data.afternoteId
             }.logFailure()
 
         /**
@@ -139,11 +140,12 @@ class AfternoteRepositoryImpl
          */
         override suspend fun updateAfternote(
             afternoteId: Long,
-            body: AfternoteUpdateRequest,
+            request: AfternoteUpdateRequest,
         ): Result<Long> =
             runCatching {
-                val response = api.updateAfternote(afternoteId = afternoteId, request = body)
-                response.requireData().afternoteId
+                val response = api.updateAfternote(afternoteId = afternoteId, request = request)
+                val data = response.requireData()
+                data.afternoteId
             }.logFailure()
 
         /**
@@ -151,6 +153,7 @@ class AfternoteRepositoryImpl
          */
         override suspend fun deleteAfternote(afternoteId: Long): Result<Unit> =
             runCatching {
-                api.deleteAfternote(afternoteId = afternoteId).requireStatus()
+                val response = api.deleteAfternote(afternoteId = afternoteId)
+                response.requireStatus()
             }.logFailure()
     }

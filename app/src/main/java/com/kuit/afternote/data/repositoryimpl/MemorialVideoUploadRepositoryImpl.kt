@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import com.kuit.afternote.data.requireData
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialVideoUploadRepository
+import com.kuit.afternote.domain.repository.MemorialVideoUploadRepository
 import com.kuit.afternote.feature.user.data.api.ImageApiService
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import dagger.hilt.android.qualifiers.ApplicationContext

@@ -2,16 +2,16 @@ package com.kuit.afternote.feature.afternote.di
 
 import com.kuit.afternote.data.repositoryimpl.MemorialThumbnailUploadRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.MemorialVideoUploadRepositoryImpl
+import com.kuit.afternote.data.repositoryimpl.MusicSearchRepositoryImpl
 import com.kuit.afternote.data.repositoryimpl.PhotoUploadRepositoryImpl
 import com.kuit.afternote.data.service.MusicApiService
+import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
+import com.kuit.afternote.domain.repository.MemorialVideoUploadRepository
+import com.kuit.afternote.domain.repository.MusicSearchRepository
 import com.kuit.afternote.domain.repository.PhotoUploadRepository
 import com.kuit.afternote.feature.afternote.data.repositoryimpl.AfternoteRepositoryImpl
-import com.kuit.afternote.feature.afternote.data.repositoryimpl.MusicSearchRepositoryImpl
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialVideoUploadRepository
-import com.kuit.afternote.feature.afternote.domain.repository.MusicSearchRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

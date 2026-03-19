@@ -1,7 +1,7 @@
 package com.kuit.afternote.data.repositoryimpl
 
 import com.kuit.afternote.data.requireData
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
+import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
 import com.kuit.afternote.feature.user.data.api.ImageApiService
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import kotlinx.coroutines.CoroutineDispatcher

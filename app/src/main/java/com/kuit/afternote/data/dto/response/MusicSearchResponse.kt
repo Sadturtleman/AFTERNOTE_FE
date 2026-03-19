@@ -1,6 +1,6 @@
-package com.kuit.afternote.feature.afternote.data.dto.response
+package com.kuit.afternote.data.dto.response
 
-import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
+import com.kuit.afternote.data.dto.MusicTrack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
