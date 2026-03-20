@@ -15,13 +15,15 @@ class MusicSearchRepositoryImpl
     constructor(
         private val api: MusicApiService,
     ) : MusicSearchRepository {
-        override suspend fun search(keyword: String): Result<List<SearchedSong>> =
-            runCatching {
-                val trimmed = keyword.trim()
-                if (trimmed.isEmpty()) return@runCatching emptyList()
+        override suspend fun search(keyword: String): Result<List<SearchedSong>> {
+            val trimmed = keyword.trim()
+            if (trimmed.isEmpty()) return Result.success(emptyList())
+            return runCatching {
                 val response = api.search(keyword = trimmed)
-                response.tracks.mapIndexed { index, dto -> dto.toPlaylistSongDisplay(index) }
+                val tracks = response.tracks
+                tracks.mapIndexed { index, dto -> dto.toPlaylistSongDisplay(index) }
             }
+        }
 
         private fun MusicTrack.toPlaylistSongDisplay(index: Int): SearchedSong {
             val id = "$artist|$title|$index"

@@ -53,20 +53,20 @@ private fun AfternoteCredentials.toDomain() =
         password = password,
     )
 
-private fun AfternotePlaylist.toDomain(): PlaylistDetail {
-    val playlistDetailMemorialMedia =
-        PlaylistDetailMemorialMedia(
-            photoUrl = memorialPhotoUrl ?: profilePhoto,
-            videoUrl = memorialVideo?.videoUrl,
-            thumbnailUrl = memorialVideo?.thumbnailUrl,
-        )
-    return PlaylistDetail(
+private fun AfternotePlaylist.toDomain() =
+    PlaylistDetail(
         profilePhoto = profilePhoto,
         atmosphere = atmosphere,
         songs = songs.map { it.toDomain() },
-        playlistDetailMemorialMedia = playlistDetailMemorialMedia,
+        playlistDetailMemorialMedia = toMemorialMedia(),
     )
-}
+
+private fun AfternotePlaylist.toMemorialMedia() =
+    PlaylistDetailMemorialMedia(
+        photoUrl = memorialPhotoUrl ?: profilePhoto,
+        videoUrl = memorialVideo?.videoUrl,
+        thumbnailUrl = memorialVideo?.thumbnailUrl,
+    )
 
 private fun AfternoteDetailReceiver.toDomain() =
     DetailReceiver(
