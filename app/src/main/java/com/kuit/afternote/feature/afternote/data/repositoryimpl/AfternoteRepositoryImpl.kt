@@ -8,8 +8,9 @@ import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGall
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
-import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
+import com.kuit.afternote.feature.afternote.data.mapper.toDetailDomain
 import com.kuit.afternote.feature.afternote.data.mapper.toDto
+import com.kuit.afternote.feature.afternote.data.mapper.toPagedNotes
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
@@ -40,7 +41,7 @@ class AfternoteRepositoryImpl
                         size = input.size,
                     )
                 val data = response.requireData()
-                AfternoteMapper.toPagedNotes(data)
+                data.toPagedNotes()
             }.logFailure()
 
         override suspend fun createSocial(input: CreateSocialInput): Result<Long> =
@@ -83,7 +84,7 @@ class AfternoteRepositoryImpl
             runCatching {
                 val response = api.getAfternoteDetail(afternoteId = afternoteId)
                 val data = response.requireData()
-                AfternoteMapper.toDetailDomain(data)
+                data.toDetailDomain()
             }.logFailure()
 
         /**
