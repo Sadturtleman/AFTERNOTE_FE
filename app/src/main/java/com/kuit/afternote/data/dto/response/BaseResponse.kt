@@ -1,4 +1,4 @@
-package com.kuit.afternote.data
+package com.kuit.afternote.data.dto.response
 
 import com.kuit.afternote.data.service.ApiException
 import kotlinx.serialization.SerialName

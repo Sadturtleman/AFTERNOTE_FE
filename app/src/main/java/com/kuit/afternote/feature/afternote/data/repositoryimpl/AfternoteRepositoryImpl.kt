@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import android.util.Log
-import com.kuit.afternote.data.requireData
-import com.kuit.afternote.data.requireStatus
+import com.kuit.afternote.data.dto.response.requireData
+import com.kuit.afternote.data.dto.response.requireStatus
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
