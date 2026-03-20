@@ -1,11 +1,11 @@
 package com.kuit.afternote.feature.afternote.presentation.mapper
 
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-fun AfternoteItem.toMindRecordUiModel(): MindRecordUiModel {
+fun Item.toMindRecordUiModel(): MindRecordUiModel {
     // 1. 날짜 포맷팅 로직 (안정성을 위해 java.time 사용)
     val inputFormatter =
         DateTimeFormatter

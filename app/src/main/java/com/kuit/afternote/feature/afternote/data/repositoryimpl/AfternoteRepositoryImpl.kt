@@ -11,7 +11,7 @@ import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdRespons
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.data.mapper.toDto
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
@@ -77,7 +77,7 @@ class AfternoteRepositoryImpl
         /**
          * GET /afternotes/{afternoteId} — 상세 조회. DTO → domain 매핑 포함.
          */
-        override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail> =
+        override suspend fun getAfternoteDetail(afternoteId: Long): Result<Detail> =
             runCatching {
                 val response = api.getAfternoteDetail(afternoteId = afternoteId)
                 val data = response.requireData()

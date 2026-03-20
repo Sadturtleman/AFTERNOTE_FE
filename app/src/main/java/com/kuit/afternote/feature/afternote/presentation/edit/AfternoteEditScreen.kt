@@ -35,8 +35,8 @@ import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.core.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
+import com.kuit.afternote.feature.afternote.domain.model.Item
+import com.kuit.afternote.feature.afternote.domain.model.ProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.RegisterAfternotePayload
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
@@ -86,7 +86,7 @@ fun AfternoteEditScreen(
     callbacks: AfternoteEditScreenCallbacks = AfternoteEditScreenCallbacks(),
     state: AfternoteEditState = rememberAfternoteEditState(),
     playlistStateHolder: MemorialPlaylistStateHolder? = null,
-    initialItem: AfternoteItem? = null,
+    initialItem: Item? = null,
     saveError: AfternoteEditSaveError? = null,
 ) {
     val focusManager = LocalFocusManager.current
@@ -187,11 +187,11 @@ fun AfternoteEditScreen(
                     val date = dateFormat.format(Date())
                     val processingMethods =
                         state.processingMethods.map {
-                            AfternoteProcessingMethod(it.id, it.text)
+                            ProcessingMethod(it.id, it.text)
                         }
                     val galleryProcessingMethods =
                         state.galleryProcessingMethods.map {
-                            AfternoteProcessingMethod(it.id, it.text)
+                            ProcessingMethod(it.id, it.text)
                         }
                     callbacks.onRegisterClick(
                         RegisterAfternotePayload(

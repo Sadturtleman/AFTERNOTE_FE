@@ -45,7 +45,7 @@ import com.kuit.afternote.presentation.screen.afternotedetail.SocialNetworkDetai
 import com.kuit.afternote.presentation.screen.afternotedetail.SocialNetworkDetailScreen
 import com.kuit.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.domain.provider.AfternoteEditDataProvider
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.presentation.AfternoteItemMapper
 import com.kuit.afternote.feature.afternote.presentation.AfternoteSaveState
 import com.kuit.afternote.feature.afternote.presentation.AfternoteValidationError
@@ -97,8 +97,8 @@ data class AfternoteListRefreshParams(
  * Parameters for [afternoteNavGraph]. Groups arguments to keep function param count ≤7.
  */
 data class AfternoteNavGraphParams(
-    val afternoteItemsProvider: () -> List<AfternoteItem>,
-    val onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    val afternoteItemsProvider: () -> List<Item>,
+    val onItemsUpdated: (List<Item>) -> Unit,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
     val userNameProvider: () -> String,
@@ -128,9 +128,9 @@ inline fun <reified T : Any> NavGraphBuilder.afternoteComposable(noinline conten
 }
 
 private fun resolveListItems(
-    afternoteItems: List<AfternoteItem>,
+    afternoteItems: List<Item>,
     afternoteProvider: AfternoteEditDataProvider,
-): List<AfternoteItem> =
+): List<Item> =
     afternoteItems.ifEmpty {
         AfternoteItemMapper.toAfternoteItemsWithStableIds(afternoteProvider.getDefaultAfternoteItems())
     }
@@ -139,7 +139,7 @@ private fun resolveListItems(
 private fun AfternoteListRouteContent(
     navController: NavController,
     onBottomNavTabSelected: (BottomNavItem) -> Unit = {},
-    onItemsUpdated: (List<AfternoteItem>) -> Unit,
+    onItemsUpdated: (List<Item>) -> Unit,
     editStateHandling: AfternoteEditStateHandling,
     playlistStateHolder: MemorialPlaylistStateHolder,
     listRefresh: AfternoteListRefreshParams? = null,
@@ -475,7 +475,7 @@ private data class EditScreenCallbacksParams(
     val editStateHandling: AfternoteEditStateHandling,
     val state: AfternoteEditState,
     val route: AfternoteRoute.EditRoute,
-    val initialItem: AfternoteItem?,
+    val initialItem: Item?,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val onNavigateToSelectReceiver: () -> Unit,
     val onBottomNavTabSelected: (BottomNavItem) -> Unit,
@@ -484,7 +484,7 @@ private data class EditScreenCallbacksParams(
 private data class AfternoteEditRouteContentParams(
     val backStackEntry: NavBackStackEntry,
     val navController: NavController,
-    val afternoteItems: List<AfternoteItem>,
+    val afternoteItems: List<Item>,
     val playlistStateHolder: MemorialPlaylistStateHolder,
     val afternoteProvider: AfternoteEditDataProvider,
     val editStateHandling: AfternoteEditStateHandling,

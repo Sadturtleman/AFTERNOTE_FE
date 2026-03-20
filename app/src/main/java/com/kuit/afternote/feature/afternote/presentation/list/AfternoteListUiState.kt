@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.presentation.list
 
 import com.kuit.afternote.core.component.list.AfternoteTab
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 
 /**
  * 애프터노트 목록 화면 UI 상태
@@ -18,7 +18,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 data class AfternoteListUiState(
     val selectedTab: AfternoteTab = AfternoteTab.ALL,
     val selectedBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
-    val items: List<AfternoteItem> = emptyList(),
+    val items: List<Item> = emptyList(),
     val isLoading: Boolean = false,
     val loadError: String? = null,
     val hasNext: Boolean = false,

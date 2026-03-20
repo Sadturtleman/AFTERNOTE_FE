@@ -10,24 +10,24 @@ import com.kuit.afternote.domain.model.AfternoteServiceType
  * @param date 날짜 (yyyy.MM.dd 형식)
  * @param type 서비스 타입 (필터링용)
  */
-data class AfternoteItem(
+data class Item(
     val id: String,
     val serviceName: String,
     val date: String,
     val type: AfternoteServiceType,
-    val account: AfternoteAccount = AfternoteAccount(),
-    val processing: AfternoteItemProcessing = AfternoteItemProcessing(),
+    val account: Account = Account(),
+    val processing: ItemProcessing = ItemProcessing(),
 )
 
-data class AfternoteAccount(
+data class Account(
     val id: String = "",
     val password: String = "",
 )
 
-data class AfternoteItemProcessing(
+data class ItemProcessing(
     val message: String = "",
     val accountMethod: String = "",
     val informationMethod: String = "",
-    val methods: List<AfternoteProcessingMethod> = emptyList(),
-    val galleryMethods: List<AfternoteProcessingMethod> = emptyList(),
+    val methods: List<ProcessingMethod> = emptyList(),
+    val galleryMethods: List<ProcessingMethod> = emptyList(),
 )

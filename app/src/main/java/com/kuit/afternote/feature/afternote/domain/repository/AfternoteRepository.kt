@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.domain.repository
 
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
+import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
@@ -28,7 +28,7 @@ interface AfternoteRepository {
 
     suspend fun createGallery(input: CreateGalleryInput): Result<Long>
 
-    suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail>
+    suspend fun getAfternoteDetail(afternoteId: Long): Result<Detail>
 
     suspend fun createPlaylist(
         title: String,

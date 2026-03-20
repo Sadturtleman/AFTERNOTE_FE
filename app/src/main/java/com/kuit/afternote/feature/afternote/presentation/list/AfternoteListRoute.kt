@@ -15,7 +15,7 @@ import com.kuit.afternote.presentation.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.util.getIconResForServiceName
 import com.kuit.afternote.presentation.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 
 data class AfternoteListRouteCallbacks(
     val onNavigateToDetail: (String) -> Unit = {},
@@ -36,8 +36,8 @@ data class AfternoteListRouteCallbacks(
 fun AfternoteListRoute(
     viewModel: AfternoteListViewModel = hiltViewModel(),
     callbacks: AfternoteListRouteCallbacks = AfternoteListRouteCallbacks(),
-    initialItems: List<AfternoteItem> = emptyList(),
-    onItemsChanged: (List<AfternoteItem>) -> Unit = {},
+    initialItems: List<Item> = emptyList(),
+    onItemsChanged: (List<Item>) -> Unit = {},
     listRefreshRequested: Boolean = false,
     onListRefreshConsumed: () -> Unit = {},
 ) {

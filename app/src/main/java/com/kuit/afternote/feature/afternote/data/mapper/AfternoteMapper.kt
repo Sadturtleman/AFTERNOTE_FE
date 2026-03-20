@@ -4,15 +4,15 @@ import com.kuit.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteListItem
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteDetailResponse
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteListResponse
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailCredentials
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailProcessing
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailTimestamps
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Detail
+import com.kuit.afternote.feature.afternote.domain.model.DetailCredentials
+import com.kuit.afternote.feature.afternote.domain.model.DetailProcessing
+import com.kuit.afternote.feature.afternote.domain.model.DetailReceiver
+import com.kuit.afternote.feature.afternote.domain.model.DetailTimestamps
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternoteDetailSong
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistDetail
+import com.kuit.afternote.feature.afternote.domain.model.playlist.DetailSong
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistDetail
 import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistDetailMemorialMedia
 
 /**
@@ -21,37 +21,37 @@ import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistDetail
 object AfternoteMapper {
     // -- List mapping --
 
-    fun toDomain(dto: AfternoteListItem): AfternoteItem =
-        AfternoteItem(
+    fun toDomain(dto: AfternoteListItem): Item =
+        Item(
             id = dto.afternoteId.toString(),
             serviceName = dto.title,
             date = formatDateFromServer(dto.createdAt),
             type = categoryToServiceType(dto.category),
         )
 
-    fun toDomainList(dtos: List<AfternoteListItem>): List<AfternoteItem> = dtos.map { toDomain(it) }
+    fun toDomainList(dtos: List<AfternoteListItem>): List<Item> = dtos.map { toDomain(it) }
 
     // -- Detail mapping --
 
-    fun toDetailDomain(dto: AfternoteDetailResponse): AfternoteDetail =
-        AfternoteDetail(
+    fun toDetailDomain(dto: AfternoteDetailResponse): Detail =
+        Detail(
             id = dto.afternoteId,
             category = dto.category,
             title = dto.title,
             timestamps =
-                AfternoteDetailTimestamps(
+                DetailTimestamps(
                     createdAt = formatDateFromServer(dto.createdAt),
                     updatedAt = formatDateFromServer(dto.createdAt),
                 ),
             type = categoryToServiceType(dto.category),
             credentials =
-                AfternoteDetailCredentials(
+                DetailCredentials(
                     id = dto.credentials?.id,
                     password = dto.credentials?.password,
                 ),
             receivers =
                 dto.receivers?.map { r ->
-                    AfternoteDetailReceiver(
+                    DetailReceiver(
                         receiverId = r.receiverId,
                         name = r.name ?: "",
                         relation = r.relation ?: "",
@@ -59,19 +59,19 @@ object AfternoteMapper {
                     )
                 } ?: emptyList(),
             processing =
-                AfternoteDetailProcessing(
+                DetailProcessing(
                     method = dto.processMethod,
                     actions = dto.actions ?: emptyList(),
                     leaveMessage = dto.leaveMessage,
                 ),
             playlist =
                 dto.playlist?.let { p ->
-                    AfternotePlaylistDetail(
+                    PlaylistDetail(
                         profilePhoto = p.profilePhoto,
                         atmosphere = p.atmosphere,
                         songs =
                             p.songs.map { s ->
-                                AfternoteDetailSong(
+                                DetailSong(
                                     id = s.id,
                                     title = s.title,
                                     artist = s.artist,

@@ -51,7 +51,7 @@ import com.kuit.afternote.core.util.getIconResForServiceName
 import com.kuit.afternote.presentation.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.di.TokenManagerEntryPoint
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.presentation.edit.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.edit.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
@@ -387,7 +387,7 @@ fun NavGraph(navHostController: NavHostController) {
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn == true) currentUserNameViewModel.loadUserName()
     }
-    var afternoteItems by remember { mutableStateOf(listOf<AfternoteItem>()) }
+    var afternoteItems by remember { mutableStateOf(listOf<Item>()) }
     val afternoteEditStateHolder = remember { mutableStateOf<AfternoteEditState?>(null) }
     val playlistStateHolder = remember { MemorialPlaylistStateHolder() }
     var listRefreshRequested by remember { mutableStateOf(false) }

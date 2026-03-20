@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.dailyrecord.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
 import com.kuit.afternote.feature.dailyrecord.data.dto.PostMindRecordRequest
@@ -451,7 +451,7 @@ class MindRecordViewModel
         }
     }
 
-fun AfternoteItem.toMindRecordUiModel(): MindRecordUiModel {
+fun Item.toMindRecordUiModel(): MindRecordUiModel {
     // 1. 날짜 포맷팅 로직 (안정성을 위해 java.time 사용)
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
     val isoFormatter = DateTimeFormatter.ISO_LOCAL_DATE // yyyy-MM-dd

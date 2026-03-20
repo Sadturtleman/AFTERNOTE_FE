@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
+import com.kuit.afternote.feature.afternote.domain.model.Detail
+import com.kuit.afternote.feature.afternote.domain.model.DetailReceiver
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
@@ -21,7 +21,7 @@ class GetAfternoteDetailUseCase
         private val getReceiversUseCase: GetReceiversUseCase,
         private val getUserIdUseCase: GetUserIdUseCase,
     ) {
-        suspend operator fun invoke(afternoteId: Long): Result<AfternoteDetail> {
+        suspend operator fun invoke(afternoteId: Long): Result<Detail> {
             val detailResult = repository.getAfternoteDetail(afternoteId = afternoteId)
             val detail = detailResult.getOrElse { return detailResult }
             val userId = getUserIdUseCase() ?: return detailResult
@@ -36,9 +36,9 @@ class GetAfternoteDetailUseCase
         }
 
         private fun resolveReceiverNames(
-            receivers: List<AfternoteDetailReceiver>,
+            receivers: List<DetailReceiver>,
             receiversList: List<ReceiverListItem>,
-        ): List<AfternoteDetailReceiver> =
+        ): List<DetailReceiver> =
             receivers.map { r ->
                 if (r.receiverId != null) {
                     val fromList = receiversList.find { it.receiverId == r.receiverId }

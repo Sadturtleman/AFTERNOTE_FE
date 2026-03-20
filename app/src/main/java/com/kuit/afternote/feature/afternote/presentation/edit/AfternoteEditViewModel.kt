@@ -3,10 +3,10 @@ package com.kuit.afternote.feature.afternote.presentation.edit
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
 import com.kuit.afternote.feature.afternote.domain.model.CredentialsInput
+import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.ReceiverRefInput
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.MemorialVideoInput
@@ -371,7 +371,7 @@ class AfternoteEditViewModel
         }
 
         private fun populatePlaylistFromDetail(
-            detail: AfternoteDetail,
+            detail: Detail,
             playlistStateHolder: MemorialPlaylistStateHolder?,
         ) {
             if (detail.category.uppercase() != "PLAYLIST" ||
@@ -392,7 +392,7 @@ class AfternoteEditViewModel
                 }.forEach { playlistStateHolder.addSong(it) }
         }
 
-        private fun buildLoadFromExistingParams(detail: AfternoteDetail): LoadFromExistingParams {
+        private fun buildLoadFromExistingParams(detail: Detail): LoadFromExistingParams {
             val actionItems =
                 detail.processing?.actions?.mapIndexed { index, text ->
                     ProcessingMethodItem(

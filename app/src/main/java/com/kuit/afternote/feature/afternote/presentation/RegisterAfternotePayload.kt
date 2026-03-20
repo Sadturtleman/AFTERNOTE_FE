@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation
 
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
+import com.kuit.afternote.feature.afternote.domain.model.ProcessingMethod
 
 /**
  * Payload passed when the user taps "등록" on the afternote edit screen.
@@ -16,7 +16,7 @@ data class RegisterAfternotePayload(
     val message: String = "",
     val accountProcessingMethod: String = "",
     val informationProcessingMethod: String = "",
-    val processingMethods: List<AfternoteProcessingMethod> = emptyList(),
-    val galleryProcessingMethods: List<AfternoteProcessingMethod> = emptyList(),
+    val processingMethods: List<ProcessingMethod> = emptyList(),
+    val galleryProcessingMethods: List<ProcessingMethod> = emptyList(),
     val atmosphere: String = "",
 )
