@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.core.component.list.AfternoteTab
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +51,13 @@ class AfternoteListViewModel
         fun loadAfternotes(category: String? = null) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, loadError = null) }
-                getAfternotesUseCase(category = category, page = 0, size = pageSize)
+                val input =
+                    GetAfternotesInput(
+                        category = category,
+                        page = 0,
+                        size = pageSize,
+                    )
+                getAfternotesUseCase(input)
                     .onSuccess { paged ->
                         allItems = paged.items
                         currentPage = 0
@@ -91,7 +98,13 @@ class AfternoteListViewModel
                 _uiState.update { it.copy(isLoadingMore = true) }
                 val category: String? = null
                 val nextPage = currentPage + 1
-                getAfternotesUseCase(category = category, page = nextPage, size = pageSize)
+                val input =
+                    GetAfternotesInput(
+                        category = category,
+                        page = nextPage,
+                        size = pageSize,
+                    )
+                getAfternotesUseCase(input)
                     .onSuccess { paged ->
                         allItems = allItems + paged.items
                         currentPage = nextPage

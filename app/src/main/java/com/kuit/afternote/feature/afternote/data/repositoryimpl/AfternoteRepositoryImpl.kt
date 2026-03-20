@@ -11,12 +11,13 @@ import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdRespons
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
 import com.kuit.afternote.feature.afternote.data.mapper.toDto
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
-import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
+import com.kuit.afternote.feature.afternote.domain.model.Detail
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
-import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -30,13 +31,14 @@ class AfternoteRepositoryImpl
     constructor(
         private val api: AfternoteApiService,
     ) : AfternoteRepository {
-        override suspend fun getAfternotes(
-            category: String?,
-            page: Int,
-            size: Int,
-        ): Result<PagedAfternotes> =
+        override suspend fun getAfternotes(input: GetAfternotesInput): Result<PagedAfternotes> =
             runCatching {
-                val response = api.getAfternotes(category = category, page = page, size = size)
+                val response =
+                    api.getAfternotes(
+                        category = input.category,
+                        page = input.page,
+                        size = input.size,
+                    )
                 val data = response.requireData()
                 AfternoteMapper.toPagedNotes(data)
             }.logFailure()
@@ -87,18 +89,14 @@ class AfternoteRepositoryImpl
         /**
          * POST /afternotes (PLAYLIST category).
          */
-        override suspend fun createPlaylist(
-            title: String,
-            playlist: PlaylistInput,
-            receiverIds: List<Long>,
-        ): Result<Long> =
+        override suspend fun createPlaylist(input: CreatePlaylistInput): Result<Long> =
             runCatching {
                 val request =
                     AfternoteCreatePlaylistRequest(
                         category = "PLAYLIST",
-                        title = title,
-                        playlist = playlist.toDto(),
-                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
+                        title = input.title,
+                        playlist = input.playlist.toDto(),
+                        receivers = input.receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 val response = api.createAfternotePlaylist(request)
                 val data = response.requireData()

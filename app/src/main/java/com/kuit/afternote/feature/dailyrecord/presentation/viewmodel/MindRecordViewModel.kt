@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.dailyrecord.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import com.kuit.afternote.feature.dailyrecord.data.dto.EmotionResponse
@@ -179,7 +180,13 @@ class MindRecordViewModel
 
         private fun loadAfternoteRecords() {
             viewModelScope.launch {
-                getAfternotesUseCase(category = null, page = 0, size = 50).fold(
+                val input =
+                    GetAfternotesInput(
+                        category = null,
+                        page = 0,
+                        size = 50,
+                    )
+                getAfternotesUseCase(input).fold(
                     onSuccess = { pagedData ->
                         // 매핑 함수 사용
                         _afternoteRecords.value = pagedData.items.map { it.toMindRecordUiModel() }

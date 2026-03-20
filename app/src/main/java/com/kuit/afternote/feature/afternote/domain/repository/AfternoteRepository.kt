@@ -3,9 +3,10 @@ package com.kuit.afternote.feature.afternote.domain.repository
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
 import com.kuit.afternote.feature.afternote.domain.model.Detail
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
-import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
 
 /**
  * Afternote 도메인 Repository 인터페이스.
@@ -18,11 +19,7 @@ import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
  * - DELETE /afternotes/{afternoteId} (삭제)
  */
 interface AfternoteRepository {
-    suspend fun getAfternotes(
-        category: String?,
-        page: Int,
-        size: Int,
-    ): Result<PagedAfternotes>
+    suspend fun getAfternotes(input: GetAfternotesInput): Result<PagedAfternotes>
 
     suspend fun createSocial(input: CreateSocialInput): Result<Long>
 
@@ -30,11 +27,7 @@ interface AfternoteRepository {
 
     suspend fun getAfternoteDetail(afternoteId: Long): Result<Detail>
 
-    suspend fun createPlaylist(
-        title: String,
-        playlist: PlaylistInput,
-        receiverIds: List<Long> = emptyList(),
-    ): Result<Long>
+    suspend fun createPlaylist(input: CreatePlaylistInput): Result<Long>
 
     suspend fun updateAfternote(
         afternoteId: Long,

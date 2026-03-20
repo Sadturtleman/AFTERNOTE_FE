@@ -9,6 +9,7 @@ import com.kuit.afternote.feature.afternote.domain.model.CredentialsInput
 import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.ReceiverRefInput
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.MemorialVideoInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.SongInput
@@ -545,7 +546,7 @@ class AfternoteEditViewModel
                 }
 
                 CATEGORY_MEMORIAL -> {
-                    val playlistDto =
+                    val input =
                         buildPlaylistInput(
                             playlistStateHolder = playlistStateHolder,
                             atmosphere = payload.atmosphere,
@@ -554,9 +555,12 @@ class AfternoteEditViewModel
                             funeralThumbnailUrl = funeralThumbnailUrl,
                         )
                     createPlaylistUseCase(
-                        title = payload.serviceName,
-                        playlist = playlistDto,
-                        receiverIds = selectedReceiverIds,
+                        input =
+                            CreatePlaylistInput(
+                                title = payload.serviceName,
+                                playlist = input,
+                                receiverIds = selectedReceiverIds,
+                            ),
                     )
                 }
 

@@ -62,7 +62,7 @@ class AfternoteRepositoryImplTest {
             coEvery { api.getAfternotes(category = null, page = 0, size = 10) } returns
                 BaseResponse(status = 200, code = 0, message = "OK", data = listDto)
 
-            val result = repository.getAfternotes(category = null, page = 0, size = 10)
+            val result = repository.getAfternotes()
 
             assertTrue(result.isSuccess)
             val paged = result.getOrNull()
@@ -202,11 +202,7 @@ class AfternoteRepositoryImplTest {
                 )
 
             val result =
-                repository.createPlaylist(
-                    title = "마지막 플레이리스트",
-                    playlist = playlist,
-                    receiverIds = emptyList(),
-                )
+                repository.createPlaylist()
 
             assertTrue(result.isSuccess)
             assertEquals(7L, result.getOrNull())
