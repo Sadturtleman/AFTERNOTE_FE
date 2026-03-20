@@ -43,10 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.icon.RightArrowIcon
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLetterUiState
 import com.kuit.afternote.ui.theme.B1

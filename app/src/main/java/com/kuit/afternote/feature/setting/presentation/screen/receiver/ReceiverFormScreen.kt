@@ -31,10 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.LabelStyle
-import com.kuit.afternote.core.ui.component.LabeledTextFieldStyle
-import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.LabelStyle
+import com.kuit.afternote.core.component.LabeledTextFieldStyle
+import com.kuit.afternote.core.component.OutlineTextField
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.DropdownMenuStyle
 import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.SelectionDropdown
 import com.kuit.afternote.feature.afternote.presentation.edit.dropdown.SelectionDropdownLabelParams

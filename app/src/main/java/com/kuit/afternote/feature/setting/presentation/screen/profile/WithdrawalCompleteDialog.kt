@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.button.ClickButton
-import com.kuit.afternote.ui.expand.dropShadow
+import com.kuit.afternote.core.component.button.ClickButton
+import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
@@ -38,34 +38,35 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun WithdrawalCompleteDialog(
     onConfirm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Dialog(
         onDismissRequest = onConfirm,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = false
-        )
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = false,
+            ),
     ) {
         val shape = RoundedCornerShape(16.dp)
         Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .dropShadow(
-                    shape = shape,
-                    color = Color.Black.copy(alpha = 0.15f),
-                    blur = 10.dp,
-                    offsetX = 0.dp,
-                    offsetY = 2.dp,
-                    spread = 0.dp
-                )
-                .clip(shape)
-                .background(Color.White)
-                .padding(
-                    horizontal = 24.dp,
-                    vertical = 40.dp
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .dropShadow(
+                        shape = shape,
+                        color = Color.Black.copy(alpha = 0.15f),
+                        blur = 10.dp,
+                        offsetX = 0.dp,
+                        offsetY = 2.dp,
+                        spread = 0.dp,
+                    ).clip(shape)
+                    .background(Color.White)
+                    .padding(
+                        horizontal = 24.dp,
+                        vertical = 40.dp,
+                    ),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(R.string.withdrawal_complete_line1),
@@ -74,7 +75,7 @@ fun WithdrawalCompleteDialog(
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Medium,
                 color = Gray9,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -84,13 +85,13 @@ fun WithdrawalCompleteDialog(
                 fontFamily = Sansneo,
                 fontWeight = FontWeight.Medium,
                 color = Gray9,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(32.dp))
             ClickButton(
                 color = B3,
                 onButtonClick = onConfirm,
-                title = stringResource(R.string.withdrawal_complete_confirm)
+                title = stringResource(R.string.withdrawal_complete_confirm),
             )
         }
     }
@@ -98,7 +99,7 @@ fun WithdrawalCompleteDialog(
 
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
 )
 @Composable
 private fun WithdrawalCompleteDialogPreview() {

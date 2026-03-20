@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.uimodel
 
-import com.kuit.afternote.core.uimodel.Step
+import com.kuit.afternote.presentation.uimodel.Step
 
 enum class SignUpStep(
     override val value: Int

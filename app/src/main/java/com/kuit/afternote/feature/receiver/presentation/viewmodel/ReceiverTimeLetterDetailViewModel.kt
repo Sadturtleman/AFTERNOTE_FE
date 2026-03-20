@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.receiver.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.receiver.domain.usecase.GetTimeLetterDetailByAuthCodeUseCase
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLetterDetailUiState
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder

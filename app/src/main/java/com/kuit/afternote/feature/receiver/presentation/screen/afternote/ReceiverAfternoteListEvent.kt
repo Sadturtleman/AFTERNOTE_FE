@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.receiver.presentation.screen.afternote
 
-import com.kuit.afternote.core.ui.component.list.AfternoteTab
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.list.AfternoteTab
+import com.kuit.afternote.core.component.navigation.BottomNavItem
 
 /**
  * 수신자 애프터노트 목록 화면에서 발생하는 사용자 이벤트.

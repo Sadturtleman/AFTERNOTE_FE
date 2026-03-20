@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.ui.expand.dropShadow
+import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
@@ -46,33 +46,36 @@ fun RecordItem(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .dropShadow(
-                shape = RoundedCornerShape(16.dp),
-                color = Color.Black.copy(alpha = 0.05f),
-                blur = 5.dp,
-                offsetY = 2.dp,
-                offsetX = 0.dp,
-                spread = 0.dp
-            ).clip(RoundedCornerShape(8.dp))
-            .background(Color.White)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .dropShadow(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black.copy(alpha = 0.05f),
+                    blur = 5.dp,
+                    offsetY = 2.dp,
+                    offsetX = 0.dp,
+                    spread = 0.dp,
+                ).clip(RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 20.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .weight(1f),
             ) {
                 Text(
                     text = title,
@@ -81,7 +84,7 @@ fun RecordItem(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1, // 텍스트가 최대 한 줄로 표시
-                    overflow = TextOverflow.Ellipsis // 한 줄 안에 못 들어가면, 잘린 부분을 ..으로 표시
+                    overflow = TextOverflow.Ellipsis, // 한 줄 안에 못 들어가면, 잘린 부분을 ..으로 표시
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -91,22 +94,24 @@ fun RecordItem(
                     fontFamily = Sansneo,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
             Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(B2)
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(B2),
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_arrow_right_tab),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(6.dp, 12.dp)
-                        .offset(x = 9.9.dp, y = 6.dp)
+                    modifier =
+                        Modifier
+                            .size(6.dp, 12.dp)
+                            .offset(x = 9.9.dp, y = 6.dp),
                 )
             }
         }
@@ -120,21 +125,22 @@ fun RecordItemPreview() {
         RecordItem(
             title = "데일리 질문 답변",
             subtitle = "매일 다른 질문들에 나를 남겨 보세요.",
-            onClick = {}
+            onClick = {},
         )
         Spacer(
-            modifier = Modifier
-                .width(8.dp)
+            modifier =
+                Modifier
+                    .width(8.dp),
         )
         RecordItem(
             title = "일기",
             subtitle = "나의 매일을 기록하세요",
-            onClick = {}
+            onClick = {},
         )
         RecordItem(
             title = "깊은 생각",
             subtitle = "오늘은 어떤 생각을 하고 있나요?",
-            onClick = {}
+            onClick = {},
         )
     }
 }

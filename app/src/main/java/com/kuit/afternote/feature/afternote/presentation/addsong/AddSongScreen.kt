@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.ui.component.list.SongPlaylistScreen
-import com.kuit.afternote.core.ui.component.list.SongPlaylistScreenSelectableOptions
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.core.component.list.SongPlaylistScreen
+import com.kuit.afternote.core.component.list.SongPlaylistScreenSelectableOptions
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import kotlinx.coroutines.flow.MutableStateFlow

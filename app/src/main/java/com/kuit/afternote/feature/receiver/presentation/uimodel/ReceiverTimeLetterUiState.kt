@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.uimodel
 
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 
 /**

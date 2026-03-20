@@ -42,11 +42,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.ui.component.ScaffoldContentWithOptionalFab
-import com.kuit.afternote.core.ui.component.list.TimeLetterBlockList
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.ScaffoldContentWithOptionalFab
+import com.kuit.afternote.core.component.list.TimeLetterBlockList
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.domain.provider.FakeReceiverDataProvider
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItemCallbacks

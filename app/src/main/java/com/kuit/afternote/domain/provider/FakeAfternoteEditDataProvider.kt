@@ -3,8 +3,8 @@ package com.kuit.afternote.domain.provider
 import com.kuit.afternote.core.dummy.afternote.AfternoteEditDummies
 import com.kuit.afternote.core.dummy.afternote.AfternoteListDummies
 import com.kuit.afternote.core.dummy.album.AlbumDummies
-import com.kuit.afternote.core.ui.component.list.AlbumCover
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.core.component.list.AlbumCover
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 import javax.inject.Inject

@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.SelectableRadioCard
+import com.kuit.afternote.core.component.SelectableRadioCard
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AccountProcessingMethod
 import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodOption
 import com.kuit.afternote.ui.theme.AfternoteTheme

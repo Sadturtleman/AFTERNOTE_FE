@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.button.ClickButton
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.button.ClickButton
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.receiver.presentation.component.CalendarGrid
 import com.kuit.afternote.feature.receiver.presentation.component.ReceiverWheelDatePickerDialog
 import com.kuit.afternote.feature.receiver.presentation.component.RecordListItem

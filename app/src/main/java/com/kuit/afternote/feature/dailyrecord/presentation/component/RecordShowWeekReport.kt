@@ -1,7 +1,5 @@
 package com.kuit.afternote.feature.dailyrecord.presentation.component
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,56 +30,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
+import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.home.presentation.component.CalendarDayStyle
-import com.kuit.afternote.ui.expand.dropShadow
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.ui.theme.White
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
-import java.util.Locale
 
 @Composable
 fun RecordShowWeekReport(
     titlePrefix: String,
-    summary: MindRecordViewModel.WeeklySummaryUiState
+    summary: MindRecordViewModel.WeeklySummaryUiState,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize() // 확장 시 애니메이션 추가
-            .dropShadow(
-                shape = RoundedCornerShape(16.dp),
-                color = Color.Black.copy(alpha = 0.05f),
-                blur = 5.dp,
-                offsetY = 2.dp
-            )
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .clickable { isExpanded = !isExpanded }
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .animateContentSize() // 확장 시 애니메이션 추가
+                .dropShadow(
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.Black.copy(alpha = 0.05f),
+                    blur = 5.dp,
+                    offsetY = 2.dp,
+                ).clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .clickable { isExpanded = !isExpanded },
     ) {
         Column(modifier = Modifier.padding(17.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = "$titlePrefix ${summary.totalWeeklyCount}번 작성했어요.",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    fontFamily = Sansneo
+                    fontFamily = Sansneo,
                 )
                 Image(
                     painter = painterResource(R.drawable.ic_under_direct_foreground),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .rotate(if (isExpanded) 180f else 0f) // 화살표 회전
+                    modifier =
+                        Modifier
+                            .size(30.dp)
+                            .rotate(if (isExpanded) 180f else 0f), // 화살표 회전
                 )
             }
 
@@ -95,7 +87,7 @@ fun RecordShowWeekReport(
                             dayLabel = dayState.dayLabel,
                             dateLabel = dayState.date.toString(),
                             isRecorded = dayState.style == CalendarDayStyle.FILLED,
-                            isToday = dayState.style == CalendarDayStyle.TODAY
+                            isToday = dayState.style == CalendarDayStyle.TODAY,
                         )
                     }
                 }

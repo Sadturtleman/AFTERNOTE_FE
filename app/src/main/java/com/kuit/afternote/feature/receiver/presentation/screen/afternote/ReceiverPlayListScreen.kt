@@ -4,9 +4,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.core.ui.component.list.SongPlaylistScreen
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.core.component.list.SongPlaylistScreen
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 
 @Composable
 fun MemorialPlaylistScreen(

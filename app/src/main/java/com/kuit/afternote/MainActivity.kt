@@ -2,18 +2,18 @@ package com.kuit.afternote
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.foundation.layout.Column
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.app.di.DataProviderEntryPoint
-import com.kuit.afternote.app.navigation.navgraph.NavGraph
+import com.kuit.afternote.di.DataProviderEntryPoint
+import com.kuit.afternote.presentation.navigation.navgraph.NavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -24,28 +24,31 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val entryPoint = EntryPointAccessors.fromApplication(
-            applicationContext,
-            DataProviderEntryPoint::class.java
-        )
+        val entryPoint =
+            EntryPointAccessors.fromApplication(
+                applicationContext,
+                DataProviderEntryPoint::class.java,
+            )
         val dataProviderSwitch = entryPoint.dataProviderSwitch()
 
         setContent {
             val useFake by dataProviderSwitch.useFakeState.collectAsStateWithLifecycle(
-                initialValue = dataProviderSwitch.getInitialUseFake()
+                initialValue = dataProviderSwitch.getInitialUseFake(),
             )
-            val afternoteProvider = remember(useFake) {
-                dataProviderSwitch.getCurrentAfternoteEditDataProvider()
-            }
-            val receiverProvider = remember(useFake) {
-                dataProviderSwitch.getCurrentReceiverDataProvider()
-            }
+            val afternoteProvider =
+                remember(useFake) {
+                    dataProviderSwitch.getCurrentAfternoteEditDataProvider()
+                }
+            val receiverProvider =
+                remember(useFake) {
+                    dataProviderSwitch.getCurrentReceiverDataProvider()
+                }
 
             AfternoteTheme(darkTheme = false, dynamicColor = false) {
                 CompositionLocalProvider(
                     DataProviderLocals.LocalDataProviderSwitch provides dataProviderSwitch,
                     DataProviderLocals.LocalAfternoteEditDataProvider provides afternoteProvider,
-                    DataProviderLocals.LocalReceiverDataProvider provides receiverProvider
+                    DataProviderLocals.LocalReceiverDataProvider provides receiverProvider,
                 ) {
                     Column {
                         val navController = rememberNavController()

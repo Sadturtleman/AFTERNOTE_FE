@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.presentation.uimodel
 
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 
 /**
  * 수신자 추모 플레이리스트 화면 UI 상태.

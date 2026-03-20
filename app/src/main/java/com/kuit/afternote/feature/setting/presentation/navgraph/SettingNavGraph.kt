@@ -18,11 +18,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ConfirmationPopup
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
-import com.kuit.afternote.core.ui.util.getIconResForServiceName
-import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.core.component.ConfirmationPopup
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.util.getAfternoteDisplayRes
+import com.kuit.afternote.core.util.getIconResForServiceName
+import com.kuit.afternote.presentation.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel

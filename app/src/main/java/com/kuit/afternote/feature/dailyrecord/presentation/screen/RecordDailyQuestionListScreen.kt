@@ -17,10 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.ui.component.button.AddFloatingActionButton
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.button.AddFloatingActionButton
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordListSort
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel

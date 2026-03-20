@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.domain.repository.MusicSearchRepository
 import javax.inject.Inject
 

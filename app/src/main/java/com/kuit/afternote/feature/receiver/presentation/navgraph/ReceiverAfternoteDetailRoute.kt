@@ -17,18 +17,18 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.list.AlbumCover
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.TopBar
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailCallbacks
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.GalleryDetailState
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailCallbacks
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.MemorialGuidelineDetailState
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailContent
-import com.kuit.afternote.core.ui.screen.afternotedetail.SocialNetworkDetailScreen
-import com.kuit.afternote.core.ui.screen.afternotedetail.rememberAfternoteDetailState
+import com.kuit.afternote.core.component.list.AlbumCover
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.presentation.screen.afternotedetail.GalleryDetailCallbacks
+import com.kuit.afternote.presentation.screen.afternotedetail.GalleryDetailScreen
+import com.kuit.afternote.presentation.screen.afternotedetail.GalleryDetailState
+import com.kuit.afternote.presentation.screen.afternotedetail.MemorialGuidelineDetailCallbacks
+import com.kuit.afternote.presentation.screen.afternotedetail.MemorialGuidelineDetailScreen
+import com.kuit.afternote.presentation.screen.afternotedetail.MemorialGuidelineDetailState
+import com.kuit.afternote.presentation.screen.afternotedetail.SocialNetworkDetailContent
+import com.kuit.afternote.presentation.screen.afternotedetail.SocialNetworkDetailScreen
+import com.kuit.afternote.presentation.screen.afternotedetail.rememberAfternoteDetailState
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternoteDetailViewModel
 
 /**
