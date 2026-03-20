@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.model.playlist
 
-data class AfternotePlaylistInput(
+data class PlaylistInput(
     val profilePhoto: String? = null,
     val atmosphere: String? = null,
     val memorialPhotoUrl: String? = null,

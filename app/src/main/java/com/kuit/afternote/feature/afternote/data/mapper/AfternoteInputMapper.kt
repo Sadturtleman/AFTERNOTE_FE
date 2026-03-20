@@ -6,14 +6,14 @@ import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteSong
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.CredentialsInput
 import com.kuit.afternote.feature.afternote.domain.model.ReceiverRefInput
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.MemorialVideoInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.SongInput
 
-fun AfternotePlaylistInput.toDto() =
+fun PlaylistInput.toDto() =
     AfternotePlaylist(
         profilePhoto = profilePhoto,
         atmosphere = atmosphere,
@@ -36,7 +36,7 @@ fun SongInput.toDto() =
         coverUrl = coverUrl,
     )
 
-fun AfternoteUpdateRequestInput.toDto() =
+fun UpdateRequestInput.toDto() =
     AfternoteUpdateRequest(
         category = category,
         title = title,

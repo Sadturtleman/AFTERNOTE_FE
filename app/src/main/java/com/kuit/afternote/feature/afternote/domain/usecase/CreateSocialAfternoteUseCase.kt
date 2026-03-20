@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
+import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -13,22 +14,8 @@ class CreateSocialAfternoteUseCase
     constructor(
         private val repository: AfternoteRepository,
     ) {
-        suspend operator fun invoke(
-            title: String,
-            processMethod: String,
-            actions: List<String>,
-            leaveMessage: String? = null,
-            credentialsId: String? = null,
-            credentialsPassword: String? = null,
-            receiverIds: List<Long> = emptyList(),
-        ): Result<Long> =
+        suspend operator fun invoke(input: CreateSocialInput): Result<Long> =
             repository.createSocial(
-                title = title,
-                processMethod = processMethod,
-                actions = actions,
-                leaveMessage = leaveMessage,
-                credentialsId = credentialsId,
-                credentialsPassword = credentialsPassword,
-                receiverIds = receiverIds,
+                input = input,
             )
     }

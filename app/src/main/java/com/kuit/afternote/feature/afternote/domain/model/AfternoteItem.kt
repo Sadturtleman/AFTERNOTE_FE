@@ -1,6 +1,5 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
-import android.R.id.message
 import com.kuit.afternote.domain.model.AfternoteServiceType
 
 /**
@@ -10,7 +9,6 @@ import com.kuit.afternote.domain.model.AfternoteServiceType
  * @param serviceName 서비스명
  * @param date 날짜 (yyyy.MM.dd 형식)
  * @param type 서비스 타입 (필터링용)
- * @param message 남기실 말씀
  */
 data class AfternoteItem(
     val id: String,

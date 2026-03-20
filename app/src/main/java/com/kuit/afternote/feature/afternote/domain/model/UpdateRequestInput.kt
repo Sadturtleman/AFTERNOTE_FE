@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
 
-data class AfternoteUpdateRequestInput(
+data class UpdateRequestInput(
     val category: String,
     val title: String,
     val processMethod: String? = null,
@@ -10,7 +10,7 @@ data class AfternoteUpdateRequestInput(
     val leaveMessage: String? = null,
     val credentials: CredentialsInput? = null,
     val receivers: List<ReceiverRefInput>? = null,
-    val playlist: AfternotePlaylistInput? = null,
+    val playlist: PlaylistInput? = null,
 )
 
 data class CredentialsInput(

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class CreatePlaylistAfternoteUseCase
     ) {
         suspend operator fun invoke(
             title: String,
-            playlist: AfternotePlaylistInput,
+            playlist: PlaylistInput,
             receiverIds: List<Long> = emptyList(),
         ): Result<Long> =
             repository.createPlaylist(
