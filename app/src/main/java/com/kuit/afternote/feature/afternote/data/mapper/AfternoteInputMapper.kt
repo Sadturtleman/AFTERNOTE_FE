@@ -23,7 +23,7 @@ fun UpdateRequestInput.toDto() =
         actions = actions,
         leaveMessage = leaveMessage,
         credentials = credentials?.toDto(),
-        receivers = receivers?.map { it.toDto() },
+        receivers = receivers?.toDto(),
         playlist = playlist?.toDto(),
     )
 
@@ -33,7 +33,12 @@ fun CredentialsInput.toDto() =
         password = password,
     )
 
-fun ReceiverRefInput.toDto() =
+private fun ReceiverRefInput.toDto() =
     AfternoteReceiverRef(
         receiverId = receiverId,
     )
+
+private fun List<ReceiverRefInput>?.toDto() =
+    this?.map {
+        it.toDto()
+    }

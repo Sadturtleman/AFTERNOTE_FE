@@ -29,7 +29,7 @@ fun AfternoteDetailResponse.toDetailDomain(): Detail =
         playlist = playlist?.toDomain(),
     )
 
-fun List<AfternoteDetailReceiver>?.toDomain() =
+private fun List<AfternoteDetailReceiver>?.toDomain() =
     this?.map { a ->
         a.toDomain()
     } ?: emptyList()

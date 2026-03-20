@@ -3,10 +3,6 @@ package com.kuit.afternote.feature.afternote.data.repositoryimpl
 import android.util.Log
 import com.kuit.afternote.data.dto.response.requireData
 import com.kuit.afternote.data.dto.response.requireStatus
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
 import com.kuit.afternote.feature.afternote.data.mapper.response.toDetailDomain
 import com.kuit.afternote.feature.afternote.data.mapper.response.toPagedNotes
@@ -19,6 +15,8 @@ import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
 import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.toRequest
+import com.kuit.afternote.feature.afternote.domain.model.toRequest
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -46,16 +44,7 @@ class AfternoteRepositoryImpl
 
         override suspend fun createSocial(input: CreateSocialInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreateSocialRequest(
-                        category = "SOCIAL",
-                        title = input.title,
-                        processMethod = input.processMethod,
-                        actions = input.actions,
-                        leaveMessage = input.leaveMessage,
-                        credentials = input.credentials?.toDto(),
-                        receivers = input.receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternoteSocial(request)
                 val data = response.requireData()
                 getAfternoteId(data)
@@ -63,15 +52,7 @@ class AfternoteRepositoryImpl
 
         override suspend fun createGallery(input: CreateGalleryInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreateGalleryRequest(
-                        category = "GALLERY",
-                        title = input.title,
-                        processMethod = input.processMethod,
-                        actions = input.actions,
-                        leaveMessage = input.leaveMessage,
-                        receivers = input.receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternoteGallery(request)
                 val data = response.requireData()
                 getAfternoteId(data)
@@ -92,13 +73,7 @@ class AfternoteRepositoryImpl
          */
         override suspend fun createPlaylist(input: CreatePlaylistInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreatePlaylistRequest(
-                        category = "PLAYLIST",
-                        title = input.title,
-                        playlist = input.playlist.toDto(),
-                        receivers = input.receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternotePlaylist(request)
                 val data = response.requireData()
                 getAfternoteId(data)
@@ -110,12 +85,14 @@ class AfternoteRepositoryImpl
         override suspend fun updateAfternote(
             afternoteId: Long,
             input: UpdateRequestInput,
-        ): Result<Long> =
-            runCatching {
-                val response = api.updateAfternote(afternoteId = afternoteId, request = input.toDto())
+        ): Result<Long> {
+            val request = input.toDto()
+            return runCatching {
+                val response = api.updateAfternote(afternoteId = afternoteId, request = request)
                 val data = response.requireData()
                 getAfternoteId(data)
             }.logFailure()
+        }
 
         /**
          * DELETE /afternotes/{afternoteId}.

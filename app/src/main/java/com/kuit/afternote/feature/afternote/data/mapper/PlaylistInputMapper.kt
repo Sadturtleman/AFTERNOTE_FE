@@ -10,14 +10,19 @@ fun PlaylistInput.toDto() =
         profilePhoto = profilePhoto,
         atmosphere = atmosphere,
         memorialPhotoUrl = memorialPhotoUrl,
-        songs = songs.map { it.toDto() },
+        songs = songs.toDto(),
         memorialVideo = memorialVideo?.toDto(),
     )
 
-fun SongInput.toDto() =
+private fun SongInput.toDto() =
     AfternoteSong(
         id = id,
         title = title,
         artist = artist,
         coverUrl = coverUrl,
     )
+
+private fun List<SongInput>.toDto() =
+    map {
+        it.toDto()
+    }
