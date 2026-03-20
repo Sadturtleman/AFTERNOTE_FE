@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.domain.repository.MusicSearchRepository
+import com.kuit.afternote.feature.afternote.domain.model.SearchedSong
 import javax.inject.Inject
 
 /**
@@ -17,5 +17,5 @@ class SearchMusicUseCase
         /**
          * @param keyword 검색할 가수명 또는 노래 제목 (blank면 빈 목록 반환)
          */
-        suspend operator fun invoke(keyword: String): Result<List<PlaylistSongDisplay>> = repository.search(keyword)
+        suspend operator fun invoke(keyword: String): Result<List<SearchedSong>> = repository.search(keyword)
     }
