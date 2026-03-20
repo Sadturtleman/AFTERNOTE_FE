@@ -1,9 +1,9 @@
-package com.kuit.afternote.data.repositoryimpl
+package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
-import com.kuit.afternote.data.dto.MusicTrack
-import com.kuit.afternote.data.service.MusicApiService
-import com.kuit.afternote.domain.repository.MusicSearchRepository
+import com.kuit.afternote.feature.afternote.data.dto.MusicTrack
+import com.kuit.afternote.feature.afternote.data.service.MusicApiService
 import com.kuit.afternote.feature.afternote.domain.model.SearchedSong
+import com.kuit.afternote.feature.afternote.domain.repository.MusicSearchRepository
 import javax.inject.Inject
 
 /**
