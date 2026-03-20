@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.kuit.afternote.R
 import com.kuit.afternote.core.NotificationScheduler
-import com.kuit.afternote.core.ui.component.button.ClickButton
+import com.kuit.afternote.core.component.button.ClickButton
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.B3

@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftDeleteBottomBar
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.DraftLetterViewModel

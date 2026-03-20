@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.navigation.navgraph.NavGraph
 import com.kuit.afternote.di.DataProviderEntryPoint
+import com.kuit.afternote.presentation.navigation.navgraph.NavGraph
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors

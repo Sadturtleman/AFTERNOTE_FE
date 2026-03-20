@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.DateWheelPicker
-import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
+import com.kuit.afternote.core.component.DateWheelPicker
+import com.kuit.afternote.core.component.DateWheelPickerDefaults
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo

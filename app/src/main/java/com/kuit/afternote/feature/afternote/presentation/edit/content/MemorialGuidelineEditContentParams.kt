@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.presentation.edit.content
 
 import androidx.compose.runtime.Immutable
-import com.kuit.afternote.core.ui.component.LastWishOption
-import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.component.LastWishOption
+import com.kuit.afternote.core.component.list.AlbumCover
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiverSection
 
 /**

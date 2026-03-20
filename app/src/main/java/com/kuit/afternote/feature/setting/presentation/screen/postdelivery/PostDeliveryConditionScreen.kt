@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.ui.component.button.ClickButton
-import com.kuit.afternote.core.ui.component.Label
-import com.kuit.afternote.core.ui.component.OutlineTextField
-import com.kuit.afternote.core.ui.component.SelectableRadioCard
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.button.ClickButton
+import com.kuit.afternote.core.component.Label
+import com.kuit.afternote.core.component.OutlineTextField
+import com.kuit.afternote.core.component.SelectableRadioCard
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodOption
 import com.kuit.afternote.feature.afternote.presentation.edit.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.feature.setting.presentation.component.DatePickerDialog

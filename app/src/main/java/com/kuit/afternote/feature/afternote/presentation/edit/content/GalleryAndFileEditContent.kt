@@ -16,10 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.ui.component.Label
-import com.kuit.afternote.core.ui.component.LabelStyle
-import com.kuit.afternote.core.ui.component.Multiline
-import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.component.Label
+import com.kuit.afternote.core.component.LabelStyle
+import com.kuit.afternote.core.component.Multiline
+import com.kuit.afternote.core.component.OutlineTextField
 import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiverSection
 import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodSection

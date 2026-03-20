@@ -1,9 +1,6 @@
 package com.kuit.afternote.core.dummy.afternote
 
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
-import com.kuit.afternote.feature.afternote.presentation.edit.model.ProcessingMethodItem
-import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 
 /**
  * Dummy data for 애프터노트 수정 화면 (플레이리스트, 수신자 등).
@@ -64,17 +61,53 @@ object AfternoteEditDummies {
     /**
      * Default search-result songs for Add Song screen. Replace with real search API when ready.
      */
-    fun defaultAddSongSearchResults(): List<PlaylistSongDisplay> =
+    fun defaultAddSongSearchResults(): List<com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay> =
         listOf(
-            PlaylistSongDisplay(id = "1", title = "보고싶다", artist = "김범수"),
-            PlaylistSongDisplay(id = "2", title = "사랑했나봐", artist = "윤도현"),
-            PlaylistSongDisplay(id = "3", title = "나의 옛날이야기", artist = "김광석"),
-            PlaylistSongDisplay(id = "4", title = "그대와 영원히", artist = "이문세"),
-            PlaylistSongDisplay(id = "5", title = "흩어진 꿈", artist = "넬"),
-            PlaylistSongDisplay(id = "6", title = "안녕", artist = "폴킴"),
-            PlaylistSongDisplay(id = "7", title = "첫눈처럼 너에게 가겠다", artist = "에일리"),
-            PlaylistSongDisplay(id = "8", title = "너를 만나", artist = "폴킴"),
-            PlaylistSongDisplay(id = "9", title = "겨울비", artist = "박효신"),
+            PlaylistSongDisplay(
+                id = "1",
+                title = "보고싶다",
+                artist = "김범수",
+            ),
+            PlaylistSongDisplay(
+                id = "2",
+                title = "사랑했나봐",
+                artist = "윤도현",
+            ),
+            PlaylistSongDisplay(
+                id = "3",
+                title = "나의 옛날이야기",
+                artist = "김광석",
+            ),
+            PlaylistSongDisplay(
+                id = "4",
+                title = "그대와 영원히",
+                artist = "이문세",
+            ),
+            PlaylistSongDisplay(
+                id = "5",
+                title = "흩어진 꿈",
+                artist = "넬",
+            ),
+            PlaylistSongDisplay(
+                id = "6",
+                title = "안녕",
+                artist = "폴킴",
+            ),
+            PlaylistSongDisplay(
+                id = "7",
+                title = "첫눈처럼 너에게 가겠다",
+                artist = "에일리",
+            ),
+            PlaylistSongDisplay(
+                id = "8",
+                title = "너를 만나",
+                artist = "폴킴",
+            ),
+            PlaylistSongDisplay(
+                id = "9",
+                title = "겨울비",
+                artist = "박효신",
+            ),
         )
 
     /**

@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.ui.expand.dropShadow
+import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray2
 
@@ -21,34 +21,36 @@ import com.kuit.afternote.ui.theme.Gray2
 fun ThumbSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     // 트랙 (배경)
     Box(
-        modifier = Modifier
-            .width(64.dp)
-            .height(32.dp)
-            .background(
-                color = if (checked) Color(0xFF91C1FF) else Gray2,
-                shape = CircleShape
-            )
-            .clickable(enabled = enabled) { onCheckedChange(!checked) }
-            .padding(2.dp), // 내부 여백
-        contentAlignment = Alignment.CenterStart
+        modifier =
+            Modifier
+                .width(64.dp)
+                .height(32.dp)
+                .background(
+                    color = if (checked) Color(0xFF91C1FF) else Gray2,
+                    shape = CircleShape,
+                ).clickable(enabled = enabled) { onCheckedChange(!checked) }
+                .padding(2.dp),
+        // 내부 여백
+        contentAlignment = Alignment.CenterStart,
     ) {
         // 엄지 (Thumb)
         Box(
-            modifier = Modifier
-                .size(24.dp) // 여기서 원하는 대로 크기 조절 가능!
-                .background(if (!checked) B2 else Color.White, CircleShape)
-                .dropShadow(
-                    shape = CircleShape,
-                    offsetX = 0.dp,
-                    offsetY = 2.dp,
-                    blur = 10.dp,
-                    spread = 0.dp,
-                    color = if (!checked) Color.Black.copy(0.15f) else Color.White
-                )
+            modifier =
+                Modifier
+                    .size(24.dp) // 여기서 원하는 대로 크기 조절 가능!
+                    .background(if (!checked) B2 else Color.White, CircleShape)
+                    .dropShadow(
+                        shape = CircleShape,
+                        offsetX = 0.dp,
+                        offsetY = 2.dp,
+                        blur = 10.dp,
+                        spread = 0.dp,
+                        color = if (!checked) Color.Black.copy(0.15f) else Color.White,
+                    ),
         )
     }
 }

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.component.OutlineTextField
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9

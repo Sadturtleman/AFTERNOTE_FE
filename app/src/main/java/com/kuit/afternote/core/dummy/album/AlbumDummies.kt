@@ -1,6 +1,6 @@
 package com.kuit.afternote.core.dummy.album
 
-import com.kuit.afternote.core.ui.component.list.AlbumCover
+import com.kuit.afternote.core.component.list.AlbumCover
 
 /**
  * Shared default album cover list for playlists (Previews and dummy state).
@@ -12,6 +12,6 @@ object AlbumDummies {
             AlbumCover("1"),
             AlbumCover("2"),
             AlbumCover("3"),
-            AlbumCover("4")
+            AlbumCover("4"),
         )
 }

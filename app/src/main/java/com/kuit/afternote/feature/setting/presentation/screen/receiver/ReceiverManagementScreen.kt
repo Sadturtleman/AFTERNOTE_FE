@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.util.KoreanConsonantUtil
 import com.kuit.afternote.domain.provider.FakeReceiverDataProvider
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.ui.theme.AfternoteTheme
@@ -42,7 +43,6 @@ import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Sansneo
-import com.kuit.afternote.util.KoreanConsonantUtil
 
 @Composable
 fun ReceiverManagementScreen(

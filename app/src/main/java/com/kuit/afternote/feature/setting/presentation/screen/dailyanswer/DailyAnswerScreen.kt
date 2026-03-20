@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.list.RecordQnAListItem
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.list.RecordQnAListItem
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray1

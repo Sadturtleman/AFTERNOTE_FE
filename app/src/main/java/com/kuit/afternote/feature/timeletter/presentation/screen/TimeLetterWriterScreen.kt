@@ -74,9 +74,9 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.DateWheelPicker
-import com.kuit.afternote.core.ui.component.DateWheelPickerDefaults
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.DateWheelPicker
+import com.kuit.afternote.core.component.DateWheelPickerDefaults
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterReceiver
 import com.kuit.afternote.feature.timeletter.presentation.component.DraftSavePopUp
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterRegisteredPopUp

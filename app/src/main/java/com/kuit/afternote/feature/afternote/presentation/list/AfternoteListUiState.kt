@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation.list
 
-import com.kuit.afternote.core.ui.component.list.AfternoteTab
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.list.AfternoteTab
+import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 
 /**

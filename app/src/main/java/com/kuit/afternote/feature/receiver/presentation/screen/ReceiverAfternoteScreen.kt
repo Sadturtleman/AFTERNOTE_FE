@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.ConfirmationPopup
-import com.kuit.afternote.core.ui.component.button.ClickButton
-import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
-import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.component.ConfirmationPopup
+import com.kuit.afternote.core.component.button.ClickButton
+import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.presentation.component.ContentSection
 import com.kuit.afternote.feature.receiver.presentation.component.HeroCard
 import com.kuit.afternote.feature.receiver.presentation.component.TopHeader

@@ -1,6 +1,6 @@
 package com.kuit.afternote.data.repositoryimpl
 
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.data.dto.MusicTrack
 import com.kuit.afternote.data.service.MusicApiService
 import com.kuit.afternote.domain.repository.MusicSearchRepository

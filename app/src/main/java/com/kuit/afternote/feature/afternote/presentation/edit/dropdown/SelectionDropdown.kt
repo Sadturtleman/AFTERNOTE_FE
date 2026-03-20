@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.Label
-import com.kuit.afternote.core.ui.component.LabelStyle
-import com.kuit.afternote.ui.expand.bottomBorder
+import com.kuit.afternote.core.component.Label
+import com.kuit.afternote.core.component.LabelStyle
+import com.kuit.afternote.core.component.expand.bottomBorder
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray3

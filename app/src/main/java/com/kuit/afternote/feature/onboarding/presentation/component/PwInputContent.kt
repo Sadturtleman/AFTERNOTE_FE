@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.ui.component.OutlineTextField
+import com.kuit.afternote.core.component.OutlineTextField
 import com.kuit.afternote.feature.onboarding.presentation.util.PasswordValidator
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray9

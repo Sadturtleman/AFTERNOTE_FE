@@ -1,6 +1,6 @@
 package com.kuit.afternote.domain.repository
 
-import com.kuit.afternote.core.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
 
 /**
  * Music search by keyword (artist or title).

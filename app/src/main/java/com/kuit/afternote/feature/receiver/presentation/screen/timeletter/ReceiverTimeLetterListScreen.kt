@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceivedTimeLetterListItemUi
 import com.kuit.afternote.feature.receiver.presentation.uimodel.ReceiverTimeLettersListUiState

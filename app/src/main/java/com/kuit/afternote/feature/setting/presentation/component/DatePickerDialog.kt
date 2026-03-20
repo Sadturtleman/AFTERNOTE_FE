@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.core.ui.component.DateWheelPicker
-import com.kuit.afternote.ui.expand.dropShadow
+import com.kuit.afternote.core.component.DateWheelPicker
+import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9
@@ -38,21 +38,22 @@ fun DatePickerDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onDateChanged: (LocalDate) -> Unit,
-    initialDate: LocalDate = LocalDate.now()
+    initialDate: LocalDate = LocalDate.now(),
 ) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
-        )
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+            ),
     ) {
         DatePickerDialogContent(
             modifier = modifier,
             initialYear = initialDate.year,
             initialMonth = initialDate.monthValue,
             initialDay = initialDate.dayOfMonth,
-            onConfirm = onDateChanged
+            onConfirm = onDateChanged,
         )
     }
 }
@@ -63,7 +64,7 @@ fun DatePickerDialogContent(
     initialYear: Int = LocalDate.now().year,
     initialMonth: Int = LocalDate.now().monthValue,
     initialDay: Int = LocalDate.now().dayOfMonth,
-    onConfirm: (LocalDate) -> Unit = {}
+    onConfirm: (LocalDate) -> Unit = {},
 ) {
     val containerShape = RoundedCornerShape(16.dp)
     val buttonShape = RoundedCornerShape(8.dp)
@@ -73,36 +74,38 @@ fun DatePickerDialogContent(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .dropShadow(
-                shape = containerShape,
-                color = Color.Black.copy(alpha = 0.15f),
-                blur = 10.dp,
-                offsetX = 0.dp,
-                offsetY = 2.dp,
-                spread = 0.dp
-            ).clip(containerShape)
-            .background(Color.White)
-            .padding(
-                horizontal = 24.dp,
-                vertical = 32.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .dropShadow(
+                    shape = containerShape,
+                    color = Color.Black.copy(alpha = 0.15f),
+                    blur = 10.dp,
+                    offsetX = 0.dp,
+                    offsetY = 2.dp,
+                    spread = 0.dp,
+                ).clip(containerShape)
+                .background(Color.White)
+                .padding(
+                    horizontal = 24.dp,
+                    vertical = 32.dp,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Title
         Text(
             text = "날짜 선택하기",
-            style = TextStyle(
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Bold,
-                color = Gray9,
-                textAlign = TextAlign.Center
-            )
+            style =
+                TextStyle(
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Bold,
+                    color = Gray9,
+                    textAlign = TextAlign.Center,
+                ),
         )
 
         // DateWheelPicker
@@ -110,37 +113,39 @@ fun DatePickerDialogContent(
 //            modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
             modifier = Modifier.fillMaxWidth(),
             currentDate = selectedDate,
-            onDateChanged = { date -> selectedDate = date }
+            onDateChanged = { date -> selectedDate = date },
         )
 
         // Confirm Button
         Text(
             text = "선택하기",
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9,
-                textAlign = TextAlign.Center
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .dropShadow(
-                    shape = buttonShape,
-                    color = Color.Black.copy(alpha = 0.05f),
-                    blur = 5.dp,
-                    offsetX = 0.dp,
-                    offsetY = 2.dp,
-                    spread = 0.dp
-                ).clip(buttonShape)
-                .background(B3)
-                .clickable {
-                    onConfirm(selectedDate)
-                }.padding(
-                    horizontal = 24.dp,
-                    vertical = 16.dp
-                )
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                    textAlign = TextAlign.Center,
+                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .dropShadow(
+                        shape = buttonShape,
+                        color = Color.Black.copy(alpha = 0.05f),
+                        blur = 5.dp,
+                        offsetX = 0.dp,
+                        offsetY = 2.dp,
+                        spread = 0.dp,
+                    ).clip(buttonShape)
+                    .background(B3)
+                    .clickable {
+                        onConfirm(selectedDate)
+                    }.padding(
+                        horizontal = 24.dp,
+                        vertical = 16.dp,
+                    ),
         )
     }
 }
@@ -153,7 +158,7 @@ private fun DatePickerDialogContentPreview() {
             initialYear = 2025,
             initialMonth = 11,
             initialDay = 26,
-            onConfirm = {}
+            onConfirm = {},
         )
     }
 }
