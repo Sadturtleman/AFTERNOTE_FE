@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.setting.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.local.PostDeliveryConditionPreferences
+import com.kuit.afternote.data.service.PostDeliveryConditionPreferences
 import com.kuit.afternote.feature.setting.presentation.model.DeliveryMethodOption
 import com.kuit.afternote.feature.setting.presentation.model.TriggerConditionOption
 import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType
@@ -31,7 +31,7 @@ data class PostDeliveryConditionState(
     val inactivityPeriodDays: Int? = null,
     val lastGreetingMessage: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
 
 /**
@@ -39,10 +39,15 @@ data class PostDeliveryConditionState(
  */
 interface PostDeliveryConditionViewModelContract {
     val state: StateFlow<PostDeliveryConditionState>
+
     fun onDeliveryMethodSelected(option: DeliveryMethodOption)
+
     fun onTriggerConditionSelected(option: TriggerConditionOption)
+
     fun onDateSelected(date: LocalDate?)
+
     fun onLastGreetingChanged(text: String)
+
     fun onSaveLastGreeting(lastGreetingText: String)
 }
 
@@ -51,171 +56,170 @@ interface PostDeliveryConditionViewModelContract {
  */
 @HiltViewModel
 class PostDeliveryConditionViewModel
-@Inject
-constructor(
-    private val getDeliveryConditionUseCase: GetDeliveryConditionUseCase,
-    private val updateDeliveryConditionUseCase: UpdateDeliveryConditionUseCase,
-    private val preferences: PostDeliveryConditionPreferences
-) : ViewModel(), PostDeliveryConditionViewModelContract {
+    @Inject
+    constructor(
+        private val getDeliveryConditionUseCase: GetDeliveryConditionUseCase,
+        private val updateDeliveryConditionUseCase: UpdateDeliveryConditionUseCase,
+        private val preferences: PostDeliveryConditionPreferences,
+    ) : ViewModel(),
+        PostDeliveryConditionViewModelContract {
+        private val _state = MutableStateFlow(PostDeliveryConditionState())
+        override val state: StateFlow<PostDeliveryConditionState> = _state.asStateFlow()
 
-    private val _state = MutableStateFlow(PostDeliveryConditionState())
-    override val state: StateFlow<PostDeliveryConditionState> = _state.asStateFlow()
+        init {
+            viewModelScope.launch { loadDeliveryCondition() }
+        }
 
-    init {
-        viewModelScope.launch { loadDeliveryCondition() }
-    }
-
-    private suspend fun loadDeliveryCondition() {
-        _state.update { it.copy(isLoading = true, errorMessage = null) }
-                getDeliveryConditionUseCase()
-            .onSuccess { condition ->
-                val deliveryCode = preferences.getDeliveryMethod() ?: CODE_AUTOMATIC_TRANSFER
-                _state.update {
-                    it.copy(
-                        selectedDeliveryMethod = deliveryCodeToOption(deliveryCode),
-                        selectedTriggerCondition = conditionTypeToTriggerOption(condition.conditionType),
-                        selectedDate = condition.specificDate?.let { iso -> LocalDate.parse(iso) },
-                        inactivityPeriodDays = condition.inactivityPeriodDays,
-                        lastGreetingMessage = condition.leaveMessage ?: "",
-                        isLoading = false,
-                        errorMessage = null
-                    )
+        private suspend fun loadDeliveryCondition() {
+            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            getDeliveryConditionUseCase()
+                .onSuccess { condition ->
+                    val deliveryCode = preferences.getDeliveryMethod() ?: CODE_AUTOMATIC_TRANSFER
+                    _state.update {
+                        it.copy(
+                            selectedDeliveryMethod = deliveryCodeToOption(deliveryCode),
+                            selectedTriggerCondition = conditionTypeToTriggerOption(condition.conditionType),
+                            selectedDate = condition.specificDate?.let { iso -> LocalDate.parse(iso) },
+                            inactivityPeriodDays = condition.inactivityPeriodDays,
+                            lastGreetingMessage = condition.leaveMessage ?: "",
+                            isLoading = false,
+                            errorMessage = null,
+                        )
+                    }
+                }.onFailure { e ->
+                    _state.update { state -> state.copy(isLoading = false, errorMessage = e.message) }
+                    loadFromPreferencesAsFallback()
                 }
+        }
+
+        private suspend fun loadFromPreferencesAsFallback() {
+            val deliveryCode = preferences.getDeliveryMethod() ?: CODE_AUTOMATIC_TRANSFER
+            val triggerCode = preferences.getTriggerCondition() ?: CODE_APP_INACTIVITY
+            val dateIso = preferences.getTriggerDateIso()
+            _state.update {
+                it.copy(
+                    selectedDeliveryMethod = deliveryCodeToOption(deliveryCode),
+                    selectedTriggerCondition = triggerCodeToOption(triggerCode),
+                    selectedDate = dateIso?.let { iso -> LocalDate.parse(iso) },
+                )
             }
-            .onFailure { e ->
-                _state.update { state -> state.copy(isLoading = false, errorMessage = e.message) }
-                loadFromPreferencesAsFallback()
+        }
+
+        override fun onDeliveryMethodSelected(option: DeliveryMethodOption) {
+            _state.update { it.copy(selectedDeliveryMethod = option) }
+        }
+
+        override fun onTriggerConditionSelected(option: TriggerConditionOption) {
+            _state.update { it.copy(selectedTriggerCondition = option, errorMessage = null) }
+            viewModelScope.launch {
+                updateDeliveryConditionApi()
+                persistDeliveryMethodOnly()
             }
-    }
-
-    private suspend fun loadFromPreferencesAsFallback() {
-        val deliveryCode = preferences.getDeliveryMethod() ?: CODE_AUTOMATIC_TRANSFER
-        val triggerCode = preferences.getTriggerCondition() ?: CODE_APP_INACTIVITY
-        val dateIso = preferences.getTriggerDateIso()
-        _state.update {
-            it.copy(
-                selectedDeliveryMethod = deliveryCodeToOption(deliveryCode),
-                selectedTriggerCondition = triggerCodeToOption(triggerCode),
-                selectedDate = dateIso?.let { iso -> LocalDate.parse(iso) }
-            )
         }
-    }
 
-    override fun onDeliveryMethodSelected(option: DeliveryMethodOption) {
-        _state.update { it.copy(selectedDeliveryMethod = option) }
-    }
-
-    override fun onTriggerConditionSelected(option: TriggerConditionOption) {
-        _state.update { it.copy(selectedTriggerCondition = option, errorMessage = null) }
-        viewModelScope.launch {
-            updateDeliveryConditionApi()
-            persistDeliveryMethodOnly()
+        override fun onDateSelected(date: LocalDate?) {
+            _state.update { it.copy(selectedDate = date, errorMessage = null) }
+            viewModelScope.launch { updateDeliveryConditionApi() }
         }
-    }
 
-    override fun onDateSelected(date: LocalDate?) {
-        _state.update { it.copy(selectedDate = date, errorMessage = null) }
-        viewModelScope.launch { updateDeliveryConditionApi() }
-    }
-
-    override fun onLastGreetingChanged(text: String) {
-        _state.update { it.copy(lastGreetingMessage = text) }
-    }
-
-    override fun onSaveLastGreeting(lastGreetingText: String) {
-        _state.update { it.copy(lastGreetingMessage = lastGreetingText) }
-        viewModelScope.launch { updateDeliveryConditionApi() }
-    }
-
-    private suspend fun updateDeliveryConditionApi() {
-        val s = _state.value
-        val conditionType = triggerOptionToConditionType(s.selectedTriggerCondition)
-        val inactivityPeriodDays = when (conditionType) {
-            DeliveryConditionType.INACTIVITY -> s.inactivityPeriodDays ?: DEFAULT_INACTIVITY_DAYS
-            else -> null
+        override fun onLastGreetingChanged(text: String) {
+            _state.update { it.copy(lastGreetingMessage = text) }
         }
-        val specificDate = when (conditionType) {
-            DeliveryConditionType.SPECIFIC_DATE -> s.selectedDate?.toString()
-            else -> null
+
+        override fun onSaveLastGreeting(lastGreetingText: String) {
+            _state.update { it.copy(lastGreetingMessage = lastGreetingText) }
+            viewModelScope.launch { updateDeliveryConditionApi() }
         }
-        updateDeliveryConditionUseCase(
-            conditionType = conditionType,
-            inactivityPeriodDays = inactivityPeriodDays,
-            specificDate = specificDate,
-            leaveMessage = s.lastGreetingMessage.ifBlank { null }
-        )
-            .onSuccess { condition ->
+
+        private suspend fun updateDeliveryConditionApi() {
+            val s = _state.value
+            val conditionType = triggerOptionToConditionType(s.selectedTriggerCondition)
+            val inactivityPeriodDays =
+                when (conditionType) {
+                    DeliveryConditionType.INACTIVITY -> s.inactivityPeriodDays ?: DEFAULT_INACTIVITY_DAYS
+                    else -> null
+                }
+            val specificDate =
+                when (conditionType) {
+                    DeliveryConditionType.SPECIFIC_DATE -> s.selectedDate?.toString()
+                    else -> null
+                }
+            updateDeliveryConditionUseCase(
+                conditionType = conditionType,
+                inactivityPeriodDays = inactivityPeriodDays,
+                specificDate = specificDate,
+                leaveMessage = s.lastGreetingMessage.ifBlank { null },
+            ).onSuccess { condition ->
                 _state.update {
                     it.copy(
                         inactivityPeriodDays = condition.inactivityPeriodDays,
-                        errorMessage = null
+                        errorMessage = null,
                     )
                 }
                 persistTriggerToPreferences()
-            }
-            .onFailure { e ->
+            }.onFailure { e ->
                 _state.update { state ->
                     state.copy(errorMessage = e.message ?: "전달 조건 저장에 실패했습니다.")
                 }
             }
+        }
+
+        private suspend fun persistDeliveryMethodOnly() {
+            val s = _state.value
+            preferences.save(
+                deliveryMethod = optionToDeliveryCode(s.selectedDeliveryMethod),
+                triggerCondition = optionToTriggerCode(s.selectedTriggerCondition),
+                triggerDateIso = s.selectedDate?.toString(),
+            )
+        }
+
+        private suspend fun persistTriggerToPreferences() {
+            val s = _state.value
+            preferences.save(
+                deliveryMethod = optionToDeliveryCode(s.selectedDeliveryMethod),
+                triggerCondition = optionToTriggerCode(s.selectedTriggerCondition),
+                triggerDateIso = s.selectedDate?.toString(),
+            )
+        }
+
+        private fun conditionTypeToTriggerOption(type: DeliveryConditionType): TriggerConditionOption =
+            when (type) {
+                DeliveryConditionType.NONE -> TriggerConditionOption.AppInactivity
+                DeliveryConditionType.DEATH_CERTIFICATE -> TriggerConditionOption.ReceiverRequest
+                DeliveryConditionType.INACTIVITY -> TriggerConditionOption.AppInactivity
+                DeliveryConditionType.SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
+            }
+
+        private fun triggerOptionToConditionType(option: TriggerConditionOption): DeliveryConditionType =
+            when (option) {
+                TriggerConditionOption.AppInactivity -> DeliveryConditionType.INACTIVITY
+                TriggerConditionOption.SpecificDate -> DeliveryConditionType.SPECIFIC_DATE
+                TriggerConditionOption.ReceiverRequest -> DeliveryConditionType.DEATH_CERTIFICATE
+            }
+
+        private fun optionToDeliveryCode(option: DeliveryMethodOption): String =
+            when (option) {
+                is DeliveryMethodOption.AutomaticTransfer -> CODE_AUTOMATIC_TRANSFER
+                is DeliveryMethodOption.ReceiverApprovalTransfer -> CODE_RECEIVER_APPROVAL
+            }
+
+        private fun deliveryCodeToOption(code: String): DeliveryMethodOption =
+            when (code) {
+                CODE_RECEIVER_APPROVAL -> DeliveryMethodOption.ReceiverApprovalTransfer
+                else -> DeliveryMethodOption.AutomaticTransfer
+            }
+
+        private fun optionToTriggerCode(option: TriggerConditionOption): String =
+            when (option) {
+                is TriggerConditionOption.AppInactivity -> CODE_APP_INACTIVITY
+                is TriggerConditionOption.SpecificDate -> CODE_SPECIFIC_DATE
+                is TriggerConditionOption.ReceiverRequest -> CODE_RECEIVER_REQUEST
+            }
+
+        private fun triggerCodeToOption(code: String): TriggerConditionOption =
+            when (code) {
+                CODE_SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
+                CODE_RECEIVER_REQUEST -> TriggerConditionOption.ReceiverRequest
+                else -> TriggerConditionOption.AppInactivity
+            }
     }
-
-    private suspend fun persistDeliveryMethodOnly() {
-        val s = _state.value
-        preferences.save(
-            deliveryMethod = optionToDeliveryCode(s.selectedDeliveryMethod),
-            triggerCondition = optionToTriggerCode(s.selectedTriggerCondition),
-            triggerDateIso = s.selectedDate?.toString()
-        )
-    }
-
-    private suspend fun persistTriggerToPreferences() {
-        val s = _state.value
-        preferences.save(
-            deliveryMethod = optionToDeliveryCode(s.selectedDeliveryMethod),
-            triggerCondition = optionToTriggerCode(s.selectedTriggerCondition),
-            triggerDateIso = s.selectedDate?.toString()
-        )
-    }
-
-    private fun conditionTypeToTriggerOption(type: DeliveryConditionType): TriggerConditionOption =
-        when (type) {
-            DeliveryConditionType.NONE -> TriggerConditionOption.AppInactivity
-            DeliveryConditionType.DEATH_CERTIFICATE -> TriggerConditionOption.ReceiverRequest
-            DeliveryConditionType.INACTIVITY -> TriggerConditionOption.AppInactivity
-            DeliveryConditionType.SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
-        }
-
-    private fun triggerOptionToConditionType(option: TriggerConditionOption): DeliveryConditionType =
-        when (option) {
-            TriggerConditionOption.AppInactivity -> DeliveryConditionType.INACTIVITY
-            TriggerConditionOption.SpecificDate -> DeliveryConditionType.SPECIFIC_DATE
-            TriggerConditionOption.ReceiverRequest -> DeliveryConditionType.DEATH_CERTIFICATE
-        }
-
-    private fun optionToDeliveryCode(option: DeliveryMethodOption): String =
-        when (option) {
-            is DeliveryMethodOption.AutomaticTransfer -> CODE_AUTOMATIC_TRANSFER
-            is DeliveryMethodOption.ReceiverApprovalTransfer -> CODE_RECEIVER_APPROVAL
-        }
-
-    private fun deliveryCodeToOption(code: String): DeliveryMethodOption =
-        when (code) {
-            CODE_RECEIVER_APPROVAL -> DeliveryMethodOption.ReceiverApprovalTransfer
-            else -> DeliveryMethodOption.AutomaticTransfer
-        }
-
-    private fun optionToTriggerCode(option: TriggerConditionOption): String =
-        when (option) {
-            is TriggerConditionOption.AppInactivity -> CODE_APP_INACTIVITY
-            is TriggerConditionOption.SpecificDate -> CODE_SPECIFIC_DATE
-            is TriggerConditionOption.ReceiverRequest -> CODE_RECEIVER_REQUEST
-        }
-
-    private fun triggerCodeToOption(code: String): TriggerConditionOption =
-        when (code) {
-            CODE_SPECIFIC_DATE -> TriggerConditionOption.SpecificDate
-            CODE_RECEIVER_REQUEST -> TriggerConditionOption.ReceiverRequest
-            else -> TriggerConditionOption.AppInactivity
-        }
-}

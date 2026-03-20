@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
 /**
@@ -11,7 +11,7 @@ import javax.inject.Inject
 class CreateSocialAfternoteUseCase
     @Inject
     constructor(
-        private val repository: AfternoteRepository
+        private val repository: AfternoteRepository,
     ) {
         suspend operator fun invoke(
             title: String,
@@ -20,14 +20,15 @@ class CreateSocialAfternoteUseCase
             leaveMessage: String? = null,
             credentialsId: String? = null,
             credentialsPassword: String? = null,
-            receiverIds: List<Long> = emptyList()
-        ): Result<Long> = repository.createSocial(
-            title = title,
-            processMethod = processMethod,
-            actions = actions,
-            leaveMessage = leaveMessage,
-            credentialsId = credentialsId,
-            credentialsPassword = credentialsPassword,
-            receiverIds = receiverIds
-        )
+            receiverIds: List<Long> = emptyList(),
+        ): Result<Long> =
+            repository.createSocial(
+                title = title,
+                processMethod = processMethod,
+                actions = actions,
+                leaveMessage = leaveMessage,
+                credentialsId = credentialsId,
+                credentialsPassword = credentialsPassword,
+                receiverIds = receiverIds,
+            )
     }

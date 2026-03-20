@@ -4,6 +4,7 @@ package com.kuit.afternote.app.navigation.navgraph
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
@@ -32,8 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -45,21 +46,21 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
 import com.kuit.afternote.app.di.TokenManagerEntryPoint
+import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
+import com.kuit.afternote.feature.afternote.presentation.edit.AfternoteEditState
+import com.kuit.afternote.feature.afternote.presentation.edit.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams
-import com.kuit.afternote.feature.user.presentation.viewmodel.CurrentUserNameViewModel
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.afternote.presentation.navgraph.afternoteNavGraph
-import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteEditState
-import com.kuit.afternote.feature.afternote.presentation.screen.FingerprintLoginScreen
-import com.kuit.afternote.feature.afternote.presentation.screen.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.dailyrecord.presentation.navgraph.recordNavGraph
 import com.kuit.afternote.feature.home.presentation.screen.HomeScreen
 import com.kuit.afternote.feature.home.presentation.screen.HomeScreenEvent
@@ -77,15 +78,18 @@ import com.kuit.afternote.feature.receiverauth.screen.ReceiverOnboardingScreen
 import com.kuit.afternote.feature.receiverauth.screen.VerifySelfScreen
 import com.kuit.afternote.feature.setting.presentation.navgraph.SettingRoute
 import com.kuit.afternote.feature.setting.presentation.navgraph.settingNavGraph
-import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.TimeLetterRoute
 import com.kuit.afternote.feature.timeletter.presentation.navgraph.timeLetterNavGraph
+import com.kuit.afternote.feature.user.presentation.viewmodel.CurrentUserNameViewModel
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.map
 
 private const val TAG_FINGERPRINT = "FingerprintLogin"
 
-private fun ejectToSplashIfLoggedOut(nav: NavHostController, isLoggedIn: Boolean?) {
+private fun ejectToSplashIfLoggedOut(
+    nav: NavHostController,
+    isLoggedIn: Boolean?,
+) {
     if (isLoggedIn != false) return
     val currentRoute = nav.currentBackStackEntry?.destination?.route
     if (currentRoute?.contains("Splash") == true) return
@@ -95,21 +99,35 @@ private fun ejectToSplashIfLoggedOut(nav: NavHostController, isLoggedIn: Boolean
     }
 }
 
-private fun dispatchFromRoot(nav: NavHostController, isLoggedIn: Boolean?) {
+private fun dispatchFromRoot(
+    nav: NavHostController,
+    isLoggedIn: Boolean?,
+) {
     when (isLoggedIn) {
-        true -> nav.navigate("home") {
-            popUpTo("root") { inclusive = true }
-            launchSingleTop = true
+        true -> {
+            nav.navigate("home") {
+                popUpTo("root") { inclusive = true }
+                launchSingleTop = true
+            }
         }
-        false -> nav.navigate(OnboardingRoute.SplashRoute) {
-            popUpTo("root") { inclusive = true }
-            launchSingleTop = true
+
+        false -> {
+            nav.navigate(OnboardingRoute.SplashRoute) {
+                popUpTo("root") { inclusive = true }
+                launchSingleTop = true
+            }
         }
-        null -> Unit
+
+        null -> {
+            Unit
+        }
     }
 }
 
-private fun redirectFromHomeIfLoggedOut(nav: NavHostController, isLoggedIn: Boolean?) {
+private fun redirectFromHomeIfLoggedOut(
+    nav: NavHostController,
+    isLoggedIn: Boolean?,
+) {
     if (isLoggedIn != false) return
     nav.navigate(OnboardingRoute.SplashRoute) {
         launchSingleTop = true
@@ -120,19 +138,28 @@ private fun redirectFromHomeIfLoggedOut(nav: NavHostController, isLoggedIn: Bool
 private fun createBottomNavTabSelectedHandler(nav: NavHostController): (BottomNavItem) -> Unit =
     { item ->
         when (item) {
-            BottomNavItem.HOME -> nav.navigate("home") { launchSingleTop = true }
-            BottomNavItem.AFTERNOTE ->
+            BottomNavItem.HOME -> {
+                nav.navigate("home") { launchSingleTop = true }
+            }
+
+            BottomNavItem.AFTERNOTE -> {
                 nav.navigate(AfternoteRoute.FingerprintLoginRoute) { launchSingleTop = true }
-            BottomNavItem.RECORD -> nav.navigate("record_main") { launchSingleTop = true }
-            BottomNavItem.TIME_LETTER ->
+            }
+
+            BottomNavItem.RECORD -> {
+                nav.navigate("record_main") { launchSingleTop = true }
+            }
+
+            BottomNavItem.TIME_LETTER -> {
                 nav.navigate(TimeLetterRoute.TimeLetterMainRoute) { launchSingleTop = true }
+            }
         }
     }
 
 @Composable
 private fun FingerprintLoginRouteContent(
     navHostController: NavHostController,
-    onBottomNavTabSelected: (BottomNavItem) -> Unit
+    onBottomNavTabSelected: (BottomNavItem) -> Unit,
 ) {
     val context = LocalContext.current
     val activity = context as? FragmentActivity
@@ -148,12 +175,10 @@ private fun FingerprintLoginRouteContent(
                         fragActivity,
                         executor,
                         object : BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(
-                                result: BiometricPrompt.AuthenticationResult
-                            ) {
+                            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                                 navHostController.popBackStack()
                             }
-                        }
+                        },
                     )
                 }
             } catch (e: Throwable) {
@@ -163,7 +188,8 @@ private fun FingerprintLoginRouteContent(
         }
     val promptInfo =
         remember(promptTitle, promptSubtitle) {
-            BiometricPrompt.PromptInfo.Builder()
+            BiometricPrompt.PromptInfo
+                .Builder()
                 .setTitle(promptTitle)
                 .setSubtitle(promptSubtitle)
                 .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
@@ -174,19 +200,21 @@ private fun FingerprintLoginRouteContent(
             if (activity == null) return@FingerprintLoginScreen
             val biometricManager = BiometricManager.from(context)
             when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-                BiometricManager.BIOMETRIC_SUCCESS ->
+                BiometricManager.BIOMETRIC_SUCCESS -> {
                     biometricPrompt?.authenticate(promptInfo)
-                else ->
-                    android.widget.Toast
+                }
+
+                else -> {
+                    Toast
                         .makeText(
                             context,
                             notAvailableMessage,
-                            android.widget.Toast.LENGTH_SHORT
-                        )
-                        .show()
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
             }
         },
-        onBottomNavTabSelected = onBottomNavTabSelected
+        onBottomNavTabSelected = onBottomNavTabSelected,
     )
 }
 
@@ -197,53 +225,72 @@ private fun ReceiverAfternoteListRouteContent(navHostController: NavHostControll
     val afterNotesState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
     var selectedBottomNavItem by remember { mutableStateOf(BottomNavItem.AFTERNOTE) }
-    val filteredItems = remember(afterNotesState.items, selectedTab) {
-        val list = afterNotesState.items
-        when (selectedTab) {
-            AfternoteTab.ALL -> list
-            AfternoteTab.SOCIAL_NETWORK -> list.filter {
-                it.sourceType.equals("SOCIAL", ignoreCase = true)
-            }
-            AfternoteTab.GALLERY_AND_FILES -> list.filter {
-                it.sourceType.equals("GALLERY", ignoreCase = true)
-            }
-            AfternoteTab.MEMORIAL -> list.filter {
-                it.sourceType.equals("PLAYLIST", ignoreCase = true)
+    val filteredItems =
+        remember(afterNotesState.items, selectedTab) {
+            val list = afterNotesState.items
+            when (selectedTab) {
+                AfternoteTab.ALL -> {
+                    list
+                }
+
+                AfternoteTab.SOCIAL_NETWORK -> {
+                    list.filter {
+                        it.sourceType.equals("SOCIAL", ignoreCase = true)
+                    }
+                }
+
+                AfternoteTab.GALLERY_AND_FILES -> {
+                    list.filter {
+                        it.sourceType.equals("GALLERY", ignoreCase = true)
+                    }
+                }
+
+                AfternoteTab.MEMORIAL -> {
+                    list.filter {
+                        it.sourceType.equals("PLAYLIST", ignoreCase = true)
+                    }
+                }
             }
         }
-    }
-    val displayItems = filteredItems.map { item ->
-        val iconResId =
-            if (item.title.isNotBlank()) getIconResForServiceName(item.title)
-            else getAfternoteDisplayRes(item.sourceType).second
-        AfternoteListDisplayItem(
-            id = item.id.toString(),
-            serviceName = item.title,
-            date = item.lastUpdatedAt,
-            iconResId = iconResId
+    val displayItems =
+        filteredItems.map { item ->
+            val iconResId =
+                if (item.title.isNotBlank()) {
+                    getIconResForServiceName(item.title)
+                } else {
+                    getAfternoteDisplayRes(item.sourceType).second
+                }
+            AfternoteListDisplayItem(
+                id = item.id.toString(),
+                serviceName = item.title,
+                date = item.lastUpdatedAt,
+                iconResId = iconResId,
+            )
+        }
+    val listState =
+        ReceiverAfternoteListUiState(
+            items = displayItems,
+            selectedTab = selectedTab,
+            selectedBottomNavItem = selectedBottomNavItem,
         )
-    }
-    val listState = ReceiverAfternoteListUiState(
-        items = displayItems,
-        selectedTab = selectedTab,
-        selectedBottomNavItem = selectedBottomNavItem
-    )
     when {
         afterNotesState.isLoading && displayItems.isEmpty() -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
         }
+
         afterNotesState.errorMessage != null && displayItems.isEmpty() -> {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(PaddingValues(24.dp)),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(PaddingValues(24.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(text = afterNotesState.errorMessage!!)
                 Spacer(modifier = Modifier.height(16.dp))
@@ -252,19 +299,25 @@ private fun ReceiverAfternoteListRouteContent(navHostController: NavHostControll
                 }
             }
         }
+
         else -> {
             ReceiverAfternoteListRoute(
                 uiState = listState,
                 onEvent = { event ->
                     when (event) {
-                        is ReceiverAfternoteListEvent.SelectTab ->
+                        is ReceiverAfternoteListEvent.SelectTab -> {
                             selectedTab = event.tab
-                        is ReceiverAfternoteListEvent.SelectBottomNav ->
+                        }
+
+                        is ReceiverAfternoteListEvent.SelectBottomNav -> {
                             selectedBottomNavItem = event.navItem
-                        is ReceiverAfternoteListEvent.ClickItem ->
+                        }
+
+                        is ReceiverAfternoteListEvent.ClickItem -> {
                             navHostController.navigate("receiver_afternote_detail/${event.itemId}")
+                        }
                     }
-                }
+                },
             )
         }
     }
@@ -276,18 +329,23 @@ private fun HomeScreenContent(
     onSettingsClick: () -> Unit = {},
     onDailyQuestionCtaClick: () -> Unit,
     onTImeLetterClick: () -> Unit,
-    onAfternoteClick: () -> Unit
+    onAfternoteClick: () -> Unit,
 ) {
     HomeScreen(
-        event = object : HomeScreenEvent {
-            override fun onBottomNavTabSelected(item: BottomNavItem) =
-                onBottomNavTabSelected(item)
-            override fun onProfileClick() = Unit
-            override fun onSettingsClick() = onSettingsClick()
-            override fun onDailyQuestionCtaClick() = onDailyQuestionCtaClick()
-            override fun onTimeLetterClick() = onTImeLetterClick()
-            override fun onAfterNoteClick() = onAfternoteClick()
-        }
+        event =
+            object : HomeScreenEvent {
+                override fun onBottomNavTabSelected(item: BottomNavItem) = onBottomNavTabSelected(item)
+
+                override fun onProfileClick() = Unit
+
+                override fun onSettingsClick() = onSettingsClick()
+
+                override fun onDailyQuestionCtaClick() = onDailyQuestionCtaClick()
+
+                override fun onTimeLetterClick() = onTImeLetterClick()
+
+                override fun onAfterNoteClick() = onAfternoteClick()
+            },
     )
 }
 
@@ -295,18 +353,22 @@ private fun HomeScreenContent(
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     val context = LocalContext.current
-    val tokenManager = remember {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            TokenManagerEntryPoint::class.java
-        ).tokenManager()
-    }
-    val receiverAuthSessionHolder = remember {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            ReceiverAuthSessionEntryPoint::class.java
-        ).receiverAuthSessionHolder()
-    }
+    val tokenManager =
+        remember {
+            EntryPointAccessors
+                .fromApplication(
+                    context.applicationContext,
+                    TokenManagerEntryPoint::class.java,
+                ).tokenManager()
+        }
+    val receiverAuthSessionHolder =
+        remember {
+            EntryPointAccessors
+                .fromApplication(
+                    context.applicationContext,
+                    ReceiverAuthSessionEntryPoint::class.java,
+                ).receiverAuthSessionHolder()
+        }
     // null = still loading from DataStore, true/false = resolved
     val isLoggedIn by remember(tokenManager) {
         tokenManager.isLoggedInFlow.map<Boolean, Boolean?> { it }
@@ -320,7 +382,7 @@ fun NavGraph(navHostController: NavHostController) {
     val receiverProvider = DataProviderLocals.LocalReceiverDataProvider.current
     val currentUserNameViewModel: CurrentUserNameViewModel = hiltViewModel()
     val currentUserName by currentUserNameViewModel.userName.collectAsStateWithLifecycle(
-        initialValue = ""
+        initialValue = "",
     )
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn == true) currentUserNameViewModel.loadUserName()
@@ -340,7 +402,7 @@ fun NavGraph(navHostController: NavHostController) {
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        popExitTransition = { ExitTransition.None },
     ) {
         composable("root") {
             LaunchedEffect(isLoggedIn) {
@@ -374,7 +436,7 @@ fun NavGraph(navHostController: NavHostController) {
                         navHostController.navigate(TimeLetterRoute.TimeLetterMainRoute) {
                             launchSingleTop = true
                         }
-                    }
+                    },
                 )
             } else {
                 Box(Modifier.fillMaxSize())
@@ -383,44 +445,47 @@ fun NavGraph(navHostController: NavHostController) {
 
         onboardingNavGraph(
             navController = navHostController,
-            onNavigateToReceiverOnboarding = { navHostController.navigate("receiver_onboarding") }
+            onNavigateToReceiverOnboarding = { navHostController.navigate("receiver_onboarding") },
         )
         recordNavGraph(
             navController = navHostController,
-            onBottomNavTabSelected = onBottomNavTabSelected
+            onBottomNavTabSelected = onBottomNavTabSelected,
         )
         afternoteNavGraph(
             navController = navHostController,
-            params = AfternoteNavGraphParams(
-                afternoteItemsProvider = { afternoteItems },
-                onItemsUpdated = { newItems ->
-                    afternoteItems = newItems
-                },
-                playlistStateHolder = playlistStateHolder,
-                afternoteProvider = afternoteProvider,
-                userNameProvider = { currentUserName },
-                editStateHandling = AfternoteEditStateHandling(
-                    holder = afternoteEditStateHolder,
-                    onClear = { afternoteEditStateHolder.value = null }
+            params =
+                AfternoteNavGraphParams(
+                    afternoteItemsProvider = { afternoteItems },
+                    onItemsUpdated = { newItems ->
+                        afternoteItems = newItems
+                    },
+                    playlistStateHolder = playlistStateHolder,
+                    afternoteProvider = afternoteProvider,
+                    userNameProvider = { currentUserName },
+                    editStateHandling =
+                        AfternoteEditStateHandling(
+                            holder = afternoteEditStateHolder,
+                            onClear = { afternoteEditStateHolder.value = null },
+                        ),
+                    listRefresh =
+                        AfternoteListRefreshParams(
+                            listRefreshRequestedProvider = { listRefreshRequested },
+                            onListRefreshConsumed = { listRefreshRequested = false },
+                            onAfternoteDeleted = { listRefreshRequested = true },
+                        ),
+                    onNavigateToSelectReceiver = {
+                        navHostController.navigate(ReceiverRoute.ReceiverListRoute)
+                    },
                 ),
-                listRefresh = AfternoteListRefreshParams(
-                    listRefreshRequestedProvider = { listRefreshRequested },
-                    onListRefreshConsumed = { listRefreshRequested = false },
-                    onAfternoteDeleted = { listRefreshRequested = true }
-                ),
-                onNavigateToSelectReceiver = {
-                    navHostController.navigate(ReceiverRoute.ReceiverListRoute)
-                }
-            ),
-            onBottomNavTabSelected = onBottomNavTabSelected
+            onBottomNavTabSelected = onBottomNavTabSelected,
         )
         timeLetterNavGraph(
             navController = navHostController,
-            onNavItemSelected = onBottomNavTabSelected
+            onNavItemSelected = onBottomNavTabSelected,
         )
         settingNavGraph(
             navController = navHostController,
-            onBottomNavTabSelected = onBottomNavTabSelected
+            onBottomNavTabSelected = onBottomNavTabSelected,
         )
 
         composable("receiver_main/{receiverId}") { backStackEntry ->
@@ -430,9 +495,8 @@ fun NavGraph(navHostController: NavHostController) {
                 navController = navHostController,
                 receiverTitle = receiverProvider.getDefaultReceiverTitle(), // 팀원 의도 반영
                 albumCovers = afternoteProvider.getAlbumCovers(),
-                receiverAuthSessionHolder = receiverAuthSessionHolder // 경민님 로직 반영
+                receiverAuthSessionHolder = receiverAuthSessionHolder, // 경민님 로직 반영
             )
-
         }
 
         composable("receiver_afternote_list") {
@@ -444,20 +508,20 @@ fun NavGraph(navHostController: NavHostController) {
             Log.d("NavGraph", "receiver_afternote_detail: itemId=$itemId, route=${backStackEntry.destination.route}")
             ReceiverAfternoteDetailRoute(
                 navHostController = navHostController,
-                itemId = itemId
+                itemId = itemId,
             )
         }
 
         composable("receiver_time_letter_list/{receiverId}") {
             ReceiverTimeLetterRoute(
                 navController = navHostController,
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
             )
         }
 
         composable("receiver_time_letter_detail/{receiverId}/{timeLetterReceiverId}") {
             ReceiverTimeLetterDetailRoute(
-                onBackClick = { navHostController.popBackStack() }
+                onBackClick = { navHostController.popBackStack() },
             )
         }
 
@@ -465,7 +529,7 @@ fun NavGraph(navHostController: NavHostController) {
             ReceiverOnboardingScreen(
                 onLoginClick = { navHostController.popBackStack() },
                 onStartClick = { navHostController.navigate("receiver_verify_self") },
-                onSignUpClick = { navHostController.popBackStack() }
+                onSignUpClick = { navHostController.popBackStack() },
             )
         }
 
@@ -480,14 +544,14 @@ fun NavGraph(navHostController: NavHostController) {
                         launchSingleTop = true
                         popUpTo("receiver_onboarding") { inclusive = true }
                     }
-                }
+                },
             )
         }
 
         composable("fingerprint_login") {
             FingerprintLoginRouteContent(
                 navHostController = navHostController,
-                onBottomNavTabSelected = onBottomNavTabSelected
+                onBottomNavTabSelected = onBottomNavTabSelected,
             )
         }
     }

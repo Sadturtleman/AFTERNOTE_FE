@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
 /**
@@ -12,13 +12,14 @@ import javax.inject.Inject
 class UpdateAfternoteUseCase
     @Inject
     constructor(
-        private val repository: AfternoteRepository
+        private val repository: AfternoteRepository,
     ) {
         suspend operator fun invoke(
             afternoteId: Long,
-            body: AfternoteUpdateRequestDto
-        ): Result<Long> = repository.updateAfternote(
-            afternoteId = afternoteId,
-            body = body
-        )
+            body: AfternoteUpdateRequestInput,
+        ): Result<Long> =
+            repository.updateAfternote(
+                afternoteId = afternoteId,
+                input = body,
+            )
     }

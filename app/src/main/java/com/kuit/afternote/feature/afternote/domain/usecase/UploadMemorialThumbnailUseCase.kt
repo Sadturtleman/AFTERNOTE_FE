@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
+import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
 import javax.inject.Inject
 
 /**
@@ -10,8 +10,7 @@ import javax.inject.Inject
 class UploadMemorialThumbnailUseCase
     @Inject
     constructor(
-        private val repository: MemorialThumbnailUploadRepository
+        private val repository: MemorialThumbnailUploadRepository,
     ) {
-        suspend operator fun invoke(jpegBytes: ByteArray): Result<String> =
-            repository.uploadThumbnail(jpegBytes)
+        suspend operator fun invoke(jpegBytes: ByteArray): Result<String> = repository.uploadThumbnail(jpegBytes)
     }

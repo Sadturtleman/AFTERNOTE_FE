@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.domain.usecase
 
-import com.kuit.afternote.data.upload.PhotoUploadRepository
+import com.kuit.afternote.domain.repository.PhotoUploadRepository
 import javax.inject.Inject
 
 private const val DIRECTORY_PROFILES = "profiles"
@@ -11,8 +11,7 @@ private const val DIRECTORY_PROFILES = "profiles"
 class UploadProfileImageUseCase
     @Inject
     constructor(
-        private val photoUploadRepository: PhotoUploadRepository
+        private val photoUploadRepository: PhotoUploadRepository,
     ) {
-    suspend operator fun invoke(uriString: String): Result<String> =
-        photoUploadRepository.upload(uriString, DIRECTORY_PROFILES)
-}
+        suspend operator fun invoke(uriString: String): Result<String> = photoUploadRepository.upload(uriString, DIRECTORY_PROFILES)
+    }

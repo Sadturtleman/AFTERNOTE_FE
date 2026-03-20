@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray8
@@ -36,7 +36,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun ReceiversCard(
     modifier: Modifier = Modifier,
-    receivers: List<AfternoteEditReceiver>
+    receivers: List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver>,
 ) {
     if (receivers.isEmpty()) return
 
@@ -44,67 +44,71 @@ fun ReceiversCard(
         modifier = modifier.fillMaxWidth(),
         content = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+                verticalArrangement = Arrangement.spacedBy(space = 8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.afternote_detail_receivers_label),
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                        ),
                 )
                 receivers.forEach { receiver ->
                     ReceiverDetailItem(receiver = receiver)
                 }
             }
-        }
+        },
     )
 }
 
 @Composable
 private fun ReceiverDetailItem(
     modifier: Modifier = Modifier,
-    receiver: AfternoteEditReceiver
+    receiver: com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Box(
-            modifier = Modifier
-                .size(58.dp)
-                .clip(CircleShape)
+            modifier =
+                Modifier
+                    .size(58.dp)
+                    .clip(CircleShape),
         ) {
             Image(
                 painter = painterResource(R.drawable.img_recipient_profile),
                 contentDescription = "프로필 사진",
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
         Column {
             Text(
                 text = receiver.name,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Black
-                )
+                style =
+                    TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Black,
+                    ),
             )
             Text(
                 text = receiver.label,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal,
-                    color = Gray8
-                )
+                style =
+                    TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Normal,
+                        color = Gray8,
+                    ),
             )
         }
     }
@@ -115,10 +119,19 @@ private fun ReceiverDetailItem(
 private fun ReceiversCardPreview() {
     AfternoteLightTheme {
         ReceiversCard(
-            receivers = listOf(
-                AfternoteEditReceiver(id = "1", name = "황규운", label = "친구"),
-                AfternoteEditReceiver(id = "2", name = "김소희", label = "가족")
-            )
+            receivers =
+                listOf(
+                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver(
+                        id = "1",
+                        name = "황규운",
+                        label = "친구",
+                    ),
+                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver(
+                        id = "2",
+                        name = "김소희",
+                        label = "가족",
+                    ),
+                ),
         )
     }
 }

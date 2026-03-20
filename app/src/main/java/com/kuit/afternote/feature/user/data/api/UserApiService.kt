@@ -1,12 +1,12 @@
 package com.kuit.afternote.feature.user.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.BaseResponse
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionRequestDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto
-import com.kuit.afternote.feature.user.data.dto.ReceiverMindRecordsResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDetailResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverItemDto
+import com.kuit.afternote.feature.user.data.dto.ReceiverMindRecordsResponseDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverResponseDto
 import com.kuit.afternote.feature.user.data.dto.UserPushSettingResponse
@@ -32,14 +32,14 @@ import retrofit2.http.Query
 interface UserApiService {
     @GET("users/me")
     suspend fun getMyProfile(
-        @Query("userId") userId: Long
-    ): ApiResponse<UserResponse?>
+        @Query("userId") userId: Long,
+    ): BaseResponse<UserResponse?>
 
     @PATCH("users/me")
     suspend fun updateMyProfile(
         @Query("userId") userId: Long,
-        @Body body: UserUpdateProfileRequest
-    ): ApiResponse<UserResponse?>
+        @Body body: UserUpdateProfileRequest,
+    ): BaseResponse<UserResponse?>
 
     /**
      * DELETE /users/me — 회원 탈퇴. 로그인한 사용자의 계정을 삭제합니다. 모든 데이터가 영구 삭제되며 복구할 수 없습니다.
@@ -47,7 +47,7 @@ interface UserApiService {
      * @return 200 OK, data: {}
      */
     @DELETE("users/me")
-    suspend fun withdrawAccount(): ApiResponse<Unit?>
+    suspend fun withdrawAccount(): BaseResponse<Unit?>
 
     /**
      * 푸시 알림 설정 조회.
@@ -58,14 +58,14 @@ interface UserApiService {
      */
     @GET("users/push-settings")
     suspend fun getMyPushSettings(
-        @Query("userId") userId: Long
-    ): ApiResponse<UserPushSettingResponse?>
+        @Query("userId") userId: Long,
+    ): BaseResponse<UserPushSettingResponse?>
 
     @PATCH("users/push-settings")
     suspend fun updateMyPushSettings(
         @Query("userId") userId: Long,
-        @Body body: UserUpdatePushSettingRequest
-    ): ApiResponse<UserPushSettingResponse?>
+        @Body body: UserUpdatePushSettingRequest,
+    ): BaseResponse<UserPushSettingResponse?>
 
     /**
      * 수신인 목록 조회.
@@ -76,13 +76,13 @@ interface UserApiService {
      */
     @GET("users/receivers")
     suspend fun getReceivers(
-        @Query("userId") userId: Long
-    ): ApiResponse<List<ReceiverItemDto>?>
+        @Query("userId") userId: Long,
+    ): BaseResponse<List<ReceiverItemDto>?>
 
     @POST("users/receivers")
     suspend fun registerReceiver(
-        @Body body: RegisterReceiverRequestDto
-    ): ApiResponse<RegisterReceiverResponseDto?>
+        @Body body: RegisterReceiverRequestDto,
+    ): BaseResponse<RegisterReceiverResponseDto?>
 
     /**
      * 수신인 상세 조회.
@@ -94,8 +94,8 @@ interface UserApiService {
      */
     @GET("users/receivers/{receiverId}")
     suspend fun getReceiverDetail(
-        @Path("receiverId") receiverId: Long
-    ): ApiResponse<ReceiverDetailResponseDto?>
+        @Path("receiverId") receiverId: Long,
+    ): BaseResponse<ReceiverDetailResponseDto?>
 
     /**
      * 수신인 수정.
@@ -104,8 +104,8 @@ interface UserApiService {
     @PATCH("users/receivers/{receiverId}")
     suspend fun updateReceiver(
         @Path("receiverId") receiverId: Long,
-        @Body body: RegisterReceiverRequestDto
-    ): ApiResponse<Unit?>
+        @Body body: RegisterReceiverRequestDto,
+    ): BaseResponse<Unit?>
 
     /**
      * 수신인별 마음의 기록 전체 조회 (일기, 깊은 생각, 데일리 질문 답변).
@@ -120,8 +120,8 @@ interface UserApiService {
     suspend fun getReceiverMindRecords(
         @Path("receiverId") receiverId: Long,
         @Query("page") page: Int,
-        @Query("size") size: Int
-    ): ApiResponse<ReceiverMindRecordsResponseDto?>
+        @Query("size") size: Int,
+    ): BaseResponse<ReceiverMindRecordsResponseDto?>
 
     /**
      * 수신인별 데일리 질문 답변 목록 조회 (페이지네이션).
@@ -136,8 +136,8 @@ interface UserApiService {
     suspend fun getReceiverDailyQuestions(
         @Path("receiverId") receiverId: Long,
         @Query("page") page: Int,
-        @Query("size") size: Int
-    ): ApiResponse<ReceiverDailyQuestionsResponseDto?>
+        @Query("size") size: Int,
+    ): BaseResponse<ReceiverDailyQuestionsResponseDto?>
 
     /**
      * 전달 조건 조회.
@@ -146,7 +146,7 @@ interface UserApiService {
      * @return data: conditionType, inactivityPeriodDays, specificDate, conditionFulfilled, conditionMet
      */
     @GET("users/delivery-condition")
-    suspend fun getDeliveryCondition(): ApiResponse<DeliveryConditionResponseDto?>
+    suspend fun getDeliveryCondition(): BaseResponse<DeliveryConditionResponseDto?>
 
     /**
      * 전달 조건 수정.
@@ -157,6 +157,6 @@ interface UserApiService {
      */
     @PATCH("users/delivery-condition")
     suspend fun updateDeliveryCondition(
-        @Body body: DeliveryConditionRequestDto
-    ): ApiResponse<DeliveryConditionResponseDto?>
+        @Body body: DeliveryConditionRequestDto,
+    ): BaseResponse<DeliveryConditionResponseDto?>
 }

@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.user.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.remote.ApiException
-import com.kuit.afternote.data.remote.requireData
-import com.kuit.afternote.data.remote.requireSuccess
+import com.kuit.afternote.data.requireData
+import com.kuit.afternote.data.requireStatus
+import com.kuit.afternote.data.service.ApiException
 import com.kuit.afternote.feature.user.data.api.UserApiService
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class UserRepositoryImpl
     @Inject
     constructor(
-        private val api: UserApiService
+        private val api: UserApiService,
     ) : UserRepository {
         override suspend fun getMyProfile(userId: Long): Result<UserProfile> =
             runCatching {
@@ -43,18 +43,20 @@ class UserRepositoryImpl
             userId: Long,
             name: String?,
             phone: String?,
-            profileImageUrl: String?
+            profileImageUrl: String?,
         ): Result<UserProfile> =
             runCatching {
                 Log.d(TAG, "updateMyProfile: userId=$userId, name=$name, phone=$phone")
-                val response = api.updateMyProfile(
-                    userId = userId,
-                    body = UserUpdateProfileRequest(
-                        name = name,
-                        phone = phone,
-                        profileImageUrl = profileImageUrl
+                val response =
+                    api.updateMyProfile(
+                        userId = userId,
+                        body =
+                            UserUpdateProfileRequest(
+                                name = name,
+                                phone = phone,
+                                profileImageUrl = profileImageUrl,
+                            ),
                     )
-                )
                 Log.d(TAG, "updateMyProfile: response=$response")
                 UserMapper.toUserProfile(response.requireData())
             }
@@ -63,7 +65,7 @@ class UserRepositoryImpl
             runCatching {
                 Log.d(TAG, "withdrawAccount: request")
                 val response = api.withdrawAccount()
-                response.requireSuccess()
+                response.requireStatus()
                 Log.d(TAG, "withdrawAccount: success")
                 Unit
             }
@@ -80,18 +82,20 @@ class UserRepositoryImpl
             userId: Long,
             timeLetter: Boolean?,
             mindRecord: Boolean?,
-            afterNote: Boolean?
+            afterNote: Boolean?,
         ): Result<PushSettings> =
             runCatching {
                 Log.d(TAG, "updateMyPushSettings: userId=$userId, timeLetter=$timeLetter, mindRecord=$mindRecord, afterNote=$afterNote")
-                val response = api.updateMyPushSettings(
-                    userId = userId,
-                    body = UserUpdatePushSettingRequest(
-                        timeLetter = timeLetter,
-                        mindRecord = mindRecord,
-                        afterNote = afterNote
+                val response =
+                    api.updateMyPushSettings(
+                        userId = userId,
+                        body =
+                            UserUpdatePushSettingRequest(
+                                timeLetter = timeLetter,
+                                mindRecord = mindRecord,
+                                afterNote = afterNote,
+                            ),
                     )
-                )
                 Log.d(TAG, "updateMyPushSettings: response=$response")
                 UserMapper.toPushSettings(response.requireData())
             }
@@ -109,31 +113,28 @@ class UserRepositoryImpl
             name: String,
             relation: String,
             phone: String?,
-            email: String?
+            email: String?,
         ): Result<Long> =
             runCatching {
                 Log.d(TAG, "registerReceiver: name=$name, relation=$relation")
-                val response = api.registerReceiver(
-                    RegisterReceiverRequestDto(
-                        name = name,
-                        relation = relation,
-                        phone = phone,
-                        email = email
+                val response =
+                    api.registerReceiver(
+                        RegisterReceiverRequestDto(
+                            name = name,
+                            relation = relation,
+                            phone = phone,
+                            email = email,
+                        ),
                     )
-                )
                 Log.d(TAG, "registerReceiver: response=$response")
-                if (response.status != 200 && response.status != 201) {
+                if (response.status != 201) {
                     throw ApiException(
                         status = response.status,
                         code = response.code,
-                        message = response.message
+                        message = response.message ?: "Status 201 아님",
                     )
                 }
-                val data = response.data ?: throw ApiException(
-                    status = response.status,
-                    code = response.code,
-                    message = response.message.ifBlank { "data is null" }
-                )
+                val data = response.requireData()
                 data.receiverId
             }
 
@@ -150,25 +151,27 @@ class UserRepositoryImpl
             name: String,
             relation: String,
             phone: String?,
-            email: String?
+            email: String?,
         ): Result<Unit> =
             runCatching {
                 Log.d(TAG, "updateReceiver: receiverId=$receiverId, name=$name")
-                val response = api.updateReceiver(
-                    receiverId = receiverId,
-                    body = RegisterReceiverRequestDto(
-                        name = name,
-                        relation = relation,
-                        phone = phone,
-                        email = email
+                val response =
+                    api.updateReceiver(
+                        receiverId = receiverId,
+                        body =
+                            RegisterReceiverRequestDto(
+                                name = name,
+                                relation = relation,
+                                phone = phone,
+                                email = email,
+                            ),
                     )
-                )
                 Log.d(TAG, "updateReceiver: response=$response")
                 if (response.status !in 200..299) {
                     throw ApiException(
                         status = response.status,
                         code = response.code,
-                        message = response.message
+                        message = response.message ?: "Status 200 이상 299 이하가 아님",
                     )
                 }
                 Unit
@@ -177,15 +180,16 @@ class UserRepositoryImpl
         override suspend fun getReceiverDailyQuestions(
             receiverId: Long,
             page: Int,
-            size: Int
+            size: Int,
         ): Result<ReceiverDailyQuestionsResult> =
             runCatching {
                 Log.d(TAG, "getReceiverDailyQuestions: receiverId=$receiverId, page=$page, size=$size")
-                val response = api.getReceiverDailyQuestions(
-                    receiverId = receiverId,
-                    page = page,
-                    size = size
-                )
+                val response =
+                    api.getReceiverDailyQuestions(
+                        receiverId = receiverId,
+                        page = page,
+                        size = size,
+                    )
                 Log.d(TAG, "getReceiverDailyQuestions: response=$response")
                 val body = response.requireData()
                 val items = body.items.map(UserMapper::toDailyQuestionAnswerItem)
@@ -195,15 +199,16 @@ class UserRepositoryImpl
         override suspend fun getReceiverMindRecords(
             receiverId: Long,
             page: Int,
-            size: Int
+            size: Int,
         ): Result<ReceiverMindRecordsResult> =
             runCatching {
                 Log.d(TAG, "getReceiverMindRecords: receiverId=$receiverId, page=$page, size=$size")
-                val response = api.getReceiverMindRecords(
-                    receiverId = receiverId,
-                    page = page,
-                    size = size
-                )
+                val response =
+                    api.getReceiverMindRecords(
+                        receiverId = receiverId,
+                        page = page,
+                        size = size,
+                    )
                 Log.d(TAG, "getReceiverMindRecords: response=$response")
                 val body = response.requireData()
                 val items = (body?.items ?: emptyList()).map(UserMapper::toReceiverMindRecordItem)
@@ -222,16 +227,17 @@ class UserRepositoryImpl
             conditionType: DeliveryConditionType,
             inactivityPeriodDays: Int?,
             specificDate: String?,
-            leaveMessage: String?
+            leaveMessage: String?,
         ): Result<DeliveryCondition> =
             runCatching {
                 Log.d(TAG, "updateDeliveryCondition: conditionType=$conditionType")
-                val body = UserMapper.toDeliveryConditionRequestDto(
-                    conditionType = conditionType,
-                    inactivityPeriodDays = inactivityPeriodDays,
-                    specificDate = specificDate,
-                    leaveMessage = leaveMessage
-                )
+                val body =
+                    UserMapper.toDeliveryConditionRequestDto(
+                        conditionType = conditionType,
+                        inactivityPeriodDays = inactivityPeriodDays,
+                        specificDate = specificDate,
+                        leaveMessage = leaveMessage,
+                    )
                 val response = api.updateDeliveryCondition(body)
                 Log.d(TAG, "updateDeliveryCondition: response=$response")
                 UserMapper.toDeliveryCondition(response.requireData())

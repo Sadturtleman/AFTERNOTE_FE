@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.usecase.LogoutUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
@@ -110,8 +110,9 @@ class LogoutViewModelTest {
     @Test
     fun logout_when401Unauthorized_stillClearsTokensAndSucceeds() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Invalid token"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Invalid token"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(401, errorBody))
             coEvery { logoutUseCase(any()) } returns Result.failure(httpException)
 
@@ -126,8 +127,9 @@ class LogoutViewModelTest {
     @Test
     fun logout_when500ServerError_stillClearsTokensAndSucceeds() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(500, errorBody))
             coEvery { logoutUseCase(any()) } returns Result.failure(httpException)
 
@@ -143,9 +145,10 @@ class LogoutViewModelTest {
     @Test
     fun logout_whenNetworkError_stillClearsTokensAndSucceeds() =
         runTest {
-            coEvery { logoutUseCase(any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { logoutUseCase(any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.logout()
             advanceUntilIdle()

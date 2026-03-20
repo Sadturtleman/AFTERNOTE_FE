@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.domain.usecase
 
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import javax.inject.Inject
 
 /**
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class GetUserIdUseCase
     @Inject
     constructor(
-        private val tokenManager: TokenManager
+        private val tokenManager: TokenManager,
     ) {
         /**
          * JWT 토큰에서 userId를 추출합니다.

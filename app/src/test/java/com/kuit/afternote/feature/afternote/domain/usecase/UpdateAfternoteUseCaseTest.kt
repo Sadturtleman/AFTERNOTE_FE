@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequestDto
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.data.dto.AfternoteUpdateRequest
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -12,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 
 class UpdateAfternoteUseCaseTest {
-
     private lateinit var repository: AfternoteRepository
     private lateinit var useCase: UpdateAfternoteUseCase
 
@@ -26,7 +25,7 @@ class UpdateAfternoteUseCaseTest {
     fun invoke_whenSuccess_returnsId() =
         runTest {
             val body =
-                AfternoteUpdateRequestDto(
+                AfternoteUpdateRequest(
                     category = "SOCIAL",
                     title = "수정된 제목",
                     processMethod = "MEMORIAL",
@@ -34,12 +33,12 @@ class UpdateAfternoteUseCaseTest {
                     leaveMessage = "수정된 메시지",
                     credentials = null,
                     receivers = null,
-                    playlist = null
+                    playlist = null,
                 )
             coEvery {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = any()
+                    input = any(),
                 )
             } returns Result.success(10L)
 
@@ -50,7 +49,7 @@ class UpdateAfternoteUseCaseTest {
             coVerify(exactly = 1) {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = body
+                    input = body,
                 )
             }
         }
@@ -59,7 +58,7 @@ class UpdateAfternoteUseCaseTest {
     fun invoke_whenFailure_returnsFailure() =
         runTest {
             val body =
-                AfternoteUpdateRequestDto(
+                AfternoteUpdateRequest(
                     category = "GALLERY",
                     title = "제목",
                     processMethod = null,
@@ -67,12 +66,12 @@ class UpdateAfternoteUseCaseTest {
                     leaveMessage = null,
                     credentials = null,
                     receivers = null,
-                    playlist = null
+                    playlist = null,
                 )
             coEvery {
                 repository.updateAfternote(
                     afternoteId = 10L,
-                    body = any()
+                    input = any(),
                 )
             } returns Result.failure(RuntimeException("404 Not found"))
 

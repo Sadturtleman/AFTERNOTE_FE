@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.MemorialVideoUploadRepository
+import com.kuit.afternote.domain.repository.MemorialVideoUploadRepository
 import javax.inject.Inject
 
 /**
@@ -10,8 +10,7 @@ import javax.inject.Inject
 class UploadMemorialVideoUseCase
     @Inject
     constructor(
-        private val repository: MemorialVideoUploadRepository
+        private val repository: MemorialVideoUploadRepository,
     ) {
-    suspend operator fun invoke(contentUriString: String): Result<String> =
-        repository.uploadVideo(contentUriString)
+        suspend operator fun invoke(contentUriString: String): Result<String> = repository.uploadVideo(contentUriString)
     }

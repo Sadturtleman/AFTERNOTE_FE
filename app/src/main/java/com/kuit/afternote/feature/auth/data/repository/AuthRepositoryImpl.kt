@@ -1,16 +1,16 @@
 package com.kuit.afternote.feature.auth.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.remote.requireData
-import com.kuit.afternote.data.remote.requireSuccess
+import com.kuit.afternote.data.requireData
+import com.kuit.afternote.data.requireStatus
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
-import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest
 import com.kuit.afternote.feature.auth.data.dto.PasswordChangeRequest
 import com.kuit.afternote.feature.auth.data.dto.ReissueRequest
 import com.kuit.afternote.feature.auth.data.dto.SendEmailCodeRequest
 import com.kuit.afternote.feature.auth.data.dto.SignUpRequest
+import com.kuit.afternote.feature.auth.data.dto.SocialLoginRequest
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailData
 import com.kuit.afternote.feature.auth.data.dto.VerifyEmailRequest
 import com.kuit.afternote.feature.auth.data.mapper.AuthMapper
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl
     @Inject
     constructor(
-        private val api: AuthApiService
+        private val api: AuthApiService,
     ) : AuthRepository {
         override suspend fun sendEmailCode(email: String): Result<Unit> =
             runCatching {
@@ -38,13 +38,13 @@ class AuthRepositoryImpl
 
         override suspend fun verifyEmail(
             email: String,
-            certificateCode: String
+            certificateCode: String,
         ): Result<EmailVerifyResult> =
             runCatching {
                 Log.d(TAG, "verifyEmail: email=$email, code=$certificateCode")
                 val response = api.verifyEmail(VerifyEmailRequest(email, certificateCode))
                 Log.d(TAG, "verifyEmail: response=$response")
-                response.requireSuccess()
+                response.requireStatus()
 
                 AuthMapper.toEmailVerifyResult(response.data ?: VerifyEmailData(isVerified = null))
             }
@@ -53,7 +53,7 @@ class AuthRepositoryImpl
             email: String,
             password: String,
             name: String,
-            profileUrl: String?
+            profileUrl: String?,
         ): Result<SignUpResult> =
             runCatching {
                 Log.d(TAG, "signUp: email=$email, name=$name")
@@ -64,7 +64,7 @@ class AuthRepositoryImpl
 
         override suspend fun login(
             email: String,
-            password: String
+            password: String,
         ): Result<LoginResult> =
             runCatching {
                 Log.d(TAG, "login: email=$email")
@@ -97,7 +97,7 @@ class AuthRepositoryImpl
 
         override suspend fun passwordChange(
             currentPassword: String,
-            newPassword: String
+            newPassword: String,
         ): Result<Unit> =
             runCatching {
                 Log.d(TAG, "passwordChange: calling API")

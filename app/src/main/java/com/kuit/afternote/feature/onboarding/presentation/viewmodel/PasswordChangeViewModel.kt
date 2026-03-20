@@ -25,7 +25,7 @@ import javax.inject.Inject
 class PasswordChangeViewModel
     @Inject
     constructor(
-        private val passwordChangeUseCase: PasswordChangeUseCase
+        private val passwordChangeUseCase: PasswordChangeUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(PasswordChangeUiState())
         val uiState: StateFlow<PasswordChangeUiState> = _uiState.asStateFlow()
@@ -33,10 +33,11 @@ class PasswordChangeViewModel
         // Race condition 방지: 진행 중 요청 식별자
         private var currentRequestId = 0
 
-        private val json = Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-        }
+        private val json =
+            Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            }
 
         /**
          * 비밀번호 변경 시도.
@@ -45,7 +46,7 @@ class PasswordChangeViewModel
          */
         fun changePassword(
             currentPassword: String,
-            newPassword: String
+            newPassword: String,
         ) {
             Log.d(TAG, "changePassword called")
             Log.d(TAG, "currentPassword length: ${currentPassword.length}")
@@ -56,10 +57,12 @@ class PasswordChangeViewModel
                     Log.w(TAG, "Validation failed: currentPassword is blank")
                     _uiState.update { it.copy(errorMessage = "현재 비밀번호를 입력하세요.") }
                 }
+
                 newPassword.isBlank() -> {
                     Log.w(TAG, "Validation failed: newPassword is blank")
                     _uiState.update { it.copy(errorMessage = "새 비밀번호를 입력하세요.") }
                 }
+
                 else -> {
                     Log.d(TAG, "Validation passed, calling UseCase")
                     runPasswordChange(currentPassword, newPassword)
@@ -69,7 +72,7 @@ class PasswordChangeViewModel
 
         private fun runPasswordChange(
             currentPassword: String,
-            newPassword: String
+            newPassword: String,
         ) {
             viewModelScope.launch {
                 Log.d(TAG, "runPasswordChange started - Optimistic update")
@@ -84,7 +87,7 @@ class PasswordChangeViewModel
                         isLoading = false,
                         errorMessage = null,
                         passwordChangeSuccess = true,
-                        needsRollback = false
+                        needsRollback = false,
                     )
                 }
 
@@ -93,12 +96,12 @@ class PasswordChangeViewModel
                     .onSuccess {
                         // 최신 요청인지 확인 (레이스 컨디션 방지)
                         if (requestId == currentRequestId) {
-                            Log.d(TAG, "Password change SUCCESS - API confirmed")
+                            Log.d(TAG, "password change SUCCESS - API confirmed")
                         }
                     }.onFailure { e ->
                         // 최신 요청인지 확인 (레이스 컨디션 방지)
                         if (requestId == currentRequestId) {
-                            Log.e(TAG, "Password change FAILED after optimistic update", e)
+                            Log.e(TAG, "password change FAILED after optimistic update", e)
                             Log.e(TAG, "Error message: ${e.message}")
                             Log.e(TAG, "Error class: ${e::class.java.simpleName}")
 
@@ -108,7 +111,7 @@ class PasswordChangeViewModel
                                     isLoading = false,
                                     passwordChangeSuccess = false,
                                     needsRollback = true, // 화면으로 돌아가야 함
-                                    errorMessage = mapErrorToUserMessage(e)
+                                    errorMessage = mapErrorToUserMessage(e),
                                 )
                             }
                         }
@@ -157,35 +160,44 @@ class PasswordChangeViewModel
          */
         private fun mapServerMessageToKorean(
             serverMessage: String,
-            code: Int
+            code: Int,
         ): String {
             // 서버 메시지에서 키워드를 찾아 적절한 한글 메시지 반환
             return when {
                 serverMessage.contains("format", ignoreCase = true) ||
-                    serverMessage.contains("pattern", ignoreCase = true) ->
+                    serverMessage.contains("pattern", ignoreCase = true) -> {
                     "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다."
+                }
 
                 serverMessage.contains("current", ignoreCase = true) &&
-                    serverMessage.contains("password", ignoreCase = true) ->
+                    serverMessage.contains("password", ignoreCase = true) -> {
                     "현재 비밀번호가 일치하지 않습니다."
+                }
 
                 serverMessage.contains("wrong", ignoreCase = true) ||
                     serverMessage.contains("incorrect", ignoreCase = true) ||
-                    serverMessage.contains("invalid", ignoreCase = true) ->
+                    serverMessage.contains("invalid", ignoreCase = true) -> {
                     "현재 비밀번호가 일치하지 않습니다."
+                }
 
-                serverMessage.contains("same", ignoreCase = true) ->
+                serverMessage.contains("same", ignoreCase = true) -> {
                     "새 비밀번호가 현재 비밀번호와 동일합니다."
+                }
 
                 serverMessage.contains("expired", ignoreCase = true) ||
-                    serverMessage.contains("token", ignoreCase = true) ->
+                    serverMessage.contains("token", ignoreCase = true) -> {
                     "로그인이 만료되었습니다. 다시 로그인해주세요."
+                }
 
                 // 서버 메시지가 한글이면 그대로 사용
-                serverMessage.any { it in '\uAC00'..'\uD7A3' } -> serverMessage
+                serverMessage.any { it in '\uAC00'..'\uD7A3' } -> {
+                    serverMessage
+                }
 
                 // 기타: 상태 코드 기반 메시지
-                else -> mapHttpCodeToMessage(code)
+                else -> {
+                    mapHttpCodeToMessage(code)
+                }
             }
         }
 
@@ -235,5 +247,5 @@ class PasswordChangeViewModel
 private data class ErrorResponse(
     val status: Int? = null,
     val code: Int? = null,
-    val message: String? = null
+    val message: String? = null,
 )

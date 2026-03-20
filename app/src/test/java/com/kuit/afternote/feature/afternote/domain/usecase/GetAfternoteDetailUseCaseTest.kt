@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
+import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
@@ -17,7 +17,6 @@ import org.junit.Before
 import org.junit.Test
 
 class GetAfternoteDetailUseCaseTest {
-
     private lateinit var repository: AfternoteRepository
     private lateinit var getReceiversUseCase: GetReceiversUseCase
     private lateinit var getUserIdUseCase: GetUserIdUseCase
@@ -28,11 +27,12 @@ class GetAfternoteDetailUseCaseTest {
         repository = mockk()
         getReceiversUseCase = mockk()
         getUserIdUseCase = mockk()
-        useCase = GetAfternoteDetailUseCase(
-            repository = repository,
-            getReceiversUseCase = getReceiversUseCase,
-            getUserIdUseCase = getUserIdUseCase
-        )
+        useCase =
+            GetAfternoteDetailUseCase(
+                repository = repository,
+                getReceiversUseCase = getReceiversUseCase,
+                getUserIdUseCase = getUserIdUseCase,
+            )
     }
 
     @Test
@@ -48,22 +48,24 @@ class GetAfternoteDetailUseCaseTest {
                     type = AfternoteServiceType.GALLERY_AND_FILES,
                     credentialsId = null,
                     credentialsPassword = null,
-                    receivers = listOf(
-                        AfternoteDetailReceiver(
-                            receiverId = 1L,
-                            name = "",
-                            relation = "",
-                            phone = ""
-                        )
-                    ),
+                    receivers =
+                        listOf(
+                            AfternoteDetailReceiver(
+                                receiverId = 1L,
+                                name = "",
+                                relation = "",
+                                phone = "",
+                            ),
+                        ),
                     processMethod = "TRANSFER",
                     actions = emptyList(),
                     leaveMessage = null,
-                    playlist = null
+                    playlist = null,
                 )
-            val receiversList = listOf(
-                ReceiverListItem(receiverId = 1L, name = "김수신", relation = "친구")
-            )
+            val receiversList =
+                listOf(
+                    ReceiverListItem(receiverId = 1L, name = "김수신", relation = "친구"),
+                )
             coEvery { repository.getAfternoteDetail(afternoteId = 10L) } returns Result.success(detail)
             coEvery { getUserIdUseCase() } returns 100L
             coEvery { getReceiversUseCase(userId = 100L) } returns Result.success(receiversList)
@@ -72,8 +74,22 @@ class GetAfternoteDetailUseCaseTest {
 
             assertTrue(result.isSuccess)
             assertEquals(10L, result.getOrNull()?.id)
-            assertEquals("김수신", result.getOrNull()?.receivers?.single()?.name)
-            assertEquals("친구", result.getOrNull()?.receivers?.single()?.relation)
+            assertEquals(
+                "김수신",
+                result
+                    .getOrNull()
+                    ?.receivers
+                    ?.single()
+                    ?.name,
+            )
+            assertEquals(
+                "친구",
+                result
+                    .getOrNull()
+                    ?.receivers
+                    ?.single()
+                    ?.relation,
+            )
             coVerify(exactly = 1) { repository.getAfternoteDetail(afternoteId = 10L) }
             coVerify(exactly = 1) { getUserIdUseCase() }
             coVerify(exactly = 1) { getReceiversUseCase(userId = 100L) }
@@ -105,18 +121,19 @@ class GetAfternoteDetailUseCaseTest {
                     type = AfternoteServiceType.GALLERY_AND_FILES,
                     credentialsId = null,
                     credentialsPassword = null,
-                    receivers = listOf(
-                        AfternoteDetailReceiver(
-                            receiverId = 1L,
-                            name = "",
-                            relation = "",
-                            phone = ""
-                        )
-                    ),
+                    receivers =
+                        listOf(
+                            AfternoteDetailReceiver(
+                                receiverId = 1L,
+                                name = "",
+                                relation = "",
+                                phone = "",
+                            ),
+                        ),
                     processMethod = "TRANSFER",
                     actions = emptyList(),
                     leaveMessage = null,
-                    playlist = null
+                    playlist = null,
                 )
             coEvery { repository.getAfternoteDetail(afternoteId = 10L) } returns Result.success(detail)
             coEvery { getUserIdUseCase() } returns null
@@ -125,7 +142,14 @@ class GetAfternoteDetailUseCaseTest {
 
             assertTrue(result.isSuccess)
             assertEquals(10L, result.getOrNull()?.id)
-            assertEquals("", result.getOrNull()?.receivers?.single()?.name)
+            assertEquals(
+                "",
+                result
+                    .getOrNull()
+                    ?.receivers
+                    ?.single()
+                    ?.name,
+            )
             coVerify(exactly = 0) { getReceiversUseCase(any()) }
         }
 }

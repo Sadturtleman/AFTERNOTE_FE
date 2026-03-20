@@ -33,12 +33,12 @@ import com.kuit.afternote.core.ui.component.detail.ReceiversCard
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.ui.component.navigation.TopBar
+import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Gray6
 import com.kuit.afternote.ui.theme.Gray9
-import com.kuit.afternote.feature.afternote.presentation.component.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.ui.theme.Sansneo
 
 /**
@@ -55,7 +55,7 @@ data class SocialNetworkDetailContent(
     val processingMethods: List<String> = emptyList(),
     val message: String = "",
     val finalWriteDate: String = "2025.11.26.",
-    val afternoteEditReceivers: List<AfternoteEditReceiver> = emptyList()
+    val afternoteEditReceivers: List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver> = emptyList(),
 )
 
 /**
@@ -82,7 +82,7 @@ fun SocialNetworkDetailScreen(
     onBackClick: () -> Unit,
     onEditClick: () -> Unit = {},
     onDeleteConfirm: () -> Unit = {},
-    state: AfternoteDetailState = rememberAfternoteDetailState()
+    state: AfternoteDetailState = rememberAfternoteDetailState(),
 ) {
     if (isEditable && state.showDeleteDialog) {
         DeleteConfirmDialog(
@@ -91,7 +91,7 @@ fun SocialNetworkDetailScreen(
             onConfirm = {
                 state.hideDeleteDialog()
                 onDeleteConfirm()
-            }
+            },
         )
     }
 
@@ -101,41 +101,43 @@ fun SocialNetworkDetailScreen(
             if (isEditable) {
                 TopBar(
                     onBackClick = onBackClick,
-                    onEditClick = state::toggleDropdownMenu
+                    onEditClick = state::toggleDropdownMenu,
                 )
             } else {
                 TopBar(
                     title = "",
-                    onBackClick = onBackClick
+                    onBackClick = onBackClick,
                 )
             }
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = state.selectedBottomNavItem,
-                onItemSelected = state::onBottomNavItemSelected
+                onItemSelected = state::onBottomNavItemSelected,
             )
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 SocialNetworkDetailScrollContent(content = content)
             }
             if (isEditable) {
                 Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(end = 20.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(end = 20.dp),
                 ) {
                     EditDropdownMenu(
                         expanded = state.showDropdownMenu,
                         onDismissRequest = state::hideDropdownMenu,
                         onEditClick = onEditClick,
-                        onDeleteClick = { state.showDeleteDialog() }
+                        onDeleteClick = { state.showDeleteDialog() },
                     )
                 }
             }
@@ -146,26 +148,29 @@ fun SocialNetworkDetailScreen(
 @Composable
 private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) {
-                    append(content.serviceName)
-                }
-                append("에 대한 ${content.userName}님의 기록")
-            },
-            style = TextStyle(
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Bold,
-                color = Gray9
-            )
+            text =
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = B1)) {
+                        append(content.serviceName)
+                    }
+                    append("에 대한 ${content.userName}님의 기록")
+                },
+            style =
+                TextStyle(
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Bold,
+                    color = Gray9,
+                ),
         )
         Spacer(modifier = Modifier.height(24.dp))
         InfoCard(
@@ -174,19 +179,20 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "최종 작성일 ${content.finalWriteDate}",
-                        style = TextStyle(
-                            fontSize = 10.sp,
-                            lineHeight = 16.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray6
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 10.sp,
+                                lineHeight = 16.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray6,
+                            ),
                     )
                     AccountProcessingMethodText(
-                        accountProcessingMethod = content.accountProcessingMethod
+                        accountProcessingMethod = content.accountProcessingMethod,
                     )
                 }
-            }
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
         ReceiversCard(receivers = content.afternoteEditReceivers)
@@ -197,20 +203,21 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                 Column {
                     Text(
                         text = "기록에 대한 개인 정보",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     InfoRow(label = "아이디", value = content.accountId)
                     Spacer(modifier = Modifier.height(8.dp))
                     InfoRow(label = "비밀번호", value = content.password)
                 }
-            }
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
         if (content.processingMethods.isNotEmpty()) {
@@ -220,13 +227,14 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                     Column {
                         Text(
                             text = "처리 방법",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 22.sp,
-                                fontFamily = Sansneo,
-                                fontWeight = FontWeight.Medium,
-                                color = Gray9
-                            )
+                            style =
+                                TextStyle(
+                                    fontSize = 16.sp,
+                                    lineHeight = 22.sp,
+                                    fontFamily = Sansneo,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Gray9,
+                                ),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         content.processingMethods.forEachIndexed { index, method ->
@@ -234,7 +242,7 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                             ProcessingMethodItem(text = method)
                         }
                     }
-                }
+                },
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -244,29 +252,31 @@ private fun SocialNetworkDetailScrollContent(content: SocialNetworkDetailContent
                 Column {
                     Text(
                         text = "남기신 말씀",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     val displayMessage = content.message.ifEmpty { "남기신 말씀이 없습니다." }
                     val textColor = if (content.message.isNotEmpty()) Gray9 else Gray5
                     Text(
                         text = displayMessage,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = textColor
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = textColor,
+                            ),
                     )
                 }
-            }
+            },
         )
     }
 }
@@ -281,56 +291,72 @@ private fun AccountProcessingMethodText(accountProcessingMethod: String) {
     // 클라이언트 enum 이름을 모두 처리한다.
     val annotatedText =
         when (accountProcessingMethod) {
-            "MEMORIAL" -> buildAnnotatedString {
-                append("사망 후 ")
-                withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
-                append("으로 전환")
+            "MEMORIAL" -> {
+                buildAnnotatedString {
+                    append("사망 후 ")
+                    withStyle(style = SpanStyle(color = B1)) { append("추모 계정") }
+                    append("으로 전환")
+                }
             }
-            "DELETE" -> buildAnnotatedString {
-                append("사망 후 ")
-                withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
+
+            "DELETE" -> {
+                buildAnnotatedString {
+                    append("사망 후 ")
+                    withStyle(style = SpanStyle(color = B1)) { append("계정 영구 삭제") }
+                }
             }
-            "TRANSFER", "RECEIVER" -> buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) { append("수신자") }
-                append("에게 정보 전달")
+
+            "TRANSFER", "RECEIVER" -> {
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = B1)) { append("수신자") }
+                    append("에게 정보 전달")
+                }
             }
-            "ADDITIONAL" -> buildAnnotatedString {
-                withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
-                append("에게 정보 전달")
+
+            "ADDITIONAL" -> {
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = B1)) { append("추가 수신자") }
+                    append("에게 정보 전달")
+                }
             }
-            else -> buildAnnotatedString {
-                append(accountProcessingMethod)
+
+            else -> {
+                buildAnnotatedString {
+                    append(accountProcessingMethod)
+                }
             }
         }
     Text(
         text = annotatedText,
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight.Medium,
-            color = Gray9
-        )
+        style =
+            TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Medium,
+                color = Gray9,
+            ),
     )
 }
 
 @Preview(
     showBackground = true,
-    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false"
+    device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
 )
 @Composable
 private fun SocialNetworkDetailScreenPreview() {
     AfternoteTheme {
         SocialNetworkDetailScreen(
-            content = SocialNetworkDetailContent(
-                accountId = "qwerty123",
-                password = "qwerty123",
-                accountProcessingMethod = "MEMORIAL_ACCOUNT",
-                processingMethods = listOf("게시물 내리기", "추모 게시물 올리기", "추모 계정으로 전환하기"),
-                message = "이 계정에는 우리 가족 여행 사진이 많아.\n계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!"
-            ),
+            content =
+                SocialNetworkDetailContent(
+                    accountId = "qwerty123",
+                    password = "qwerty123",
+                    accountProcessingMethod = "MEMORIAL_ACCOUNT",
+                    processingMethods = listOf("게시물 내리기", "추모 게시물 올리기", "추모 계정으로 전환하기"),
+                    message = "이 계정에는 우리 가족 여행 사진이 많아.\n계정 삭제하지 말고 꼭 추모 계정으로 남겨줘!",
+                ),
             onBackClick = {},
-            onEditClick = {}
+            onEditClick = {},
         )
     }
 }
@@ -338,21 +364,22 @@ private fun SocialNetworkDetailScreenPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "SocialNetworkDetailScreen with Delete Dialog"
+    name = "SocialNetworkDetailScreen with Delete Dialog",
 )
 @Composable
 private fun SocialNetworkDetailScreenWithDeleteDialogPreview() {
     AfternoteTheme {
-        val stateWithDialog = remember {
-            AfternoteDetailState().apply {
-                showDeleteDialog()
+        val stateWithDialog =
+            remember {
+                AfternoteDetailState().apply {
+                    showDeleteDialog()
+                }
             }
-        }
         SocialNetworkDetailScreen(
             content = SocialNetworkDetailContent(),
             onBackClick = {},
             onEditClick = {},
-            state = stateWithDialog
+            state = stateWithDialog,
         )
     }
 }
@@ -360,21 +387,22 @@ private fun SocialNetworkDetailScreenWithDeleteDialogPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "SocialNetworkDetailScreen with Edit Dropdown Menu"
+    name = "SocialNetworkDetailScreen with Edit Dropdown Menu",
 )
 @Composable
 private fun SocialNetworkDetailScreenWithEditDropdownMenuPreview() {
     AfternoteTheme {
-        val stateWithDropdown = remember {
-            AfternoteDetailState().apply {
-                toggleDropdownMenu()
+        val stateWithDropdown =
+            remember {
+                AfternoteDetailState().apply {
+                    toggleDropdownMenu()
+                }
             }
-        }
         SocialNetworkDetailScreen(
             content = SocialNetworkDetailContent(),
             onBackClick = {},
             onEditClick = {},
-            state = stateWithDropdown
+            state = stateWithDropdown,
         )
     }
 }
@@ -382,7 +410,7 @@ private fun SocialNetworkDetailScreenWithEditDropdownMenuPreview() {
 @Preview(
     showBackground = true,
     device = "spec:width=390dp,height=844dp,dpi=420,isRound=false",
-    name = "SocialNetworkDetailScreen - Receiver Mode (Read Only)"
+    name = "SocialNetworkDetailScreen - Receiver Mode (Read Only)",
 )
 @Composable
 private fun SocialNetworkDetailScreenReceiverModePreview() {
@@ -391,9 +419,10 @@ private fun SocialNetworkDetailScreenReceiverModePreview() {
             content = SocialNetworkDetailContent(),
             isEditable = false,
             onBackClick = {},
-            state = rememberAfternoteDetailState(
-                defaultBottomNavItem = BottomNavItem.AFTERNOTE
-            )
+            state =
+                rememberAfternoteDetailState(
+                    defaultBottomNavItem = BottomNavItem.AFTERNOTE,
+                ),
         )
     }
 }

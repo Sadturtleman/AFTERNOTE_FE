@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class CreateSocialAfternoteUseCaseTest {
-
     private lateinit var repository: AfternoteRepository
     private lateinit var useCase: CreateSocialAfternoteUseCase
 
@@ -32,7 +31,7 @@ class CreateSocialAfternoteUseCaseTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.success(3L)
 
@@ -43,7 +42,7 @@ class CreateSocialAfternoteUseCaseTest {
                     actions = listOf("게시물 내리기"),
                     leaveMessage = "감사했습니다",
                     credentialsId = "id",
-                    credentialsPassword = "pw"
+                    credentialsPassword = "pw",
                 )
 
             assertTrue(result.isSuccess)
@@ -56,7 +55,7 @@ class CreateSocialAfternoteUseCaseTest {
                     leaveMessage = "감사했습니다",
                     credentialsId = "id",
                     credentialsPassword = "pw",
-                    receiverIds = emptyList()
+                    receiverIds = emptyList(),
                 )
             }
         }
@@ -72,7 +71,7 @@ class CreateSocialAfternoteUseCaseTest {
                     leaveMessage = any(),
                     credentialsId = any(),
                     credentialsPassword = any(),
-                    receiverIds = any()
+                    receiverIds = any(),
                 )
             } returns Result.failure(RuntimeException("Server error"))
 
@@ -83,7 +82,7 @@ class CreateSocialAfternoteUseCaseTest {
                     actions = emptyList(),
                     leaveMessage = null,
                     credentialsId = null,
-                    credentialsPassword = null
+                    credentialsPassword = null,
                 )
 
             assertTrue(result.isFailure)

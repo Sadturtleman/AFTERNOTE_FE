@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.feature.afternote.domain.repository.iface.AfternoteRepository
+import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
 /**
@@ -11,8 +11,7 @@ import javax.inject.Inject
 class DeleteAfternoteUseCase
     @Inject
     constructor(
-        private val repository: AfternoteRepository
+        private val repository: AfternoteRepository,
     ) {
-        suspend operator fun invoke(afternoteId: Long): Result<Unit> =
-            repository.deleteAfternote(afternoteId = afternoteId)
+        suspend operator fun invoke(afternoteId: Long): Result<Unit> = repository.deleteAfternote(afternoteId = afternoteId)
     }

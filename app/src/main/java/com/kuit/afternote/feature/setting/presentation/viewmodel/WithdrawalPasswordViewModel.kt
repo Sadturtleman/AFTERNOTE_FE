@@ -2,16 +2,16 @@ package com.kuit.afternote.feature.setting.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.local.TokenManager
+import com.kuit.afternote.data.service.TokenManager
 import com.kuit.afternote.feature.user.domain.usecase.WithdrawAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import javax.inject.Inject
 
 /**
  * 회원 탈퇴 확인 문장.
@@ -43,62 +43,61 @@ class WithdrawalPasswordViewModel
         private val withdrawAccountUseCase: WithdrawAccountUseCase,
         private val tokenManager: TokenManager,
     ) : ViewModel() {
+        private val _uiState = MutableStateFlow(WithdrawalPasswordUiState())
+        val uiState: StateFlow<WithdrawalPasswordUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(WithdrawalPasswordUiState())
-    val uiState: StateFlow<WithdrawalPasswordUiState> = _uiState.asStateFlow()
-
-    /**
-     * Called when the user taps "탈퇴하기".
-     * 입력된 문장이 확인 문장과 일치하는지 검증한 후, API를 호출한다.
-     *
-     * @param confirmationText 사용자가 입력한 확인 문장
-     */
-    fun submitWithdrawal(confirmationText: String) {
-        if (confirmationText.trim() != CONFIRMATION_SENTENCE) {
-            _uiState.update { it.copy(showSentenceError = true) }
-            return
-        }
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true, showSentenceError = false, errorMessage = null)
+        /**
+         * Called when the user taps "탈퇴하기".
+         * 입력된 문장이 확인 문장과 일치하는지 검증한 후, API를 호출한다.
+         *
+         * @param confirmationText 사용자가 입력한 확인 문장
+         */
+        fun submitWithdrawal(confirmationText: String) {
+            if (confirmationText.trim() != CONFIRMATION_SENTENCE) {
+                _uiState.update { it.copy(showSentenceError = true) }
+                return
             }
-            withdrawAccountUseCase()
-                .onSuccess {
-                    tokenManager.clearTokens()
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = null,
-                            withdrawalComplete = true,
-                        )
-                    }
+            viewModelScope.launch {
+                _uiState.update {
+                    it.copy(isLoading = true, showSentenceError = false, errorMessage = null)
                 }
-                .onFailure { e ->
-                    val message = when (e) {
-                        is HttpException -> "HTTP ${e.code()} ${e.message()}"
-                        else -> e.message ?: "회원 탈퇴에 실패했습니다."
+                withdrawAccountUseCase()
+                    .onSuccess {
+                        tokenManager.clearTokens()
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = null,
+                                withdrawalComplete = true,
+                            )
+                        }
+                    }.onFailure { e ->
+                        val message =
+                            when (e) {
+                                is HttpException -> "HTTP ${e.code()} ${e.message()}"
+                                else -> e.message ?: "회원 탈퇴에 실패했습니다."
+                            }
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = message,
+                            )
+                        }
                     }
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = message,
-                        )
-                    }
-                }
+            }
+        }
+
+        /**
+         * Clears the sentence mismatch error when the user edits the input.
+         */
+        fun clearSentenceError() {
+            _uiState.update { it.copy(showSentenceError = false) }
+        }
+
+        /**
+         * Clears the withdrawal-complete state after the user taps "확인하기" on the completion dialog.
+         */
+        fun clearWithdrawalComplete() {
+            _uiState.update { it.copy(withdrawalComplete = false) }
         }
     }
-
-    /**
-     * Clears the sentence mismatch error when the user edits the input.
-     */
-    fun clearSentenceError() {
-        _uiState.update { it.copy(showSentenceError = false) }
-    }
-
-    /**
-     * Clears the withdrawal-complete state after the user taps "확인하기" on the completion dialog.
-     */
-    fun clearWithdrawalComplete() {
-        _uiState.update { it.copy(withdrawalComplete = false) }
-    }
-}

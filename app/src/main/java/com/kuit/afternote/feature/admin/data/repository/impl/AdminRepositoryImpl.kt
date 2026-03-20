@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.admin.data.repository.impl
 
-import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.requireData
 import com.kuit.afternote.feature.admin.data.api.AdminApiService
 import com.kuit.afternote.feature.admin.data.dto.AdminVerificationResponseDto
 import com.kuit.afternote.feature.admin.data.dto.ApproveVerificationRequestDto
@@ -14,32 +14,31 @@ import javax.inject.Inject
 class AdminRepositoryImpl
     @Inject
     constructor(
-        private val api: AdminApiService
+        private val api: AdminApiService,
     ) : AdminRepository {
+        override suspend fun getPendingVerifications(): Result<List<AdminVerificationResponseDto>> =
+            runCatching {
+                api.getPendingVerifications().requireData() ?: emptyList()
+            }
 
-    override suspend fun getPendingVerifications(): Result<List<AdminVerificationResponseDto>> =
-        runCatching {
-            api.getPendingVerifications().requireData() ?: emptyList()
-        }
+        override suspend fun getVerificationDetail(id: Long): Result<AdminVerificationResponseDto> =
+            runCatching {
+                api.getVerificationDetail(id).requireData()
+            }
 
-    override suspend fun getVerificationDetail(id: Long): Result<AdminVerificationResponseDto> =
-        runCatching {
-            api.getVerificationDetail(id).requireData()
-        }
+        override suspend fun approveVerification(
+            id: Long,
+            request: ApproveVerificationRequestDto,
+        ): Result<AdminVerificationResponseDto> =
+            runCatching {
+                api.approveVerification(id = id, body = request).requireData()
+            }
 
-    override suspend fun approveVerification(
-        id: Long,
-        request: ApproveVerificationRequestDto
-    ): Result<AdminVerificationResponseDto> =
-        runCatching {
-            api.approveVerification(id = id, body = request).requireData()
-        }
-
-    override suspend fun rejectVerification(
-        id: Long,
-        request: RejectVerificationRequestDto
-    ): Result<AdminVerificationResponseDto> =
-        runCatching {
-            api.rejectVerification(id = id, body = request).requireData()
-        }
-}
+        override suspend fun rejectVerification(
+            id: Long,
+            request: RejectVerificationRequestDto,
+        ): Result<AdminVerificationResponseDto> =
+            runCatching {
+                api.rejectVerification(id = id, body = request).requireData()
+            }
+    }

@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.timeletter.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.remote.requireData
+import com.kuit.afternote.data.requireData
 import com.kuit.afternote.feature.timeletter.data.api.TimeLetterApiService
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterCreateRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterDeleteRequest
@@ -23,7 +23,7 @@ import com.kuit.afternote.feature.timeletter.domain.model.TimeLetterStatus as Do
 class TimeLetterRepositoryImpl
     @Inject
     constructor(
-        private val api: TimeLetterApiService
+        private val api: TimeLetterApiService,
     ) : TimeLetterRepository {
         override suspend fun getTimeLetters(): Result<TimeLetterList> =
             runCatching {
@@ -40,35 +40,39 @@ class TimeLetterRepositoryImpl
             status: DomainStatus,
             mediaList: List<Pair<DomainMediaType, String>>?,
             receiverIds: List<Long>,
-            deliveredAt: String?
+            deliveredAt: String?,
         ): Result<TimeLetter> =
             runCatching {
                 Log.d(TAG, "createTimeLetter: title=$title, status=$status")
-                val dtoStatus = when (status) {
-                    DomainStatus.DRAFT -> DtoStatus.DRAFT
-                    DomainStatus.SCHEDULED -> DtoStatus.SCHEDULED
-                    DomainStatus.SENT -> DtoStatus.SENT
-                }
-                val dtoMediaList = mediaList?.map { (type, url) ->
-                    val dtoType = when (type) {
-                        DomainMediaType.IMAGE -> DtoMediaType.IMAGE
-                        DomainMediaType.VIDEO -> DtoMediaType.VIDEO
-                        DomainMediaType.AUDIO -> DtoMediaType.AUDIO
-                        DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
+                val dtoStatus =
+                    when (status) {
+                        DomainStatus.DRAFT -> DtoStatus.DRAFT
+                        DomainStatus.SCHEDULED -> DtoStatus.SCHEDULED
+                        DomainStatus.SENT -> DtoStatus.SENT
                     }
-                    TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
-                }
-                val response = api.createTimeLetter(
-                    TimeLetterCreateRequest(
-                        title = title,
-                        content = content,
-                        sendAt = sendAt,
-                        status = dtoStatus,
-                        mediaList = dtoMediaList,
-                        receiverIds = receiverIds,
-                        deliveredAt = deliveredAt
+                val dtoMediaList =
+                    mediaList?.map { (type, url) ->
+                        val dtoType =
+                            when (type) {
+                                DomainMediaType.IMAGE -> DtoMediaType.IMAGE
+                                DomainMediaType.VIDEO -> DtoMediaType.VIDEO
+                                DomainMediaType.AUDIO -> DtoMediaType.AUDIO
+                                DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
+                            }
+                        TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
+                    }
+                val response =
+                    api.createTimeLetter(
+                        TimeLetterCreateRequest(
+                            title = title,
+                            content = content,
+                            sendAt = sendAt,
+                            status = dtoStatus,
+                            mediaList = dtoMediaList,
+                            receiverIds = receiverIds,
+                            deliveredAt = deliveredAt,
+                        ),
                     )
-                )
                 Log.d(TAG, "createTimeLetter: response=$response")
                 TimeLetterMapper.toTimeLetter(response.requireData())
             }
@@ -87,36 +91,41 @@ class TimeLetterRepositoryImpl
             content: String?,
             sendAt: String?,
             status: DomainStatus?,
-            mediaList: List<Pair<DomainMediaType, String>>?
+            mediaList: List<Pair<DomainMediaType, String>>?,
         ): Result<TimeLetter> =
             runCatching {
                 Log.d(TAG, "updateTimeLetter: timeLetterId=$timeLetterId, title=$title, status=$status")
-                val dtoStatus = status?.let {
-                    when (it) {
-                        DomainStatus.DRAFT -> DtoStatus.DRAFT
-                        DomainStatus.SCHEDULED -> DtoStatus.SCHEDULED
-                        DomainStatus.SENT -> DtoStatus.SENT
+                val dtoStatus =
+                    status?.let {
+                        when (it) {
+                            DomainStatus.DRAFT -> DtoStatus.DRAFT
+                            DomainStatus.SCHEDULED -> DtoStatus.SCHEDULED
+                            DomainStatus.SENT -> DtoStatus.SENT
+                        }
                     }
-                }
-                val dtoMediaList = mediaList?.map { (type, url) ->
-                    val dtoType = when (type) {
-                        DomainMediaType.IMAGE -> DtoMediaType.IMAGE
-                        DomainMediaType.VIDEO -> DtoMediaType.VIDEO
-                        DomainMediaType.AUDIO -> DtoMediaType.AUDIO
-                        DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
+                val dtoMediaList =
+                    mediaList?.map { (type, url) ->
+                        val dtoType =
+                            when (type) {
+                                DomainMediaType.IMAGE -> DtoMediaType.IMAGE
+                                DomainMediaType.VIDEO -> DtoMediaType.VIDEO
+                                DomainMediaType.AUDIO -> DtoMediaType.AUDIO
+                                DomainMediaType.DOCUMENT -> DtoMediaType.DOCUMENT
+                            }
+                        TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
                     }
-                    TimeLetterMediaRequest(mediaType = dtoType, mediaUrl = url)
-                }
-                val response = api.updateTimeLetter(
-                    timeLetterId = timeLetterId,
-                    body = TimeLetterUpdateRequest(
-                        title = title,
-                        content = content,
-                        sendAt = sendAt,
-                        status = dtoStatus,
-                        mediaList = dtoMediaList
+                val response =
+                    api.updateTimeLetter(
+                        timeLetterId = timeLetterId,
+                        body =
+                            TimeLetterUpdateRequest(
+                                title = title,
+                                content = content,
+                                sendAt = sendAt,
+                                status = dtoStatus,
+                                mediaList = dtoMediaList,
+                            ),
                     )
-                )
                 Log.d(TAG, "updateTimeLetter: response=$response")
                 TimeLetterMapper.toTimeLetter(response.requireData())
             }

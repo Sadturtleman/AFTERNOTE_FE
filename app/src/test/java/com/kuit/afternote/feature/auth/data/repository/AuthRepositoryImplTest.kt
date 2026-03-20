@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.auth.data.repository
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.dto.response.BaseResponse
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.LoginData
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
@@ -23,7 +23,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -49,7 +48,7 @@ class AuthRepositoryImplTest {
     @Test
     fun sendEmailCode_whenSuccess_returnsUnit() =
         runTest {
-            coEvery { api.sendEmailCode(any()) } returns ApiResponse(200, 200, "Success", null)
+            coEvery { api.sendEmailCode(any()) } returns BaseResponse(200, 200, "Success", null)
 
             val result = repository.sendEmailCode("test@example.com")
 
@@ -60,14 +59,16 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_whenSuccess_returnsEmailVerifyResult() =
         runTest {
-            val response = ApiResponse<JsonObject?>(
-                status = 200,
-                code = 200,
-                message = "Success",
-                data = buildJsonObject {
-                    put("isVerified", JsonPrimitive(true))
-                }
-            )
+            val response =
+                BaseResponse<JsonObject?>(
+                    status = 200,
+                    code = 200,
+                    message = "Success",
+                    data =
+                        buildJsonObject {
+                            put("isVerified", JsonPrimitive(true))
+                        },
+                )
             coEvery { api.verifyEmail(any()) } returns response
 
             val result = repository.verifyEmail("test@example.com", "123456")
@@ -80,7 +81,7 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_whenSuccessWithNullData_returnsEmailVerifyResultDefaultTrue() =
         runTest {
-            val response = ApiResponse<JsonObject?>(200, 200, "Success", null)
+            val response = BaseResponse<JsonObject?>(200, 200, "Success", null)
             coEvery { api.verifyEmail(any()) } returns response
 
             val result = repository.verifyEmail("test@example.com", "123456")
@@ -92,12 +93,13 @@ class AuthRepositoryImplTest {
     @Test
     fun signUp_whenSuccess_returnsSignUpResult() =
         runTest {
-            val response = ApiResponse<SignUpData?>(
-                status = 200,
-                code = 200,
-                message = "Success",
-                data = SignUpData(userId = 1L, email = "test@example.com")
-            )
+            val response =
+                BaseResponse<SignUpData?>(
+                    status = 200,
+                    code = 200,
+                    message = "Success",
+                    data = SignUpData(userId = 1L, email = "test@example.com"),
+                )
             coEvery { api.signUp(any()) } returns response
 
             val result = repository.signUp("test@example.com", "password123!", "홍길동", null)
@@ -112,12 +114,13 @@ class AuthRepositoryImplTest {
     @Test
     fun login_whenSuccess_returnsLoginResult() =
         runTest {
-            val response = ApiResponse<LoginData?>(
-                status = 200,
-                code = 200,
-                message = "Success",
-                data = LoginData(accessToken = "at", refreshToken = "rt")
-            )
+            val response =
+                BaseResponse<LoginData?>(
+                    status = 200,
+                    code = 200,
+                    message = "Success",
+                    data = LoginData(accessToken = "at", refreshToken = "rt"),
+                )
             coEvery { api.login(any()) } returns response
 
             val result = repository.login("test@example.com", "password123!")
@@ -130,12 +133,13 @@ class AuthRepositoryImplTest {
     @Test
     fun reissue_whenSuccess_returnsReissueResult() =
         runTest {
-            val response = ApiResponse<ReissueData?>(
-                status = 200,
-                code = 200,
-                message = "Success",
-                data = ReissueData(accessToken = "new_at", refreshToken = "new_rt")
-            )
+            val response =
+                BaseResponse<ReissueData?>(
+                    status = 200,
+                    code = 200,
+                    message = "Success",
+                    data = ReissueData(accessToken = "new_at", refreshToken = "new_rt"),
+                )
             coEvery { api.reissue(any()) } returns response
 
             val result = repository.reissue("old_refresh_token")
@@ -148,7 +152,7 @@ class AuthRepositoryImplTest {
     @Test
     fun logout_whenSuccess_returnsUnit() =
         runTest {
-            coEvery { api.logout(any()) } returns ApiResponse(200, 200, "Success", null)
+            coEvery { api.logout(any()) } returns BaseResponse(200, 200, "Success", null)
 
             val result = repository.logout("refresh_token")
 
@@ -159,7 +163,7 @@ class AuthRepositoryImplTest {
     @Test
     fun passwordChange_whenSuccess_returnsUnit() =
         runTest {
-            coEvery { api.passwordChange(any()) } returns ApiResponse(200, 200, "Success", null)
+            coEvery { api.passwordChange(any()) } returns BaseResponse(200, 200, "Success", null)
 
             val result = repository.passwordChange("oldPwd", "newPwd")
 
@@ -172,11 +176,13 @@ class AuthRepositoryImplTest {
     @Test
     fun login_when404NotFound_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.login(any()) } throws HttpException(
-                Response.error<LoginData>(404, errorBody)
-            )
+            val errorBody =
+                """{"status":404,"code":404,"message":"User not found"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.login(any()) } throws
+                HttpException(
+                    Response.error<LoginData>(404, errorBody),
+                )
 
             val result = repository.login("nonexistent@example.com", "password123!")
 
@@ -189,11 +195,13 @@ class AuthRepositoryImplTest {
     @Test
     fun login_when401Unauthorized_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Invalid credentials"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.login(any()) } throws HttpException(
-                Response.error<LoginData>(401, errorBody)
-            )
+            val errorBody =
+                """{"status":401,"code":401,"message":"Invalid credentials"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.login(any()) } throws
+                HttpException(
+                    Response.error<LoginData>(401, errorBody),
+                )
 
             val result = repository.login("test@example.com", "wrongPassword")
 
@@ -206,11 +214,13 @@ class AuthRepositoryImplTest {
     @Test
     fun login_when400BadRequest_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.login(any()) } throws HttpException(
-                Response.error<LoginData>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.login(any()) } throws
+                HttpException(
+                    Response.error<LoginData>(400, errorBody),
+                )
 
             val result = repository.login("invalid-email", "password123!")
 
@@ -223,11 +233,13 @@ class AuthRepositoryImplTest {
     @Test
     fun login_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.login(any()) } throws HttpException(
-                Response.error<LoginData>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.login(any()) } throws
+                HttpException(
+                    Response.error<LoginData>(500, errorBody),
+                )
 
             val result = repository.login("test@example.com", "password123!")
 
@@ -240,11 +252,13 @@ class AuthRepositoryImplTest {
     @Test
     fun signUp_when409Conflict_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":409,"code":409,"message":"Email already exists"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.signUp(any()) } throws HttpException(
-                Response.error<SignUpData>(409, errorBody)
-            )
+            val errorBody =
+                """{"status":409,"code":409,"message":"Email already exists"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.signUp(any()) } throws
+                HttpException(
+                    Response.error<SignUpData>(409, errorBody),
+                )
 
             val result = repository.signUp("existing@example.com", "password123!", "홍길동", null)
 
@@ -257,11 +271,13 @@ class AuthRepositoryImplTest {
     @Test
     fun sendEmailCode_when429TooManyRequests_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":429,"code":429,"message":"Too many requests"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.sendEmailCode(any()) } throws HttpException(
-                Response.error<Unit>(429, errorBody)
-            )
+            val errorBody =
+                """{"status":429,"code":429,"message":"Too many requests"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.sendEmailCode(any()) } throws
+                HttpException(
+                    Response.error<Unit>(429, errorBody),
+                )
 
             val result = repository.sendEmailCode("test@example.com")
 
@@ -274,11 +290,13 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_when400InvalidCode_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid verification code"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<JsonObject>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid verification code"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.verifyEmail(any()) } throws
+                HttpException(
+                    Response.error<JsonObject>(400, errorBody),
+                )
 
             val result = repository.verifyEmail("test@example.com", "000000")
 
@@ -291,11 +309,13 @@ class AuthRepositoryImplTest {
     @Test
     fun reissue_when401ExpiredToken_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Refresh token expired"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.reissue(any()) } throws HttpException(
-                Response.error<ReissueData>(401, errorBody)
-            )
+            val errorBody =
+                """{"status":401,"code":401,"message":"Refresh token expired"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.reissue(any()) } throws
+                HttpException(
+                    Response.error<ReissueData>(401, errorBody),
+                )
 
             val result = repository.reissue("expired_refresh_token")
 
@@ -308,11 +328,13 @@ class AuthRepositoryImplTest {
     @Test
     fun passwordChange_when401Unauthorized_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Current password is incorrect"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.passwordChange(any()) } throws HttpException(
-                Response.error<Unit>(401, errorBody)
-            )
+            val errorBody =
+                """{"status":401,"code":401,"message":"Current password is incorrect"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.passwordChange(any()) } throws
+                HttpException(
+                    Response.error<Unit>(401, errorBody),
+                )
 
             val result = repository.passwordChange("wrongOldPwd", "newPwd")
 
@@ -325,11 +347,13 @@ class AuthRepositoryImplTest {
     @Test
     fun logout_when401InvalidToken_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Invalid refresh token"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.logout(any()) } throws HttpException(
-                Response.error<Unit>(401, errorBody)
-            )
+            val errorBody =
+                """{"status":401,"code":401,"message":"Invalid refresh token"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.logout(any()) } throws
+                HttpException(
+                    Response.error<Unit>(401, errorBody),
+                )
 
             val result = repository.logout("invalid_refresh_token")
 
@@ -344,11 +368,13 @@ class AuthRepositoryImplTest {
     @Test
     fun signUp_when400BadRequest_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.signUp(any()) } throws HttpException(
-                Response.error<SignUpData>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid password format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.signUp(any()) } throws
+                HttpException(
+                    Response.error<SignUpData>(400, errorBody),
+                )
 
             val result = repository.signUp("test@example.com", "weak", "홍길동", null)
 
@@ -361,11 +387,13 @@ class AuthRepositoryImplTest {
     @Test
     fun signUp_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.signUp(any()) } throws HttpException(
-                Response.error<SignUpData>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.signUp(any()) } throws
+                HttpException(
+                    Response.error<SignUpData>(500, errorBody),
+                )
 
             val result = repository.signUp("test@example.com", "password123!", "홍길동", null)
 
@@ -380,11 +408,13 @@ class AuthRepositoryImplTest {
     @Test
     fun sendEmailCode_when400BadRequest_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.sendEmailCode(any()) } throws HttpException(
-                Response.error<Unit>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.sendEmailCode(any()) } throws
+                HttpException(
+                    Response.error<Unit>(400, errorBody),
+                )
 
             val result = repository.sendEmailCode("invalid-email")
 
@@ -397,11 +427,13 @@ class AuthRepositoryImplTest {
     @Test
     fun sendEmailCode_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Failed to send email"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.sendEmailCode(any()) } throws HttpException(
-                Response.error<Unit>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Failed to send email"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.sendEmailCode(any()) } throws
+                HttpException(
+                    Response.error<Unit>(500, errorBody),
+                )
 
             val result = repository.sendEmailCode("test@example.com")
 
@@ -416,11 +448,13 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_when401CodeExpired_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Verification code expired"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<JsonObject>(401, errorBody)
-            )
+            val errorBody =
+                """{"status":401,"code":401,"message":"Verification code expired"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.verifyEmail(any()) } throws
+                HttpException(
+                    Response.error<JsonObject>(401, errorBody),
+                )
 
             val result = repository.verifyEmail("test@example.com", "123456")
 
@@ -433,11 +467,13 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_when404EmailNotFound_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"Email not found"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<JsonObject>(404, errorBody)
-            )
+            val errorBody =
+                """{"status":404,"code":404,"message":"Email not found"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.verifyEmail(any()) } throws
+                HttpException(
+                    Response.error<JsonObject>(404, errorBody),
+                )
 
             val result = repository.verifyEmail("nonexistent@example.com", "123456")
 
@@ -450,11 +486,13 @@ class AuthRepositoryImplTest {
     @Test
     fun verifyEmail_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.verifyEmail(any()) } throws HttpException(
-                Response.error<JsonObject>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.verifyEmail(any()) } throws
+                HttpException(
+                    Response.error<JsonObject>(500, errorBody),
+                )
 
             val result = repository.verifyEmail("test@example.com", "123456")
 
@@ -469,11 +507,13 @@ class AuthRepositoryImplTest {
     @Test
     fun reissue_when400InvalidToken_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid token format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.reissue(any()) } throws HttpException(
-                Response.error<ReissueData>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid token format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.reissue(any()) } throws
+                HttpException(
+                    Response.error<ReissueData>(400, errorBody),
+                )
 
             val result = repository.reissue("invalid_format_token")
 
@@ -486,11 +526,13 @@ class AuthRepositoryImplTest {
     @Test
     fun reissue_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.reissue(any()) } throws HttpException(
-                Response.error<ReissueData>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.reissue(any()) } throws
+                HttpException(
+                    Response.error<ReissueData>(500, errorBody),
+                )
 
             val result = repository.reissue("valid_refresh_token")
 
@@ -505,11 +547,13 @@ class AuthRepositoryImplTest {
     @Test
     fun logout_when400InvalidToken_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid token format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.logout(any()) } throws HttpException(
-                Response.error<Unit>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid token format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.logout(any()) } throws
+                HttpException(
+                    Response.error<Unit>(400, errorBody),
+                )
 
             val result = repository.logout("invalid_format_token")
 
@@ -522,11 +566,13 @@ class AuthRepositoryImplTest {
     @Test
     fun logout_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.logout(any()) } throws HttpException(
-                Response.error<Unit>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.logout(any()) } throws
+                HttpException(
+                    Response.error<Unit>(500, errorBody),
+                )
 
             val result = repository.logout("refresh_token")
 
@@ -541,11 +587,13 @@ class AuthRepositoryImplTest {
     @Test
     fun passwordChange_when400BadRequest_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.passwordChange(any()) } throws HttpException(
-                Response.error<Unit>(400, errorBody)
-            )
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid password format"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.passwordChange(any()) } throws
+                HttpException(
+                    Response.error<Unit>(400, errorBody),
+                )
 
             val result = repository.passwordChange("oldPwd", "weak")
 
@@ -558,11 +606,13 @@ class AuthRepositoryImplTest {
     @Test
     fun passwordChange_when404UserNotFound_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.passwordChange(any()) } throws HttpException(
-                Response.error<Unit>(404, errorBody)
-            )
+            val errorBody =
+                """{"status":404,"code":404,"message":"User not found"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.passwordChange(any()) } throws
+                HttpException(
+                    Response.error<Unit>(404, errorBody),
+                )
 
             val result = repository.passwordChange("oldPwd", "newPwd123!")
 
@@ -575,11 +625,13 @@ class AuthRepositoryImplTest {
     @Test
     fun passwordChange_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
-            coEvery { api.passwordChange(any()) } throws HttpException(
-                Response.error<Unit>(500, errorBody)
-            )
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
+            coEvery { api.passwordChange(any()) } throws
+                HttpException(
+                    Response.error<Unit>(500, errorBody),
+                )
 
             val result = repository.passwordChange("oldPwd", "newPwd123!")
 

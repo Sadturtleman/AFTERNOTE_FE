@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.data.api
 
-import com.kuit.afternote.data.remote.ApiResponse
+import com.kuit.afternote.data.BaseResponse
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlResponseDto
 import retrofit2.http.Body
@@ -14,6 +14,6 @@ import retrofit2.http.POST
 fun interface ImageApiService {
     @POST("files/presigned-url")
     suspend fun getPresignedUrl(
-        @Body body: PresignedUrlRequestDto
-    ): ApiResponse<PresignedUrlResponseDto?>
+        @Body body: PresignedUrlRequestDto,
+    ): BaseResponse<PresignedUrlResponseDto?>
 }
