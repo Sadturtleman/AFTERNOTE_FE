@@ -8,12 +8,12 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailCredentials
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailProcessing
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailSong
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailTimestamps
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.AfternotePlaylistDetail
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
-import com.kuit.afternote.feature.afternote.domain.model.PlaylistDetailMemorialMedia
+import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternoteDetailSong
+import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistDetail
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistDetailMemorialMedia
 
 /**
  * Maps server DTOs to domain models at the boundary only.

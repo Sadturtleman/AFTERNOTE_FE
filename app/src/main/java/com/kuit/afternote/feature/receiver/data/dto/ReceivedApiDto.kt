@@ -17,8 +17,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateTimeLetterReceiverRequestDto(
     @SerialName("timeLetterID") val timeLetterId: Long,
-    @SerialName("receiverIds") val receiverIds: List<Long>,
-    @SerialName("deliveredAt") val deliveredAt: String? = null
+    @SerialName("receivers") val receiverIds: List<Long>,
+    @SerialName("deliveredAt") val deliveredAt: String? = null,
 )
 
 // --- POST /api/received/mind-records (마인드레코드 수신자 등록) ---
@@ -26,6 +26,5 @@ data class CreateTimeLetterReceiverRequestDto(
 @Serializable
 data class CreateMindRecordReceiverRequestDto(
     @SerialName("mindRecordId") val mindRecordId: Long,
-    @SerialName("receiverIds") val receiverIds: List<Long>
+    @SerialName("receivers") val receiverIds: List<Long>,
 )
-

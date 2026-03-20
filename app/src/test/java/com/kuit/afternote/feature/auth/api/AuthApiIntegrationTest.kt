@@ -60,30 +60,33 @@ class AuthApiIntegrationTest {
         private const val INVALID_TOKEN = "invalid_token_12345"
     }
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-        isLenient = true
-        coerceInputValues = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+            isLenient = true
+            coerceInputValues = true
+        }
 
     @Before
     fun setUp() {
         // 인증 없는 API 클라이언트
-        val okHttpClient = OkHttpClient
-            .Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            ).build()
+        val okHttpClient =
+            OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+                ).build()
 
-        val retrofit = Retrofit
-            .Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
+        val retrofit =
+            Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+                .build()
 
         authApi = retrofit.create(AuthApiService::class.java)
     }
@@ -94,38 +97,43 @@ class AuthApiIntegrationTest {
     private suspend fun loginAndGetTokens() {
         if (accessToken != null && refreshToken != null) return
 
-        val response = authApi.login(
-            LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD)
-        )
+        val response =
+            authApi.login(
+                LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD),
+            )
         accessToken = response.data?.accessToken
         refreshToken = response.data?.refreshToken
 
         // 인증된 API 클라이언트 생성
-        val authInterceptor = Interceptor { chain ->
-            val request = chain
-                .request()
-                .newBuilder()
-                .addHeader("Authorization", "Bearer $accessToken")
+        val authInterceptor =
+            Interceptor { chain ->
+                val request =
+                    chain
+                        .request()
+                        .newBuilder()
+                        .addHeader("Authorization", "Bearer $accessToken")
+                        .build()
+                chain.proceed(request)
+            }
+
+        val authenticatedClient =
+            OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(authInterceptor)
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+                ).build()
+
+        authenticatedApi =
+            Retrofit
+                .Builder()
+                .baseUrl(BASE_URL)
+                .client(authenticatedClient)
+                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
                 .build()
-            chain.proceed(request)
-        }
-
-        val authenticatedClient = OkHttpClient
-            .Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .addInterceptor(authInterceptor)
-            .addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-            ).build()
-
-        authenticatedApi = Retrofit
-            .Builder()
-            .baseUrl(BASE_URL)
-            .client(authenticatedClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(AuthApiService::class.java)
+                .create(AuthApiService::class.java)
     }
 
     // ========== Login API Tests ==========
@@ -133,9 +141,10 @@ class AuthApiIntegrationTest {
     @Test
     fun login_withCorrectCredentials_returns200() =
         runBlocking {
-            val response = authApi.login(
-                LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD)
-            )
+            val response =
+                authApi.login(
+                    LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD),
+                )
 
             // 성공 시 200 OK, data에 토큰이 포함됨
             assertEquals(200, response.status)
@@ -146,7 +155,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.login(
-                    LoginRequest(email = EXISTING_EMAIL, password = WRONG_PASSWORD)
+                    LoginRequest(email = EXISTING_EMAIL, password = WRONG_PASSWORD),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -164,7 +173,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.login(
-                    LoginRequest(email = NON_EXISTENT_EMAIL, password = WRONG_PASSWORD)
+                    LoginRequest(email = NON_EXISTENT_EMAIL, password = WRONG_PASSWORD),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -183,7 +192,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.sendEmailCode(
-                    SendEmailCodeRequest(email = "invalid-email-format")
+                    SendEmailCodeRequest(email = "invalid-email-format"),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -197,7 +206,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.verifyEmail(
-                    VerifyEmailRequest(email = EXISTING_EMAIL, certificateCode = "000000")
+                    VerifyEmailRequest(email = EXISTING_EMAIL, certificateCode = "000000"),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -220,8 +229,8 @@ class AuthApiIntegrationTest {
                         email = EXISTING_EMAIL,
                         password = "TestPassword123!",
                         name = "TestName",
-                        profileUrl = null
-                    )
+                        profileUrl = null,
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -240,8 +249,8 @@ class AuthApiIntegrationTest {
                         email = "newuser_${System.currentTimeMillis()}@test.com",
                         password = "weak", // 약한 비밀번호
                         name = "TestName",
-                        profileUrl = null
-                    )
+                        profileUrl = null,
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -300,7 +309,7 @@ class AuthApiIntegrationTest {
                 // 401 또는 400 중 하나여야 함
                 assertTrue(
                     "Expected 400 or 401 but got ${e.code()}",
-                    e.code() == 400 || e.code() == 401
+                    e.code() == 400 || e.code() == 401,
                 )
             }
         }
@@ -329,39 +338,44 @@ class AuthApiIntegrationTest {
     fun logout_withValidRefreshToken_returnsExpectedStatusCode() =
         runBlocking {
             // 새로운 로그인을 통해 fresh 토큰 획득
-            val loginResponse = authApi.login(
-                LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD)
-            )
+            val loginResponse =
+                authApi.login(
+                    LoginRequest(email = EXISTING_EMAIL, password = CORRECT_PASSWORD),
+                )
             val freshRefreshToken = loginResponse.data?.refreshToken
             val freshAccessToken = loginResponse.data?.accessToken
             assertNotNull("RefreshToken should not be null", freshRefreshToken)
 
             // Authorization 헤더가 있는 클라이언트로 로그아웃 시도
-            val authInterceptor = Interceptor { chain ->
-                val request = chain
-                    .request()
-                    .newBuilder()
-                    .addHeader("Authorization", "Bearer $freshAccessToken")
+            val authInterceptor =
+                Interceptor { chain ->
+                    val request =
+                        chain
+                            .request()
+                            .newBuilder()
+                            .addHeader("Authorization", "Bearer $freshAccessToken")
+                            .build()
+                    chain.proceed(request)
+                }
+
+            val authenticatedClient =
+                OkHttpClient
+                    .Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .addInterceptor(authInterceptor)
+                    .addInterceptor(
+                        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY },
+                    ).build()
+
+            val authenticatedApi =
+                Retrofit
+                    .Builder()
+                    .baseUrl(BASE_URL)
+                    .client(authenticatedClient)
+                    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
                     .build()
-                chain.proceed(request)
-            }
-
-            val authenticatedClient = OkHttpClient
-                .Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-                .addInterceptor(authInterceptor)
-                .addInterceptor(
-                    HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-                ).build()
-
-            val authenticatedApi = Retrofit
-                .Builder()
-                .baseUrl(BASE_URL)
-                .client(authenticatedClient)
-                .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-                .build()
-                .create(AuthApiService::class.java)
+                    .create(AuthApiService::class.java)
 
             try {
                 val response = authenticatedApi.logout(LogoutRequest(refreshToken = freshRefreshToken!!))
@@ -372,7 +386,7 @@ class AuthApiIntegrationTest {
                 // API가 401을 반환하면 기록 (Authorization 헤더가 있어도)
                 assertTrue(
                     "Expected 200 or 401 but got ${e.code()}",
-                    e.code() == 401 || e.code() == 200
+                    e.code() == 401 || e.code() == 200,
                 )
             }
 
@@ -392,7 +406,7 @@ class AuthApiIntegrationTest {
                 // 401 또는 400 중 하나여야 함
                 assertTrue(
                     "Expected 400 or 401 but got ${e.code()}",
-                    e.code() == 400 || e.code() == 401
+                    e.code() == 400 || e.code() == 401,
                 )
             }
         }
@@ -409,7 +423,7 @@ class AuthApiIntegrationTest {
             }
         }
 
-    // ========== Password Change API Tests ==========
+    // ========== password Change API Tests ==========
 
     @Test
     fun passwordChange_withCorrectCurrentPassword_returns200() =
@@ -419,21 +433,23 @@ class AuthApiIntegrationTest {
             // 비밀번호 변경 후 다시 원래대로 변경 (테스트 계정 보호)
             val newPassword = "NewPassword123!"
 
-            val response = authenticatedApi.passwordChange(
-                PasswordChangeRequest(
-                    currentPassword = CORRECT_PASSWORD,
-                    newPassword = newPassword
+            val response =
+                authenticatedApi.passwordChange(
+                    PasswordChangeRequest(
+                        currentPassword = CORRECT_PASSWORD,
+                        newPassword = newPassword,
+                    ),
                 )
-            )
             assertEquals(200, response.status)
 
             // 원래 비밀번호로 복구
-            val restoreResponse = authenticatedApi.passwordChange(
-                PasswordChangeRequest(
-                    currentPassword = newPassword,
-                    newPassword = CORRECT_PASSWORD
+            val restoreResponse =
+                authenticatedApi.passwordChange(
+                    PasswordChangeRequest(
+                        currentPassword = newPassword,
+                        newPassword = CORRECT_PASSWORD,
+                    ),
                 )
-            )
             assertEquals(200, restoreResponse.status)
 
             // 토큰 초기화
@@ -450,8 +466,8 @@ class AuthApiIntegrationTest {
                 authenticatedApi.passwordChange(
                     PasswordChangeRequest(
                         currentPassword = WRONG_PASSWORD,
-                        newPassword = "NewPassword123!"
-                    )
+                        newPassword = "NewPassword123!",
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -459,7 +475,7 @@ class AuthApiIntegrationTest {
                 // 400 또는 401 중 하나여야 함
                 assertTrue(
                     "Expected 400 or 401 but got ${e.code()}",
-                    e.code() == 400 || e.code() == 401
+                    e.code() == 400 || e.code() == 401,
                 )
             }
         }
@@ -473,8 +489,8 @@ class AuthApiIntegrationTest {
                 authenticatedApi.passwordChange(
                     PasswordChangeRequest(
                         currentPassword = CORRECT_PASSWORD,
-                        newPassword = "weak" // 약한 비밀번호
-                    )
+                        newPassword = "weak", // 약한 비밀번호
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -491,8 +507,8 @@ class AuthApiIntegrationTest {
                 authApi.passwordChange(
                     PasswordChangeRequest(
                         currentPassword = CORRECT_PASSWORD,
-                        newPassword = "NewPassword123!"
-                    )
+                        newPassword = "NewPassword123!",
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -522,7 +538,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.verifyEmail(
-                    VerifyEmailRequest(email = NON_EXISTENT_EMAIL, certificateCode = "123456")
+                    VerifyEmailRequest(email = NON_EXISTENT_EMAIL, certificateCode = "123456"),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -530,7 +546,7 @@ class AuthApiIntegrationTest {
                 // 400 또는 404 중 하나여야 함
                 assertTrue(
                     "Expected 400 or 404 but got ${e.code()}",
-                    e.code() == 400 || e.code() == 404
+                    e.code() == 400 || e.code() == 404,
                 )
             }
         }
@@ -540,7 +556,7 @@ class AuthApiIntegrationTest {
         runBlocking {
             try {
                 authApi.verifyEmail(
-                    VerifyEmailRequest(email = EXISTING_EMAIL, certificateCode = "")
+                    VerifyEmailRequest(email = EXISTING_EMAIL, certificateCode = ""),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -560,8 +576,8 @@ class AuthApiIntegrationTest {
                         email = "invalid-email-format",
                         password = "ValidPassword123!",
                         name = "TestName",
-                        profileUrl = null
-                    )
+                        profileUrl = null,
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -579,8 +595,8 @@ class AuthApiIntegrationTest {
                         email = "newuser_${System.currentTimeMillis()}@test.com",
                         password = "ValidPassword123!",
                         name = "",
-                        profileUrl = null
-                    )
+                        profileUrl = null,
+                    ),
                 )
                 throw AssertionError("Expected HttpException but got success response")
             } catch (e: HttpException) {
@@ -721,7 +737,7 @@ class AuthApiIntegrationTest {
                 results["logout_empty_token"] = e.code()
             }
 
-            // ===== Password Change =====
+            // ===== password Change =====
             try {
                 authApi.passwordChange(PasswordChangeRequest(CORRECT_PASSWORD, "NewPass123!"))
                 results["password_change_no_auth"] = "200 (unexpected)"

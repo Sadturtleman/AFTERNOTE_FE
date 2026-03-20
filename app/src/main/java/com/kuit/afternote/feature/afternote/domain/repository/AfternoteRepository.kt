@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.afternote.domain.repository
 
-import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
+import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
 
 /**
  * Afternote 도메인 Repository 인터페이스.
@@ -44,13 +44,13 @@ interface AfternoteRepository {
 
     suspend fun createPlaylist(
         title: String,
-        playlist: AfternotePlaylist,
+        playlist: AfternotePlaylistInput,
         receiverIds: List<Long> = emptyList(),
     ): Result<Long>
 
     suspend fun updateAfternote(
         afternoteId: Long,
-        request: AfternoteUpdateRequest,
+        input: AfternoteUpdateRequestInput,
     ): Result<Long>
 
     suspend fun deleteAfternote(afternoteId: Long): Result<Unit>

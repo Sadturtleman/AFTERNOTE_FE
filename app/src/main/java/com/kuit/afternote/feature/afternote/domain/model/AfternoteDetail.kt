@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
 import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistDetail
 
 /**
  * 애프터노트 상세 도메인 모델.

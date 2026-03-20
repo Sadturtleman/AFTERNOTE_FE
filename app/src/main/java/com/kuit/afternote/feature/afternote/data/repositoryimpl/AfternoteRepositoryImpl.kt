@@ -4,17 +4,18 @@ import android.util.Log
 import com.kuit.afternote.data.requireData
 import com.kuit.afternote.data.requireStatus
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
-import com.kuit.afternote.feature.afternote.data.dto.AfternotePlaylist
 import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteUpdateRequest
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
 import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
+import com.kuit.afternote.feature.afternote.data.mapper.toDto
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
+import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -101,7 +102,7 @@ class AfternoteRepositoryImpl
          */
         override suspend fun createPlaylist(
             title: String,
-            playlist: AfternotePlaylist,
+            playlist: AfternotePlaylistInput,
             receiverIds: List<Long>,
         ): Result<Long> =
             runCatching {
@@ -109,7 +110,7 @@ class AfternoteRepositoryImpl
                     AfternoteCreatePlaylistRequest(
                         category = "PLAYLIST",
                         title = title,
-                        playlist = playlist,
+                        playlist = playlist.toDto(),
                         receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
                     )
                 val response = api.createAfternotePlaylist(request)
@@ -122,10 +123,10 @@ class AfternoteRepositoryImpl
          */
         override suspend fun updateAfternote(
             afternoteId: Long,
-            request: AfternoteUpdateRequest,
+            input: AfternoteUpdateRequestInput,
         ): Result<Long> =
             runCatching {
-                val response = api.updateAfternote(afternoteId = afternoteId, request = request)
+                val response = api.updateAfternote(afternoteId = afternoteId, request = input.toDto())
                 val data = response.requireData()
                 getAfternoteId(data)
             }.logFailure()

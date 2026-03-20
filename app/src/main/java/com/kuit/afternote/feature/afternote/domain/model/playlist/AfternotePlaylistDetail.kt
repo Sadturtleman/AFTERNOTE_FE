@@ -1,4 +1,4 @@
-package com.kuit.afternote.feature.afternote.domain.model
+package com.kuit.afternote.feature.afternote.domain.model.playlist
 
 /**
  * 추모 가이드라인 카테고리의 플레이리스트 상세.

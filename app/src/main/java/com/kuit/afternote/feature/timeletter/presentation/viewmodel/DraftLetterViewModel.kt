@@ -32,14 +32,14 @@ class DraftLetterViewModel
         private val deleteTimeLettersUseCase: DeleteTimeLettersUseCase,
         private val deleteAllTemporaryUseCase: DeleteAllTemporaryUseCase,
         private val getUserIdUseCase: GetUserIdUseCase,
-        private val getReceiversUseCase: GetReceiversUseCase
+        private val getReceiversUseCase: GetReceiversUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(DraftLetterUiState())
         val uiState: StateFlow<DraftLetterUiState> = _uiState.asStateFlow()
 
         /**
          * 임시저장 목록 로드 (GET /time-letters/temporary)
-         * 수신자 목록(GET /users/receivers)으로 receiverIds → 이름 매핑 후 표시
+         * 수신자 목록(GET /users/receivers)으로 receivers → 이름 매핑 후 표시
          */
         fun loadTemporaryLetters() {
             viewModelScope.launch {
@@ -51,14 +51,14 @@ class DraftLetterViewModel
                         _uiState.update {
                             it.copy(
                                 draftLetters = items,
-                                isLoading = false
+                                isLoading = false,
                             )
                         }
                     }.onFailure {
                         _uiState.update {
                             it.copy(
                                 draftLetters = emptyList(),
-                                isLoading = false
+                                isLoading = false,
                             )
                         }
                     }
@@ -72,14 +72,20 @@ class DraftLetterViewModel
 
         private fun resolveReceiverDisplayText(
             receiverIds: List<Long>,
-            receivers: List<ReceiverListItem>
+            receivers: List<ReceiverListItem>,
         ): String =
             when {
-                receiverIds.isEmpty() -> "-"
+                receiverIds.isEmpty() -> {
+                    "-"
+                }
+
                 receiverIds.size == 1 -> {
                     receivers.find { it.receiverId == receiverIds[0] }?.name?.let { name -> "${name}님께" } ?: "-"
                 }
-                else -> "${receiverIds.size}명에게"
+
+                else -> {
+                    "${receiverIds.size}명에게"
+                }
             }
 
         /**
@@ -105,11 +111,12 @@ class DraftLetterViewModel
          */
         fun toggleSelection(id: String) {
             _uiState.update { state ->
-                val newSet = if (state.selectedIds.contains(id)) {
-                    state.selectedIds - id
-                } else {
-                    state.selectedIds + id
-                }
+                val newSet =
+                    if (state.selectedIds.contains(id)) {
+                        state.selectedIds - id
+                    } else {
+                        state.selectedIds + id
+                    }
                 state.copy(selectedIds = newSet)
             }
         }
@@ -126,7 +133,7 @@ class DraftLetterViewModel
                         _uiState.update {
                             it.copy(
                                 isEditMode = false,
-                                selectedIds = emptySet()
+                                selectedIds = emptySet(),
                             )
                         }
                         loadTemporaryLetters()
@@ -146,7 +153,7 @@ class DraftLetterViewModel
                             it.copy(
                                 isEditMode = false,
                                 selectedIds = emptySet(),
-                                draftLetters = emptyList()
+                                draftLetters = emptyList(),
                             )
                         }
                         onSuccess()
@@ -156,13 +163,13 @@ class DraftLetterViewModel
 
         private fun toDraftLetterItem(
             t: TimeLetter,
-            receivers: List<ReceiverListItem>
+            receivers: List<ReceiverListItem>,
         ): DraftLetterItem =
             DraftLetterItem(
                 id = t.id.toString(),
                 receiverName = resolveReceiverDisplayText(t.receiverIds, receivers),
                 sendDate = formatSendAtForDisplay(t.sendAt),
-                title = t.title ?: ""
+                title = t.title ?: "",
             )
 
         /**
@@ -182,5 +189,5 @@ data class DraftLetterUiState(
     val draftLetters: List<DraftLetterItem> = emptyList(),
     val isLoading: Boolean = false,
     val isEditMode: Boolean = false,
-    val selectedIds: Set<String> = emptySet()
+    val selectedIds: Set<String> = emptySet(),
 )

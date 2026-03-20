@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 enum class TimeLetterStatus {
     DRAFT,
     SCHEDULED,
-    SENT
+    SENT,
 }
 
 @Serializable
@@ -19,13 +19,13 @@ enum class TimeLetterMediaType {
     IMAGE,
     VIDEO,
     AUDIO,
-    DOCUMENT
+    DOCUMENT,
 }
 
 @Serializable
 data class TimeLetterMediaRequest(
     @SerialName("mediaType") val mediaType: TimeLetterMediaType,
-    @SerialName("mediaUrl") val mediaUrl: String
+    @SerialName("mediaUrl") val mediaUrl: String,
 )
 
 @Serializable
@@ -35,15 +35,15 @@ data class TimeLetterCreateRequest(
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: TimeLetterStatus,
     @SerialName("mediaList") val mediaList: List<TimeLetterMediaRequest>? = null,
-    @SerialName("receiverIds") val receiverIds: List<Long> = emptyList(),
-    @SerialName("deliveredAt") val deliveredAt: String? = null
+    @SerialName("receivers") val receiverIds: List<Long> = emptyList(),
+    @SerialName("deliveredAt") val deliveredAt: String? = null,
 )
 
 @Serializable
 data class TimeLetterMediaResponse(
     @SerialName("id") val id: Long,
     @SerialName("mediaType") val mediaType: TimeLetterMediaType,
-    @SerialName("mediaUrl") val mediaUrl: String
+    @SerialName("mediaUrl") val mediaUrl: String,
 )
 
 @Serializable
@@ -56,18 +56,18 @@ data class TimeLetterResponse(
     @SerialName("mediaList") val mediaList: List<TimeLetterMediaResponse>? = null,
     val receiverIds: List<Long> = emptyList(),
     @SerialName("createdAt") val createdAt: String? = null,
-    @SerialName("updatedAt") val updatedAt: String? = null
+    @SerialName("updatedAt") val updatedAt: String? = null,
 )
 
 @Serializable
 data class TimeLetterListResponse(
     @SerialName("timeLetters") val timeLetters: List<TimeLetterResponse>,
-    @SerialName("totalCount") val totalCount: Int
+    @SerialName("totalCount") val totalCount: Int,
 )
 
 @Serializable
 data class TimeLetterDeleteRequest(
-    @SerialName("timeLetterIds") val timeLetterIds: List<Long>
+    @SerialName("timeLetterIds") val timeLetterIds: List<Long>,
 )
 
 @Serializable
@@ -76,5 +76,5 @@ data class TimeLetterUpdateRequest(
     @SerialName("content") val content: String? = null,
     @SerialName("sendAt") val sendAt: String? = null,
     @SerialName("status") val status: TimeLetterStatus? = null,
-    @SerialName("mediaList") val mediaList: List<TimeLetterMediaRequest>? = null
+    @SerialName("mediaList") val mediaList: List<TimeLetterMediaRequest>? = null,
 )
