@@ -8,9 +8,9 @@ import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGall
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
 import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
-import com.kuit.afternote.feature.afternote.data.mapper.toDetailDomain
+import com.kuit.afternote.feature.afternote.data.mapper.response.toDetailDomain
+import com.kuit.afternote.feature.afternote.data.mapper.response.toPagedNotes
 import com.kuit.afternote.feature.afternote.data.mapper.toDto
-import com.kuit.afternote.feature.afternote.data.mapper.toPagedNotes
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput

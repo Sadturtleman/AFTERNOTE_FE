@@ -20,13 +20,13 @@ fun List<AfternoteListItem>.toDomainList() = map { it.toDomain() }
 
 // -- Internal helpers --
 
-internal fun formatDateFromServer(createdAt: String): String =
+internal fun formatDateFromServer(serverDateTime: String): String =
     try {
         // Server returns "2025-11-26T14:30:00" -> display "2025.11.26"
-        val datePart = createdAt.substringBefore('T')
+        val datePart = serverDateTime.substringBefore('T')
         datePart.replace('-', '.')
     } catch (_: Exception) {
-        createdAt
+        serverDateTime
     }
 
 internal fun categoryToServiceType(category: String): AfternoteServiceType =
