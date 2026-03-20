@@ -33,7 +33,7 @@ private fun TopBarBackButton(onBackClick: () -> Unit) {
             painter = painterResource(R.drawable.ic_arrow_left_tab),
             contentDescription = null,
             modifier = Modifier.size(width = 8.dp, height = 14.dp),
-            tint = Gray8
+            tint = Gray8,
         )
     }
 }
@@ -42,7 +42,7 @@ private fun TopBarBackButton(onBackClick: () -> Unit) {
 @Composable
 fun TopBar(
     title: String = "",
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -53,11 +53,11 @@ fun TopBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
-                fontFamily = Sansneo
+                fontFamily = Sansneo,
             )
         },
         navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -67,7 +67,7 @@ fun TopBar(
     title: String = "",
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
-    actionText: String = "등록"
+    actionText: String = "등록",
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -78,7 +78,7 @@ fun TopBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
-                fontFamily = Sansneo
+                fontFamily = Sansneo,
             )
         },
         navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
@@ -89,11 +89,11 @@ fun TopBar(
                     fontSize = 14.sp,
                     fontFamily = Sansneo,
                     fontWeight = FontWeight.Normal,
-                    color = Gray5
+                    color = Gray5,
                 )
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -109,10 +109,10 @@ fun TopBar(title: String) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
-                fontFamily = Sansneo
+                fontFamily = Sansneo,
             )
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -121,7 +121,7 @@ fun TopBar(title: String) {
 fun TopBar(
     title: String,
     step: Step,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Column {
@@ -132,15 +132,15 @@ fun TopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = Sansneo
+                    fontFamily = Sansneo,
                 )
             },
             navigationIcon = { TopBarBackButton(onBackClick = onBackClick) },
-            scrollBehavior = scrollBehavior
+            scrollBehavior = scrollBehavior,
         )
         StepProgressBar(
             step = step.value,
-            totalStep = 4
+            totalStep = 4,
         )
     }
 }
@@ -149,7 +149,7 @@ fun TopBar(
 @Composable
 fun TopBar(
     onBackClick: () -> Unit,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -163,11 +163,11 @@ fun TopBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_edit),
                     contentDescription = "편집",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -190,7 +190,7 @@ fun TopBar(
     onActionClick: () -> Unit = {},
     actionText: String = "",
     navigationIcon: (@Composable () -> Unit)? = null,
-    titleContent: (@Composable () -> Unit)? = null
+    titleContent: (@Composable () -> Unit)? = null,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -204,7 +204,7 @@ fun TopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = Sansneo
+                    fontFamily = Sansneo,
                 )
             }
         },
@@ -223,12 +223,12 @@ fun TopBar(
                         fontSize = 14.sp,
                         fontFamily = Sansneo,
                         fontWeight = FontWeight.Normal,
-                        color = Gray5
+                        color = Gray5,
                     )
                 }
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -254,12 +254,13 @@ private fun TopBarWithStepPreview() {
     AfternoteTheme {
         TopBar(
             title = "회원가입",
-            step = object : Step {
-                override val value: Int = 1
+            step =
+                object : Step {
+                    override val value: Int = 1
 
-                override fun previous(): Step? = null
-            },
-            onBackClick = {}
+                    override fun previous(): Step? = null
+                },
+            onBackClick = {},
         )
     }
 }
@@ -278,7 +279,7 @@ private fun TopBarWithActionPreview() {
     AfternoteTheme {
         TopBar(
             onBackClick = {},
-            onActionClick = {}
+            onActionClick = {},
         )
     }
 }
@@ -290,7 +291,7 @@ private fun TopBarWithTitleAndActionPreview() {
         TopBar(
             title = "뒤로가기+액션",
             onBackClick = {},
-            onActionClick = {}
+            onActionClick = {},
         )
     }
 }
@@ -301,7 +302,7 @@ private fun TopBarWithBackAndTitlePreview() {
     AfternoteTheme {
         TopBar(
             title = "추모 플레이리스트",
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }
@@ -312,7 +313,7 @@ private fun TopBarWithEditPreview() {
     AfternoteTheme {
         TopBar(
             onBackClick = {},
-            onEditClick = {}
+            onEditClick = {},
         )
     }
 }

@@ -45,49 +45,51 @@ import com.kuit.afternote.ui.theme.White
 fun AfternoteListItem(
     modifier: Modifier = Modifier,
     item: AfternoteListDisplayItem,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     val shape = RoundedCornerShape(16.dp)
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(74.dp)
-            .dropShadow(
-                shape = shape,
-                color = ShadowBlack,
-                blur = 5.dp,
-                offsetY = 2.dp,
-                offsetX = 0.dp,
-                spread = 0.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(74.dp)
+                .dropShadow(
+                    shape = shape,
+                    color = ShadowBlack,
+                    blur = 5.dp,
+                    offsetY = 2.dp,
+                    offsetX = 0.dp,
+                    spread = 0.dp,
+                ),
         shape = shape,
         color = White,
-        onClick = onClick
+        onClick = onClick,
     ) {
         Box(
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier.padding(horizontal = 20.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     modifier = Modifier.size(40.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Image(
                         painter = painterResource(item.iconResId),
                         contentDescription = item.serviceName,
                         modifier = Modifier.size(40.dp),
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.FillBounds,
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text(
                         text = item.serviceName,
@@ -95,7 +97,7 @@ fun AfternoteListItem(
                         lineHeight = 22.sp,
                         fontSize = 16.sp,
                         fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -111,17 +113,19 @@ fun AfternoteListItem(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(B2)
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(B2),
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_arrow_forward_b2),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(6.dp, 12.dp)
-                            .offset(x = 9.9.dp, y = 6.dp)
+                        modifier =
+                            Modifier
+                                .size(6.dp, 12.dp)
+                                .offset(x = 9.9.dp, y = 6.dp),
                     )
                 }
             }
@@ -134,12 +138,13 @@ fun AfternoteListItem(
 private fun AfternoteListItemPreview() {
     AfternoteTheme {
         AfternoteListItem(
-            item = AfternoteListDisplayItem(
-                id = "1",
-                serviceName = "인스타그램",
-                date = "2023.11.24",
-                iconResId = R.drawable.img_insta_pattern
-            )
+            item =
+                AfternoteListDisplayItem(
+                    id = "1",
+                    serviceName = "인스타그램",
+                    date = "2023.11.24",
+                    iconResId = R.drawable.img_insta_pattern,
+                ),
         )
     }
 }

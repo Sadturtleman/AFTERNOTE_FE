@@ -18,7 +18,7 @@ data class AfternoteListScreenShellParams(
     val bottomBarSelectedItem: BottomNavItem = BottomNavItem.AFTERNOTE,
     val onBottomBarItemSelected: (BottomNavItem) -> Unit,
     val showFab: Boolean = false,
-    val onFabClick: () -> Unit = {}
+    val onFabClick: () -> Unit = {},
 )
 
 /** List params for AfternoteListScreen (items, tab, callbacks, pagination). */
@@ -29,7 +29,7 @@ data class AfternoteListScreenListParams(
     val onItemClick: (String) -> Unit,
     val hasNext: Boolean = false,
     val isLoadingMore: Boolean = false,
-    val onLoadMore: () -> Unit = {}
+    val onLoadMore: () -> Unit = {},
 )
 
 /**
@@ -40,7 +40,7 @@ data class AfternoteListScreenListParams(
 fun AfternoteListScreen(
     modifier: Modifier = Modifier,
     shell: AfternoteListScreenShellParams,
-    list: AfternoteListScreenListParams
+    list: AfternoteListScreenListParams,
 ) {
     AfternoteListScreenShell(
         modifier = modifier,
@@ -52,17 +52,18 @@ fun AfternoteListScreen(
         content = { contentModifier ->
             AfternoteListContent(
                 modifier = contentModifier,
-                list = AfternoteListContentListParams(
-                    items = list.items,
-                    selectedTab = list.selectedTab,
-                    onTabSelected = list.onTabSelected,
-                    onItemClick = list.onItemClick,
-                    hasNext = list.hasNext,
-                    isLoadingMore = list.isLoadingMore,
-                    onLoadMore = list.onLoadMore
-                )
+                list =
+                    AfternoteListContentListParams(
+                        items = list.items,
+                        selectedTab = list.selectedTab,
+                        onTabSelected = list.onTabSelected,
+                        onItemClick = list.onItemClick,
+                        hasNext = list.hasNext,
+                        isLoadingMore = list.isLoadingMore,
+                        onLoadMore = list.onLoadMore,
+                    ),
             )
-        }
+        },
     )
 }
 
@@ -71,28 +72,31 @@ fun AfternoteListScreen(
 private fun AfternoteListScreenPreview() {
     AfternoteTheme {
         AfternoteListScreen(
-            shell = AfternoteListScreenShellParams(
-                bottomBarSelectedItem = BottomNavItem.AFTERNOTE,
-                onBottomBarItemSelected = {},
-                showFab = false,
-                onFabClick = {}
-            ),
-            list = AfternoteListScreenListParams(
-                items = listOf(
-                    AfternoteListDisplayItem(
-                        id = "1",
-                        serviceName = "추모 가이드라인",
-                        date = "2025.12.01",
-                        iconResId = R.drawable.img_logo
-                    )
+            shell =
+                AfternoteListScreenShellParams(
+                    bottomBarSelectedItem = BottomNavItem.AFTERNOTE,
+                    onBottomBarItemSelected = {},
+                    showFab = false,
+                    onFabClick = {},
                 ),
-                selectedTab = AfternoteTab.ALL,
-                onTabSelected = {},
-                onItemClick = {},
-                hasNext = false,
-                isLoadingMore = false,
-                onLoadMore = {}
-            )
+            list =
+                AfternoteListScreenListParams(
+                    items =
+                        listOf(
+                            AfternoteListDisplayItem(
+                                id = "1",
+                                serviceName = "추모 가이드라인",
+                                date = "2025.12.01",
+                                iconResId = R.drawable.img_logo,
+                            ),
+                        ),
+                    selectedTab = AfternoteTab.ALL,
+                    onTabSelected = {},
+                    onItemClick = {},
+                    hasNext = false,
+                    isLoadingMore = false,
+                    onLoadMore = {},
+                ),
         )
     }
 }

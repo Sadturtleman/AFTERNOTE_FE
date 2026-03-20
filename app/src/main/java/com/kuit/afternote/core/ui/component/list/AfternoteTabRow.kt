@@ -44,7 +44,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun AfternoteTabRow(
     modifier: Modifier = Modifier,
     selectedTab: AfternoteTab = AfternoteTab.ALL,
-    onTabSelected: (AfternoteTab) -> Unit
+    onTabSelected: (AfternoteTab) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val canScrollRight by remember {
@@ -53,30 +53,32 @@ fun AfternoteTabRow(
 
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalFadingEdge(edgeWidth = 45.dp)
-                .horizontalScroll(scrollState),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalFadingEdge(edgeWidth = 45.dp)
+                    .horizontalScroll(scrollState),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             AfternoteTab.entries.forEach { tab ->
                 TabItem(
                     tab = tab,
                     isSelected = tab == selectedTab,
-                    onClick = { onTabSelected(tab) }
+                    onClick = { onTabSelected(tab) },
                 )
             }
         }
 
         if (canScrollRight) {
             RightArrowIcon(
-                iconSpec = ArrowIconSpec(
-                    iconRes = R.drawable.ic_arrow_right_tab,
-                    contentDescription = "더 보기"
-                ),
+                iconSpec =
+                    ArrowIconSpec(
+                        iconRes = R.drawable.ic_arrow_right_tab,
+                        contentDescription = "더 보기",
+                    ),
                 backgroundColor = B1,
                 size = 16.dp,
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd),
             )
         }
     }
@@ -87,16 +89,17 @@ private fun TabItem(
     tab: AfternoteTab,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .height(34.dp)
-            .clip(RoundedCornerShape(17.dp))
-            .background(if (isSelected) B3 else Gray2)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .height(34.dp)
+                .clip(RoundedCornerShape(17.dp))
+                .background(if (isSelected) B3 else Gray2)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = tab.label,
@@ -104,7 +107,7 @@ private fun TabItem(
             fontFamily = Sansneo,
             fontWeight = FontWeight.Medium,
             lineHeight = 18.sp,
-            fontSize = 12.sp
+            fontSize = 12.sp,
         )
     }
 }
@@ -117,7 +120,7 @@ private fun AfternoteTabRowPreview() {
         var selectedTab by remember { mutableStateOf(AfternoteTab.ALL) }
         AfternoteTabRow(
             selectedTab = selectedTab,
-            onTabSelected = { selectedTab = it }
+            onTabSelected = { selectedTab = it },
         )
     }
 }

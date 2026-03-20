@@ -1,8 +1,8 @@
 package com.kuit.afternote.core.ui.util
 
 import com.kuit.afternote.R
-import com.kuit.afternote.core.domain.model.AfternoteServiceCatalog
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.core.AfternoteServiceCatalog
+import com.kuit.afternote.domain.model.AfternoteServiceType
 
 /**
  * Single source of truth for afternote type → display resources (label string, icon).
@@ -12,8 +12,9 @@ import com.kuit.afternote.core.domain.model.AfternoteServiceType
  * @return Pair(stringResId, drawableResId). Use [stringResource](first) for label.
  */
 fun getAfternoteDisplayRes(typeKey: String): Pair<Int, Int> {
-    val (stringResId, displayKey) = TYPE_KEY_TO_STRING_AND_DISPLAY_KEY[typeKey]
-        ?: (R.string.afternote_category_social_network to typeKey)
+    val (stringResId, displayKey) =
+        TYPE_KEY_TO_STRING_AND_DISPLAY_KEY[typeKey]
+            ?: (R.string.afternote_category_social_network to typeKey)
     val drawableResId = DISPLAY_KEY_TO_DRAWABLE[displayKey] ?: R.drawable.img_logo
     return stringResId to drawableResId
 }
@@ -22,7 +23,7 @@ private data class DisplayEntry(
     val typeKey: String,
     val displayKey: String,
     val stringResId: Int,
-    val drawableResId: Int
+    val drawableResId: Int,
 )
 
 /**
@@ -54,7 +55,7 @@ private val DISPLAY_ENTRIES: List<DisplayEntry> =
         DisplayEntry("ONEDRIVE", "Onedrive", R.string.receiver_afternote_item_gallery, R.drawable.img_onedrive_pattern),
         DisplayEntry("TALKDRIVE", "카카오톡 톡서랍", R.string.receiver_afternote_item_gallery, R.drawable.img_talkdrive_pattern),
         // Writer-only: displayKey used by getIconResForServiceName; no receiver typeKey
-        DisplayEntry("_", "파일", R.string.receiver_afternote_item_gallery, R.drawable.ic_gallery_pattern)
+        DisplayEntry("_", "파일", R.string.receiver_afternote_item_gallery, R.drawable.ic_gallery_pattern),
     )
 
 private val DISPLAY_KEY_TO_DRAWABLE: Map<String, Int> =
@@ -68,8 +69,7 @@ private val TYPE_KEY_TO_STRING_AND_DISPLAY_KEY: Map<String, Pair<Int, String>> =
 /**
  * Icon drawable res for an [AfternoteServiceType]. Same mapping as [getAfternoteDisplayRes]; use when you have [AfternoteServiceType].
  */
-fun getIconResForServiceType(serviceType: AfternoteServiceType): Int =
-    getAfternoteDisplayRes(serviceType.name).second
+fun getIconResForServiceType(serviceType: AfternoteServiceType): Int = getAfternoteDisplayRes(serviceType.name).second
 
 /**
  * Icon drawable res for a specific afternote service by its display name (e.g. "인스타그램", "갤러리").
@@ -79,4 +79,3 @@ fun getIconResForServiceType(serviceType: AfternoteServiceType): Int =
 fun getIconResForServiceName(serviceName: String): Int =
     DISPLAY_KEY_TO_DRAWABLE[serviceName]
         ?: getIconResForServiceType(AfternoteServiceCatalog.serviceTypeFor(serviceName))
-

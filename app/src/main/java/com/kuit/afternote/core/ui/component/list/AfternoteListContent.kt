@@ -41,7 +41,7 @@ data class AfternoteListContentListParams(
     val onItemClick: (String) -> Unit = {},
     val hasNext: Boolean = false,
     val isLoadingMore: Boolean = false,
-    val onLoadMore: () -> Unit = {}
+    val onLoadMore: () -> Unit = {},
 )
 
 /**
@@ -52,24 +52,26 @@ data class AfternoteListContentListParams(
 @Composable
 fun AfternoteListContent(
     modifier: Modifier = Modifier,
-    list: AfternoteListContentListParams
+    list: AfternoteListContentListParams,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .fillMaxWidth()
+        modifier =
+            modifier
+                .fillMaxSize()
+                .fillMaxWidth(),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         AfternoteTabRow(
             selectedTab = list.selectedTab,
-            onTabSelected = list.onTabSelected
+            onTabSelected = list.onTabSelected,
         )
         Spacer(modifier = Modifier.height(20.dp))
         if (list.items.isEmpty() && list.selectedTab == AfternoteTab.ALL) {
             EmptyAfternoteContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
             )
         } else {
             AfternoteListContentPagedList(list = list)
@@ -84,21 +86,22 @@ private fun AfternoteListContentPagedList(list: AfternoteListContentListParams) 
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(items = list.items, key = { it.id }) { item ->
                 AfternoteListItem(
                     item = item,
-                    onClick = { list.onItemClick(item.id) }
+                    onClick = { list.onItemClick(item.id) },
                 )
             }
         }
         if (list.hasNext && list.isLoadingMore) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(32.dp),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(32.dp),
+                contentAlignment = Alignment.Center,
             ) {}
         }
     }
@@ -120,10 +123,11 @@ private fun AfternoteListContentPagedList(list: AfternoteListContentListParams) 
 private fun AfternoteListContentEmptyPreview() {
     AfternoteTheme {
         AfternoteListContent(
-            list = AfternoteListContentListParams(
-                items = emptyList(),
-                selectedTab = AfternoteTab.ALL
-            )
+            list =
+                AfternoteListContentListParams(
+                    items = emptyList(),
+                    selectedTab = AfternoteTab.ALL,
+                ),
         )
     }
 }
@@ -133,23 +137,25 @@ private fun AfternoteListContentEmptyPreview() {
 private fun AfternoteListContentWithItemsPreview() {
     AfternoteTheme {
         AfternoteListContent(
-            list = AfternoteListContentListParams(
-                items = listOf(
-                    AfternoteListDisplayItem(
-                        id = "1",
-                        serviceName = "추모 가이드라인",
-                        date = "2025.12.01",
-                        iconResId = R.drawable.img_logo
-                    ),
-                    AfternoteListDisplayItem(
-                        id = "2",
-                        serviceName = "인스타그램",
-                        date = "2025.11.26",
-                        iconResId = R.drawable.img_logo
-                    )
+            list =
+                AfternoteListContentListParams(
+                    items =
+                        listOf(
+                            AfternoteListDisplayItem(
+                                id = "1",
+                                serviceName = "추모 가이드라인",
+                                date = "2025.12.01",
+                                iconResId = R.drawable.img_logo,
+                            ),
+                            AfternoteListDisplayItem(
+                                id = "2",
+                                serviceName = "인스타그램",
+                                date = "2025.11.26",
+                                iconResId = R.drawable.img_logo,
+                            ),
+                        ),
+                    selectedTab = AfternoteTab.ALL,
                 ),
-                selectedTab = AfternoteTab.ALL
-            )
         )
     }
 }

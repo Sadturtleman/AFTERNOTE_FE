@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.kuit.afternote.R
-import com.kuit.afternote.core.data.NotificationScheduler
+import com.kuit.afternote.core.NotificationScheduler
 import com.kuit.afternote.core.ui.component.button.ClickButton
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2
@@ -49,26 +49,28 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onLoginClick: () -> Unit,
     onStartClick: () -> Unit,
-    onCheckClick: () -> Unit
+    onCheckClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            // 권한 허용 시: 알림 스케줄링 로직 실행 가능
-            Log.d("Permission", "Notification permission granted")
-        } else {
-            // 권한 거부 시: 사용자 경험을 저해하지 않는 선에서 처리 (예: 스낵바)
-            Log.d("Permission", "Notification permission denied")
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) {
+                // 권한 허용 시: 알림 스케줄링 로직 실행 가능
+                Log.d("Permission", "Notification permission granted")
+            } else {
+                // 권한 거부 시: 사용자 경험을 저해하지 않는 선에서 처리 (예: 스낵바)
+                Log.d("Permission", "Notification permission denied")
+            }
         }
-    }
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val isPermissionGranted = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+            val isPermissionGranted =
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
 
             if (!isPermissionGranted) {
                 // 권한이 없다면 요청
@@ -80,20 +82,22 @@ fun SplashScreen(
     }
 
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp),
         ) {
             Spacer(modifier = Modifier.weight(0.3f))
 
             Image(
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(width = 40.dp, height = 50.dp)
+                modifier =
+                    Modifier
+                        .size(width = 40.dp, height = 50.dp),
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -102,27 +106,28 @@ fun SplashScreen(
                 text = "나의 만약이, 남겨진 이들의\n막막함이 되지 않도록",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-                fontFamily = Sansneo
+                fontFamily = Sansneo,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        SpanStyle(
-                            color = B1,
-                            fontFamily = Sansneo
-                        )
-                    ) {
-                        append("애프터노트")
-                    }
-                    append("는 당신의 디지털 세상을\n 미리 정리해 가장 소중한 사람들에게\n 안전하고 따뜻한 다리를 제공합니다.")
-                },
+                text =
+                    buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                color = B1,
+                                fontFamily = Sansneo,
+                            ),
+                        ) {
+                            append("애프터노트")
+                        }
+                        append("는 당신의 디지털 세상을\n 미리 정리해 가장 소중한 사람들에게\n 안전하고 따뜻한 다리를 제공합니다.")
+                    },
                 fontSize = 16.sp,
                 fontFamily = Sansneo,
                 color = Gray5,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -130,7 +135,7 @@ fun SplashScreen(
             ClickButton(
                 color = B2,
                 onButtonClick = onStartClick,
-                title = "시작하기"
+                title = "시작하기",
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -138,21 +143,22 @@ fun SplashScreen(
             ClickButton(
                 color = B3,
                 onButtonClick = onCheckClick,
-                title = "전달 받은 기록 확인하기"
+                title = "전달 받은 기록 확인하기",
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = "이미 가입하셨나요?",
                     color = Gray6,
-                    fontFamily = Sansneo
+                    fontFamily = Sansneo,
                 )
 
                 Spacer(modifier = Modifier.width(11.dp))
@@ -161,12 +167,13 @@ fun SplashScreen(
                     text = "로그인하기",
                     color = Gray6,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier
-                        .clickable {
-                            onLoginClick()
-                        },
+                    modifier =
+                        Modifier
+                            .clickable {
+                                onLoginClick()
+                            },
                     fontFamily = Sansneo,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
                 )
             }
 
@@ -181,6 +188,6 @@ private fun SplashScreenPreview() {
     SplashScreen(
         onLoginClick = {},
         onStartClick = {},
-        onCheckClick = {}
+        onCheckClick = {},
     )
 }

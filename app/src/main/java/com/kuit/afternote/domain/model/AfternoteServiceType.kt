@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.domain.model
+package com.kuit.afternote.domain.model
 
 /**
  * 애프터노트 서비스 타입 enum.
@@ -7,5 +7,5 @@ package com.kuit.afternote.core.domain.model
 enum class AfternoteServiceType {
     SOCIAL_NETWORK,
     GALLERY_AND_FILES,
-    MEMORIAL
+    MEMORIAL,
 }

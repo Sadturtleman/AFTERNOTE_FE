@@ -1,4 +1,4 @@
-package com.kuit.afternote.app.di
+package com.kuit.afternote.di
 
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.hilt.EntryPoint

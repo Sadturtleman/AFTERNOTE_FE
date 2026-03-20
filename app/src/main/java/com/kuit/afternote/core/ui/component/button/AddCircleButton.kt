@@ -26,14 +26,15 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun AddCircleButton(
     modifier: Modifier = Modifier,
     contentDescription: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Image(
         painter = painterResource(R.drawable.ic_add_circle),
         contentDescription = contentDescription,
-        modifier = modifier
-            .size(24.dp)
-            .clickable(onClick = onClick)
+        modifier =
+            modifier
+                .size(24.dp)
+                .clickable(onClick = onClick),
     )
 }
 
@@ -43,7 +44,7 @@ private fun AddCircleButtonPreview() {
     AfternoteTheme {
         AddCircleButton(
             contentDescription = "추가",
-            onClick = {}
+            onClick = {},
         )
     }
 }

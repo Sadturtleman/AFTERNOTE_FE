@@ -1,4 +1,6 @@
-package com.kuit.afternote.core.domain.model
+package com.kuit.afternote.core
+
+import com.kuit.afternote.domain.model.AfternoteServiceType
 
 /**
  * Single source of truth for afternote service names by category.
@@ -20,7 +22,7 @@ object AfternoteServiceCatalog {
             "네이버 블로그",
             "네이버 카페",
             "네이버 밴드",
-            "디스코드"
+            "디스코드",
         )
 
     /** Display names for 갤러리 및 파일 (GALLERY) category. */
@@ -32,7 +34,7 @@ object AfternoteServiceCatalog {
             "네이버 MYBOX",
             "아이클라우드",
             "Onedrive",
-            "카카오톡 톡서랍"
+            "카카오톡 톡서랍",
         )
 
     private const val MEMORIAL_SERVICE_NAME = "추모 가이드라인"

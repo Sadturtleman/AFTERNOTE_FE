@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
 import android.R.id.message
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
+import com.kuit.afternote.domain.model.AfternoteServiceType
 
 /**
  * 애프터노트 아이템 도메인 모델

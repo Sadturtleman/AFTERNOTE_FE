@@ -1,4 +1,4 @@
-package com.kuit.afternote.app.di
+package com.kuit.afternote.di
 
 import com.kuit.afternote.domain.provider.DataProviderSwitch
 import dagger.hilt.EntryPoint

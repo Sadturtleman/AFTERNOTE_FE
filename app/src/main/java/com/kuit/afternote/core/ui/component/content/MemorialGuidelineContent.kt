@@ -21,7 +21,7 @@ data class MemorialGuidelineSlots(
     val playlistContent: @Composable () -> Unit,
     val lastWishContent: @Composable () -> Unit,
     val recipientContent: @Composable () -> Unit = {},
-    val videoContent: @Composable () -> Unit
+    val videoContent: @Composable () -> Unit,
 )
 
 /**
@@ -38,7 +38,7 @@ fun MemorialGuidelineContent(
     modifier: Modifier = Modifier,
     slots: MemorialGuidelineSlots,
     sectionSpacing: Dp = 32.dp,
-    trailingSpacerHeight: Dp = 0.dp
+    trailingSpacerHeight: Dp = 0.dp,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         slots.introContent()
@@ -63,14 +63,15 @@ fun MemorialGuidelineContent(
 private fun MemorialGuidelineContentPreview() {
     AfternoteTheme {
         MemorialGuidelineContent(
-            slots = MemorialGuidelineSlots(
-                introContent = { },
-                photoContent = { },
-                playlistContent = { },
-                lastWishContent = { },
-                recipientContent = { },
-                videoContent = { }
-            )
+            slots =
+                MemorialGuidelineSlots(
+                    introContent = { },
+                    photoContent = { },
+                    playlistContent = { },
+                    lastWishContent = { },
+                    recipientContent = { },
+                    videoContent = { },
+                ),
         )
     }
 }

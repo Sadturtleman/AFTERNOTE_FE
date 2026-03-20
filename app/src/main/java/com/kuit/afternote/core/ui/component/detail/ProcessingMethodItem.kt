@@ -25,25 +25,26 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun ProcessingMethodItem(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // 체크 아이콘 (파란색 원 안에 체크마크)
         CheckCircleIcon()
 
         Text(
             text = text,
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
+                ),
         )
     }
 }

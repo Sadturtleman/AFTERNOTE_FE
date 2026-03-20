@@ -24,32 +24,34 @@ fun ClickButton(
     color: Color,
     onButtonClick: () -> Unit,
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onButtonClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(54.dp)
-            .dropShadow(
-                shape = RoundedCornerShape(8.dp),
-                color = Color.Black.copy(alpha = 0.05f),
-                offsetX = 5.dp,
-                offsetY = 0.dp,
-                blur = 5.dp,
-                spread = 0.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(54.dp)
+                .dropShadow(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.Black.copy(alpha = 0.05f),
+                    offsetX = 5.dp,
+                    offsetY = 0.dp,
+                    blur = 5.dp,
+                    spread = 0.dp,
+                ),
         shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = color
-        )
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = color,
+            ),
     ) {
         Text(
             text = title,
             fontSize = 16.sp,
             color = Gray9,
             fontFamily = Sansneo,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -60,33 +62,35 @@ fun ClickButton(
     title: String,
     isTrue: Boolean,
     modifier: Modifier = Modifier,
-    activeColor: Color = B3
+    activeColor: Color = B3,
 ) {
     Button(
         enabled = isTrue,
         onClick = onButtonClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(54.dp)
-            .dropShadow(
-                shape = RoundedCornerShape(8.dp),
-                color = Color.Black.copy(alpha = 0.05f),
-                offsetX = 5.dp,
-                offsetY = 0.dp,
-                blur = 5.dp,
-                spread = 0.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(54.dp)
+                .dropShadow(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.Black.copy(alpha = 0.05f),
+                    offsetX = 5.dp,
+                    offsetY = 0.dp,
+                    blur = 5.dp,
+                    spread = 0.dp,
+                ),
         shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isTrue) activeColor else Gray3
-        )
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = if (isTrue) activeColor else Gray3,
+            ),
     ) {
         Text(
             text = title,
             fontSize = 16.sp,
             color = Gray9,
             fontFamily = Sansneo,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -97,6 +101,6 @@ private fun ClickButtonPreview() {
     ClickButton(
         onButtonClick = {},
         title = "시작하기",
-        color = B3
+        color = B3,
     )
 }

@@ -59,47 +59,51 @@ private const val TAG = "PlaylistSongItem"
 fun PlaylistSongItem(
     song: PlaylistSongDisplay,
     onClick: (() -> Unit)? = null,
-    trailingContent: (@Composable RowScope.() -> Unit)? = null
+    trailingContent: (@Composable RowScope.() -> Unit)? = null,
 ) {
-    val base = if (onClick != null) {
-        Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    } else {
-        Modifier.fillMaxWidth()
-    }
+    val base =
+        if (onClick != null) {
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+        } else {
+            Modifier.fillMaxWidth()
+        }
 
     Column(modifier = base) {
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             AlbumCoverBox(albumImageUrl = song.albumImageUrl)
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = song.title,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray9,
+                        ),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = song.artist,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray9
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray9,
+                        ),
                 )
             }
             if (trailingContent != null) {
@@ -117,19 +121,23 @@ fun PlaylistSongItem(
 
 @Composable
 private fun AlbumCoverBox(albumImageUrl: String?) {
-    val modifier = Modifier
-        .size(48.dp)
-        .clip(RoundedCornerShape(4.dp))
+    val modifier =
+        Modifier
+            .size(48.dp)
+            .clip(RoundedCornerShape(4.dp))
     if (!albumImageUrl.isNullOrBlank()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(albumImageUrl)
-                .httpHeaders(
-                    NetworkHeaders.Builder().apply {
-                        this["User-Agent"] = "Afternote Android App"
-                    }.build()
-                )
-                .build(),
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(albumImageUrl)
+                    .httpHeaders(
+                        NetworkHeaders
+                            .Builder()
+                            .apply {
+                                this["User-Agent"] = "Afternote Android App"
+                            }.build(),
+                    ).build(),
             contentDescription = stringResource(R.string.content_description_album_cover),
             modifier = modifier,
             contentScale = ContentScale.Crop,
@@ -138,13 +146,13 @@ private fun AlbumCoverBox(albumImageUrl: String?) {
                 Log.e(
                     TAG,
                     "Coil load failed: albumImageUrl=$albumImageUrl",
-                    state.result.throwable
+                    state.result.throwable,
                 )
-            }
+            },
         )
     } else {
         Box(
-            modifier = modifier.background(Color.DarkGray)
+            modifier = modifier.background(Color.DarkGray),
         )
     }
 }

@@ -29,7 +29,7 @@ fun EditDropdownMenu(
     onEditClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     offset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
-    showEditItem: Boolean = true
+    showEditItem: Boolean = true,
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -38,29 +38,30 @@ fun EditDropdownMenu(
         shape = RoundedCornerShape(8.dp),
         containerColor = Color.White,
         shadowElevation = 4.dp,
-        modifier = modifier.width(110.dp)
+        modifier = modifier.width(110.dp),
     ) {
         if (showEditItem) {
             DropdownMenuItem(
                 text = {
                     Text(
                         text = "수정하기",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                                textAlign = TextAlign.Center,
+                            ),
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 },
                 onClick = {
                     onDismissRequest()
                     onEditClick()
                 },
-                contentPadding = PaddingValues(all = 16.dp)
+                contentPadding = PaddingValues(all = 16.dp),
             )
         }
 
@@ -68,22 +69,23 @@ fun EditDropdownMenu(
             text = {
                 Text(
                     text = "삭제하기",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 22.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray9,
-                        textAlign = TextAlign.Center
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = Gray9,
+                            textAlign = TextAlign.Center,
+                        ),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             },
             onClick = {
                 onDismissRequest()
                 onDeleteClick()
             },
-            contentPadding = PaddingValues(all = 16.dp)
+            contentPadding = PaddingValues(all = 16.dp),
         )
     }
 }
@@ -94,7 +96,7 @@ private fun EditDropdownMenuPreview() {
     AfternoteTheme {
         EditDropdownMenu(
             expanded = true,
-            onDismissRequest = {}
+            onDismissRequest = {},
         )
     }
 }

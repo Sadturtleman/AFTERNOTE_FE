@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2
-import com.kuit.afternote.ui.theme.Red
 import com.kuit.afternote.ui.theme.Gray1
 import com.kuit.afternote.ui.theme.Gray4
 import com.kuit.afternote.ui.theme.Gray9
+import com.kuit.afternote.ui.theme.Red
 import com.kuit.afternote.ui.theme.Sansneo
 import com.kuit.afternote.ui.theme.White
 
@@ -65,7 +65,7 @@ private fun OutlineTextFieldPlaceholderSimple(text: String) {
         text = text,
         fontSize = 16.sp,
         fontFamily = Sansneo,
-        color = Gray4
+        color = Gray4,
     )
 }
 
@@ -80,22 +80,24 @@ private fun OutlineTextFieldPlaceholderWithLineHeight(text: String) {
         lineHeight = 20.sp,
         fontFamily = Sansneo,
         fontWeight = FontWeight.Normal,
-        color = Gray4
+        color = Gray4,
     )
 }
 
 @Composable
-private fun outlineTextFieldBasicColors() = OutlinedTextFieldDefaults.colors(
-    unfocusedBorderColor = Gray4,
-    disabledTextColor = Gray9,
-    disabledPlaceholderColor = Gray4,
-    disabledContainerColor = White
-)
+private fun outlineTextFieldBasicColors() =
+    OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = Gray4,
+        disabledTextColor = Gray9,
+        disabledPlaceholderColor = Gray4,
+        disabledContainerColor = White,
+    )
 
 @Composable
-private fun outlineTextFieldBasicColorsSimple() = OutlinedTextFieldDefaults.colors(
-    unfocusedBorderColor = Gray4
-)
+private fun outlineTextFieldBasicColorsSimple() =
+    OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = Gray4,
+    )
 
 @Composable
 private fun outlineTextFieldFilledColors(containerColor: Color) =
@@ -103,7 +105,7 @@ private fun outlineTextFieldFilledColors(containerColor: Color) =
         unfocusedBorderColor = Color.Transparent,
         focusedBorderColor = Color.Transparent,
         unfocusedContainerColor = containerColor,
-        focusedContainerColor = containerColor
+        focusedContainerColor = containerColor,
     )
 
 @Composable
@@ -116,7 +118,7 @@ private fun outlineTextFieldFilledColorsAll(containerColor: Color) =
         focusedContainerColor = containerColor,
         unfocusedContainerColor = containerColor,
         disabledContainerColor = containerColor,
-        errorContainerColor = containerColor
+        errorContainerColor = containerColor,
     )
 
 /**
@@ -128,15 +130,14 @@ data class LabeledTextFieldStyle(
     val labelFontSize: TextUnit = 12.sp,
     val labelLineHeight: TextUnit = 18.sp,
     val labelFontWeight: FontWeight = FontWeight.Normal,
-    val labelColor: Color = Gray9
+    val labelColor: Color = Gray9,
 )
 
-private val PasswordOutputTransformation = OutputTransformation {
-    val originalLength = length
-    replace(0, originalLength, PASSWORD_MASK_CHAR.toString().repeat(originalLength))
-}
-
-
+private val PasswordOutputTransformation =
+    OutputTransformation {
+        val originalLength = length
+        replace(0, originalLength, PASSWORD_MASK_CHAR.toString().repeat(originalLength))
+    }
 
 // ============================================================================
 // Basic Variants (placeholder inside field, 70.dp height)
@@ -159,7 +160,7 @@ fun OutlineTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     enabled: Boolean = true,
     focusRequester: FocusRequester? = null,
-    requestFocusOnEnabled: Boolean = false
+    requestFocusOnEnabled: Boolean = false,
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -168,29 +169,31 @@ fun OutlineTextField(
         colors = outlineTextFieldBasicColors(),
         shape = OutlineTextFieldShape,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        outputTransformation = if (keyboardType == KeyboardType.Password) {
-            PasswordOutputTransformation
-        } else {
-            null
-        },
+        outputTransformation =
+            if (keyboardType == KeyboardType.Password) {
+                PasswordOutputTransformation
+            } else {
+                null
+            },
         enabled = enabled,
         readOnly = false,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(OutlineTextFieldHeightBasic)
-            .then(
-                if (focusRequester != null) {
-                    Modifier
-                        .focusRequester(focusRequester)
-                        .onGloballyPositioned {
-                            if (enabled && requestFocusOnEnabled) {
-                                focusRequester.requestFocus()
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(OutlineTextFieldHeightBasic)
+                .then(
+                    if (focusRequester != null) {
+                        Modifier
+                            .focusRequester(focusRequester)
+                            .onGloballyPositioned {
+                                if (enabled && requestFocusOnEnabled) {
+                                    focusRequester.requestFocus()
+                                }
                             }
-                        }
-                } else {
-                    Modifier
-                }
-            )
+                    } else {
+                        Modifier
+                    },
+                ),
     )
 }
 
@@ -202,7 +205,7 @@ fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    onAuthClick: () -> Unit
+    onAuthClick: () -> Unit,
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -210,26 +213,28 @@ fun OutlineTextField(
         placeholder = { OutlineTextFieldPlaceholderSimple(text = label) },
         shape = OutlineTextFieldShape,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        outputTransformation = if (keyboardType == KeyboardType.Password) {
-            PasswordOutputTransformation
-        } else {
-            null
-        },
+        outputTransformation =
+            if (keyboardType == KeyboardType.Password) {
+                PasswordOutputTransformation
+            } else {
+                null
+            },
         colors = outlineTextFieldBasicColorsSimple(),
         trailingIcon = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 25.dp)
+                modifier = Modifier.padding(end = 25.dp),
             ) {
                 Text(
                     text = "인증번호 받기",
-                    modifier = Modifier.clickable { onAuthClick() }
+                    modifier = Modifier.clickable { onAuthClick() },
                 )
             }
         },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(OutlineTextFieldHeightBasic)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(OutlineTextFieldHeightBasic),
     )
 }
 
@@ -238,7 +243,7 @@ fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Phone,
-    outputTransformation: OutputTransformation
+    outputTransformation: OutputTransformation,
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -248,16 +253,17 @@ fun OutlineTextField(
                 text = label,
                 fontSize = 16.sp,
                 fontFamily = Sansneo,
-                color = Gray4
+                color = Gray4,
             )
         },
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         outputTransformation = outputTransformation,
         colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Gray4),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(70.dp),
     )
 }
 
@@ -268,7 +274,7 @@ fun OutlineTextField(
 fun OutlineTextField(
     textFieldState: TextFieldState,
     label: String,
-    onFileAddClick: () -> Unit
+    onFileAddClick: () -> Unit,
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -280,21 +286,22 @@ fun OutlineTextField(
         trailingIcon = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 25.dp)
+                modifier = Modifier.padding(end = 25.dp),
             ) {
                 IconButton(onClick = { onFileAddClick() }) {
                     Icon(
                         imageVector = Icons.Filled.AddCircle,
                         contentDescription = "Add file",
                         tint = B2,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
         },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(OutlineTextFieldHeightBasic)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(OutlineTextFieldHeightBasic),
     )
 }
 
@@ -326,61 +333,66 @@ fun OutlineTextField(
     placeholder: String = DEFAULT_PLACEHOLDER,
     keyboardType: KeyboardType = KeyboardType.Text,
     style: LabeledTextFieldStyle = LabeledTextFieldStyle(),
-    isError: Boolean = false
+    isError: Boolean = false,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = style.labelSpacing)
+        verticalArrangement = Arrangement.spacedBy(space = style.labelSpacing),
     ) {
         Text(
             text = label,
-            style = TextStyle(
-                fontSize = style.labelFontSize,
-                lineHeight = style.labelLineHeight,
-                fontFamily = Sansneo,
-                fontWeight = style.labelFontWeight,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = style.labelFontSize,
+                    lineHeight = style.labelLineHeight,
+                    fontFamily = Sansneo,
+                    fontWeight = style.labelFontWeight,
+                    color = Gray9,
+                ),
         )
 
         OutlinedTextField(
             state = textFieldState,
             lineLimits = TextFieldLineLimits.SingleLine,
-            contentPadding = PaddingValues(
-                vertical = 16.dp,
-                horizontal = 24.dp
-            ),
+            contentPadding =
+                PaddingValues(
+                    vertical = 16.dp,
+                    horizontal = 24.dp,
+                ),
             placeholder = { OutlineTextFieldPlaceholderWithLineHeight(text = placeholder) },
             colors = outlineTextFieldFilledColors(style.containerColor),
             shape = OutlineTextFieldShape,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            outputTransformation = if (keyboardType == KeyboardType.Password) {
-                PasswordOutputTransformation
-            } else {
-                null
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(OutlineTextFieldHeightLabeled)
-                .background(style.containerColor, OutlineTextFieldShape)
-                .then(
-                    if (isError) {
-                        Modifier.border(
-                            width = 1.dp,
-                            color = Red,
-                            shape = OutlineTextFieldShape
-                        )
-                    } else {
-                        Modifier
-                    }
+            outputTransformation =
+                if (keyboardType == KeyboardType.Password) {
+                    PasswordOutputTransformation
+                } else {
+                    null
+                },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(OutlineTextFieldHeightLabeled)
+                    .background(style.containerColor, OutlineTextFieldShape)
+                    .then(
+                        if (isError) {
+                            Modifier.border(
+                                width = 1.dp,
+                                color = Red,
+                                shape = OutlineTextFieldShape,
+                            )
+                        } else {
+                            Modifier
+                        },
+                    ),
+            textStyle =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
                 ),
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 20.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
         )
     }
 }
@@ -410,21 +422,22 @@ fun OutlineTextField(
     label: String,
     textFieldState: TextFieldState,
     placeholder: String = DEFAULT_PLACEHOLDER,
-    multiline: Multiline
+    multiline: Multiline,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp),
     ) {
         Text(
             text = label,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                ),
         )
 
         OutlinedTextField(
@@ -434,18 +447,20 @@ fun OutlineTextField(
             colors = outlineTextFieldFilledColors(White),
             shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions.Default,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(OutlineTextFieldHeightMultiline)
-                .background(White, RoundedCornerShape(16.dp)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(OutlineTextFieldHeightMultiline)
+                    .background(White, RoundedCornerShape(16.dp)),
             contentPadding = PaddingValues(all = 16.dp),
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 20.dp.value.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
+            textStyle =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 20.dp.value.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
+                ),
         )
     }
 }
@@ -471,7 +486,7 @@ fun OutlineTextField(
     placeholder: String = DEFAULT_PLACEHOLDER,
     containerColor: Color = Gray1,
     height: Dp = OutlineTextFieldHeightMultiline,
-    shape: RoundedCornerShape = RoundedCornerShape(16.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
 ) {
     OutlinedTextField(
         state = textFieldState,
@@ -480,18 +495,20 @@ fun OutlineTextField(
         colors = outlineTextFieldFilledColorsAll(containerColor),
         shape = shape,
         keyboardOptions = KeyboardOptions.Default,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .background(containerColor, shape),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(height)
+                .background(containerColor, shape),
         contentPadding = PaddingValues(all = 16.dp),
-        textStyle = TextStyle(
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
-            fontFamily = Sansneo,
-            fontWeight = FontWeight.Normal,
-            color = Gray9
-        )
+        textStyle =
+            TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontFamily = Sansneo,
+                fontWeight = FontWeight.Normal,
+                color = Gray9,
+            ),
     )
 }
 
@@ -506,7 +523,7 @@ private fun OutlineTextFieldBasicPreview() {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
             label = "시작",
-            keyboardType = KeyboardType.Text
+            keyboardType = KeyboardType.Text,
         )
     }
 }
@@ -518,7 +535,7 @@ private fun OutlineTextFieldWithAuthPreview() {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
             label = "전화번호",
-            onAuthClick = {}
+            onAuthClick = {},
         )
     }
 }
@@ -530,7 +547,7 @@ private fun OutlineTextFieldWithFileAddPreview() {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
             label = "파일 선택",
-            onFileAddClick = {}
+            onFileAddClick = {},
         )
     }
 }
@@ -542,7 +559,7 @@ private fun OutlineTextFieldWithLabelPreview() {
         OutlineTextField(
             modifier = Modifier,
             label = "아이디",
-            textFieldState = rememberTextFieldState()
+            textFieldState = rememberTextFieldState(),
         )
     }
 }
@@ -555,7 +572,7 @@ private fun OutlineTextFieldWithErrorPreview() {
             modifier = Modifier,
             label = "비밀번호",
             textFieldState = rememberTextFieldState(),
-            isError = true
+            isError = true,
         )
     }
 }
@@ -567,7 +584,7 @@ private fun OutlineTextFieldDisabledPreview() {
         OutlineTextField(
             textFieldState = rememberTextFieldState(),
             label = "비활성화된 필드",
-            enabled = false
+            enabled = false,
         )
     }
 }
@@ -579,7 +596,7 @@ private fun OutlineTextFieldPasswordPreview() {
         OutlineTextField(
             textFieldState = rememberTextFieldState("password123"),
             label = "비밀번호",
-            keyboardType = KeyboardType.Password
+            keyboardType = KeyboardType.Password,
         )
     }
 }
@@ -591,7 +608,7 @@ private fun OutlineTextFieldMultilinePreview() {
         OutlineTextField(
             label = "남기실 말씀",
             textFieldState = rememberTextFieldState(),
-            multiline = Multiline
+            multiline = Multiline,
         )
     }
 }

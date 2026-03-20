@@ -1,6 +1,6 @@
 @file:Suppress("AssignedValueIsNeverRead")
 
-package com.kuit.afternote.app.navigation.navgraph
+package com.kuit.afternote.core.navigation.navgraph
 
 import android.os.Build
 import android.util.Log
@@ -44,18 +44,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.app.di.ReceiverAuthSessionEntryPoint
-import com.kuit.afternote.app.di.TokenManagerEntryPoint
 import com.kuit.afternote.core.navigation.ReceiverRoute
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.util.getAfternoteDisplayRes
 import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.di.ReceiverAuthSessionEntryPoint
+import com.kuit.afternote.di.TokenManagerEntryPoint
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.edit.AfternoteEditState
 import com.kuit.afternote.feature.afternote.presentation.edit.MemorialPlaylistStateHolder
+import com.kuit.afternote.feature.afternote.presentation.fingerprint.FingerprintLoginScreen
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteEditStateHandling
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteListRefreshParams
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteNavGraphParams

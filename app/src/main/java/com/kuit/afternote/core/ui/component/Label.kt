@@ -44,7 +44,7 @@ data class LabelStyle(
     val lineHeight: TextUnit = 22.sp,
     val fontWeight: FontWeight = FontWeight.Medium,
     val color: Color = Gray9,
-    val requiredDotOffsetY: Dp = 4.dp
+    val requiredDotOffsetY: Dp = 4.dp,
 )
 
 /**
@@ -64,7 +64,7 @@ fun Label(
     modifier: Modifier = Modifier,
     text: String,
     isRequired: Boolean = false,
-    style: LabelStyle = LabelStyle()
+    style: LabelStyle = LabelStyle(),
 ) {
     Box(modifier = modifier) {
         var textWidth by remember { mutableStateOf(0.dp) }
@@ -72,24 +72,27 @@ fun Label(
 
         Text(
             text = text,
-            style = TextStyle(
-                fontSize = style.fontSize,
-                lineHeight = style.lineHeight,
-                fontFamily = Sansneo,
-                fontWeight = style.fontWeight,
-                color = style.color
-            ),
-            modifier = Modifier.onGloballyPositioned { coordinates ->
-                textWidth = with(density) { coordinates.size.width.toDp() }
-            }
+            style =
+                TextStyle(
+                    fontSize = style.fontSize,
+                    lineHeight = style.lineHeight,
+                    fontFamily = Sansneo,
+                    fontWeight = style.fontWeight,
+                    color = style.color,
+                ),
+            modifier =
+                Modifier.onGloballyPositioned { coordinates ->
+                    textWidth = with(density) { coordinates.size.width.toDp() }
+                },
         )
 
         if (isRequired) {
             Box(
-                modifier = Modifier
-                    .offset(x = textWidth + 8.dp, y = style.requiredDotOffsetY)
-                    .size(4.dp)
-                    .background(color = B2, shape = CircleShape)
+                modifier =
+                    Modifier
+                        .offset(x = textWidth + 8.dp, y = style.requiredDotOffsetY)
+                        .size(4.dp)
+                        .background(color = B2, shape = CircleShape),
             )
         }
     }
@@ -100,9 +103,10 @@ fun Label(
 private fun LabelPreview() {
     AfternoteTheme {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
         ) {
             Label(text = "이름")
         }
@@ -114,13 +118,14 @@ private fun LabelPreview() {
 private fun LabelRequiredPreview() {
     AfternoteTheme {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
         ) {
             Label(
                 text = "정보 처리 방법",
-                isRequired = true
+                isRequired = true,
             )
         }
     }
@@ -131,17 +136,19 @@ private fun LabelRequiredPreview() {
 private fun LabelSmallPreview() {
     AfternoteTheme {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
         ) {
             Label(
                 text = "종류",
-                style = LabelStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = FontWeight.Normal
-                )
+                style =
+                    LabelStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight.Normal,
+                    ),
             )
         }
     }
@@ -152,21 +159,23 @@ private fun LabelSmallPreview() {
 private fun LabelVariantsPreview() {
     AfternoteTheme {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
         ) {
             Label(text = "일반 라벨")
             Label(text = "필수 라벨", isRequired = true)
             Label(
                 text = "작은 필수 라벨",
                 isRequired = true,
-                style = LabelStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = FontWeight.Normal,
-                    requiredDotOffsetY = 2.dp
-                )
+                style =
+                    LabelStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight.Normal,
+                        requiredDotOffsetY = 2.dp,
+                    ),
             )
         }
     }

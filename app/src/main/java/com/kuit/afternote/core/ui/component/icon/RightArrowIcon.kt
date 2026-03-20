@@ -42,7 +42,7 @@ data class ArrowIconSpec(
     @DrawableRes val iconRes: Int,
     val contentDescription: String? = null,
     val size: Dp? = null,
-    val offset: DpOffset = DpOffset.Zero
+    val offset: DpOffset = DpOffset.Zero,
 )
 
 /**
@@ -54,19 +54,20 @@ data class ArrowIconSpec(
 @Composable
 fun RightArrowIcon(
     color: Color,
-    size: Dp = 12.dp
+    size: Dp = 12.dp,
 ) {
     Box(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(color = color)
+        modifier =
+            Modifier
+                .size(size)
+                .clip(CircleShape)
+                .background(color = color),
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             modifier = Modifier.size(size = size),
-            tint = Color.White
+            tint = Color.White,
         )
     }
 }
@@ -89,39 +90,41 @@ fun RightArrowIcon(
     backgroundColor: Color = B1,
     size: Dp = 12.dp,
     shape: Shape = CircleShape,
-    padding: Dp = 1.dp
+    padding: Dp = 1.dp,
 ) {
     Box(
-        modifier = modifier
-            .size(size)
-            .clip(shape)
-            .background(backgroundColor)
-            .then(
-                if (shape == CircleShape) {
-                    Modifier.padding(padding)
-                } else {
-                    Modifier
-                }
-            ),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(size)
+                .clip(shape)
+                .background(backgroundColor)
+                .then(
+                    if (shape == CircleShape) {
+                        Modifier.padding(padding)
+                    } else {
+                        Modifier
+                    },
+                ),
+        contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(iconSpec.iconRes),
             contentDescription = iconSpec.contentDescription,
-            modifier = Modifier
-                .then(
-                    if (iconSpec.size != null) {
-                        Modifier.size(iconSpec.size)
-                    } else {
-                        Modifier
-                    }
-                ).then(
-                    if (iconSpec.offset != DpOffset.Zero) {
-                        Modifier.offset(x = iconSpec.offset.x, y = iconSpec.offset.y)
-                    } else {
-                        Modifier
-                    }
-                )
+            modifier =
+                Modifier
+                    .then(
+                        if (iconSpec.size != null) {
+                            Modifier.size(iconSpec.size)
+                        } else {
+                            Modifier
+                        },
+                    ).then(
+                        if (iconSpec.offset != DpOffset.Zero) {
+                            Modifier.offset(x = iconSpec.offset.x, y = iconSpec.offset.y)
+                        } else {
+                            Modifier
+                        },
+                    ),
         )
     }
 }
@@ -132,7 +135,7 @@ private fun RightArrowIconMaterialPreview() {
     AfternoteTheme {
         RightArrowIcon(
             color = B1,
-            size = 16.dp
+            size = 16.dp,
         )
     }
 }
@@ -142,12 +145,13 @@ private fun RightArrowIconMaterialPreview() {
 private fun RightArrowIconDrawableTabPreview() {
     AfternoteTheme {
         RightArrowIcon(
-            iconSpec = ArrowIconSpec(
-                iconRes = R.drawable.ic_arrow_right_tab,
-                contentDescription = "추가"
-            ),
+            iconSpec =
+                ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_right_tab,
+                    contentDescription = "추가",
+                ),
             backgroundColor = B1,
-            size = 12.dp
+            size = 12.dp,
         )
     }
 }
@@ -157,12 +161,13 @@ private fun RightArrowIconDrawableTabPreview() {
 private fun RightArrowIconDrawablePlaylistPreview() {
     AfternoteTheme {
         RightArrowIcon(
-            iconSpec = ArrowIconSpec(
-                iconRes = R.drawable.ic_arrow_right_playlist,
-                contentDescription = "추가"
-            ),
+            iconSpec =
+                ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_right_playlist,
+                    contentDescription = "추가",
+                ),
             backgroundColor = B1,
-            size = 12.dp
+            size = 12.dp,
         )
     }
 }
@@ -172,15 +177,16 @@ private fun RightArrowIconDrawablePlaylistPreview() {
 private fun RightArrowIconDrawableRoundedPreview() {
     AfternoteTheme {
         RightArrowIcon(
-            iconSpec = ArrowIconSpec(
-                iconRes = R.drawable.ic_arrow_forward_b2,
-                size = 6.dp,
-                offset = DpOffset(x = 9.9.dp, y = 6.dp)
-            ),
+            iconSpec =
+                ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_forward_b2,
+                    size = 6.dp,
+                    offset = DpOffset(x = 9.9.dp, y = 6.dp),
+                ),
             backgroundColor = B2,
             size = 24.dp,
             shape = RoundedCornerShape(12.dp),
-            padding = 0.dp
+            padding = 0.dp,
         )
     }
 }

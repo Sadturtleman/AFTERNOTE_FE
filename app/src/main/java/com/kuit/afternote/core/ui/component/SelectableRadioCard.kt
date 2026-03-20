@@ -52,31 +52,33 @@ fun SelectableRadioCard(
     modifier: Modifier = Modifier,
     borderWhenUnselected: Boolean = false,
     radioButtonSpacing: Dp = 16.dp,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    val borderColor = when {
-        selected -> B2
-        borderWhenUnselected -> Gray4
-        else -> Color.Transparent
-    }
+    val borderColor =
+        when {
+            selected -> B2
+            borderWhenUnselected -> Gray4
+            else -> Color.Transparent
+        }
 
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
-        modifier = modifier.selectable(
-            selected = selected,
-            onClick = onClick,
-            role = Role.RadioButton,
-            interactionSource = interactionSource,
-            indication = null
-        ),
+        modifier =
+            modifier.selectable(
+                selected = selected,
+                onClick = onClick,
+                role = Role.RadioButton,
+                interactionSource = interactionSource,
+                indication = null,
+            ),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, borderColor),
-        color = White
+        color = White,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // 내부 라디오 버튼은 클릭 이벤트 null 처리하여 부모 Surface 클릭과 충돌 방지
             CustomRadioButton(
@@ -84,7 +86,7 @@ fun SelectableRadioCard(
                 onClick = null,
                 buttonSize = 24.dp,
                 selectedColor = B2,
-                unselectedColor = Gray4
+                unselectedColor = Gray4,
             )
 
             Spacer(modifier = Modifier.width(radioButtonSpacing))
@@ -108,15 +110,16 @@ private fun SelectableRadioCardPreview() {
                 content = {
                     androidx.compose.material3.Text(
                         text = "선택된 옵션",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
-                }
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -128,15 +131,16 @@ private fun SelectableRadioCardPreview() {
                 content = {
                     androidx.compose.material3.Text(
                         text = "선택 안 된 옵션",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
-                }
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -148,25 +152,27 @@ private fun SelectableRadioCardPreview() {
                 content = {
                     androidx.compose.material3.Text(
                         text = "제목 텍스트",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
                     androidx.compose.material3.Text(
                         text = "설명 텍스트",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Normal,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Normal,
+                                color = Gray9,
+                            ),
                     )
-                }
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -179,15 +185,16 @@ private fun SelectableRadioCardPreview() {
                 content = {
                     androidx.compose.material3.Text(
                         text = "보더가 있는 선택 안 된 옵션",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp,
-                            fontFamily = Sansneo,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray9
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 22.sp,
+                                fontFamily = Sansneo,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray9,
+                            ),
                     )
-                }
+                },
             )
         }
     }

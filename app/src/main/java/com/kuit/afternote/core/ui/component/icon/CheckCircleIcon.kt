@@ -22,7 +22,7 @@ fun CheckCircleIcon(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.ic_check_circle),
         contentDescription = null,
-        modifier = modifier.size(16.dp)
+        modifier = modifier.size(16.dp),
     )
 }
 

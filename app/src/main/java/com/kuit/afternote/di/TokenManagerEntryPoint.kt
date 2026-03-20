@@ -1,4 +1,4 @@
-package com.kuit.afternote.app.di
+package com.kuit.afternote.di
 
 import com.kuit.afternote.data.service.TokenManager
 import dagger.hilt.EntryPoint

@@ -41,15 +41,16 @@ fun BottomNavigationItem(
     iconTextSpacing: Dp = 4.dp,
 ) {
     Column(
-        modifier = modifier
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painterResource(iconRes),
             contentDescription = label,
             colorFilter = ColorFilter.tint(if (isSelected) B1 else Gray4),
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.height(iconTextSpacing))
         Text(
@@ -57,7 +58,7 @@ fun BottomNavigationItem(
             color = if (isSelected) B1 else Gray4,
             fontSize = 12.sp,
             fontFamily = Sansneo,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -70,7 +71,7 @@ private fun BottomNavigationItemPreview() {
             iconRes = R.drawable.ic_home,
             label = "홈",
             isSelected = true,
-            onClick = {}
+            onClick = {},
         )
     }
 }

@@ -22,29 +22,31 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun CircleCheckBox(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    size: Dp = 20.dp
+    size: Dp = 20.dp,
 ) {
     Surface(
-        modifier = Modifier
-            .size(size)
-            .clickable { onCheckedChange(!checked) },
+        modifier =
+            Modifier
+                .size(size)
+                .clickable { onCheckedChange(!checked) },
         shape = CircleShape,
         color = if (checked) Color(0xFFBDBDBD) else Color.Transparent,
-        border = if (checked) {
-            null
-        } else {
-            BorderStroke(
-                1.5.dp,
-                Color(0xFFBDBDBD)
-            )
-        }
+        border =
+            if (checked) {
+                null
+            } else {
+                BorderStroke(
+                    1.5.dp,
+                    Color(0xFFBDBDBD),
+                )
+            },
     ) {
         if (checked) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = Color.White,
-                modifier = Modifier.padding(2.dp)
+                modifier = Modifier.padding(2.dp),
             )
         }
     }
@@ -57,11 +59,11 @@ private fun CircleCheckBoxPreview() {
         Row {
             CircleCheckBox(
                 checked = true,
-                onCheckedChange = {}
+                onCheckedChange = {},
             )
             CircleCheckBox(
                 checked = false,
-                onCheckedChange = {}
+                onCheckedChange = {},
             )
         }
     }

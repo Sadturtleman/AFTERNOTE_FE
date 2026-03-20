@@ -42,7 +42,7 @@ private data class DateWheelPickerColors(
     val selectedTextColor: Color,
     val unselectedTextColor: Color,
     val selectionBorderColor: Color,
-    val dividerColor: Color
+    val dividerColor: Color,
 )
 
 /**
@@ -77,14 +77,15 @@ fun DateWheelPicker(
     selectedTextColor: Color = DateWheelPickerDefaults.SelectedTextColor,
     unselectedTextColor: Color = DateWheelPickerDefaults.UnselectedTextColor,
     selectionBorderColor: Color = DateWheelPickerDefaults.SelectionBorderColor,
-    dividerColor: Color = DateWheelPickerDefaults.DividerColor
+    dividerColor: Color = DateWheelPickerDefaults.DividerColor,
 ) {
-    val colors = DateWheelPickerColors(
-        selectedTextColor = selectedTextColor,
-        unselectedTextColor = unselectedTextColor,
-        selectionBorderColor = selectionBorderColor,
-        dividerColor = dividerColor
-    )
+    val colors =
+        DateWheelPickerColors(
+            selectedTextColor = selectedTextColor,
+            unselectedTextColor = unselectedTextColor,
+            selectionBorderColor = selectionBorderColor,
+            dividerColor = dividerColor,
+        )
 
     val model = rememberDateWheelPickerModel(currentDate = currentDate, minDate = minDate)
     val yearState = rememberFWheelPickerState(initialIndex = model.yearIndex)
@@ -99,14 +100,14 @@ fun DateWheelPicker(
         currentYearFallback = model.currentYear,
         currentDate = currentDate,
         minDate = minDate,
-        onDateChanged = onDateChanged
+        onDateChanged = onDateChanged,
     )
     ObserveMonthWheel(
         state = monthState,
         months = model.months,
         currentDate = currentDate,
         minDate = minDate,
-        onDateChanged = onDateChanged
+        onDateChanged = onDateChanged,
     )
 
     DateWheelPickerContent(
@@ -117,7 +118,7 @@ fun DateWheelPicker(
         monthState = monthState,
         minDate = minDate,
         onDateChanged = onDateChanged,
-        colors = colors
+        colors = colors,
     )
 }
 
@@ -130,46 +131,52 @@ private data class DateWheelPickerModel(
     val yearIndex: Int,
     val monthIndex: Int,
     val dayIndex: Int,
-    val dateDescription: String
+    val dateDescription: String,
 )
 
 @Composable
 private fun rememberDateWheelPickerModel(
     currentDate: LocalDate,
-    minDate: LocalDate?
+    minDate: LocalDate?,
 ): DateWheelPickerModel {
     val currentYear = LocalDate.now().year
     val years = remember(currentYear) { (currentYear..currentYear + 10).toList() }
     val months = remember { (1..12).toList() }
 
-    val effectiveDate = remember(currentDate, minDate) {
-        if (minDate != null) currentDate.coerceAtLeast(minDate) else currentDate
-    }
-
-    val yearIndex = remember(effectiveDate.year, years) {
-        years.indexOf(effectiveDate.year).coerceIn(0, years.lastIndex)
-    }
-    val monthIndex = remember(effectiveDate.monthValue, months) {
-        (effectiveDate.monthValue - 1).coerceIn(0, months.lastIndex)
-    }
-
-    val daysInMonth = remember(effectiveDate.year, effectiveDate.monthValue) {
-        LocalDate.of(effectiveDate.year, effectiveDate.monthValue, 1).lengthOfMonth()
-    }
-    val days = remember(daysInMonth, minDate, effectiveDate.year, effectiveDate.monthValue) {
-        if (minDate != null &&
-            effectiveDate.year == minDate.year &&
-            effectiveDate.monthValue == minDate.monthValue
-        ) {
-            (minDate.dayOfMonth..daysInMonth).toList()
-        } else {
-            (1..daysInMonth).toList()
+    val effectiveDate =
+        remember(currentDate, minDate) {
+            if (minDate != null) currentDate.coerceAtLeast(minDate) else currentDate
         }
-    }
-    val dayIndex = remember(effectiveDate.dayOfMonth, days) {
-        val idx = days.indexOf(effectiveDate.dayOfMonth)
-        idx.coerceIn(0, days.lastIndex)
-    }
+
+    val yearIndex =
+        remember(effectiveDate.year, years) {
+            years.indexOf(effectiveDate.year).coerceIn(0, years.lastIndex)
+        }
+    val monthIndex =
+        remember(effectiveDate.monthValue, months) {
+            (effectiveDate.monthValue - 1).coerceIn(0, months.lastIndex)
+        }
+
+    val daysInMonth =
+        remember(effectiveDate.year, effectiveDate.monthValue) {
+            LocalDate.of(effectiveDate.year, effectiveDate.monthValue, 1).lengthOfMonth()
+        }
+    val days =
+        remember(daysInMonth, minDate, effectiveDate.year, effectiveDate.monthValue) {
+            if (minDate != null &&
+                effectiveDate.year == minDate.year &&
+                effectiveDate.monthValue == minDate.monthValue
+            ) {
+                (minDate.dayOfMonth..daysInMonth).toList()
+            } else {
+                (1..daysInMonth).toList()
+            }
+        }
+    val dayIndex =
+        remember(effectiveDate.dayOfMonth, days) {
+            val idx = days.indexOf(effectiveDate.dayOfMonth)
+            idx.coerceIn(0, days.lastIndex)
+        }
 
     val dateDescription = "${effectiveDate.year}년 ${effectiveDate.monthValue}월 ${effectiveDate.dayOfMonth}일 선택됨"
 
@@ -182,7 +189,7 @@ private fun rememberDateWheelPickerModel(
         yearIndex = yearIndex,
         monthIndex = monthIndex,
         dayIndex = dayIndex,
-        dateDescription = dateDescription
+        dateDescription = dateDescription,
     )
 }
 
@@ -195,25 +202,27 @@ private fun DateWheelPickerContent(
     monthState: FWheelPickerState,
     minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit,
-    colors: DateWheelPickerColors
+    colors: DateWheelPickerColors,
 ) {
     Box(
-        modifier = modifier.semantics {
-            contentDescription = model.dateDescription
-        }
+        modifier =
+            modifier.semantics {
+                contentDescription = model.dateDescription
+            },
     ) {
         // 테두리는 뒤에 그려서 휠 터치가 가려지지 않도록 함
         SelectionBorder(
             modifier = Modifier.align(Alignment.Center),
-            selectionBorderColor = colors.selectionBorderColor
+            selectionBorderColor = colors.selectionBorderColor,
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(PickerContainerHeight),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(PickerContainerHeight),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             FVerticalWheelPicker(
                 count = model.years.size,
@@ -221,19 +230,19 @@ private fun DateWheelPickerContent(
                 modifier = Modifier.weight(4f),
                 itemHeight = SelectionBorderHeight,
                 unfocusedCount = 1,
-                focus = {}
+                focus = {},
             ) { index ->
                 PickerText(
                     text = "${model.years[index]}",
                     isSelected = index == yearState.currentIndex,
                     selectedTextColor = colors.selectedTextColor,
-                    unselectedTextColor = colors.unselectedTextColor
+                    unselectedTextColor = colors.unselectedTextColor,
                 )
             }
 
             Divider(
                 modifier = Modifier.width(DividerWidth),
-                color = colors.dividerColor
+                color = colors.dividerColor,
             )
 
             FVerticalWheelPicker(
@@ -242,32 +251,33 @@ private fun DateWheelPickerContent(
                 modifier = Modifier.weight(3f),
                 itemHeight = SelectionBorderHeight,
                 unfocusedCount = 1,
-                focus = {}
+                focus = {},
             ) { index ->
                 PickerText(
                     text = "${model.months[index]}",
                     isSelected = index == monthState.currentIndex,
                     selectedTextColor = colors.selectedTextColor,
-                    unselectedTextColor = colors.unselectedTextColor
+                    unselectedTextColor = colors.unselectedTextColor,
                 )
             }
 
             Divider(
                 modifier = Modifier.width(DividerWidth),
-                color = colors.dividerColor
+                color = colors.dividerColor,
             )
 
             DayWheel(
                 modifier = Modifier.weight(3f),
-                model = DateWheelPickerDayModel(
-                    daysInMonth = model.daysInMonth,
-                    days = model.days,
-                    dayIndex = model.dayIndex
-                ),
+                model =
+                    DateWheelPickerDayModel(
+                        daysInMonth = model.daysInMonth,
+                        days = model.days,
+                        dayIndex = model.dayIndex,
+                    ),
                 currentDate = currentDate,
                 minDate = minDate,
                 onDateChanged = onDateChanged,
-                colors = colors
+                colors = colors,
             )
         }
     }
@@ -276,24 +286,26 @@ private fun DateWheelPickerContent(
 private data class DateWheelPickerDayModel(
     val daysInMonth: Int,
     val days: List<Int>,
-    val dayIndex: Int
+    val dayIndex: Int,
 )
 
 @Composable
 private fun SelectionBorder(
     modifier: Modifier,
-    selectionBorderColor: Color
+    selectionBorderColor: Color,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = SelectionBorderHorizontalInset)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = SelectionBorderHorizontalInset),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(SelectionBorderHeight)
-                .border(1.dp, selectionBorderColor, RoundedCornerShape(8.dp))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(SelectionBorderHeight)
+                    .border(1.dp, selectionBorderColor, RoundedCornerShape(8.dp)),
         )
     }
 }
@@ -305,7 +317,7 @@ private fun DayWheel(
     currentDate: LocalDate,
     minDate: LocalDate?,
     onDateChanged: (LocalDate) -> Unit,
-    colors: DateWheelPickerColors
+    colors: DateWheelPickerColors,
 ) {
     key(model.daysInMonth, model.days.size) {
         val dayState = rememberFWheelPickerState(initialIndex = model.dayIndex)
@@ -316,7 +328,7 @@ private fun DayWheel(
             days = model.days,
             currentDate = currentDate,
             minDate = minDate,
-            onDateChanged = onDateChanged
+            onDateChanged = onDateChanged,
         )
 
         FVerticalWheelPicker(
@@ -325,13 +337,13 @@ private fun DayWheel(
             modifier = modifier,
             itemHeight = SelectionBorderHeight,
             unfocusedCount = 1,
-            focus = {}
+            focus = {},
         ) { index ->
             PickerText(
                 text = "${model.days[index]}",
                 isSelected = index == dayState.currentIndex,
                 selectedTextColor = colors.selectedTextColor,
-                unselectedTextColor = colors.unselectedTextColor
+                unselectedTextColor = colors.unselectedTextColor,
             )
         }
     }
@@ -340,7 +352,7 @@ private fun DayWheel(
 @Composable
 private fun SyncWheelIndex(
     state: FWheelPickerState,
-    targetIndex: Int
+    targetIndex: Int,
 ) {
     LaunchedEffect(targetIndex) {
         if (state.currentIndex != targetIndex) {
@@ -356,7 +368,7 @@ private fun ObserveYearWheel(
     currentYearFallback: Int,
     currentDate: LocalDate,
     minDate: LocalDate?,
-    onDateChanged: (LocalDate) -> Unit
+    onDateChanged: (LocalDate) -> Unit,
 ) {
     LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
@@ -376,7 +388,7 @@ private fun ObserveMonthWheel(
     months: List<Int>,
     currentDate: LocalDate,
     minDate: LocalDate?,
-    onDateChanged: (LocalDate) -> Unit
+    onDateChanged: (LocalDate) -> Unit,
 ) {
     LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
@@ -396,7 +408,7 @@ private fun ObserveDayWheel(
     days: List<Int>,
     currentDate: LocalDate,
     minDate: LocalDate?,
-    onDateChanged: (LocalDate) -> Unit
+    onDateChanged: (LocalDate) -> Unit,
 ) {
     LaunchedEffect(state, currentDate, minDate) {
         snapshotFlow { state.currentIndex }
@@ -434,27 +446,27 @@ private fun PickerText(
     text: String,
     isSelected: Boolean,
     selectedTextColor: Color,
-    unselectedTextColor: Color
+    unselectedTextColor: Color,
 ) {
     Text(
         text = text,
         fontSize = if (isSelected) 18.sp else 14.sp,
         fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
         color = if (isSelected) selectedTextColor else unselectedTextColor,
-        fontFamily = FontFamily(Font(R.font.sansneomedium))
+        fontFamily = FontFamily(Font(R.font.sansneomedium)),
     )
 }
 
 @Composable
 private fun Divider(
     modifier: Modifier = Modifier,
-    color: Color
+    color: Color,
 ) {
     Text(
         text = "|",
         color = color,
         fontSize = 20.sp,
-        modifier = modifier.padding(horizontal = 8.dp)
+        modifier = modifier.padding(horizontal = 8.dp),
     )
 }
 
@@ -464,6 +476,6 @@ private fun DateWheelPickerPreview() {
     DateWheelPicker(
         modifier = Modifier.width(DateWheelPickerDefaults.ContainerWidth),
         currentDate = LocalDate.of(2025, 11, 26),
-        onDateChanged = {}
+        onDateChanged = {},
     )
 }

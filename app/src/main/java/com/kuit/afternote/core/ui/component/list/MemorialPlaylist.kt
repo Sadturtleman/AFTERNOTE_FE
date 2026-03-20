@@ -36,9 +36,9 @@ import coil3.network.NetworkHeaders
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import com.kuit.afternote.R
+import com.kuit.afternote.core.dummy.album.AlbumDummies
 import com.kuit.afternote.core.ui.component.icon.ArrowIconSpec
 import com.kuit.afternote.core.ui.component.icon.RightArrowIcon
-import com.kuit.afternote.core.dummy.album.AlbumDummies
 import com.kuit.afternote.ui.expand.horizontalFadingEdge
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
@@ -55,27 +55,28 @@ private const val TAG = "MemorialPlaylist"
 data class AlbumCover(
     val id: String,
     val imageUrl: String? = null,
-    val title: String? = null
+    val title: String? = null,
 )
 
-private val songCountTextStyle = TextStyle(
-    fontSize = 14.sp,
-    lineHeight = 20.sp,
-    fontFamily = Sansneo,
-    fontWeight = FontWeight.Normal,
-    color = Color(0xFF000000)
-)
+private val songCountTextStyle =
+    TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontFamily = Sansneo,
+        fontWeight = FontWeight.Normal,
+        color = Color(0xFF000000),
+    )
 
 @Composable
 private fun MemorialPlaylistSongCountRow(
     songCount: Int,
-    showArrow: Boolean
+    showArrow: Boolean,
 ) {
     if (showArrow) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(text = "현재 ${songCount}개의 노래가 담겨 있습니다.", style = songCountTextStyle)
             RightArrowIcon(color = B1, size = 16.dp)
@@ -88,33 +89,36 @@ private fun MemorialPlaylistSongCountRow(
 @Composable
 private fun MemorialPlaylistAddButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .background(color = B3, shape = RoundedCornerShape(20.dp))
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+        modifier =
+            modifier
+                .background(color = B3, shape = RoundedCornerShape(20.dp))
+                .clickable(onClick = onClick)
+                .padding(vertical = 8.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = "노래 추가하기",
-            style = TextStyle(
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 12.sp,
+                    lineHeight = 18.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                ),
         )
         RightArrowIcon(
-            iconSpec = ArrowIconSpec(
-                iconRes = R.drawable.ic_arrow_right_playlist,
-                contentDescription = "추가"
-            ),
+            iconSpec =
+                ArrowIconSpec(
+                    iconRes = R.drawable.ic_arrow_right_playlist,
+                    contentDescription = "추가",
+                ),
             backgroundColor = B1,
-            size = 12.dp
+            size = 12.dp,
         )
     }
 }
@@ -139,49 +143,57 @@ fun MemorialPlaylist(
     albumCovers: List<AlbumCover> = emptyList(),
     onAddSongClick: (() -> Unit)? = null,
     onPlaylistClick: (() -> Unit)? = null,
-    albumItemContent: (@Composable (album: AlbumCover, index: Int) -> Unit)? = null
+    albumItemContent: (@Composable (album: AlbumCover, index: Int) -> Unit)? = null,
 ) {
     val isEditMode = onAddSongClick != null
-    val cardModifier = when {
-        !isEditMode && onPlaylistClick != null -> modifier
-            .fillMaxWidth()
-            .clickable(onClick = onPlaylistClick)
-        else -> modifier.fillMaxWidth()
-    }
+    val cardModifier =
+        when {
+            !isEditMode && onPlaylistClick != null -> {
+                modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onPlaylistClick)
+            }
+
+            else -> {
+                modifier.fillMaxWidth()
+            }
+        }
     Column(
-        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp),
     ) {
         Text(
             text = label,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                ),
         )
         Column(
-            modifier = cardModifier
-                .background(color = White, shape = RoundedCornerShape(size = 16.dp))
-                .padding(all = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+            modifier =
+                cardModifier
+                    .background(color = White, shape = RoundedCornerShape(size = 16.dp))
+                    .padding(all = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(space = 8.dp),
         ) {
             MemorialPlaylistSongCountRow(
                 songCount = songCount,
-                showArrow = !isEditMode
+                showArrow = !isEditMode,
             )
             if (albumCovers.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 MemorialPlaylistAlbumRow(
                     albumCovers = albumCovers,
-                    albumItemContent = albumItemContent
+                    albumItemContent = albumItemContent,
                 )
             }
             if (onAddSongClick != null) {
                 MemorialPlaylistAddButton(
                     modifier = Modifier.align(Alignment.End),
-                    onClick = onAddSongClick
+                    onClick = onAddSongClick,
                 )
             }
         }
@@ -191,13 +203,14 @@ fun MemorialPlaylist(
 @Composable
 private fun MemorialPlaylistAlbumRow(
     albumCovers: List<AlbumCover>,
-    albumItemContent: (@Composable (album: AlbumCover, index: Int) -> Unit)?
+    albumItemContent: (@Composable (album: AlbumCover, index: Int) -> Unit)?,
 ) {
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalFadingEdge(edgeWidth = 45.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .horizontalFadingEdge(edgeWidth = 45.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         itemsIndexed(albumCovers) { index, album ->
             if (albumItemContent != null) {
@@ -211,19 +224,23 @@ private fun MemorialPlaylistAlbumRow(
 
 @Composable
 private fun MemorialPlaylistAlbumCoverBox(album: AlbumCover) {
-    val modifier = Modifier
-        .size(80.dp)
-        .clip(RoundedCornerShape(8.dp))
+    val modifier =
+        Modifier
+            .size(80.dp)
+            .clip(RoundedCornerShape(8.dp))
     if (!album.imageUrl.isNullOrBlank()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(album.imageUrl)
-                .httpHeaders(
-                    NetworkHeaders.Builder().apply {
-                        this["User-Agent"] = "Afternote Android App"
-                    }.build()
-                )
-                .build(),
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(album.imageUrl)
+                    .httpHeaders(
+                        NetworkHeaders
+                            .Builder()
+                            .apply {
+                                this["User-Agent"] = "Afternote Android App"
+                            }.build(),
+                    ).build(),
             contentDescription = stringResource(R.string.content_description_album_cover),
             modifier = modifier,
             contentScale = ContentScale.Crop,
@@ -232,16 +249,17 @@ private fun MemorialPlaylistAlbumCoverBox(album: AlbumCover) {
                 Log.e(
                     TAG,
                     "Coil load failed: album.imageUrl=${album.imageUrl}",
-                    state.result.throwable
+                    state.result.throwable,
                 )
-            }
+            },
         )
     } else {
         Box(
-            modifier = modifier.background(
-                color = Color.LightGray,
-                shape = RoundedCornerShape(8.dp)
-            )
+            modifier =
+                modifier.background(
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(8.dp),
+                ),
         )
     }
 }
@@ -252,12 +270,12 @@ private fun MemorialPlaylistEditPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             MemorialPlaylist(
                 songCount = 4,
                 albumCovers = AlbumDummies.list,
-                onAddSongClick = {}
+                onAddSongClick = {},
             )
         }
     }
@@ -269,12 +287,12 @@ private fun MemorialPlaylistViewPreview() {
     AfternoteTheme {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             MemorialPlaylist(
                 songCount = 16,
                 albumCovers = AlbumDummies.list,
-                onAddSongClick = null
+                onAddSongClick = null,
             )
         }
     }

@@ -25,7 +25,7 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
     selectedItem: BottomNavItem = BottomNavItem.HOME,
-    onItemSelected: (BottomNavItem) -> Unit
+    onItemSelected: (BottomNavItem) -> Unit,
 ) {
     val homeLabel = stringResource(BottomNavItem.HOME.labelResId)
     val recordLabel = stringResource(BottomNavItem.RECORD.labelResId)
@@ -33,18 +33,19 @@ fun BottomNavigationBar(
     val afternoteLabel = stringResource(BottomNavItem.AFTERNOTE.labelResId)
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(start = 38.dp, top = 19.dp, end = 32.dp, bottom = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(start = 38.dp, top = 19.dp, end = 32.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         BottomNavigationItem(
             iconRes = BottomNavItem.HOME.iconRes,
             label = homeLabel,
             isSelected = BottomNavItem.HOME == selectedItem,
             onClick = { onItemSelected(BottomNavItem.HOME) },
-            iconTextSpacing = BottomNavItem.HOME.iconTextSpacing
+            iconTextSpacing = BottomNavItem.HOME.iconTextSpacing,
         )
 
         Spacer(modifier = Modifier.weight(62f))
@@ -54,7 +55,7 @@ fun BottomNavigationBar(
             label = recordLabel,
             isSelected = BottomNavItem.RECORD == selectedItem,
             onClick = { onItemSelected(BottomNavItem.RECORD) },
-            iconTextSpacing = BottomNavItem.RECORD.iconTextSpacing
+            iconTextSpacing = BottomNavItem.RECORD.iconTextSpacing,
         )
 
         Spacer(modifier = Modifier.weight(57f))
@@ -64,7 +65,7 @@ fun BottomNavigationBar(
             label = timeLetterLabel,
             isSelected = BottomNavItem.TIME_LETTER == selectedItem,
             onClick = { onItemSelected(BottomNavItem.TIME_LETTER) },
-            iconTextSpacing = BottomNavItem.TIME_LETTER.iconTextSpacing
+            iconTextSpacing = BottomNavItem.TIME_LETTER.iconTextSpacing,
         )
 
         Spacer(modifier = Modifier.weight(46f))
@@ -74,7 +75,7 @@ fun BottomNavigationBar(
             label = afternoteLabel,
             isSelected = BottomNavItem.AFTERNOTE == selectedItem,
             onClick = { onItemSelected(BottomNavItem.AFTERNOTE) },
-            iconTextSpacing = BottomNavItem.AFTERNOTE.iconTextSpacing
+            iconTextSpacing = BottomNavItem.AFTERNOTE.iconTextSpacing,
         )
     }
 }
@@ -85,7 +86,7 @@ private fun BottomNavigationBarPreview() {
     AfternoteTheme {
         BottomNavigationBar(
             selectedItem = BottomNavItem.HOME,
-            onItemSelected = {}
+            onItemSelected = {},
         )
     }
 }

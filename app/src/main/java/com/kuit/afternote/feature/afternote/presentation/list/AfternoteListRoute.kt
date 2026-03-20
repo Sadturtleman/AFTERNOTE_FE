@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.domain.model.AfternoteServiceType
 import com.kuit.afternote.core.ui.component.list.AfternoteTab
 import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
 import com.kuit.afternote.core.ui.screen.AfternoteListScreen
@@ -15,6 +14,7 @@ import com.kuit.afternote.core.ui.screen.AfternoteListScreenListParams
 import com.kuit.afternote.core.ui.screen.AfternoteListScreenShellParams
 import com.kuit.afternote.core.ui.util.getIconResForServiceName
 import com.kuit.afternote.core.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
 
 data class AfternoteListRouteCallbacks(

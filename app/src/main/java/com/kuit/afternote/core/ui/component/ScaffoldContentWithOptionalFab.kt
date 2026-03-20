@@ -24,13 +24,14 @@ fun ScaffoldContentWithOptionalFab(
     contentPadding: PaddingValues = PaddingValues(start = 20.dp, end = 20.dp, bottom = 16.dp),
     showFab: Boolean = false,
     onFabClick: () -> Unit = {},
-    content: @Composable (Modifier) -> Unit
+    content: @Composable (Modifier) -> Unit,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(contentPadding)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(contentPadding),
     ) {
         content(Modifier)
         if (showFab) {
@@ -47,7 +48,7 @@ private fun ScaffoldContentWithOptionalFabPreview() {
             paddingValues = PaddingValues(),
             showFab = true,
             onFabClick = {},
-            content = { mod -> Box(modifier = mod.fillMaxSize()) {} }
+            content = { mod -> Box(modifier = mod.fillMaxSize()) {} },
         )
     }
 }

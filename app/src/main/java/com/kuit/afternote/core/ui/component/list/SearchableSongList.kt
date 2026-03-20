@@ -67,7 +67,7 @@ import com.kuit.afternote.ui.theme.White
  */
 data class SearchableSongListSlots(
     val trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)? = null,
-    val leadingContent: (@Composable () -> Unit)? = null
+    val leadingContent: (@Composable () -> Unit)? = null,
 )
 
 /**
@@ -78,7 +78,7 @@ data class SearchableSongListSlots(
  */
 data class SongPlaylistScreenManagementContent(
     val leadingContent: @Composable (selectedIds: Set<String>) -> Unit,
-    val selectionBottomBar: @Composable (selectedIds: Set<String>, onClearSelection: () -> Unit) -> Unit
+    val selectionBottomBar: @Composable (selectedIds: Set<String>, onClearSelection: () -> Unit) -> Unit,
 )
 
 /**
@@ -88,7 +88,7 @@ data class SongPlaylistScreenSelectableOptions(
     val defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
     val initialSelectedSongIds: Set<String>? = null,
     val searchQuery: String? = null,
-    val onSearchQueryChange: ((String) -> Unit)? = null
+    val onSearchQueryChange: ((String) -> Unit)? = null,
 )
 
 // region ── SongPlaylistScreen (full screen composable) ──
@@ -109,7 +109,7 @@ fun SongPlaylistScreen(
     title: String,
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedBottomNavItem by remember { mutableStateOf(defaultBottomNavItem) }
@@ -119,24 +119,25 @@ fun SongPlaylistScreen(
         topBar = {
             TopBar(
                 title = title,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
             )
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { selectedBottomNavItem = it },
             )
-        }
+        },
     ) { paddingValues ->
         SearchableSongList(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
             songs = songs,
             searchQuery = searchQuery,
             onSearchQueryChange = { searchQuery = it },
-            contentPadding = PaddingValues(horizontal = 20.dp)
+            contentPadding = PaddingValues(horizontal = 20.dp),
         )
     }
 }
@@ -161,7 +162,7 @@ fun SongPlaylistScreen(
     onBackClick: () -> Unit,
     songs: List<PlaylistSongDisplay>,
     onSongsSelected: (List<PlaylistSongDisplay>) -> Unit,
-    options: SongPlaylistScreenSelectableOptions = SongPlaylistScreenSelectableOptions()
+    options: SongPlaylistScreenSelectableOptions = SongPlaylistScreenSelectableOptions(),
 ) {
     var selectedSongIds by remember { mutableStateOf(options.initialSelectedSongIds ?: emptySet<String>()) }
     var internalSearchQuery by remember { mutableStateOf("") }
@@ -181,15 +182,15 @@ fun SongPlaylistScreen(
         topBar = {
             TopBar(
                 title = title,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
             )
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { selectedBottomNavItem = it },
             )
-        }
+        },
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             SearchableSongList(
@@ -198,41 +199,45 @@ fun SongPlaylistScreen(
                 searchQuery = effectiveQuery,
                 onSearchQueryChange = effectiveOnSearchQueryChange,
                 onSongClick = { song ->
-                    selectedSongIds = if (song.id in selectedSongIds) {
-                        selectedSongIds - song.id
-                    } else {
-                        selectedSongIds + song.id
-                    }
+                    selectedSongIds =
+                        if (song.id in selectedSongIds) {
+                            selectedSongIds - song.id
+                        } else {
+                            selectedSongIds + song.id
+                        }
                 },
-                contentPadding = PaddingValues(
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
-                ),
-                slots = SearchableSongListSlots(
-                    trailingContent = { song ->
-                        CustomRadioButton(
-                            selected = selectedSongIds.contains(song.id),
-                            onClick = null,
-                            buttonSize = 24.dp,
-                            selectedColor = B2,
-                            unselectedColor = Gray4
-                        )
-                    }
-                )
+                contentPadding =
+                    PaddingValues(
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp,
+                    ),
+                slots =
+                    SearchableSongListSlots(
+                        trailingContent = { song ->
+                            CustomRadioButton(
+                                selected = selectedSongIds.contains(song.id),
+                                onClick = null,
+                                buttonSize = 24.dp,
+                                selectedColor = B2,
+                                unselectedColor = Gray4,
+                            )
+                        },
+                    ),
             )
             if (selectedSongIds.isNotEmpty()) {
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(start = 20.dp, end = 20.dp, bottom = 24.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(start = 20.dp, end = 20.dp, bottom = 24.dp),
                 ) {
                     SongAddButton(
                         count = selectedSongIds.size,
                         onClick = {
                             val selected = displaySongs.filter { it.id in selectedSongIds }
                             onSongsSelected(selected)
-                        }
+                        },
                     )
                 }
             }
@@ -261,7 +266,7 @@ fun SongPlaylistScreen(
     songs: List<PlaylistSongDisplay>,
     managementContent: SongPlaylistScreenManagementContent,
     defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
-    initialSelectedSongIds: Set<String>? = null
+    initialSelectedSongIds: Set<String>? = null,
 ) {
     var selectedSongIds by remember {
         mutableStateOf(initialSelectedSongIds ?: emptySet<String>())
@@ -273,15 +278,15 @@ fun SongPlaylistScreen(
         topBar = {
             TopBar(
                 title = title,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
             )
         },
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
+                onItemSelected = { selectedBottomNavItem = it },
             )
-        }
+        },
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             SearchableSongList(
@@ -290,35 +295,39 @@ fun SongPlaylistScreen(
                 searchQuery = "",
                 onSearchQueryChange = {},
                 onSongClick = { song ->
-                    selectedSongIds = if (song.id in selectedSongIds) {
-                        selectedSongIds - song.id
-                    } else {
-                        selectedSongIds + song.id
-                    }
+                    selectedSongIds =
+                        if (song.id in selectedSongIds) {
+                            selectedSongIds - song.id
+                        } else {
+                            selectedSongIds + song.id
+                        }
                 },
-                contentPadding = PaddingValues(
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp
-                ),
-                slots = SearchableSongListSlots(
-                    trailingContent = { song ->
-                        CustomRadioButton(
-                            selected = selectedSongIds.contains(song.id),
-                            onClick = null,
-                            buttonSize = 24.dp,
-                            selectedColor = B2,
-                            unselectedColor = Gray4
-                        )
-                    },
-                    leadingContent = { managementContent.leadingContent(selectedSongIds) }
-                )
+                contentPadding =
+                    PaddingValues(
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = if (selectedSongIds.isNotEmpty()) 72.dp else 0.dp,
+                    ),
+                slots =
+                    SearchableSongListSlots(
+                        trailingContent = { song ->
+                            CustomRadioButton(
+                                selected = selectedSongIds.contains(song.id),
+                                onClick = null,
+                                buttonSize = 24.dp,
+                                selectedColor = B2,
+                                unselectedColor = Gray4,
+                            )
+                        },
+                        leadingContent = { managementContent.leadingContent(selectedSongIds) },
+                    ),
             )
             if (selectedSongIds.isNotEmpty()) {
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(start = 20.dp, end = 20.dp, bottom = 24.dp)
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(start = 20.dp, end = 20.dp, bottom = 24.dp),
                 ) {
                     managementContent.selectionBottomBar(selectedSongIds) {
                         selectedSongIds = emptySet()
@@ -335,7 +344,7 @@ fun SongPlaylistScreen(
 
 private fun filterSongsByQuery(
     songs: List<PlaylistSongDisplay>,
-    searchQuery: String
+    searchQuery: String,
 ): List<PlaylistSongDisplay> {
     val query = searchQuery.trim().lowercase()
     if (query.isEmpty()) return songs
@@ -349,14 +358,14 @@ private fun filterSongsByQuery(
 private fun SearchableSongListHeader(
     slots: SearchableSongListSlots,
     searchQuery: String,
-    onSearchQueryChange: (String) -> Unit
+    onSearchQueryChange: (String) -> Unit,
 ) {
     if (slots.leadingContent != null) {
         slots.leadingContent()
     } else {
         SongSearchSection(
             searchQuery = searchQuery,
-            onSearchQueryChange = onSearchQueryChange
+            onSearchQueryChange = onSearchQueryChange,
         )
     }
 }
@@ -365,12 +374,22 @@ private fun SearchableSongListHeader(
 private fun SearchableSongListRow(
     song: PlaylistSongDisplay,
     onSongClick: ((PlaylistSongDisplay) -> Unit)?,
-    trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)?
+    trailingContent: (@Composable RowScope.(PlaylistSongDisplay) -> Unit)?,
 ) {
     PlaylistSongItem(
         song = song,
-        onClick = if (onSongClick != null) { { onSongClick(song) } } else null,
-        trailingContent = if (trailingContent != null) { { trailingContent(song) } } else null
+        onClick =
+            if (onSongClick != null) {
+                { onSongClick(song) }
+            } else {
+                null
+            },
+        trailingContent =
+            if (trailingContent != null) {
+                { trailingContent(song) }
+            } else {
+                null
+            },
     )
 }
 
@@ -393,27 +412,28 @@ fun SearchableSongList(
     onSearchQueryChange: (String) -> Unit,
     onSongClick: ((PlaylistSongDisplay) -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    slots: SearchableSongListSlots = SearchableSongListSlots()
+    slots: SearchableSongListSlots = SearchableSongListSlots(),
 ) {
-    val filteredSongs = remember(songs, searchQuery) {
-        filterSongsByQuery(songs, searchQuery)
-    }
+    val filteredSongs =
+        remember(songs, searchQuery) {
+            filterSongsByQuery(songs, searchQuery)
+        }
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
         item {
             SearchableSongListHeader(
                 slots = slots,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
+                onSearchQueryChange = onSearchQueryChange,
             )
         }
         itemsIndexed(filteredSongs) { _, song ->
             SearchableSongListRow(
                 song = song,
                 onSongClick = onSongClick,
-                trailingContent = slots.trailingContent
+                trailingContent = slots.trailingContent,
             )
         }
     }
@@ -426,23 +446,25 @@ fun SearchableSongList(
 @Composable
 private fun SongSearchSection(
     searchQuery: String,
-    onSearchQueryChange: (String) -> Unit
+    onSearchQueryChange: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
     ) {
         Text(
             text = stringResource(R.string.song_search_label),
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            ),
-            modifier = Modifier.padding(bottom = 8.dp)
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                ),
+            modifier = Modifier.padding(bottom = 8.dp),
         )
         OutlinedTextField(
             value = searchQuery,
@@ -450,40 +472,44 @@ private fun SongSearchSection(
             placeholder = {
                 Text(
                     text = "Text Field",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray4
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Normal,
+                            color = Gray4,
+                        ),
                 )
             },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(R.string.song_search_label),
-                    tint = Gray9
+                    tint = Gray9,
                 )
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = White,
-                unfocusedContainerColor = White,
-                focusedBorderColor = B1,
-                unfocusedBorderColor = Gray2,
-                cursorColor = B1
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = White,
+                    unfocusedContainerColor = White,
+                    focusedBorderColor = B1,
+                    unfocusedBorderColor = Gray2,
+                    cursorColor = B1,
+                ),
             singleLine = true,
-            textStyle = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = Sansneo,
-                color = Gray9
-            ),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
+            textStyle =
+                TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = Sansneo,
+                    color = Gray9,
+                ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         )
     }
 }
@@ -496,51 +522,55 @@ private fun SongSearchSection(
 private fun SongAddButton(
     count: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(8.dp)
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(52.dp)
-            .shadow(
-                elevation = 5.dp,
-                shape = shape,
-                clip = false,
-                ambientColor = Color(0x26000000),
-                spotColor = Color(0x26000000)
-            ).background(color = Gray1, shape = shape)
-            .clip(shape)
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .shadow(
+                    elevation = 5.dp,
+                    shape = shape,
+                    clip = false,
+                    ambientColor = Color(0x26000000),
+                    spotColor = Color(0x26000000),
+                ).background(color = Gray1, shape = shape)
+                .clip(shape)
+                .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Row {
             Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .background(color = B1, shape = RoundedCornerShape(40.dp)),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .background(color = B1, shape = RoundedCornerShape(40.dp)),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "$count",
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = Sansneo,
-                        fontWeight = FontWeight.Medium,
-                        color = White
-                    )
+                    style =
+                        TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = Sansneo,
+                            fontWeight = FontWeight.Medium,
+                            color = White,
+                        ),
                 )
             }
             Spacer(Modifier.width(16.dp))
             Text(
                 text = stringResource(R.string.add_button),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
+                style =
+                    TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9,
+                    ),
             )
         }
     }
@@ -553,29 +583,31 @@ private fun SongAddButton(
 @Preview(showBackground = true, name = "View-only 모드")
 @Composable
 private fun SongPlaylistScreenPreview() {
-    val songs = (1..5).map { i ->
-        PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
-    }
+    val songs =
+        (1..5).map { i ->
+            PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
+        }
     SongPlaylistScreen(
         title = "추모 플레이리스트",
         onBackClick = {},
         songs = songs,
-        defaultBottomNavItem = BottomNavItem.AFTERNOTE
+        defaultBottomNavItem = BottomNavItem.AFTERNOTE,
     )
 }
 
 @Preview(showBackground = true, name = "선택 모드")
 @Composable
 private fun SongPlaylistScreenSelectablePreview() {
-    val songs = (1..5).map { i ->
-        PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
-    }
+    val songs =
+        (1..5).map { i ->
+            PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
+        }
     SongPlaylistScreen(
         title = "추모 플레이리스트 추가",
         onBackClick = {},
         songs = songs,
         onSongsSelected = {},
-        options = SongPlaylistScreenSelectableOptions(initialSelectedSongIds = setOf("1", "3"))
+        options = SongPlaylistScreenSelectableOptions(initialSelectedSongIds = setOf("1", "3")),
     )
 }
 
@@ -583,15 +615,16 @@ private fun SongPlaylistScreenSelectablePreview() {
 @Composable
 @Suppress("AssignedValueIsNeverRead")
 private fun SearchableSongListPreview() {
-    val songs = (1..5).map { i ->
-        PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
-    }
+    val songs =
+        (1..5).map { i ->
+            PlaylistSongDisplay(id = "$i", title = "노래 제목 $i", artist = "가수 이름")
+        }
     var query by remember { mutableStateOf("") }
     SearchableSongList(
         songs = songs,
         searchQuery = query,
         onSearchQueryChange = { query = it },
-        contentPadding = PaddingValues(horizontal = 20.dp)
+        contentPadding = PaddingValues(horizontal = 20.dp),
     )
 }
 

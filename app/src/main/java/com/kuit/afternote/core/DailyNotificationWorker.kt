@@ -1,4 +1,4 @@
-package com.kuit.afternote.core.data
+package com.kuit.afternote.core
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -16,9 +16,8 @@ import com.kuit.afternote.R
 
 class DailyNotificationWorker(
     context: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
-
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
         // 1. Notification Channel 생성 (Android 8.0 이상 필수)
@@ -32,15 +31,19 @@ class DailyNotificationWorker(
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showNotification() {
-        val notification = NotificationCompat.Builder(applicationContext, "DAILY_CHANNEL_ID")
-            .setSmallIcon(R.drawable.img_logo) // 리소스 확인 필수
-            .setContentTitle("AFTERNOTE")
-            .setContentText("오늘 하루 누구한테 가장 고마웠나요?")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-            .build()
+        val notification =
+            NotificationCompat
+                .Builder(applicationContext, "DAILY_CHANNEL_ID")
+                .setSmallIcon(R.drawable.img_logo) // 리소스 확인 필수
+                .setContentTitle("AFTERNOTE")
+                .setContentText("오늘 하루 누구한테 가장 고마웠나요?")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .build()
 
-        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
             NotificationManagerCompat.from(applicationContext).notify(1001, notification)
         }
     }

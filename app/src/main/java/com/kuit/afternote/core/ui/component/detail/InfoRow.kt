@@ -32,42 +32,45 @@ import com.kuit.afternote.ui.theme.Sansneo
 fun InfoRow(
     modifier: Modifier = Modifier,
     label: String,
-    value: String
+    value: String,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // 라벨 배지
         Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .background(B3)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(B3)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             Text(
                 text = label,
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp,
-                    fontFamily = Sansneo,
-                    fontWeight = FontWeight.Medium,
-                    color = Gray9
-                )
+                style =
+                    TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontFamily = Sansneo,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray9,
+                    ),
             )
         }
 
         // 값
         Text(
             text = value,
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Normal,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Normal,
+                    color = Gray9,
+                ),
         )
     }
 }
@@ -78,7 +81,7 @@ private fun InfoRowPreview() {
     AfternoteTheme {
         InfoRow(
             label = "아이디",
-            value = "qwerty123"
+            value = "qwerty123",
         )
     }
 }

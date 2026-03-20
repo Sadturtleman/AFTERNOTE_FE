@@ -25,7 +25,7 @@ fun AfternoteListScreenShell(
     onBottomBarItemSelected: (BottomNavItem) -> Unit,
     showFab: Boolean = false,
     onFabClick: () -> Unit = {},
-    content: @Composable (Modifier) -> Unit
+    content: @Composable (Modifier) -> Unit,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -35,15 +35,15 @@ fun AfternoteListScreenShell(
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = bottomBarSelectedItem,
-                onItemSelected = onBottomBarItemSelected
+                onItemSelected = onBottomBarItemSelected,
             )
-        }
+        },
     ) { paddingValues ->
         ScaffoldContentWithOptionalFab(
             paddingValues = paddingValues,
             showFab = showFab,
             onFabClick = onFabClick,
-            content = content
+            content = content,
         )
     }
 }
@@ -61,7 +61,7 @@ private fun AfternoteListScreenShellPreview() {
                 Box(modifier = modifier.fillMaxSize()) {
                     Text("Content")
                 }
-            }
+            },
         )
     }
 }

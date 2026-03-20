@@ -17,7 +17,7 @@ import com.kuit.afternote.core.ui.component.navigation.BottomNavItem
  */
 @Stable
 class AfternoteDetailState(
-    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE
+    defaultBottomNavItem: BottomNavItem = BottomNavItem.AFTERNOTE,
 ) {
     var selectedBottomNavItem by mutableStateOf(defaultBottomNavItem)
         private set

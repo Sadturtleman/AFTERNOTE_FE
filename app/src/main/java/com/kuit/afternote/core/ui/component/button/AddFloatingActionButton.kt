@@ -31,28 +31,29 @@ import com.kuit.afternote.ui.expand.dropShadow
 @Composable
 fun BoxScope.AddFloatingActionButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier
-            .align(Alignment.BottomEnd)
-            .dropShadow(
-                shape = CircleShape,
-                color = Color(0x26000000),
-                blur = 40.dp,
-                offsetX = 0.dp,
-                offsetY = 2.dp,
-                spread = 0.dp
-            ).background(Color.White, CircleShape)
-            .clip(CircleShape)
-            .clickable {
-                Log.d("AddFAB", "FAB clicked")
-                onClick()
-            }
+        modifier =
+            modifier
+                .align(Alignment.BottomEnd)
+                .dropShadow(
+                    shape = CircleShape,
+                    color = Color(0x26000000),
+                    blur = 40.dp,
+                    offsetX = 0.dp,
+                    offsetY = 2.dp,
+                    spread = 0.dp,
+                ).background(Color.White, CircleShape)
+                .clip(CircleShape)
+                .clickable {
+                    Log.d("AddFAB", "FAB clicked")
+                    onClick()
+                },
     ) {
         Image(
             painter = painterResource(R.drawable.ic_add_circle_fab),
-            contentDescription = "새 애프터노트 추가"
+            contentDescription = "새 애프터노트 추가",
         )
     }
 }
@@ -61,10 +62,10 @@ fun BoxScope.AddFloatingActionButton(
 @Composable
 private fun AddFloatingActionButtonPreview() {
     Box(
-        modifier = Modifier.wrapContentSize()
+        modifier = Modifier.wrapContentSize(),
     ) {
         AddFloatingActionButton(
-            onClick = {}
+            onClick = {},
         )
     }
 }

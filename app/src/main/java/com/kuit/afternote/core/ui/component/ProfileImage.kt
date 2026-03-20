@@ -32,8 +32,10 @@ private const val TAG = "ProfileImage"
 
 /** Ratio: container size / profile image size (157 / 133). */
 private const val CONTAINER_TO_PROFILE_RATIO = 157f / 133f
+
 /** Ratio: edit button size / profile image size (52 / 133). */
 private const val EDIT_BUTTON_TO_PROFILE_RATIO = 52f / 133f
+
 /** Ratio: edit button shadow elevation / profile image size (10 / 133). */
 private const val SHADOW_TO_PROFILE_RATIO = 10f / 133f
 
@@ -59,7 +61,7 @@ fun ProfileImage(
     profileImageSize: Dp = 133.dp,
     isEditable: Boolean = true,
     onEditClick: (() -> Unit)? = null,
-    displayImageUri: String? = null
+    displayImageUri: String? = null,
 ) {
     Log.d(TAG, "displayImageUri=$displayImageUri fallbackImageRes=$fallbackImageRes")
 
@@ -71,33 +73,33 @@ fun ProfileImage(
         val shadowElevation = (profileImageSize.value * SHADOW_TO_PROFILE_RATIO).dp
         Box(
             modifier = modifier.size(containerSize),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             ProfileImageContent(
                 displayImageUri = displayImageUri,
                 fallbackImageRes = fallbackImageRes,
-                modifier = imageModifier
+                modifier = imageModifier,
             )
             Image(
                 painter = painterResource(R.drawable.ic_add_circle_profile),
                 contentDescription = stringResource(R.string.content_description_profile_edit_button),
-                modifier = Modifier
-                    .size(editButtonSize)
-                    .align(Alignment.BottomEnd)
-                    .shadow(
-                        elevation = shadowElevation,
-                        shape = CircleShape,
-                        spotColor = PROFILE_EDIT_BUTTON_SHADOW_COLOR,
-                        ambientColor = PROFILE_EDIT_BUTTON_SHADOW_COLOR
-                    )
-                    .clickable(onClick = { onEditClick?.invoke() })
+                modifier =
+                    Modifier
+                        .size(editButtonSize)
+                        .align(Alignment.BottomEnd)
+                        .shadow(
+                            elevation = shadowElevation,
+                            shape = CircleShape,
+                            spotColor = PROFILE_EDIT_BUTTON_SHADOW_COLOR,
+                            ambientColor = PROFILE_EDIT_BUTTON_SHADOW_COLOR,
+                        ).clickable(onClick = { onEditClick?.invoke() }),
             )
         }
     } else {
         ProfileImageContent(
             displayImageUri = displayImageUri,
             fallbackImageRes = fallbackImageRes,
-            modifier = modifier.then(imageModifier)
+            modifier = modifier.then(imageModifier),
         )
     }
 }
@@ -106,19 +108,22 @@ fun ProfileImage(
 private fun ProfileImageContent(
     modifier: Modifier,
     displayImageUri: String?,
-    @DrawableRes fallbackImageRes: Int
+    @DrawableRes fallbackImageRes: Int,
 ) {
     if (!displayImageUri.isNullOrBlank()) {
         Log.d(TAG, "using AsyncImage for uri=$displayImageUri")
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(displayImageUri)
-                .httpHeaders(
-                    NetworkHeaders.Builder().apply {
-                        this["User-Agent"] = "Afternote Android App"
-                    }.build()
-                )
-                .build(),
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(displayImageUri)
+                    .httpHeaders(
+                        NetworkHeaders
+                            .Builder()
+                            .apply {
+                                this["User-Agent"] = "Afternote Android App"
+                            }.build(),
+                    ).build(),
             contentDescription = stringResource(R.string.content_description_profile_image),
             modifier = modifier,
             contentScale = ContentScale.Crop,
@@ -127,9 +132,9 @@ private fun ProfileImageContent(
                 Log.e(
                     TAG,
                     "Coil load failed: uri=$displayImageUri",
-                    state.result.throwable
+                    state.result.throwable,
                 )
-            }
+            },
         )
     } else {
         Log.d(TAG, "using fallback drawable")
@@ -137,7 +142,7 @@ private fun ProfileImageContent(
             painter = painterResource(fallbackImageRes),
             contentDescription = stringResource(R.string.content_description_profile_image),
             contentScale = ContentScale.Crop,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

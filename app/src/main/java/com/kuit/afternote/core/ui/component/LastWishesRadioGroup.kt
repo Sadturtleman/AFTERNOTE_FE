@@ -46,7 +46,7 @@ const val LABEL_LAST_WISH = "남기고 싶은 당부"
  */
 data class LastWishOption(
     val text: String,
-    val value: String
+    val value: String,
 )
 
 /**
@@ -57,7 +57,7 @@ data class LastWishOption(
  */
 data class LastWishOtherState(
     val text: String,
-    val onTextChange: (String) -> Unit
+    val onTextChange: (String) -> Unit,
 )
 
 /**
@@ -77,21 +77,22 @@ fun LastWishesRadioGroup(
     selectedValue: String? = null,
     onOptionSelected: (String) -> Unit = {},
     displayTextOnly: String? = null,
-    otherState: LastWishOtherState? = null
+    otherState: LastWishOtherState? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+        verticalArrangement = Arrangement.spacedBy(space = 16.dp),
     ) {
         Text(
             text = label,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium,
-                color = Gray9
-            )
+            style =
+                TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                    color = Gray9,
+                ),
         )
 
         if (displayTextOnly != null) {
@@ -101,7 +102,7 @@ fun LastWishesRadioGroup(
                 options = options,
                 selectedValue = selectedValue,
                 onOptionSelected = onOptionSelected,
-                otherState = otherState
+                otherState = otherState,
             )
         }
     }
@@ -113,17 +114,18 @@ private fun LastWishViewModeContent(displayTextOnly: String) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, B1),
-        color = White
+        color = White,
     ) {
         Text(
             text = displayTextOnly,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             color = B1,
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = Sansneo,
-                fontWeight = FontWeight.Medium
-            )
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = Sansneo,
+                    fontWeight = FontWeight.Medium,
+                ),
         )
     }
 }
@@ -133,7 +135,7 @@ private fun LastWishEditModeContent(
     options: List<LastWishOption>,
     selectedValue: String?,
     onOptionSelected: (String) -> Unit,
-    otherState: LastWishOtherState?
+    otherState: LastWishOtherState?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(space = 8.dp)) {
         options.forEach { option ->
@@ -143,18 +145,18 @@ private fun LastWishEditModeContent(
                     option = option,
                     selected = selected,
                     otherState = otherState,
-                    onOptionSelected = { onOptionSelected(option.value) }
+                    onOptionSelected = { onOptionSelected(option.value) },
                 )
             } else {
                 SelectableRadioCard(
                     modifier = Modifier.fillMaxWidth(),
                     selected = selected,
-                    onClick = { onOptionSelected(option.value) }
+                    onClick = { onOptionSelected(option.value) },
                 ) {
                     Text(
                         text = option.text,
                         style = optionLabelStyle(selected = selected),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -167,46 +169,48 @@ private fun LastWishOtherCard(
     option: LastWishOption,
     selected: Boolean,
     otherState: LastWishOtherState,
-    onOptionSelected: () -> Unit
+    onOptionSelected: () -> Unit,
 ) {
     val borderColor = if (selected) B2 else Color.Transparent
     val interactionSource = remember { MutableInteractionSource() }
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = selected,
-                onClick = onOptionSelected,
-                role = Role.RadioButton,
-                interactionSource = interactionSource,
-                indication = null
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = selected,
+                    onClick = onOptionSelected,
+                    role = Role.RadioButton,
+                    interactionSource = interactionSource,
+                    indication = null,
+                ),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, borderColor),
         color = White,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 CustomRadioButton(
                     selected = selected,
                     onClick = null,
                     buttonSize = 24.dp,
                     selectedColor = B2,
-                    unselectedColor = Gray4
+                    unselectedColor = Gray4,
                 )
                 Text(
                     text = option.text,
                     style = optionLabelStyle(selected = selected),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             if (selected) {
@@ -219,19 +223,20 @@ private fun LastWishOtherCard(
     }
 }
 
-private fun optionLabelStyle(selected: Boolean): TextStyle = TextStyle(
-    fontSize = 16.sp,
-    lineHeight = 22.sp,
-    fontFamily = Sansneo,
-    fontWeight = FontWeight.Medium,
-    color = if (selected) B1 else Gray9
-)
+private fun optionLabelStyle(selected: Boolean): TextStyle =
+    TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
+        fontFamily = Sansneo,
+        fontWeight = FontWeight.Medium,
+        color = if (selected) B1 else Gray9,
+    )
 
 @Composable
 private fun LastWishOtherTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val state = rememberTextFieldState(initialText = value)
     LaunchedEffect(value) {
@@ -248,7 +253,7 @@ private fun LastWishOtherTextField(
         placeholder = "Text Field",
         containerColor = Gray1,
         height = 160.dp,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     )
 }
 
@@ -256,18 +261,19 @@ private fun LastWishOtherTextField(
 @Composable
 private fun LastWishesRadioGroupEditPreview() {
     AfternoteTheme {
-        val options = listOf(
-            LastWishOption(text = "차분하고 조용하게 보내주세요.", value = "calm"),
-            LastWishOption(text = "슬퍼 하지 말고 밝고 따뜻하게 보내주세요.", value = "bright"),
-            LastWishOption(text = "기타(직접 입력)", value = "other")
-        )
+        val options =
+            listOf(
+                LastWishOption(text = "차분하고 조용하게 보내주세요.", value = "calm"),
+                LastWishOption(text = "슬퍼 하지 말고 밝고 따뜻하게 보내주세요.", value = "bright"),
+                LastWishOption(text = "기타(직접 입력)", value = "other"),
+            )
         Column(modifier = Modifier.padding(20.dp)) {
             LastWishesRadioGroup(
                 label = LABEL_LAST_WISH,
                 options = options,
                 selectedValue = "calm",
                 onOptionSelected = {},
-                otherState = LastWishOtherState(text = "", onTextChange = {})
+                otherState = LastWishOtherState(text = "", onTextChange = {}),
             )
         }
     }
@@ -277,21 +283,23 @@ private fun LastWishesRadioGroupEditPreview() {
 @Composable
 private fun LastWishesRadioGroupOtherSelectedPreview() {
     AfternoteTheme {
-        val options = listOf(
-            LastWishOption(text = "차분하고 조용하게 보내주세요.", value = "calm"),
-            LastWishOption(text = "슬퍼 하지 말고 밝고 따뜻하게 보내주세요.", value = "bright"),
-            LastWishOption(text = "기타(직접 입력)", value = "other")
-        )
+        val options =
+            listOf(
+                LastWishOption(text = "차분하고 조용하게 보내주세요.", value = "calm"),
+                LastWishOption(text = "슬퍼 하지 말고 밝고 따뜻하게 보내주세요.", value = "bright"),
+                LastWishOption(text = "기타(직접 입력)", value = "other"),
+            )
         Column(modifier = Modifier.padding(20.dp)) {
             LastWishesRadioGroup(
                 label = LABEL_LAST_WISH,
                 options = options,
                 selectedValue = "other",
                 onOptionSelected = {},
-                otherState = LastWishOtherState(
-                    text = "끼니 거르지 말고 건강 챙기고 지내.",
-                    onTextChange = {}
-                )
+                otherState =
+                    LastWishOtherState(
+                        text = "끼니 거르지 말고 건강 챙기고 지내.",
+                        onTextChange = {},
+                    ),
             )
         }
     }
@@ -304,7 +312,7 @@ private fun LastWishesRadioGroupViewPreview() {
         Column(modifier = Modifier.padding(20.dp)) {
             LastWishesRadioGroup(
                 label = LABEL_LAST_WISH,
-                displayTextOnly = "끼니 거르지 말고 건강 챙기고 지내."
+                displayTextOnly = "끼니 거르지 말고 건강 챙기고 지내.",
             )
         }
     }

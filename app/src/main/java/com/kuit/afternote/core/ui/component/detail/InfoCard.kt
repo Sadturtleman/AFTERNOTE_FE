@@ -24,15 +24,15 @@ import com.kuit.afternote.ui.theme.Gray2
 @Composable
 fun InfoCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = Gray2
+        color = Gray2,
     ) {
         Box(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             content()
         }

@@ -28,7 +28,7 @@ fun SignUpContentButton(
     // 1. 컨텐츠 기준으로 띄우고 싶을 때 (순서대로 나열)
     if (contentSpacing != null) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             // (1) 컨텐츠 표시
             content()
@@ -39,12 +39,12 @@ fun SignUpContentButton(
             // (3) 버튼 표시 (가로 중앙 정렬을 위해 Box로 감쌈)
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 ClickButton(
                     title = buttonTitle,
                     onButtonClick = onNextClick,
-                    color = B3
+                    color = B3,
                 )
             }
         }
@@ -52,24 +52,26 @@ fun SignUpContentButton(
     // 2. 기존 방식 (화면 위치 고정, 다른 화면 깨짐 방지용)
     else {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                content = content
+                content = content,
             )
 
             ClickButton(
                 title = buttonTitle,
                 onButtonClick = onNextClick,
                 color = B3,
-                modifier = Modifier
-                    .align(buttonAlignment)
-                    .padding(bottom = if (buttonAlignment == Alignment.BottomCenter) 33.dp else 0.dp)
+                modifier =
+                    Modifier
+                        .align(buttonAlignment)
+                        .padding(bottom = if (buttonAlignment == Alignment.BottomCenter) 33.dp else 0.dp),
             )
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun SignUpContentButtonPreview() {
@@ -78,7 +80,7 @@ private fun SignUpContentButtonPreview() {
             onNextClick = {},
             content = {
                 // Preview용 콘텐츠
-            }
+            },
         )
     }
 }

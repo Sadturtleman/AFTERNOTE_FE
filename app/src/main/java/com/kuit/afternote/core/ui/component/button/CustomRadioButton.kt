@@ -39,7 +39,7 @@ fun CustomRadioButton(
     onClick: (() -> Unit)? = null,
     buttonSize: Dp = 24.dp,
     selectedColor: Color = B2,
-    unselectedColor: Color = Gray4
+    unselectedColor: Color = Gray4,
 ) {
     // 보더 두께
     val borderWidth = 1.dp
@@ -51,30 +51,32 @@ fun CustomRadioButton(
     val indicatorSize = buttonSize - (borderWidth * 2) - (spacing * 2)
 
     Box(
-        modifier = modifier
-            .size(buttonSize)
-            .clip(CircleShape)
-            .border(
-                width = borderWidth,
-                color = if (selected) selectedColor else unselectedColor,
-                shape = CircleShape
-            ).then(
-                if (onClick != null) {
-                    Modifier.clickable(onClick = onClick)
-                } else {
-                    Modifier
-                }
-            ),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(buttonSize)
+                .clip(CircleShape)
+                .border(
+                    width = borderWidth,
+                    color = if (selected) selectedColor else unselectedColor,
+                    shape = CircleShape,
+                ).then(
+                    if (onClick != null) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    },
+                ),
+        contentAlignment = Alignment.Center,
     ) {
         if (selected) {
             Box(
-                modifier = Modifier
-                    .size(indicatorSize)
-                    .background(
-                        color = selectedColor,
-                        shape = CircleShape
-                    )
+                modifier =
+                    Modifier
+                        .size(indicatorSize)
+                        .background(
+                            color = selectedColor,
+                            shape = CircleShape,
+                        ),
             )
         }
     }
@@ -87,15 +89,15 @@ private fun CustomRadioButtonPreview() {
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             CustomRadioButton(
                 selected = true,
-                onClick = {}
+                onClick = {},
             )
             CustomRadioButton(
                 selected = false,
-                onClick = {}
+                onClick = {},
             )
         }
     }

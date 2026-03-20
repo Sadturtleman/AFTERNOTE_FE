@@ -11,13 +11,14 @@ import com.kuit.afternote.ui.theme.AfternoteTheme
 fun DeleteConfirmDialog(
     serviceName: String = "인스타그램",
     onDismiss: () -> Unit = {},
-    onConfirm: () -> Unit = {}
+    onConfirm: () -> Unit = {},
 ) {
     ConfirmationPopup(
-        message = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
-            "\n삭제 시, 되돌릴 수 없습니다.",
+        message =
+            "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
+                "\n삭제 시, 되돌릴 수 없습니다.",
         onDismiss = onDismiss,
-        onConfirm = onConfirm
+        onConfirm = onConfirm,
     )
 }
 
@@ -26,14 +27,15 @@ fun DeleteConfirmDialogContent(
     serviceName: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ConfirmationPopupContent(
-        message = "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
-            "\n삭제 시, 되돌릴 수 없습니다.",
+        message =
+            "${serviceName}에 대한 기록을 삭제하시겠습니까?" +
+                "\n삭제 시, 되돌릴 수 없습니다.",
         onDismiss = onDismiss,
         onConfirm = onConfirm,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
