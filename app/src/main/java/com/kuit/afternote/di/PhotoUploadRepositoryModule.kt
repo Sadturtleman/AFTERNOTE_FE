@@ -1,4 +1,4 @@
-package com.kuit.afternote.data.di
+package com.kuit.afternote.di
 
 import com.kuit.afternote.data.repositoryimpl.PhotoUploadRepositoryImpl
 import com.kuit.afternote.domain.repository.PhotoUploadRepository
