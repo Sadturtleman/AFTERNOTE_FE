@@ -3,12 +3,15 @@ package com.kuit.afternote.feature.afternote.presentation.edit
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
+import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
 import com.kuit.afternote.feature.afternote.domain.model.CredentialsInput
+import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.ReceiverRefInput
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.MemorialVideoInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistInput
 import com.kuit.afternote.feature.afternote.domain.model.playlist.SongInput
 import com.kuit.afternote.feature.afternote.domain.usecase.CreateGalleryAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.CreatePlaylistAfternoteUseCase
@@ -315,15 +318,14 @@ class AfternoteEditViewModel
         ) {
             Log.e(TAG, "saveAfternote: FAILURE, category=$categoryForApi", e)
             val validationError =
-                when {
-                    e is AfternoteValidationException -> e.validationError
-                    e is HttpException && e.code() == 400 -> parseReceiversRequiredFromBody(e)
+                when (e) {
+                    is AfternoteValidationException -> e.validationError
+                    is HttpException if e.code() == 400 -> parseReceiversRequiredFromBody(e)
                     else -> null
                 }
             val errorMessage =
                 when {
                     validationError != null -> null
-                    e is AfternoteValidationException -> null
                     else -> e.message ?: "저장에 실패했습니다."
                 }
             _saveState.update {
@@ -370,7 +372,7 @@ class AfternoteEditViewModel
         }
 
         private fun populatePlaylistFromDetail(
-            detail: AfternoteDetail,
+            detail: Detail,
             playlistStateHolder: MemorialPlaylistStateHolder?,
         ) {
             if (detail.category.uppercase() != "PLAYLIST" ||
@@ -391,7 +393,7 @@ class AfternoteEditViewModel
                 }.forEach { playlistStateHolder.addSong(it) }
         }
 
-        private fun buildLoadFromExistingParams(detail: AfternoteDetail): LoadFromExistingParams {
+        private fun buildLoadFromExistingParams(detail: Detail): LoadFromExistingParams {
             val actionItems =
                 detail.processing?.actions?.mapIndexed { index, text ->
                     ProcessingMethodItem(
@@ -532,16 +534,19 @@ class AfternoteEditViewModel
                         "performCreate GALLERY: receivers=$selectedReceiverIds, actions=$galleryActions",
                     )
                     createGalleryUseCase(
-                        title = payload.serviceName,
-                        processMethod = processMethod,
-                        actions = galleryActions,
-                        leaveMessage = leaveMessage,
-                        receiverIds = selectedReceiverIds,
+                        input =
+                            CreateGalleryInput(
+                                title = payload.serviceName,
+                                processMethod = processMethod,
+                                actions = galleryActions,
+                                leaveMessage = leaveMessage,
+                                receiverIds = selectedReceiverIds,
+                            ),
                     )
                 }
 
                 CATEGORY_MEMORIAL -> {
-                    val playlistDto =
+                    val input =
                         buildPlaylistInput(
                             playlistStateHolder = playlistStateHolder,
                             atmosphere = payload.atmosphere,
@@ -550,21 +555,29 @@ class AfternoteEditViewModel
                             funeralThumbnailUrl = funeralThumbnailUrl,
                         )
                     createPlaylistUseCase(
-                        title = payload.serviceName,
-                        playlist = playlistDto,
-                        receiverIds = selectedReceiverIds,
+                        input =
+                            CreatePlaylistInput(
+                                title = payload.serviceName,
+                                playlist = input,
+                                receiverIds = selectedReceiverIds,
+                            ),
                     )
                 }
 
                 else -> {
                     createSocialUseCase(
-                        title = payload.serviceName,
-                        processMethod = processMethod,
-                        actions = actions,
-                        leaveMessage = leaveMessage,
-                        credentialsId = payload.accountId.takeIf { it.isNotEmpty() },
-                        credentialsPassword = payload.password.takeIf { it.isNotEmpty() },
-                        receiverIds = selectedReceiverIds,
+                        CreateSocialInput(
+                            title = payload.serviceName,
+                            processMethod = processMethod,
+                            actions = actions,
+                            leaveMessage = leaveMessage,
+                            credentials =
+                                CredentialsInput(
+                                    id = payload.accountId.takeIf { it.isNotEmpty() },
+                                    password = payload.password.takeIf { it.isNotEmpty() },
+                                ),
+                            receiverIds = selectedReceiverIds,
+                        ),
                     )
                 }
             }
@@ -610,7 +623,7 @@ class AfternoteEditViewModel
             funeralVideoUrl: String? = null,
             funeralThumbnailUrl: String? = null,
             memorialPhotoUrl: String? = null,
-        ) = AfternoteUpdateRequestInput(
+        ) = UpdateRequestInput(
             category = "PLAYLIST",
             title = title,
             playlist =
@@ -627,7 +640,7 @@ class AfternoteEditViewModel
             category: String,
             payload: RegisterAfternotePayload,
             selectedReceiverIds: List<Long>,
-        ): AfternoteUpdateRequestInput {
+        ): UpdateRequestInput {
             val actions =
                 payload.processingMethods.map { it.text } +
                     payload.galleryProcessingMethods.map { it.text }
@@ -647,7 +660,7 @@ class AfternoteEditViewModel
                     else -> null
                 }
             // Title and category are mandatory for the edit API; fallback for unknown display category.
-            return AfternoteUpdateRequestInput(
+            return UpdateRequestInput(
                 category = serverCategory ?: "SOCIAL",
                 title = payload.serviceName,
                 processMethod = processMethod.ifEmpty { null },
@@ -741,7 +754,7 @@ class AfternoteEditViewModel
             memorialPhotoUrl: String? = null,
             funeralVideoUrl: String? = null,
             funeralThumbnailUrl: String? = null,
-        ): AfternotePlaylistInput {
+        ): PlaylistInput {
             val songs =
                 playlistStateHolder?.songs?.map { song ->
                     SongInput(
@@ -760,7 +773,7 @@ class AfternoteEditViewModel
                         thumbnailUrl = funeralThumbnailUrl.takeIf { !it.isNullOrBlank() },
                     )
                 }
-            return AfternotePlaylistInput(
+            return PlaylistInput(
                 atmosphere = atmosphere.ifEmpty { null },
                 memorialPhotoUrl = memorialPhotoUrl?.takeIf { it.isNotBlank() },
                 songs = songs,
@@ -771,7 +784,6 @@ class AfternoteEditViewModel
 
 /**
  * Memorial-related media URLs and the picked photo URI for save.
- * Groups 4 params to keep [saveAfternote] under the 7-parameter limit (S107).
  */
 data class SaveAfternoteMemorialMedia(
     val funeralVideoUrl: String? = null,
@@ -782,7 +794,6 @@ data class SaveAfternoteMemorialMedia(
 
 /**
  * Resolved memorial media URLs for performUpdate/performCreate.
- * Groups 3 params to keep [performUpdate] under the 7-parameter limit (S107).
  */
 private data class MemorialMediaUrls(
     val funeralVideoUrl: String? = null,

@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
+import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -13,18 +14,8 @@ class CreateGalleryAfternoteUseCase
     constructor(
         private val repository: AfternoteRepository,
     ) {
-        suspend operator fun invoke(
-            title: String,
-            processMethod: String,
-            actions: List<String>,
-            leaveMessage: String? = null,
-            receiverIds: List<Long> = emptyList(),
-        ): Result<Long> =
+        suspend operator fun invoke(input: CreateGalleryInput): Result<Long> =
             repository.createGallery(
-                title = title,
-                processMethod = processMethod,
-                actions = actions,
-                leaveMessage = leaveMessage,
-                receiverIds = receiverIds,
+                input = input,
             )
     }

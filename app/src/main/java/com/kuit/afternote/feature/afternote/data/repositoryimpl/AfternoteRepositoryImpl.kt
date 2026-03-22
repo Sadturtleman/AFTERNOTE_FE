@@ -1,21 +1,22 @@
 package com.kuit.afternote.feature.afternote.data.repositoryimpl
 
 import android.util.Log
-import com.kuit.afternote.data.requireData
-import com.kuit.afternote.data.requireStatus
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteCredentials
-import com.kuit.afternote.feature.afternote.data.dto.AfternoteReceiverRef
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateGalleryRequest
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreatePlaylistRequest
-import com.kuit.afternote.feature.afternote.data.dto.request.AfternoteCreateSocialRequest
+import com.kuit.afternote.data.dto.response.requireData
+import com.kuit.afternote.data.dto.response.requireStatus
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
-import com.kuit.afternote.feature.afternote.data.mapper.AfternoteMapper
+import com.kuit.afternote.feature.afternote.data.mapper.response.toDetailDomain
+import com.kuit.afternote.feature.afternote.data.mapper.response.toPagedNotes
 import com.kuit.afternote.feature.afternote.data.mapper.toDto
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteUpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.model.CreateGalleryInput
+import com.kuit.afternote.feature.afternote.domain.model.CreateSocialInput
+import com.kuit.afternote.feature.afternote.domain.model.Detail
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.PagedAfternotes
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.UpdateRequestInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.CreatePlaylistInput
+import com.kuit.afternote.feature.afternote.domain.model.playlist.toRequest
+import com.kuit.afternote.feature.afternote.domain.model.toRequest
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
 import javax.inject.Inject
 
@@ -29,59 +30,29 @@ class AfternoteRepositoryImpl
     constructor(
         private val api: AfternoteApiService,
     ) : AfternoteRepository {
-        override suspend fun getAfternotes(
-            category: String?,
-            page: Int,
-            size: Int,
-        ): Result<PagedAfternotes> =
+        override suspend fun getAfternotes(input: GetAfternotesInput): Result<PagedAfternotes> =
             runCatching {
-                val response = api.getAfternotes(category = category, page = page, size = size)
+                val response =
+                    api.getAfternotes(
+                        category = input.category,
+                        page = input.page,
+                        size = input.size,
+                    )
                 val data = response.requireData()
-                AfternoteMapper.toPagedNotes(data)
+                data.toPagedNotes()
             }.logFailure()
 
-        override suspend fun createSocial(
-            title: String,
-            processMethod: String,
-            actions: List<String>,
-            leaveMessage: String?,
-            credentialsId: String?,
-            credentialsPassword: String?,
-            receiverIds: List<Long>,
-        ): Result<Long> =
+        override suspend fun createSocial(input: CreateSocialInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreateSocialRequest(
-                        category = "SOCIAL",
-                        title = title,
-                        processMethod = processMethod,
-                        actions = actions,
-                        leaveMessage = leaveMessage,
-                        credentials = afternoteCredentials(credentialsId, credentialsPassword),
-                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternoteSocial(request)
                 val data = response.requireData()
                 getAfternoteId(data)
             }.logFailure()
 
-        override suspend fun createGallery(
-            title: String,
-            processMethod: String,
-            actions: List<String>,
-            leaveMessage: String?,
-            receiverIds: List<Long>,
-        ): Result<Long> =
+        override suspend fun createGallery(input: CreateGalleryInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreateGalleryRequest(
-                        category = "GALLERY",
-                        title = title,
-                        processMethod = processMethod,
-                        actions = actions,
-                        leaveMessage = leaveMessage,
-                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternoteGallery(request)
                 val data = response.requireData()
                 getAfternoteId(data)
@@ -90,29 +61,19 @@ class AfternoteRepositoryImpl
         /**
          * GET /afternotes/{afternoteId} — 상세 조회. DTO → domain 매핑 포함.
          */
-        override suspend fun getAfternoteDetail(afternoteId: Long): Result<AfternoteDetail> =
+        override suspend fun getAfternoteDetail(afternoteId: Long): Result<Detail> =
             runCatching {
                 val response = api.getAfternoteDetail(afternoteId = afternoteId)
                 val data = response.requireData()
-                AfternoteMapper.toDetailDomain(data)
+                data.toDetailDomain()
             }.logFailure()
 
         /**
          * POST /afternotes (PLAYLIST category).
          */
-        override suspend fun createPlaylist(
-            title: String,
-            playlist: AfternotePlaylistInput,
-            receiverIds: List<Long>,
-        ): Result<Long> =
+        override suspend fun createPlaylist(input: CreatePlaylistInput): Result<Long> =
             runCatching {
-                val request =
-                    AfternoteCreatePlaylistRequest(
-                        category = "PLAYLIST",
-                        title = title,
-                        playlist = playlist.toDto(),
-                        receivers = receiverIds.map { AfternoteReceiverRef(receiverId = it) },
-                    )
+                val request = input.toRequest()
                 val response = api.createAfternotePlaylist(request)
                 val data = response.requireData()
                 getAfternoteId(data)
@@ -123,13 +84,15 @@ class AfternoteRepositoryImpl
          */
         override suspend fun updateAfternote(
             afternoteId: Long,
-            input: AfternoteUpdateRequestInput,
-        ): Result<Long> =
-            runCatching {
-                val response = api.updateAfternote(afternoteId = afternoteId, request = input.toDto())
+            input: UpdateRequestInput,
+        ): Result<Long> {
+            val request = input.toDto()
+            return runCatching {
+                val response = api.updateAfternote(afternoteId = afternoteId, request = request)
                 val data = response.requireData()
                 getAfternoteId(data)
             }.logFailure()
+        }
 
         /**
          * DELETE /afternotes/{afternoteId}.
@@ -149,13 +112,3 @@ private fun <T> Result<T>.logFailure() =
         val msg = message.toString()
         Log.e("AfternoteRepository", msg)
     }
-
-private fun afternoteCredentials(
-    credentialsId: String?,
-    credentialsPassword: String?,
-): AfternoteCredentials? {
-    if (credentialsId != null || credentialsPassword != null) {
-        return AfternoteCredentials(id = credentialsId, password = credentialsPassword)
-    }
-    return null
-}

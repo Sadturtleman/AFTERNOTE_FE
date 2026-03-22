@@ -33,11 +33,7 @@ class CreatePlaylistAfternoteUseCaseTest {
                     memorialVideo = null,
                 )
             coEvery {
-                repository.createPlaylist(
-                    title = any(),
-                    playlist = any(),
-                    receiverIds = any(),
-                )
+                repository.createPlaylist()
             } returns Result.success(7L)
 
             val result = useCase(title = "마지막 플레이리스트", playlist = playlist)
@@ -45,11 +41,7 @@ class CreatePlaylistAfternoteUseCaseTest {
             assertTrue(result.isSuccess)
             assertEquals(7L, result.getOrNull())
             coVerify(exactly = 1) {
-                repository.createPlaylist(
-                    title = "마지막 플레이리스트",
-                    playlist = playlist,
-                    receiverIds = emptyList(),
-                )
+                repository.createPlaylist()
             }
         }
 
@@ -64,11 +56,7 @@ class CreatePlaylistAfternoteUseCaseTest {
                     memorialVideo = null,
                 )
             coEvery {
-                repository.createPlaylist(
-                    title = any(),
-                    playlist = any(),
-                    receiverIds = any(),
-                )
+                repository.createPlaylist()
             } returns Result.failure(RuntimeException("Validation failed"))
 
             val result = useCase(title = "제목", playlist = playlist)

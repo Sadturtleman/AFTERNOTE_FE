@@ -7,6 +7,6 @@ package com.kuit.afternote.feature.afternote.domain.model
  * @param hasNext Whether more pages are available
  */
 data class PagedAfternotes(
-    val items: List<AfternoteItem>,
+    val items: List<Item>,
     val hasNext: Boolean
 )

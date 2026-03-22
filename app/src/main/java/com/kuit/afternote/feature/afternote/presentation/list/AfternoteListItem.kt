@@ -31,7 +31,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.component.expand.dropShadow
 import com.kuit.afternote.core.util.getIconResForServiceName
 import com.kuit.afternote.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray5
@@ -51,7 +51,7 @@ import com.kuit.afternote.ui.theme.White
 @Composable
 fun AfternoteListItem(
     modifier: Modifier = Modifier,
-    item: AfternoteItem,
+    item: Item,
     onClick: () -> Unit = {},
 ) {
     val imageRes = getIconResForServiceName(item.serviceName)
@@ -160,7 +160,7 @@ private fun AfternoteListItemPreview() {
     Column {
         AfternoteListItem(
             item =
-                AfternoteItem(
+                Item(
                     id = "1",
                     serviceName = "인스타그램",
                     date = "2023.11.24",
@@ -170,7 +170,7 @@ private fun AfternoteListItemPreview() {
         Spacer(modifier = Modifier.height(8.dp))
         AfternoteListItem(
             item =
-                AfternoteItem(
+                Item(
                     id = "2",
                     serviceName = "갤러리",
                     date = "2023.11.25",

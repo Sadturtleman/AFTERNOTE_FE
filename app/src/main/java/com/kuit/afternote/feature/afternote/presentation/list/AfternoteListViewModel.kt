@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.core.component.list.AfternoteTab
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
+import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
+import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ class AfternoteListViewModel
         private val _uiState = MutableStateFlow(AfternoteListUiState())
         val uiState: StateFlow<AfternoteListUiState> = _uiState.asStateFlow()
 
-        private var allItems: List<AfternoteItem> = emptyList()
+        private var allItems: List<Item> = emptyList()
         private var currentPage: Int = 0
         private var hasNextPage: Boolean = false
         private val pageSize: Int = 10
@@ -50,7 +51,13 @@ class AfternoteListViewModel
         fun loadAfternotes(category: String? = null) {
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true, loadError = null) }
-                getAfternotesUseCase(category = category, page = 0, size = pageSize)
+                val input =
+                    GetAfternotesInput(
+                        category = category,
+                        page = 0,
+                        size = pageSize,
+                    )
+                getAfternotesUseCase(input)
                     .onSuccess { paged ->
                         allItems = paged.items
                         currentPage = 0
@@ -91,7 +98,13 @@ class AfternoteListViewModel
                 _uiState.update { it.copy(isLoadingMore = true) }
                 val category: String? = null
                 val nextPage = currentPage + 1
-                getAfternotesUseCase(category = category, page = nextPage, size = pageSize)
+                val input =
+                    GetAfternotesInput(
+                        category = category,
+                        page = nextPage,
+                        size = pageSize,
+                    )
+                getAfternotesUseCase(input)
                     .onSuccess { paged ->
                         allItems = allItems + paged.items
                         currentPage = nextPage
@@ -109,7 +122,7 @@ class AfternoteListViewModel
         /**
          * 초기 데이터 설정 (NavGraph에서 더미/캐시로 주입)
          */
-        fun setItems(items: List<AfternoteItem>) {
+        fun setItems(items: List<Item>) {
             allItems = items
             hasNextPage = false
             _uiState.update {

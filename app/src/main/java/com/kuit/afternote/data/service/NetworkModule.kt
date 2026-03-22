@@ -1,6 +1,7 @@
 package com.kuit.afternote.data.service
 
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
+import com.kuit.afternote.feature.afternote.data.service.MusicApiService
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService
 import dagger.Module
 import dagger.Provides

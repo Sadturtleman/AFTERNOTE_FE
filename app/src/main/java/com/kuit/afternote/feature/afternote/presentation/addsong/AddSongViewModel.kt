@@ -3,6 +3,7 @@ package com.kuit.afternote.feature.afternote.presentation.addsong
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.domain.usecase.SearchMusicUseCase
+import com.kuit.afternote.feature.afternote.presentation.mapper.toDisplay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -42,7 +43,7 @@ class AddSongViewModel
                     searchMusicUseCase(trimmed)
                         .onSuccess { list ->
                             _uiState.update {
-                                it.copy(songs = list, isLoading = false, errorMessage = null)
+                                it.copy(songs = list.map { item -> item.toDisplay() }, isLoading = false, errorMessage = null)
                             }
                         }.onFailure { e ->
                             _uiState.update {

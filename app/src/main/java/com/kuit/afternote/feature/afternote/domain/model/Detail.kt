@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.model
 
 import com.kuit.afternote.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlaylistDetail
+import com.kuit.afternote.feature.afternote.domain.model.playlist.PlaylistDetail
 
 /**
  * 애프터노트 상세 도메인 모델.
@@ -12,29 +12,29 @@ import com.kuit.afternote.feature.afternote.domain.model.playlist.AfternotePlayl
  * - GALLERY: receivers, processMethod, actions
  * - PLAYLIST: playlist
  */
-data class AfternoteDetail(
+data class Detail(
     val id: Long,
     val category: String,
     val title: String,
-    val timestamps: AfternoteDetailTimestamps,
+    val timestamps: DetailTimestamps,
     val type: AfternoteServiceType,
-    val credentials: AfternoteDetailCredentials?,
-    val receivers: List<AfternoteDetailReceiver>,
-    val processing: AfternoteDetailProcessing?,
-    val playlist: AfternotePlaylistDetail?,
+    val credentials: DetailCredentials?,
+    val receivers: List<DetailReceiver>,
+    val processing: DetailProcessing?,
+    val playlist: PlaylistDetail?,
 )
 
-data class AfternoteDetailTimestamps(
+data class DetailTimestamps(
     val createdAt: String,
     val updatedAt: String,
 )
 
-data class AfternoteDetailCredentials(
+data class DetailCredentials(
     val id: String?,
     val password: String?,
 )
 
-data class AfternoteDetailProcessing(
+data class DetailProcessing(
     val method: String?,
     val actions: List<String>,
     val leaveMessage: String?,

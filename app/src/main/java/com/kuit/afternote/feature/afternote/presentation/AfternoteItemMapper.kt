@@ -2,10 +2,10 @@ package com.kuit.afternote.feature.afternote.presentation
 
 import com.kuit.afternote.core.util.AfternoteServiceCatalog
 import com.kuit.afternote.domain.model.AfternoteServiceType
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteAccount
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItem
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteItemProcessing
-import com.kuit.afternote.feature.afternote.domain.model.AfternoteProcessingMethod
+import com.kuit.afternote.feature.afternote.domain.model.Account
+import com.kuit.afternote.feature.afternote.domain.model.Item
+import com.kuit.afternote.feature.afternote.domain.model.ItemProcessing
+import com.kuit.afternote.feature.afternote.domain.model.ProcessingMethod
 
 /**
  * Pair<String, String> 및 RegisterAfternotePayload를 AfternoteItem으로 변환하는 매퍼
@@ -16,23 +16,23 @@ object AfternoteItemMapper {
      * List<Pair>를 List<AfternoteItem>으로 변환하며 **안정적인 id**를 부여.
      * 목록/상세/편집에서 동일한 id로 조회할 수 있도록 더미 목록용.
      */
-    fun toAfternoteItemsWithStableIds(pairs: List<Pair<String, String>>): List<AfternoteItem> =
+    fun toAfternoteItemsWithStableIds(pairs: List<Pair<String, String>>): List<Item> =
         pairs.mapIndexed { index, pair ->
             val (serviceName, date) = pair
             val serviceType = inferServiceType(serviceName)
             val dummyData = dummyDataForServiceType(serviceType)
-            AfternoteItem(
+            Item(
                 id = "dummy_${serviceName}_${date}_$index",
                 serviceName = serviceName,
                 date = date,
                 type = serviceType,
                 account =
-                    AfternoteAccount(
+                    Account(
                         id = dummyData.accountId,
                         password = dummyData.password,
                     ),
                 processing =
-                    AfternoteItemProcessing(
+                    ItemProcessing(
                         message = dummyData.message,
                         accountMethod = dummyData.accountProcessingMethod,
                         informationMethod = dummyData.informationProcessingMethod,
@@ -81,9 +81,9 @@ object AfternoteItemMapper {
             accountProcessingMethod = "MEMORIAL_ACCOUNT",
             processingMethods =
                 listOf(
-                    AfternoteProcessingMethod("1", "게시물 내리기"),
-                    AfternoteProcessingMethod("2", "추모 게시물 올리기"),
-                    AfternoteProcessingMethod("3", "추모 계정으로 전환하기"),
+                    ProcessingMethod("1", "게시물 내리기"),
+                    ProcessingMethod("2", "추모 게시물 올리기"),
+                    ProcessingMethod("3", "추모 계정으로 전환하기"),
                 ),
         )
 
@@ -98,8 +98,8 @@ object AfternoteItemMapper {
                     informationProcessingMethod = "TRANSFER_TO_AFTERNOTE_EDIT_RECEIVER",
                     galleryProcessingMethods =
                         listOf(
-                            AfternoteProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
-                            AfternoteProcessingMethod("2", "'흑역사' 폴더 삭제"),
+                            ProcessingMethod("1", "'엽사' 폴더 박선호에게 전송"),
+                            ProcessingMethod("2", "'흑역사' 폴더 삭제"),
                         ),
                 )
             }
@@ -115,7 +115,7 @@ object AfternoteItemMapper {
         val message: String = "",
         val accountProcessingMethod: String = "",
         val informationProcessingMethod: String = "",
-        val processingMethods: List<AfternoteProcessingMethod> = emptyList(),
-        val galleryProcessingMethods: List<AfternoteProcessingMethod> = emptyList(),
+        val processingMethods: List<ProcessingMethod> = emptyList(),
+        val galleryProcessingMethods: List<ProcessingMethod> = emptyList(),
     )
 }

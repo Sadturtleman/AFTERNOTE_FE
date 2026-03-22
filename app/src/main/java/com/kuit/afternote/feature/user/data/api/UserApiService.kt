@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.data.api
 
-import com.kuit.afternote.data.BaseResponse
+import com.kuit.afternote.data.dto.response.BaseResponse
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionRequestDto
 import com.kuit.afternote.feature.user.data.dto.DeliveryConditionResponseDto
 import com.kuit.afternote.feature.user.data.dto.ReceiverDailyQuestionsResponseDto

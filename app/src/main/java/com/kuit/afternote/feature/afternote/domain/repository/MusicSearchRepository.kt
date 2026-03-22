@@ -1,6 +1,6 @@
-package com.kuit.afternote.domain.repository
+package com.kuit.afternote.feature.afternote.domain.repository
 
-import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.afternote.domain.model.SearchedSong
 
 /**
  * Music search by keyword (artist or title).
@@ -11,7 +11,7 @@ fun interface MusicSearchRepository {
      * Searches for tracks by keyword. Call only when [keyword] is non-blank (API returns 400 otherwise).
      *
      * @param keyword 검색할 가수명 또는 노래 제목
-     * @return Result with list of [PlaylistSongDisplay], or failure on API error
+     * @return Result with list of [SearchedSong], or failure on API error
      */
-    suspend fun search(keyword: String): Result<List<PlaylistSongDisplay>>
+    suspend fun search(keyword: String): Result<List<SearchedSong>>
 }
