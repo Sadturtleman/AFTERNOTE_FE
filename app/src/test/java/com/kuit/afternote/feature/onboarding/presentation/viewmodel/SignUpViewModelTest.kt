@@ -1,10 +1,10 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.data.service.TokenManager
+import com.kuit.afternote.core.data.service.TokenManager
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.model.SignUpResult
-import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
-import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.LoginUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.SignUpUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coJustRun

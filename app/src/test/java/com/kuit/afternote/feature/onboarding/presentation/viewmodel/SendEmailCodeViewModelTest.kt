@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.feature.auth.domain.usecase.SendEmailCodeUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.SendEmailCodeUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -98,8 +98,9 @@ class SendEmailCodeViewModelTest {
     @Test
     fun sendEmailCode_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(400, errorBody))
             coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
 
@@ -108,7 +109,7 @@ class SendEmailCodeViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.sendSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -117,8 +118,9 @@ class SendEmailCodeViewModelTest {
     @Test
     fun sendEmailCode_when429TooManyRequests_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":429,"code":429,"message":"Rate limit exceeded"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":429,"code":429,"message":"Rate limit exceeded"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(429, errorBody))
             coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
 
@@ -127,7 +129,7 @@ class SendEmailCodeViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("429") == true
+                    ?.contains("429") == true,
             )
             assertFalse(viewModel.uiState.value.sendSuccess)
         }
@@ -135,8 +137,9 @@ class SendEmailCodeViewModelTest {
     @Test
     fun sendEmailCode_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(500, errorBody))
             coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(httpException)
 
@@ -145,7 +148,7 @@ class SendEmailCodeViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.sendSuccess)
         }
@@ -155,9 +158,10 @@ class SendEmailCodeViewModelTest {
     @Test
     fun sendEmailCode_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { sendEmailCodeUseCase(any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { sendEmailCodeUseCase(any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.sendEmailCode("a@b.com")
             advanceUntilIdle()

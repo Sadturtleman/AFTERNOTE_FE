@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.receiverauth.data.di
 
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfternoteDetailByAuthCodeRepository
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfterNotesByAuthCodeRepository
+import com.kuit.afternote.feature.afternote.domain.repository.GetAfternoteDetailByAuthCodeRepository
+import com.kuit.afternote.feature.afternote.domain.repository.GetAfterNotesByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetSenderMessageRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetMindRecordDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.GetMindRecordsByAuthCodeRepository

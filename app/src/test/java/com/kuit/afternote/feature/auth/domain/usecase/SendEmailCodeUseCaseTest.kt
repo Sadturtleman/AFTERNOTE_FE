@@ -1,6 +1,7 @@
 package com.kuit.afternote.feature.auth.domain.usecase
 
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
+import com.kuit.afternote.feature.auth.domain.usecase.auth.SendEmailCodeUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -11,7 +12,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * [SendEmailCodeUseCase] 단위 테스트.
+ * [com.kuit.afternote.feature.auth.domain.usecase.auth.SendEmailCodeUseCase] 단위 테스트.
  */
 class SendEmailCodeUseCaseTest {
     private lateinit var authRepository: AuthRepository

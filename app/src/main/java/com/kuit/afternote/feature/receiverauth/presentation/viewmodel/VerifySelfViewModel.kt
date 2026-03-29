@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.receiverauth.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.service.ApiException
+import com.kuit.afternote.core.data.service.ApiException
 import com.kuit.afternote.feature.receiverauth.domain.usecase.GetDeliveryVerificationStatusUseCase
 import com.kuit.afternote.feature.receiverauth.domain.usecase.SubmitDeliveryVerificationUseCase
 import com.kuit.afternote.feature.receiverauth.domain.usecase.UploadReceiverDocumentUseCase

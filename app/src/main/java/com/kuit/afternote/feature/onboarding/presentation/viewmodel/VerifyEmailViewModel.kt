@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.auth.domain.usecase.VerifyEmailUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.VerifyEmailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class VerifyEmailViewModel
     @Inject
     constructor(
-        private val verifyEmailUseCase: VerifyEmailUseCase
+        private val verifyEmailUseCase: VerifyEmailUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(VerifyEmailUiState())
         val uiState: StateFlow<VerifyEmailUiState> = _uiState.asStateFlow()
@@ -32,7 +32,7 @@ class VerifyEmailViewModel
          */
         fun verifyEmail(
             email: String,
-            certificateCode: String
+            certificateCode: String,
         ) {
             android.util.Log.d("VerifyEmailViewModel", "verifyEmail 호출: email=$email, code=$certificateCode")
             if (email.isBlank() || certificateCode.isBlank()) {
@@ -54,7 +54,7 @@ class VerifyEmailViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = e.message ?: "인증번호 확인에 실패했습니다."
+                                errorMessage = e.message ?: "인증번호 확인에 실패했습니다.",
                             )
                         }
                     }

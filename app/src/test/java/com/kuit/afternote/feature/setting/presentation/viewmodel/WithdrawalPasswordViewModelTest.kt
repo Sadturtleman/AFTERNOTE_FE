@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.setting.presentation.viewmodel
 
-import com.kuit.afternote.data.service.TokenManager
+import com.kuit.afternote.core.data.service.TokenManager
 import com.kuit.afternote.feature.user.domain.usecase.WithdrawAccountUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery

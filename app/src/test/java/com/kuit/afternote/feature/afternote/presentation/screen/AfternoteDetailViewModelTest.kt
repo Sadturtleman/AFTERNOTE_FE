@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.screen
 
-import com.kuit.afternote.domain.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.usecase.DeleteAfternoteUseCase

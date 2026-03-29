@@ -6,13 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.component.list.SongPlaylistScreen
-import com.kuit.afternote.core.component.list.SongPlaylistScreenSelectableOptions
-import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.afternote.presentation.component.list.SongPlaylistScreen
+import com.kuit.afternote.feature.afternote.presentation.component.list.SongPlaylistScreenSelectableOptions
+import com.kuit.afternote.feature.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.presentation.edit.model.Song
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.collections.map
 
 /**
  * 노래 추가 화면의 콜백
@@ -42,7 +43,7 @@ fun AddSongScreen(
         onSongsSelected = { selected ->
             callbacks.onSongsAdded(
                 selected.map {
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.Song(
+                    Song(
                         id = it.id,
                         title = it.title,
                         artist = it.artist,
@@ -81,7 +82,7 @@ fun AddSongScreen(
         onSongsSelected = { selected ->
             callbacks.onSongsAdded(
                 selected.map {
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.Song(
+                    Song(
                         id = it.id,
                         title = it.title,
                         artist = it.artist,

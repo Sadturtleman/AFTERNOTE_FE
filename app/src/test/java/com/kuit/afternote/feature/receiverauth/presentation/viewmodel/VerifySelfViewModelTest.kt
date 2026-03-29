@@ -1,5 +1,6 @@
 package com.kuit.afternote.feature.receiverauth.presentation.viewmodel
 
+import com.kuit.afternote.core.data.service.ApiException
 import com.kuit.afternote.feature.receiverauth.domain.entity.DeliveryVerificationStatus
 import com.kuit.afternote.feature.receiverauth.domain.entity.ReceiverAuthVerifyResult
 import com.kuit.afternote.feature.receiverauth.domain.usecase.GetDeliveryVerificationStatusUseCase
@@ -81,8 +82,7 @@ class VerifySelfViewModelTest {
         runTest {
             coEvery { verifyReceiverAuthUseCase(any()) } returns
                 Result.failure(
-                    com.kuit.afternote.data.service
-                        .ApiException(status = 400, code = 400, message = "잘못된 인증번호입니다."),
+                    ApiException(status = 400, code = 400, message = "잘못된 인증번호입니다."),
                 )
             viewModel.updateMasterKey("wrong-key")
             viewModel.verifyMasterKey()
@@ -203,8 +203,7 @@ class VerifySelfViewModelTest {
                 Result.success("https://file1.pdf")
             coEvery { submitDeliveryVerificationUseCase(any(), any(), any()) } returns
                 Result.failure(
-                    com.kuit.afternote.data.service
-                        .ApiException(400, 400, "Invalid URL"),
+                    ApiException(400, 400, "Invalid URL"),
                 )
 
             viewModel.submitDocuments("content://death", "content://family")

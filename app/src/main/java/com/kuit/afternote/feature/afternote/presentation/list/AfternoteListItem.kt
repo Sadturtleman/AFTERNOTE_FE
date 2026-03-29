@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.core.component.expand.dropShadow
-import com.kuit.afternote.core.util.getIconResForServiceName
-import com.kuit.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.presentation.util.getIconResForServiceName
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Black

@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.user.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.dto.response.requireData
-import com.kuit.afternote.data.dto.response.requireStatus
-import com.kuit.afternote.data.service.ApiException
+import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.dto.response.requireStatus
+import com.kuit.afternote.core.data.service.ApiException
 import com.kuit.afternote.feature.user.data.api.UserApiService
 import com.kuit.afternote.feature.user.data.dto.RegisterReceiverRequestDto
 import com.kuit.afternote.feature.user.data.dto.UserUpdateProfileRequest

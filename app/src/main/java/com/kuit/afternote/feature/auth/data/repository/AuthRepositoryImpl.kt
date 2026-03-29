@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.auth.data.repository
 
 import android.util.Log
-import com.kuit.afternote.data.dto.response.requireData
-import com.kuit.afternote.data.dto.response.requireStatus
+import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.dto.response.requireStatus
 import com.kuit.afternote.feature.auth.data.api.AuthApiService
 import com.kuit.afternote.feature.auth.data.dto.LoginRequest
 import com.kuit.afternote.feature.auth.data.dto.LogoutRequest

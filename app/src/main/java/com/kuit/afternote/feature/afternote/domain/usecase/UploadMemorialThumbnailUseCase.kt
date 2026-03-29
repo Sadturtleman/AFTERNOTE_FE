@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
-import com.kuit.afternote.domain.repository.MemorialThumbnailUploadRepository
+import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
 import javax.inject.Inject
 
 /**

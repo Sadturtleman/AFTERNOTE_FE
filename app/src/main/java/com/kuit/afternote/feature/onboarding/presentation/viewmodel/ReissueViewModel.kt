@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.auth.domain.usecase.ReissueUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.ReissueUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ReissueViewModel
     @Inject
     constructor(
-        private val reissueUseCase: ReissueUseCase
+        private val reissueUseCase: ReissueUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ReissueUiState())
         val uiState: StateFlow<ReissueUiState> = _uiState.asStateFlow()
@@ -46,7 +46,7 @@ class ReissueViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = e.message ?: "토큰 재발급에 실패했습니다."
+                                errorMessage = e.message ?: "토큰 재발급에 실패했습니다.",
                             )
                         }
                     }

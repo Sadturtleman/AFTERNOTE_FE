@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.presentation
 
-import com.kuit.afternote.core.util.AfternoteServiceCatalog
-import com.kuit.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.presentation.util.AfternoteServiceCatalog
 import com.kuit.afternote.feature.afternote.domain.model.Account
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.model.ItemProcessing

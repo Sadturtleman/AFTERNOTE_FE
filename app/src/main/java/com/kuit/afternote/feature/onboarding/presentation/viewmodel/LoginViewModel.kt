@@ -3,10 +3,10 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.service.ApiException
-import com.kuit.afternote.data.service.TokenManager
-import com.kuit.afternote.feature.auth.domain.usecase.KakaoLoginUseCase
-import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
+import com.kuit.afternote.core.data.service.ApiException
+import com.kuit.afternote.core.data.service.TokenManager
+import com.kuit.afternote.feature.auth.domain.usecase.auth.KakaoLoginUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

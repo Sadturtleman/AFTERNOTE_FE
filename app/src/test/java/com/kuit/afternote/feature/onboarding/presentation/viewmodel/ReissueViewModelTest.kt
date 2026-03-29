@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import com.kuit.afternote.feature.auth.domain.model.ReissueResult
-import com.kuit.afternote.feature.auth.domain.usecase.ReissueUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.ReissueUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -48,9 +48,10 @@ class ReissueViewModelTest {
     @Test
     fun reissue_whenSuccess_setsReissueSuccess() =
         runTest {
-            coEvery { reissueUseCase(any()) } returns Result.success(
-                ReissueResult(accessToken = "at", refreshToken = "rt")
-            )
+            coEvery { reissueUseCase(any()) } returns
+                Result.success(
+                    ReissueResult(accessToken = "at", refreshToken = "rt"),
+                )
 
             viewModel.reissue("refreshToken")
             advanceUntilIdle()
@@ -101,8 +102,9 @@ class ReissueViewModelTest {
     @Test
     fun reissue_when401Unauthorized_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Token expired"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Token expired"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<ReissueResult>(401, errorBody))
             coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
 
@@ -111,7 +113,7 @@ class ReissueViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("401") == true
+                    ?.contains("401") == true,
             )
             assertFalse(viewModel.uiState.value.reissueSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -120,8 +122,9 @@ class ReissueViewModelTest {
     @Test
     fun reissue_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid token format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid token format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<ReissueResult>(400, errorBody))
             coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
 
@@ -130,7 +133,7 @@ class ReissueViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.reissueSuccess)
         }
@@ -138,8 +141,9 @@ class ReissueViewModelTest {
     @Test
     fun reissue_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<ReissueResult>(500, errorBody))
             coEvery { reissueUseCase(any()) } returns Result.failure(httpException)
 
@@ -148,7 +152,7 @@ class ReissueViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.reissueSuccess)
         }
@@ -158,9 +162,10 @@ class ReissueViewModelTest {
     @Test
     fun reissue_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { reissueUseCase(any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { reissueUseCase(any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.reissue("validToken")
             advanceUntilIdle()

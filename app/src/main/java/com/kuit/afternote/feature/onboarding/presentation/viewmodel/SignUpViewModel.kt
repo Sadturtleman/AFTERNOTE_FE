@@ -2,9 +2,9 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.service.TokenManager
-import com.kuit.afternote.feature.auth.domain.usecase.LoginUseCase
-import com.kuit.afternote.feature.auth.domain.usecase.SignUpUseCase
+import com.kuit.afternote.core.data.service.TokenManager
+import com.kuit.afternote.feature.auth.domain.usecase.auth.LoginUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

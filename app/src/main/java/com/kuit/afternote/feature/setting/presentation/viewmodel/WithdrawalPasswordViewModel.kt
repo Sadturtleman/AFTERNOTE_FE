@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.setting.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.service.TokenManager
+import com.kuit.afternote.core.data.service.TokenManager
 import com.kuit.afternote.feature.user.domain.usecase.WithdrawAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

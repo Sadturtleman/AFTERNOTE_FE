@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.setting.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.data.service.PostDeliveryConditionPreferences
+import com.kuit.afternote.core.data.service.PostDeliveryConditionPreferences
 import com.kuit.afternote.feature.setting.presentation.model.DeliveryMethodOption
 import com.kuit.afternote.feature.setting.presentation.model.TriggerConditionOption
 import com.kuit.afternote.feature.user.domain.model.DeliveryConditionType

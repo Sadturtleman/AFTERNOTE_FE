@@ -2,9 +2,9 @@ package com.kuit.afternote.feature.afternote.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.core.component.list.AfternoteTab
+import com.kuit.afternote.feature.afternote.presentation.component.list.AfternoteTab
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.domain.model.GetAfternotesInput
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternotesUseCase

@@ -30,7 +30,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.component.button.AddCircleButton
 import com.kuit.afternote.core.component.detail.EditDropdownMenu
-import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
+import com.kuit.afternote.feature.afternote.presentation.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.ui.theme.AfternoteTheme

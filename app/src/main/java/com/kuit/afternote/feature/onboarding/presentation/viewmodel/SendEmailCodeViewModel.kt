@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.auth.domain.usecase.SendEmailCodeUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.SendEmailCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class SendEmailCodeViewModel
     @Inject
     constructor(
-        private val sendEmailCodeUseCase: SendEmailCodeUseCase
+        private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SendEmailCodeUiState())
         val uiState: StateFlow<SendEmailCodeUiState> = _uiState.asStateFlow()
@@ -46,7 +46,7 @@ class SendEmailCodeViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = e.message ?: "인증번호 발송에 실패했습니다."
+                                errorMessage = e.message ?: "인증번호 발송에 실패했습니다.",
                             )
                         }
                     }

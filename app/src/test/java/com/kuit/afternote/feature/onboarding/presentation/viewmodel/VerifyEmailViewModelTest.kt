@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import android.util.Log
 import com.kuit.afternote.feature.auth.domain.model.EmailVerifyResult
-import com.kuit.afternote.feature.auth.domain.usecase.VerifyEmailUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.VerifyEmailUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.every
@@ -122,8 +122,9 @@ class VerifyEmailViewModelTest {
     @Test
     fun verifyEmail_when400BadRequest_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid code format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid code format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<EmailVerifyResult>(400, errorBody))
             coEvery { verifyEmailUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -132,7 +133,7 @@ class VerifyEmailViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("400") == true
+                    ?.contains("400") == true,
             )
             assertFalse(viewModel.uiState.value.verifySuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -141,8 +142,9 @@ class VerifyEmailViewModelTest {
     @Test
     fun verifyEmail_when401Unauthorized_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Code expired or invalid"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Code expired or invalid"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<EmailVerifyResult>(401, errorBody))
             coEvery { verifyEmailUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -151,7 +153,7 @@ class VerifyEmailViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("401") == true
+                    ?.contains("401") == true,
             )
             assertFalse(viewModel.uiState.value.verifySuccess)
         }
@@ -159,8 +161,9 @@ class VerifyEmailViewModelTest {
     @Test
     fun verifyEmail_when404NotFound_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"Email not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"Email not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<EmailVerifyResult>(404, errorBody))
             coEvery { verifyEmailUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -169,7 +172,7 @@ class VerifyEmailViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("404") == true
+                    ?.contains("404") == true,
             )
             assertFalse(viewModel.uiState.value.verifySuccess)
         }
@@ -177,8 +180,9 @@ class VerifyEmailViewModelTest {
     @Test
     fun verifyEmail_when500ServerError_setsErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<EmailVerifyResult>(500, errorBody))
             coEvery { verifyEmailUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -187,7 +191,7 @@ class VerifyEmailViewModelTest {
 
             assertTrue(
                 viewModel.uiState.value.errorMessage
-                    ?.contains("500") == true
+                    ?.contains("500") == true,
             )
             assertFalse(viewModel.uiState.value.verifySuccess)
         }
@@ -197,9 +201,10 @@ class VerifyEmailViewModelTest {
     @Test
     fun verifyEmail_whenNetworkError_setsErrorMessage() =
         runTest {
-            coEvery { verifyEmailUseCase(any(), any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { verifyEmailUseCase(any(), any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.verifyEmail("a@b.com", "123456")
             advanceUntilIdle()

@@ -12,7 +12,7 @@ import com.kuit.afternote.core.component.LastWishOtherState
 import com.kuit.afternote.core.component.LastWishesRadioGroup
 import com.kuit.afternote.core.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.component.content.MemorialGuidelineSlots
-import com.kuit.afternote.core.component.list.MemorialPlaylist
+import com.kuit.afternote.feature.afternote.presentation.component.list.MemorialPlaylist
 import com.kuit.afternote.feature.afternote.presentation.edit.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.afternote.presentation.edit.upload.FuneralVideoUpload
 import com.kuit.afternote.feature.afternote.presentation.edit.upload.MemorialPhotoUpload

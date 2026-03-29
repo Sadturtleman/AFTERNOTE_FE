@@ -30,13 +30,13 @@ import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
 import com.kuit.afternote.core.component.icon.ArrowIconSpec
 import com.kuit.afternote.core.component.icon.RightArrowIcon
-import com.kuit.afternote.core.component.list.SongPlaylistScreen
-import com.kuit.afternote.core.component.list.SongPlaylistScreenManagementContent
+import com.kuit.afternote.feature.afternote.presentation.component.list.SongPlaylistScreen
+import com.kuit.afternote.feature.afternote.presentation.component.list.SongPlaylistScreenManagementContent
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
-import com.kuit.afternote.domain.provider.FakeAfternoteEditDataProvider
+import com.kuit.afternote.feature.afternote.presentation.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.edit.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
+import com.kuit.afternote.feature.afternote.presentation.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9

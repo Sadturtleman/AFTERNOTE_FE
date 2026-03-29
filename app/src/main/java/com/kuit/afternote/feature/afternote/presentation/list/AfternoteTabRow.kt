@@ -29,7 +29,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.component.expand.horizontalFadingEdge
 import com.kuit.afternote.core.component.icon.ArrowIconSpec
 import com.kuit.afternote.core.component.icon.RightArrowIcon
-import com.kuit.afternote.core.component.list.AfternoteTab
+import com.kuit.afternote.feature.afternote.presentation.component.list.AfternoteTab
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3

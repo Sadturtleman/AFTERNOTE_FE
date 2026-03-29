@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.auth.domain.usecase
 
 import com.kuit.afternote.feature.auth.domain.model.LoginResult
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
+import com.kuit.afternote.feature.auth.domain.usecase.auth.LoginUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -16,7 +17,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 
 /**
- * [LoginUseCase] 단위 테스트.
+ * [com.kuit.afternote.feature.auth.domain.usecase.auth.LoginUseCase] 단위 테스트.
  */
 class LoginUseCaseTest {
     private lateinit var authRepository: AuthRepository
@@ -57,8 +58,9 @@ class LoginUseCaseTest {
     @Test
     fun invoke_when404NotFound_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":404,"code":404,"message":"User not found"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":404,"code":404,"message":"User not found"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(404, errorBody))
             coEvery { authRepository.login(any(), any()) } returns Result.failure(httpException)
 
@@ -74,8 +76,9 @@ class LoginUseCaseTest {
     @Test
     fun invoke_when401Unauthorized_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Invalid credentials"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Invalid credentials"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(401, errorBody))
             coEvery { authRepository.login(any(), any()) } returns Result.failure(httpException)
 
@@ -90,8 +93,9 @@ class LoginUseCaseTest {
     @Test
     fun invoke_when400BadRequest_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid email format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid email format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(400, errorBody))
             coEvery { authRepository.login(any(), any()) } returns Result.failure(httpException)
 
@@ -106,8 +110,9 @@ class LoginUseCaseTest {
     @Test
     fun invoke_when500ServerError_returnsFailureWithHttpException() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<LoginResult>(500, errorBody))
             coEvery { authRepository.login(any(), any()) } returns Result.failure(httpException)
 
@@ -124,9 +129,10 @@ class LoginUseCaseTest {
     @Test
     fun invoke_whenNetworkError_returnsFailure() =
         runTest {
-            coEvery { authRepository.login(any(), any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { authRepository.login(any(), any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             val result = loginUseCase("test@example.com", "password123!")
 

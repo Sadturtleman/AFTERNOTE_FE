@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.addsong
 
-import com.kuit.afternote.presentation.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.afternote.presentation.uimodel.PlaylistSongDisplay
 import kotlinx.coroutines.flow.StateFlow
 
 /**

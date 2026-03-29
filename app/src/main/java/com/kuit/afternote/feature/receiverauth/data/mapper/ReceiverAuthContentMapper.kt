@@ -1,10 +1,10 @@
 package com.kuit.afternote.feature.receiverauth.data.mapper
 
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternote
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternoteDetail
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternotePlaylist
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternote
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternotePlaylist
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedPlaylistSong
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedPlaylistSong
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetterMedia
 import com.kuit.afternote.feature.receiverauth.data.dto.ReceivedAfternoteAuthResponseDto

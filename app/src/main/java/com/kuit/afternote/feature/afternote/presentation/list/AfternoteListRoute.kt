@@ -7,15 +7,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.component.list.AfternoteTab
+import com.kuit.afternote.feature.afternote.presentation.component.list.AfternoteTab
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.presentation.screen.AfternoteListScreen
-import com.kuit.afternote.presentation.screen.AfternoteListScreenListParams
-import com.kuit.afternote.presentation.screen.AfternoteListScreenShellParams
-import com.kuit.afternote.core.util.getIconResForServiceName
-import com.kuit.afternote.presentation.uimodel.AfternoteListDisplayItem
-import com.kuit.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
+import com.kuit.afternote.feature.afternote.presentation.util.getIconResForServiceName
 import com.kuit.afternote.feature.afternote.domain.model.Item
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListScreen
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListScreenListParams
+import com.kuit.afternote.feature.afternote.presentation.screen.AfternoteListScreenShellParams
+import com.kuit.afternote.feature.afternote.presentation.uimodel.AfternoteListDisplayItem
 
 data class AfternoteListRouteCallbacks(
     val onNavigateToDetail: (String) -> Unit = {},

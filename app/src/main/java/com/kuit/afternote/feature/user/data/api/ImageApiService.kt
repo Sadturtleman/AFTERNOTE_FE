@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.data.api
 
-import com.kuit.afternote.data.dto.response.BaseResponse
+import com.kuit.afternote.core.data.dto.response.BaseResponse
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlResponseDto
 import retrofit2.http.Body

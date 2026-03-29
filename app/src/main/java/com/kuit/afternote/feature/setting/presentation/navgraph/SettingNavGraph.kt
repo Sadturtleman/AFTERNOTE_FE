@@ -20,13 +20,13 @@ import androidx.navigation.toRoute
 import com.kuit.afternote.R
 import com.kuit.afternote.core.component.ConfirmationPopup
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.util.getAfternoteDisplayRes
-import com.kuit.afternote.core.util.getIconResForServiceName
-import com.kuit.afternote.presentation.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.afternote.presentation.util.getAfternoteDisplayRes
+import com.kuit.afternote.feature.afternote.presentation.util.getIconResForServiceName
+import com.kuit.afternote.feature.afternote.presentation.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.onboarding.presentation.navgraph.OnboardingRoute
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LogoutViewModel
-import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverAfternotesListViewModel
+import com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel.ReceiverAfternotesListViewModel
 import com.kuit.afternote.feature.receiver.presentation.viewmodel.ReceiverTimeLettersListViewModel
 import com.kuit.afternote.feature.setting.presentation.screen.account.ConnectedAccountsScreen
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel

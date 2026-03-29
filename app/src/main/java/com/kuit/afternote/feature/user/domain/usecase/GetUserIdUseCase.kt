@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.domain.usecase
 
-import com.kuit.afternote.data.service.TokenManager
+import com.kuit.afternote.core.data.service.TokenManager
 import javax.inject.Inject
 
 /**

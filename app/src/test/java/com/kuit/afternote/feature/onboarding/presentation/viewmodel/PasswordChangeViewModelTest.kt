@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
 import android.util.Log
-import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.PasswordChangeUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.every
@@ -84,9 +84,10 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_whenFailure_setsErrorMessage() =
         runTest {
-            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
-                RuntimeException("현재 비밀번호가 일치하지 않습니다.")
-            )
+            coEvery { passwordChangeUseCase(any(), any()) } returns
+                Result.failure(
+                    RuntimeException("현재 비밀번호가 일치하지 않습니다."),
+                )
 
             viewModel.changePassword("wrongPwd", "newPwd123!")
             advanceUntilIdle()
@@ -124,8 +125,9 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_when400BadRequest_setsUserFriendlyErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Invalid password format"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Invalid password format"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(400, errorBody))
             coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -135,7 +137,7 @@ class PasswordChangeViewModelTest {
             // Server message contains "format" -> maps to password format requirement message
             assertEquals(
                 "비밀번호는 영문, 숫자, 특수문자를 포함한 8~20자여야 합니다.",
-                viewModel.uiState.value.errorMessage
+                viewModel.uiState.value.errorMessage,
             )
             assertFalse(viewModel.uiState.value.passwordChangeSuccess)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -144,8 +146,9 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_when400WrongPassword_setsUserFriendlyErrorMessage() =
         runTest {
-            val errorBody = """{"status":400,"code":400,"message":"Current password is wrong"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":400,"code":400,"message":"Current password is wrong"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(400, errorBody))
             coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -161,8 +164,9 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_when401Unauthorized_setsUserFriendlyErrorMessage() =
         runTest {
-            val errorBody = """{"status":401,"code":401,"message":"Current password is incorrect"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":401,"code":401,"message":"Current password is incorrect"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(401, errorBody))
             coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -176,8 +180,9 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_when500ServerError_setsUserFriendlyErrorMessage() =
         runTest {
-            val errorBody = """{"status":500,"code":500,"message":"Internal server error"}"""
-                .toResponseBody("application/json".toMediaType())
+            val errorBody =
+                """{"status":500,"code":500,"message":"Internal server error"}"""
+                    .toResponseBody("application/json".toMediaType())
             val httpException = HttpException(Response.error<Unit>(500, errorBody))
             coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(httpException)
 
@@ -193,9 +198,10 @@ class PasswordChangeViewModelTest {
     @Test
     fun changePassword_whenNetworkError_setsUserFriendlyErrorMessage() =
         runTest {
-            coEvery { passwordChangeUseCase(any(), any()) } returns Result.failure(
-                java.io.IOException("Network unavailable")
-            )
+            coEvery { passwordChangeUseCase(any(), any()) } returns
+                Result.failure(
+                    java.io.IOException("Network unavailable"),
+                )
 
             viewModel.changePassword("currentPwd!", "newPwd123!")
             advanceUntilIdle()

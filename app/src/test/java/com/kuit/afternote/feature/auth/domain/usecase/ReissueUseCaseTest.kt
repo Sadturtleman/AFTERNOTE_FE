@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.auth.domain.usecase
 
 import com.kuit.afternote.feature.auth.domain.model.ReissueResult
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
+import com.kuit.afternote.feature.auth.domain.usecase.auth.ReissueUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -12,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * [ReissueUseCase] 단위 테스트.
+ * [com.kuit.afternote.feature.auth.domain.usecase.auth.ReissueUseCase] 단위 테스트.
  */
 class ReissueUseCaseTest {
     private lateinit var authRepository: AuthRepository
@@ -27,10 +28,11 @@ class ReissueUseCaseTest {
     @Test
     fun invoke_whenSuccess_returnsReissueResult() =
         runTest {
-            val expected = ReissueResult(
-                accessToken = "new_access_token",
-                refreshToken = "new_refresh_token"
-            )
+            val expected =
+                ReissueResult(
+                    accessToken = "new_access_token",
+                    refreshToken = "new_refresh_token",
+                )
             coEvery { authRepository.reissue(any()) } returns Result.success(expected)
 
             val result = reissueUseCase("old_refresh_token")

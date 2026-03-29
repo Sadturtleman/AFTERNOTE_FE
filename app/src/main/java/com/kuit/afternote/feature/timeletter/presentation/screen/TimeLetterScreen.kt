@@ -47,7 +47,7 @@ import com.kuit.afternote.core.component.list.TimeLetterBlockList
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.core.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.component.navigation.TopBar
-import com.kuit.afternote.domain.provider.FakeReceiverDataProvider
+import com.kuit.afternote.core.domain.provider.FakeReceiverDataProvider
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItem
 import com.kuit.afternote.feature.timeletter.presentation.component.TimeLetterListItemCallbacks
 import com.kuit.afternote.feature.timeletter.presentation.component.ViewModeToggle

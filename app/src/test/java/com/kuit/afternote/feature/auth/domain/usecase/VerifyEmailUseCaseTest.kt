@@ -2,6 +2,7 @@ package com.kuit.afternote.feature.auth.domain.usecase
 
 import com.kuit.afternote.feature.auth.domain.model.EmailVerifyResult
 import com.kuit.afternote.feature.auth.domain.repository.AuthRepository
+import com.kuit.afternote.feature.auth.domain.usecase.auth.VerifyEmailUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -12,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * [VerifyEmailUseCase] 단위 테스트.
+ * [com.kuit.afternote.feature.auth.domain.usecase.auth.VerifyEmailUseCase] 단위 테스트.
  */
 class VerifyEmailUseCaseTest {
     private lateinit var authRepository: AuthRepository

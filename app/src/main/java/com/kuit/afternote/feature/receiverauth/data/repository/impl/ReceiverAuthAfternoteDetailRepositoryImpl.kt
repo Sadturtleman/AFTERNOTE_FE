@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.receiverauth.data.repository.impl
 
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedAfternoteDetail
-import com.kuit.afternote.feature.receiver.domain.repository.iface.GetAfternoteDetailByAuthCodeRepository
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.repository.GetAfternoteDetailByAuthCodeRepository
 import com.kuit.afternote.feature.receiverauth.data.mapper.toReceivedAfternoteDetail
 import com.kuit.afternote.feature.receiverauth.data.repository.iface.ReceiverAuthRepository
 import javax.inject.Inject

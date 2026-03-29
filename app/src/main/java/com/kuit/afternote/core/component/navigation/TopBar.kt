@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.presentation.uimodel.Step
+import com.kuit.afternote.core.presentation.uimodel.Step
 import com.kuit.afternote.feature.onboarding.presentation.component.StepProgressBar
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.Gray5

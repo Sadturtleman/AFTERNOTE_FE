@@ -2,10 +2,8 @@ package com.kuit.afternote.feature.receiver.data.di
 
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.repository.iface.ReceivedRepository
-import com.kuit.afternote.feature.receiver.data.repository.impl.ExportReceivedRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedRepositoryImpl
 import com.kuit.afternote.feature.receiver.data.repository.impl.ReceivedTimeLetterRepositoryStub
-import com.kuit.afternote.feature.receiver.domain.repository.iface.ExportReceivedRepository
 import com.kuit.afternote.feature.receiver.domain.repository.iface.ReceivedTimeLetterRepository
 import dagger.Binds
 import dagger.Module
@@ -28,12 +26,6 @@ abstract class ReceiverModule {
     abstract fun bindReceivedTimeLetterRepository(
         impl: ReceivedTimeLetterRepositoryStub
     ): ReceivedTimeLetterRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindExportReceivedRepository(
-        impl: ExportReceivedRepositoryImpl
-    ): ExportReceivedRepository
 
     companion object {
         @Provides

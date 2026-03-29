@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 
-import com.kuit.afternote.data.service.TokenManager
-import com.kuit.afternote.feature.auth.domain.usecase.LogoutUseCase
+import com.kuit.afternote.core.data.service.TokenManager
+import com.kuit.afternote.feature.auth.domain.usecase.auth.LogoutUseCase
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coJustRun

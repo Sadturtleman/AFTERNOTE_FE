@@ -3,7 +3,7 @@ package com.kuit.afternote.feature.onboarding.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.auth.domain.usecase.PasswordChangeUseCase
+import com.kuit.afternote.feature.auth.domain.usecase.auth.PasswordChangeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
