@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.afternote.presentation.author.edit.ui.provide
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
 import com.kuit.afternote.feature.afternote.presentation.shared.model.dummy.afternote.AfternoteEditDummies
 import com.kuit.afternote.feature.afternote.presentation.shared.model.dummy.afternote.AfternoteListDummies
-import com.kuit.afternote.core.dummy.album.AlbumDummies
+import com.kuit.afternote.feature.afternote.presentation.shared.model.dummy.AlbumDummies
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.Song
 import com.kuit.afternote.feature.afternote.presentation.shared.model.uimodel.PlaylistSongDisplay

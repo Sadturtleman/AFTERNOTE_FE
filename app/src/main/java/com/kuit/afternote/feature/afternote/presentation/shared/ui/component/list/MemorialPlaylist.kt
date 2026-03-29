@@ -38,7 +38,7 @@ import com.kuit.afternote.R
 import com.kuit.afternote.core.presentation.expand.ui.horizontalFadingEdge
 import com.kuit.afternote.core.presentation.icon.ui.ArrowIconSpec
 import com.kuit.afternote.core.presentation.icon.ui.RightArrowIcon
-import com.kuit.afternote.core.dummy.album.AlbumDummies
+import com.kuit.afternote.feature.afternote.presentation.shared.model.dummy.AlbumDummies
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B3

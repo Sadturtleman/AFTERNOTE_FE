@@ -51,7 +51,7 @@ import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.lis
 import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
 import com.kuit.afternote.core.presentation.shell.ui.TopBar
-import com.kuit.afternote.core.dummy.album.AlbumDummies
+import com.kuit.afternote.feature.afternote.presentation.shared.model.dummy.AlbumDummies
 import com.kuit.afternote.feature.afternote.presentation.author.nav.ui.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.Black

@@ -1,8 +1,9 @@
-package com.kuit.afternote.core.dummy.album
+package com.kuit.afternote.feature.afternote.presentation.shared.model.dummy
+
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
 
 /**
- * Shared default album cover list for playlists (Previews and dummy state).
+ * Default album cover list for playlists (Previews and dummy state).
  * Replace with real data when loaded from API.
  */
 object AlbumDummies {
