@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.component.navigation.TopBar
-import com.kuit.afternote.core.domain.provider.FakeReceiverDataProvider
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
+import com.kuit.afternote.core.domain.receiver.provider.FakeReceiverDataProvider
 import com.kuit.afternote.core.util.KoreanConsonantUtil
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.ui.theme.AfternoteTheme

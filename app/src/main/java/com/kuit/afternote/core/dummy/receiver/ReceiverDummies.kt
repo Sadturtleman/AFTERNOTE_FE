@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.dummy.receiver
-
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.setting.presentation.screen.dailyanswer.DailyAnswerItemUiModel

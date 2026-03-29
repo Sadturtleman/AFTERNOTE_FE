@@ -27,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.component.icon.ArrowIconSpec
-import com.kuit.afternote.core.component.icon.RightArrowIcon
+import com.kuit.afternote.core.presentation.icon.ui.ArrowIconSpec
+import com.kuit.afternote.core.presentation.icon.ui.RightArrowIcon
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.SongPlaylistScreen
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.SongPlaylistScreenManagementContent
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.MemorialPlaylistStateHolder
 import com.kuit.afternote.feature.afternote.presentation.author.nav.ui.navgraph.AfternoteLightTheme

@@ -11,9 +11,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.afternote.presentation.author.nav.ui.navgraph.AfternoteLightTheme
 
 /**

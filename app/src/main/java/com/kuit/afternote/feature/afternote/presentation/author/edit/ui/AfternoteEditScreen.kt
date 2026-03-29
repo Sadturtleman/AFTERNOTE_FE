@@ -28,11 +28,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.component.expand.addFocusCleaner
+import com.kuit.afternote.core.presentation.expand.ui.addFocusCleaner
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.domain.model.Item
 import com.kuit.afternote.feature.afternote.domain.model.ProcessingMethod

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.timeletter.data.api
 
-import com.kuit.afternote.core.data.dto.response.BaseResponse
+import com.kuit.afternote.core.data.model.BaseResponse
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterCreateRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterDeleteRequest
 import com.kuit.afternote.feature.timeletter.data.dto.TimeLetterListResponse

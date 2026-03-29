@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordHomeContract
 import com.kuit.afternote.feature.dailyrecord.presentation.viewmodel.MindRecordViewModel
 import com.kuit.afternote.feature.home.presentation.component.CalendarDay

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.user.domain.usecase
 
-import com.kuit.afternote.core.domain.repository.PhotoUploadRepository
+import com.kuit.afternote.core.domain.upload.repository.PhotoUploadRepository
 import javax.inject.Inject
 
 private const val DIRECTORY_PROFILES = "profiles"

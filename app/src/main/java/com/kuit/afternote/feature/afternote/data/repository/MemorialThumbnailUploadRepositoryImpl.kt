@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
-import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.model.requireData
 import com.kuit.afternote.feature.afternote.data.api.AfternotePresignedUrlApi
 import com.kuit.afternote.feature.afternote.data.dto.AfternotePresignedUrlRequestDto
 import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository

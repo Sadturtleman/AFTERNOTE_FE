@@ -18,8 +18,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
 import com.kuit.afternote.feature.afternote.presentation.receiver.ui.screen.ReceiverAfterNoteScreen
 import com.kuit.afternote.feature.afternote.presentation.receiver.ui.screen.afternote.MemorialPlaylistScreen

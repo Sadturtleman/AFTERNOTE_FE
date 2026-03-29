@@ -21,9 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.dailyrecord.presentation.component.EmotionBubbleReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordAllSeeReport
 import com.kuit.afternote.feature.dailyrecord.presentation.component.RecordCurrentWeek

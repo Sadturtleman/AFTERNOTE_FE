@@ -6,11 +6,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.component.LastWishOption
-import com.kuit.afternote.core.component.LastWishOtherState
-import com.kuit.afternote.core.component.LastWishesRadioGroup
-import com.kuit.afternote.core.component.content.MemorialGuidelineContent
-import com.kuit.afternote.core.component.content.MemorialGuidelineSlots
+import com.kuit.afternote.core.presentation.form.ui.LastWishOption
+import com.kuit.afternote.core.presentation.form.ui.LastWishOtherState
+import com.kuit.afternote.core.presentation.form.ui.LastWishesRadioGroup
+import com.kuit.afternote.core.presentation.content.ui.MemorialGuidelineContent
+import com.kuit.afternote.core.presentation.content.ui.MemorialGuidelineSlots
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.MemorialPlaylist
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.memorial.LastMomentQuestion
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.upload.FuneralVideoUpload

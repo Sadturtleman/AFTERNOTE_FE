@@ -7,7 +7,7 @@ import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.lis
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AfternoteListContentListParams
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AfternoteListScreenShell
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AfternoteTab
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.shared.model.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.ui.theme.AfternoteTheme
 

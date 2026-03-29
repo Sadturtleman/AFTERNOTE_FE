@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.component.expand.dropShadow
+import com.kuit.afternote.core.presentation.expand.ui.dropShadow
 
 /**
  * 주간리포트 나의 감정 키워드 컴포넌트

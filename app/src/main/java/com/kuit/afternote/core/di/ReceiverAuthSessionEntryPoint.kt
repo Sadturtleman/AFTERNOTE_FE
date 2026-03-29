@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.di
-
 import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

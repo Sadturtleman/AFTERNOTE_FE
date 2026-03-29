@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
 import android.util.Log
-import com.kuit.afternote.core.data.dto.response.requireData
-import com.kuit.afternote.core.data.dto.response.requireStatus
+import com.kuit.afternote.core.data.model.requireData
+import com.kuit.afternote.core.data.model.requireStatus
 import com.kuit.afternote.feature.afternote.data.dto.response.AfternoteIdResponse
 import com.kuit.afternote.feature.afternote.data.mapper.response.toDetailDomain
 import com.kuit.afternote.feature.afternote.data.mapper.response.toPagedNotes

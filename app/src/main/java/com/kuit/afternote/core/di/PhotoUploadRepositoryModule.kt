@@ -1,7 +1,7 @@
 package com.kuit.afternote.core.di
 
-import com.kuit.afternote.core.data.repositoryimpl.PhotoUploadRepositoryImpl
-import com.kuit.afternote.core.domain.repository.PhotoUploadRepository
+import com.kuit.afternote.core.data.repository.PhotoUploadRepositoryImpl
+import com.kuit.afternote.core.domain.upload.repository.PhotoUploadRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

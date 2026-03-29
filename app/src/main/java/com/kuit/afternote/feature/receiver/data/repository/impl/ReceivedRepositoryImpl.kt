@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.data.repository.impl
 
-import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.model.requireData
 import com.kuit.afternote.feature.receiver.data.api.ReceivedApiService
 import com.kuit.afternote.feature.receiver.data.dto.CreateMindRecordReceiverRequestDto
 import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequestDto

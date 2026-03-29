@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.list.RecordQnAListItem
+import com.kuit.afternote.core.presentation.list.ui.RecordQnAListItem
 import com.kuit.afternote.feature.dailyrecord.presentation.uimodel.MindRecordUiModel
 import com.kuit.afternote.ui.theme.Gray5
 import com.kuit.afternote.ui.theme.Sansneo

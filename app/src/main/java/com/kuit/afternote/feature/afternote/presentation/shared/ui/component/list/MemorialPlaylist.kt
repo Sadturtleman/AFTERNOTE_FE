@@ -35,9 +35,9 @@ import coil3.network.NetworkHeaders
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.expand.horizontalFadingEdge
-import com.kuit.afternote.core.component.icon.ArrowIconSpec
-import com.kuit.afternote.core.component.icon.RightArrowIcon
+import com.kuit.afternote.core.presentation.expand.ui.horizontalFadingEdge
+import com.kuit.afternote.core.presentation.icon.ui.ArrowIconSpec
+import com.kuit.afternote.core.presentation.icon.ui.RightArrowIcon
 import com.kuit.afternote.core.dummy.album.AlbumDummies
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1

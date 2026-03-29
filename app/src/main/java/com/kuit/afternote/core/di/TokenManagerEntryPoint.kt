@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.di
-
 import com.kuit.afternote.core.data.service.TokenManager
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

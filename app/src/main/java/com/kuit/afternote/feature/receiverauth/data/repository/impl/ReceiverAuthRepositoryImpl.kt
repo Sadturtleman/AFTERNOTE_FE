@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiverauth.data.repository.impl
 
-import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.model.requireData
 import com.kuit.afternote.feature.receiverauth.data.api.ReceiverAuthApiService
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationRequestDto
 import com.kuit.afternote.feature.receiverauth.data.dto.DeliveryVerificationResponseDto

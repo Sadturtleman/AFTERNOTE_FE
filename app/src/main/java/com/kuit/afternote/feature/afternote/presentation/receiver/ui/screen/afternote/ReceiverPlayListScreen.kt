@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.SongPlaylistScreen
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.shared.model.uimodel.PlaylistSongDisplay
 
 @Composable

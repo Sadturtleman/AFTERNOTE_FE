@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.data.service
-
 import com.kuit.afternote.feature.afternote.data.service.AfternoteApiService
 import com.kuit.afternote.feature.afternote.data.service.MusicApiService
 import com.kuit.afternote.feature.dailyrecord.data.api.DailyRecordApiService

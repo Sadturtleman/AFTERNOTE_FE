@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiverauth.uimodel
 
-import com.kuit.afternote.core.presentation.uimodel.Step
+import com.kuit.afternote.core.presentation.shared.model.Step
 
 enum class VerifyStep(
     override val value: Int

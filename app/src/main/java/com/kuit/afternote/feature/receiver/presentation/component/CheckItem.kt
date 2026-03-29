@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.component.CircleCheckBox
+import com.kuit.afternote.core.presentation.form.ui.CircleCheckBox
 import com.kuit.afternote.ui.theme.Gray9
 
 @Composable

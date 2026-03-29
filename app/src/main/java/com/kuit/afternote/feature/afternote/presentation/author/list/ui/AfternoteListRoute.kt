@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AfternoteTab
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteServiceType
 import com.kuit.afternote.feature.afternote.presentation.shared.model.util.getIconResForServiceName
 import com.kuit.afternote.feature.afternote.domain.model.Item

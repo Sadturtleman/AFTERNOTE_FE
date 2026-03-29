@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.kuit.afternote.core.component.DateWheelPicker
-import com.kuit.afternote.core.component.expand.dropShadow
+import com.kuit.afternote.core.presentation.form.ui.DateWheelPicker
+import com.kuit.afternote.core.presentation.expand.ui.dropShadow
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B3
 import com.kuit.afternote.ui.theme.Gray9

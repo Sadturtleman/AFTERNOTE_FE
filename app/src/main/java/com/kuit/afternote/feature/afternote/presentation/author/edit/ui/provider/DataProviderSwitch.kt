@@ -2,9 +2,9 @@ package com.kuit.afternote.feature.afternote.presentation.author.edit.ui.provide
 import android.content.Context
 import androidx.core.content.edit
 import com.kuit.afternote.BuildConfig
-import com.kuit.afternote.core.domain.provider.FakeReceiverDataProvider
-import com.kuit.afternote.core.domain.provider.RealReceiverDataProvider
-import com.kuit.afternote.core.domain.provider.ReceiverDataProvider
+import com.kuit.afternote.core.domain.receiver.provider.FakeReceiverDataProvider
+import com.kuit.afternote.core.domain.receiver.provider.RealReceiverDataProvider
+import com.kuit.afternote.core.domain.receiver.provider.ReceiverDataProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

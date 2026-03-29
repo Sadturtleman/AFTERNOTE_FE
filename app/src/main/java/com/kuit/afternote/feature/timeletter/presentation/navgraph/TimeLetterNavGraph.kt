@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.timeletter.presentation.screen.DraftLetterScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.ReceiveListScreen
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterDetailParams
@@ -19,8 +19,8 @@ import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWrite
 import com.kuit.afternote.feature.timeletter.presentation.screen.TimeLetterWriterScreenState
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.ReceiveListViewModel
 import com.kuit.afternote.feature.timeletter.presentation.viewmodel.TimeLetterWriterViewModel
-import com.kuit.afternote.core.presentation.navigation.ReceiverRoute
-import com.kuit.afternote.core.presentation.navigation.SELECTED_RECEIVER_ID_KEY
+import com.kuit.afternote.core.presentation.navigation.model.ReceiverRoute
+import com.kuit.afternote.core.presentation.navigation.model.SELECTED_RECEIVER_ID_KEY
 
 /**
  * 타임레터 기능의 네비게이션 그래프

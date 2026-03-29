@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.data.service
-
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

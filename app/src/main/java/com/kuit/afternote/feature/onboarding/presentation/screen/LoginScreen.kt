@@ -31,9 +31,9 @@ import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.user.model.LoginUiMode
 import com.kuit.afternote.BuildConfig
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.OutlineTextField
-import com.kuit.afternote.core.component.button.ClickButton
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.form.ui.OutlineTextField
+import com.kuit.afternote.core.presentation.button.ui.ClickButton
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LoginUiState
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.LoginViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme

@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.data.service
-
 import android.util.Log
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable

@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuit.afternote.core.component.icon.RightArrowIcon
+import com.kuit.afternote.core.presentation.icon.ui.RightArrowIcon
 import com.kuit.afternote.feature.afternote.presentation.receiver.model.uimodel.AppNoteItem
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray5

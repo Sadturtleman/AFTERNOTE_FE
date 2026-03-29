@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.component.Label
-import com.kuit.afternote.core.component.LabelStyle
+import com.kuit.afternote.core.presentation.form.ui.Label
+import com.kuit.afternote.core.presentation.form.ui.LabelStyle
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.editreceiver.AfternoteEditReceiverList
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverCallbacks
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection

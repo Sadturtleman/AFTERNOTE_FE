@@ -51,7 +51,7 @@ class MainActivity : FragmentActivity() {
                 ) {
                     Column {
                         val navController = rememberNavController()
-                        com.kuit.afternote.core.presentation.navigation.navgraph.NavGraph(
+                        com.kuit.afternote.core.presentation.navigation.ui.navgraph.NavGraph(
                             navController,
                         )
                     }

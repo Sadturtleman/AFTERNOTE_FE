@@ -2,7 +2,7 @@ package com.kuit.afternote.feature.timeletter.data.repository
 
 import android.content.Context
 import android.net.Uri
-import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.core.data.model.requireData
 import com.kuit.afternote.feature.timeletter.domain.repository.TimeLetterMediaUploadRepository
 import com.kuit.afternote.feature.user.data.api.ImageApiService
 import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto

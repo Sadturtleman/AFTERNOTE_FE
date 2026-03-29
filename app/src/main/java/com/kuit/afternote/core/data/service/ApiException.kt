@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.data.service
-
 /**
  * API 오류 시 사용하는 예외.
  *

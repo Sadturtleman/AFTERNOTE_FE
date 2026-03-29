@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.component.OutlineTextField
-import com.kuit.afternote.core.component.ProfileImage
-import com.kuit.afternote.core.component.button.ClickButton
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.form.ui.OutlineTextField
+import com.kuit.afternote.core.presentation.form.ui.ProfileImage
+import com.kuit.afternote.core.presentation.button.ui.ClickButton
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.onboarding.presentation.viewmodel.SignUpViewModel
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B2

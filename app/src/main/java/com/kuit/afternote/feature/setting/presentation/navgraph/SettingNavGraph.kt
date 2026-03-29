@@ -18,8 +18,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.ConfirmationPopup
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.feedback.ui.ConfirmationPopup
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.shared.model.util.getAfternoteDisplayRes
 import com.kuit.afternote.feature.afternote.presentation.shared.model.util.getIconResForServiceName
 import com.kuit.afternote.feature.afternote.presentation.shared.model.uimodel.AfternoteListDisplayItem

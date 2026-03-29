@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.afternote.R
-import com.kuit.afternote.core.component.button.ClickButton
-import com.kuit.afternote.core.component.button.SignUpContentButton
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.button.ui.ClickButton
+import com.kuit.afternote.core.presentation.button.ui.SignUpContentButton
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.receiverauth.component.MasterKeyInputContent
 import com.kuit.afternote.feature.receiverauth.component.PdfInputContent
 import com.kuit.afternote.feature.receiverauth.component.ReceiveEndContent

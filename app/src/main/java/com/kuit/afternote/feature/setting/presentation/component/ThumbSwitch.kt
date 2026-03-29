@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kuit.afternote.core.component.expand.dropShadow
+import com.kuit.afternote.core.presentation.expand.ui.dropShadow
 import com.kuit.afternote.ui.theme.B2
 import com.kuit.afternote.ui.theme.Gray2
 

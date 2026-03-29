@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.component.button.AddCircleButton
-import com.kuit.afternote.core.component.detail.EditDropdownMenu
+import com.kuit.afternote.core.presentation.button.ui.AddCircleButton
+import com.kuit.afternote.core.presentation.detail.ui.EditDropdownMenu
 import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.provider.FakeAfternoteEditDataProvider
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverCallbacks

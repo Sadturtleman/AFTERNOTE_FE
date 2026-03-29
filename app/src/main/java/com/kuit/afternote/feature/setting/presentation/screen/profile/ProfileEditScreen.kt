@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kuit.afternote.core.component.LabeledTextFieldStyle
-import com.kuit.afternote.core.component.OutlineTextField
-import com.kuit.afternote.core.component.ProfileImage
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.form.ui.LabeledTextFieldStyle
+import com.kuit.afternote.core.presentation.form.ui.OutlineTextField
+import com.kuit.afternote.core.presentation.form.ui.ProfileImage
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.user.presentation.uimodel.ProfileUiState
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileEditViewModelContract
 import com.kuit.afternote.feature.user.presentation.viewmodel.ProfileViewModel

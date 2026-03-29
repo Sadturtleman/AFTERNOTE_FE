@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordCategoryState
 import com.kuit.afternote.feature.dailyrecord.presentation.screen.RecordDailyQuestionListScreen

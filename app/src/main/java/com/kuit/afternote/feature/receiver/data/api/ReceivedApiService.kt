@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.receiver.data.api
 
-import com.kuit.afternote.core.data.dto.response.BaseResponse
+import com.kuit.afternote.core.data.model.BaseResponse
 import com.kuit.afternote.feature.receiver.data.dto.CreateMindRecordReceiverRequestDto
 import com.kuit.afternote.feature.receiver.data.dto.CreateTimeLetterReceiverRequestDto
 import retrofit2.http.Body

@@ -1,6 +1,6 @@
 package com.kuit.afternote.feature.afternote.presentation.author.list.model
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AfternoteTab
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 
 /**
  * 애프터노트 목록 화면 UI 이벤트

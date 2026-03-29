@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.util
-
 /**
  * 한글 초성(자음) 관련 유틸리티
  */

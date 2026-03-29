@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.data.service
-
 import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore

@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.kuit.afternote.app.compositionlocal.DataProviderLocals
-import com.kuit.afternote.core.component.LastWishOption
+import com.kuit.afternote.core.presentation.form.ui.LastWishOption
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
-import com.kuit.afternote.core.component.navigation.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
 import com.kuit.afternote.feature.afternote.presentation.shared.model.util.AfternoteServiceCatalog
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodManager
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem

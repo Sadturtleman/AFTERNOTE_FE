@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.PlaylistSongItem
-import com.kuit.afternote.core.component.button.CustomRadioButton
-import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.core.component.navigation.BottomNavigationBar
-import com.kuit.afternote.core.component.navigation.TopBar
+import com.kuit.afternote.core.presentation.button.ui.CustomRadioButton
+import com.kuit.afternote.core.presentation.shell.model.BottomNavItem
+import com.kuit.afternote.core.presentation.shell.ui.BottomNavigationBar
+import com.kuit.afternote.core.presentation.shell.ui.TopBar
 import com.kuit.afternote.feature.afternote.presentation.shared.model.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.ui.theme.B1
 import com.kuit.afternote.ui.theme.B2

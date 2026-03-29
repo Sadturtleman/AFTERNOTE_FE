@@ -1,0 +1,6 @@
+package com.kuit.afternote.core.presentation.navigation.model
+import com.kuit.afternote.feature.dailyrecord.presentation.navigiation.RecordRoute
+
+interface DailyRecordNavigator {
+    fun gotoDailyRecord(route: RecordRoute)
+}

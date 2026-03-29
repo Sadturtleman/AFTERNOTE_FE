@@ -1,5 +1,4 @@
 package com.kuit.afternote.core.dummy.album
-
 import com.kuit.afternote.feature.afternote.presentation.shared.ui.component.list.AlbumCover
 
 /**
