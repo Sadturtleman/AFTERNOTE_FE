@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.presentation.shared.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfterNotesByAuthCodeUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailByAuthCodeUseCase
+import com.kuit.afternote.feature.afternote.domain.port.ReceiverAuthCodeProvider
 import com.kuit.afternote.feature.afternote.presentation.receiver.uimodel.ReceiverMemorialPlaylistUiState
-import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +26,7 @@ class ReceiverMemorialPlaylistViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
-        private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val receiverAuthCodeProvider: ReceiverAuthCodeProvider,
         private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase,
         private val getAfternoteDetailByAuthCodeUseCase: GetAfternoteDetailByAuthCodeUseCase
     ) : ViewModel() {
@@ -36,7 +36,7 @@ class ReceiverMemorialPlaylistViewModel
 
     init {
         val afternoteId = (savedStateHandle["afternoteId"] as? String)?.toLongOrNull()
-        val authCode = receiverAuthSessionHolder.getAuthCode()
+        val authCode = receiverAuthCodeProvider.currentAuthCode()
 
         when {
             authCode == null || authCode.isBlank() -> {

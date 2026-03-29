@@ -20,13 +20,13 @@ import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCas
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialPhotoUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
+import com.kuit.afternote.feature.afternote.domain.model.AuthorReceiverDirectoryEntry
+import com.kuit.afternote.feature.afternote.domain.port.AuthorReceiversDirectoryPort
+import com.kuit.afternote.feature.afternote.domain.port.CurrentAuthorUserIdPort
 import com.kuit.afternote.feature.afternote.presentation.author.edit.AfternoteSaveState
 import com.kuit.afternote.feature.afternote.presentation.author.edit.RegisterAfternotePayload
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.Song
-import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
-import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
-import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -64,8 +64,8 @@ class AfternoteEditViewModel
         private val createPlaylistUseCase: CreatePlaylistAfternoteUseCase,
         private val updateUseCase: UpdateAfternoteUseCase,
         private val getDetailUseCase: GetAfternoteDetailUseCase,
-        private val getReceiversUseCase: GetReceiversUseCase,
-        private val getUserIdUseCase: GetUserIdUseCase,
+        private val currentAuthorUserId: CurrentAuthorUserIdPort,
+        private val authorReceiversDirectory: AuthorReceiversDirectoryPort,
         private val uploadMemorialThumbnailUseCase: UploadMemorialThumbnailUseCase,
         private val uploadMemorialVideoUseCase: UploadMemorialVideoUseCase,
         private val uploadMemorialPhotoUseCase: UploadMemorialPhotoUseCase,
@@ -78,7 +78,7 @@ class AfternoteEditViewModel
         val uploadedThumbnailUrl: StateFlow<String?> = _uploadedThumbnailUrl.asStateFlow()
 
         /** Cached receiver list (GET /users/receivers) for lookup when returning from receiver selection. */
-        private var cachedReceivers: List<ReceiverListItem> = emptyList()
+        private var cachedReceivers: List<AuthorReceiverDirectoryEntry> = emptyList()
 
         /**
          * Loads receivers (GET /users/receivers) and caches for [getReceiverById] lookup.
@@ -86,8 +86,8 @@ class AfternoteEditViewModel
          */
         fun loadReceivers() {
             viewModelScope.launch {
-                val userId = getUserIdUseCase() ?: return@launch
-                getReceiversUseCase(userId = userId)
+                val userId = currentAuthorUserId() ?: return@launch
+                authorReceiversDirectory(userId)
                     .getOrNull()
                     ?.let { cachedReceivers = it }
             }
@@ -96,7 +96,7 @@ class AfternoteEditViewModel
         /**
          * Returns the receiver for the given id from the last [loadReceivers] result, or null.
          */
-        fun getReceiverById(id: Long): ReceiverListItem? = cachedReceivers.find { it.receiverId == id }
+        fun getReceiverById(id: Long): AuthorReceiverDirectoryEntry? = cachedReceivers.find { it.receiverId == id }
 
         /**
          * Category from the server when loading for edit. Used for update requests because the API

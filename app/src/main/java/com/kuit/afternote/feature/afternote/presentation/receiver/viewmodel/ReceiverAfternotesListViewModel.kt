@@ -1,10 +1,10 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.feature.afternote.domain.port.ReceiverAuthCodeProvider
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfterNotesByAuthCodeUseCase
 import com.kuit.afternote.feature.afternote.presentation.receiver.uimodel.ReceivedAfternoteListItemUi
 import com.kuit.afternote.feature.afternote.presentation.receiver.uimodel.ReceiverAfternotesListUiState
-import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class ReceiverAfternotesListViewModel
     @Inject
     constructor(
-        private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val receiverAuthCodeProvider: ReceiverAuthCodeProvider,
         private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase
     ) : ViewModel() {
 
@@ -30,7 +30,7 @@ class ReceiverAfternotesListViewModel
         val uiState: StateFlow<ReceiverAfternotesListUiState> = _uiState.asStateFlow()
 
         init {
-            receiverAuthSessionHolder.getAuthCode()?.let { authCode -> loadAfterNotes(authCode) }
+            receiverAuthCodeProvider.currentAuthCode()?.let { authCode -> loadAfterNotes(authCode) }
         }
 
         fun loadAfterNotes(authCode: String) {
@@ -73,6 +73,6 @@ class ReceiverAfternotesListViewModel
          */
         fun retry() {
             clearError()
-            receiverAuthSessionHolder.getAuthCode()?.let { loadAfterNotes(it) }
+            receiverAuthCodeProvider.currentAuthCode()?.let { loadAfterNotes(it) }
         }
     }

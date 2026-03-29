@@ -1,9 +1,9 @@
 package com.kuit.afternote.feature.afternote.data.repository
 
 import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.feature.afternote.data.api.AfternotePresignedUrlApi
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePresignedUrlRequestDto
 import com.kuit.afternote.feature.afternote.domain.repository.MemorialThumbnailUploadRepository
-import com.kuit.afternote.feature.user.data.api.ImageApiService
-import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -23,16 +23,16 @@ private const val CONTENT_TYPE_JPEG = "image/jpeg"
 class MemorialThumbnailUploadRepositoryImpl
     @Inject
     constructor(
-        private val imageApi: ImageApiService,
+        private val presignedUrlApi: AfternotePresignedUrlApi,
         @Named("S3Upload") private val okHttpClient: OkHttpClient,
         @Named("IoDispatcher") private val ioDispatcher: CoroutineDispatcher,
     ) : MemorialThumbnailUploadRepository {
         override suspend fun uploadThumbnail(jpegBytes: ByteArray): Result<String> =
             runCatching {
                 val presigned =
-                    imageApi
+                    presignedUrlApi
                         .getPresignedUrl(
-                            PresignedUrlRequestDto(
+                            AfternotePresignedUrlRequestDto(
                                 directory = DIRECTORY_AFTERNOTES,
                                 extension = EXTENSION_JPG,
                             ),

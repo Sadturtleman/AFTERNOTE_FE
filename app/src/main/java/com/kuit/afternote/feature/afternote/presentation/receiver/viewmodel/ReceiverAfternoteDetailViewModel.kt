@@ -3,8 +3,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternoteDetail
+import com.kuit.afternote.feature.afternote.domain.port.ReceiverAuthCodeProvider
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailByAuthCodeUseCase
-import com.kuit.afternote.feature.receiverauth.session.ReceiverAuthSessionHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ private const val TAG = "ReceiverAfternoteDetailVM"
 class ReceiverAfternoteDetailViewModel
     @Inject
     constructor(
-        private val receiverAuthSessionHolder: ReceiverAuthSessionHolder,
+        private val receiverAuthCodeProvider: ReceiverAuthCodeProvider,
         private val getAfternoteDetailByAuthCodeUseCase: GetAfternoteDetailByAuthCodeUseCase
     ) : ViewModel() {
 
@@ -54,7 +54,7 @@ class ReceiverAfternoteDetailViewModel
             }
             return
         }
-        val authCode = receiverAuthSessionHolder.getAuthCode()
+        val authCode = receiverAuthCodeProvider.currentAuthCode()
         if (authCode.isNullOrBlank()) {
             Log.d(TAG, "loadDetail: early return (authCode null or blank)")
             _uiState.update {

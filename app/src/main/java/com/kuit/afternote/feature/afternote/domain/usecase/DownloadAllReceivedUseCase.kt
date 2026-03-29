@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
 import com.kuit.afternote.feature.afternote.domain.model.DownloadAllResult
-import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
-import com.kuit.afternote.feature.receiver.domain.usecase.GetTimeLettersByAuthCodeUseCase
+import com.kuit.afternote.feature.afternote.domain.port.LoadMindRecordsByAuthCodePort
+import com.kuit.afternote.feature.afternote.domain.port.LoadTimeLettersByAuthCodePort
 import javax.inject.Inject
 
 /**
@@ -14,27 +14,26 @@ import javax.inject.Inject
 class DownloadAllReceivedUseCase
     @Inject
     constructor(
-        private val getTimeLettersByAuthCodeUseCase: GetTimeLettersByAuthCodeUseCase,
-        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase,
-        private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase
+        private val loadTimeLettersByAuthCode: LoadTimeLettersByAuthCodePort,
+        private val loadMindRecordsByAuthCode: LoadMindRecordsByAuthCodePort,
+        private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase,
     ) {
+        suspend operator fun invoke(authCode: String): Result<DownloadAllResult> {
+            val timeLettersResult = loadTimeLettersByAuthCode(authCode)
+            if (timeLettersResult.isFailure) return Result.failure(timeLettersResult.exceptionOrNull()!!)
 
-    suspend operator fun invoke(authCode: String): Result<DownloadAllResult> {
-        val timeLettersResult = getTimeLettersByAuthCodeUseCase(authCode)
-        if (timeLettersResult.isFailure) return Result.failure(timeLettersResult.exceptionOrNull()!!)
+            val mindRecordsResult = loadMindRecordsByAuthCode(authCode)
+            if (mindRecordsResult.isFailure) return Result.failure(mindRecordsResult.exceptionOrNull()!!)
 
-        val mindRecordsResult = getMindRecordsByAuthCodeUseCase(authCode)
-        if (mindRecordsResult.isFailure) return Result.failure(mindRecordsResult.exceptionOrNull()!!)
+            val afternotesResult = getAfterNotesByAuthCodeUseCase(authCode)
+            if (afternotesResult.isFailure) return Result.failure(afternotesResult.exceptionOrNull()!!)
 
-        val afternotesResult = getAfterNotesByAuthCodeUseCase(authCode)
-        if (afternotesResult.isFailure) return Result.failure(afternotesResult.exceptionOrNull()!!)
-
-        return Result.success(
-            DownloadAllResult(
-                timeLetters = timeLettersResult.getOrThrow().items,
-                mindRecords = mindRecordsResult.getOrThrow().items,
-                afternotes = afternotesResult.getOrThrow().items
+            return Result.success(
+                DownloadAllResult(
+                    timeLetters = timeLettersResult.getOrThrow().items,
+                    mindRecords = mindRecordsResult.getOrThrow().items,
+                    afternotes = afternotesResult.getOrThrow().items,
+                ),
             )
-        )
+        }
     }
-}

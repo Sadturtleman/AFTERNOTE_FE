@@ -1,7 +1,7 @@
 package com.kuit.afternote.feature.afternote.domain.repository
 
 import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternote
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedListWithCount
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedListWithCount
 
 /**
  * 수신자 인증번호(authCode)로 애프터노트 목록을 조회하는 Domain Repository.

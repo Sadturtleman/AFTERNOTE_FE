@@ -129,14 +129,14 @@ fun AfternoteEditScreen(
                             informationMethodName = item.processing.informationMethod,
                             methods =
                                 item.processing.methods.map {
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem(
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem(
                                         it.id,
                                         it.text,
                                     )
                                 },
                             galleryMethods =
                                 item.processing.galleryMethods.map {
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem(
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodItem(
                                         it.id,
                                         it.text,
                                     )
@@ -253,17 +253,17 @@ fun AfternoteEditScreen(
             state.activeDialog?.let { dialogType ->
                 when (dialogType) {
                     DialogType.ADD_AFTERNOTE_EDIT_RECEIVER -> {
-                        _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.afternoteeditreceiver
+                        com.kuit.afternote.feature.afternote.presentation.author.edit.editreceiver
                             .AddAfternoteEditReceiverDialog(
                                 params =
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.afternoteeditreceiver
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.editreceiver
                                         .AddAfternoteEditReceiverDialogParams(
                                             afternoteEditReceiverNameState = state.afternoteEditReceiverNameState,
                                             phoneNumberState = state.phoneNumberState,
                                             relationshipSelectedValue = state.relationshipSelectedValue,
                                             relationshipOptions = state.relationshipOptions,
                                             callbacks =
-                                                _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.afternoteeditreceiver
+                                                com.kuit.afternote.feature.afternote.presentation.author.edit.editreceiver
                                                     .AddAfternoteEditReceiverDialogCallbacks(
                                                         onDismiss = state::dismissDialog,
                                                         onAddClick = state::onAddAfternoteEditReceiver,
@@ -277,13 +277,13 @@ fun AfternoteEditScreen(
                     }
 
                     DialogType.CUSTOM_SERVICE -> {
-                        _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod.CustomServiceDialog(
+                        com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod.CustomServiceDialog(
                             params =
-                                _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod
+                                com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod
                                     .CustomServiceDialogParams(
                                         serviceNameState = state.customServiceNameState,
                                         callbacks =
-                                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod
+                                            com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod
                                                 .CustomServiceDialogCallbacks(
                                                     onDismiss = state::dismissDialog,
                                                     onAddClick = state::onAddCustomService,
@@ -322,16 +322,16 @@ private fun EditContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 종류 선택 (Line 279 해결: State의 메서드 사용)
-            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdown(
+            com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdown(
                 labelParams =
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdownLabelParams(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdownLabelParams(
                         label = "종류",
                     ),
                 selectedValue = state.selectedCategory,
                 options = state.categories,
                 onValueSelected = state::onCategorySelected,
                 menuStyle =
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.DropdownMenuStyle(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.DropdownMenuStyle(
                         shadowElevation = 10.dp,
                         tonalElevation = 10.dp,
                     ),
@@ -342,16 +342,16 @@ private fun EditContent(
             if (state.selectedCategory != CATEGORY_MEMORIAL_GUIDELINE) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdown(
+                com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdown(
                     labelParams =
-                        _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdownLabelParams(
+                        com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.SelectionDropdownLabelParams(
                             label = "서비스명",
                         ),
                     selectedValue = state.selectedService,
                     options = state.currentServiceOptions,
                     onValueSelected = state::onServiceSelected,
                     menuStyle =
-                        _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.DropdownMenuStyle(
+                        com.kuit.afternote.feature.afternote.presentation.author.edit.dropdown.DropdownMenuStyle(
                             shadowElevation = 10.dp,
                             tonalElevation = 10.dp,
                         ),
@@ -399,10 +399,10 @@ private fun CategoryContent(
                 } ?: state.playlistAlbumCovers
             val livePlaylistSongCount =
                 state.playlistStateHolder?.songs?.size ?: state.playlistSongCount
-            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.MemorialGuidelineEditContent(
+            com.kuit.afternote.feature.afternote.presentation.author.edit.content.MemorialGuidelineEditContent(
                 bottomPadding = bottomPadding,
                 params =
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.MemorialGuidelineEditContentParams(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.content.MemorialGuidelineEditContentParams(
                         displayMemorialPhotoUri = state.pickedMemorialPhotoUri ?: state.memorialPhotoUrl,
                         playlistSongCount = livePlaylistSongCount,
                         playlistAlbumCovers = albumCoversFromPlaylist,
@@ -412,10 +412,10 @@ private fun CategoryContent(
                         funeralThumbnailUrl = state.funeralThumbnailUrl,
                         customLastWishText = state.customLastWishText,
                         recipientSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
                                 afternoteEditReceivers = state.afternoteEditReceivers,
                                 callbacks =
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.model
                                         .AfternoteEditReceiverCallbacks(
                                             onAddClick = onNavigateToSelectReceiver,
                                             onItemDeleteClick = state::onAfternoteEditReceiverDelete,
@@ -433,16 +433,16 @@ private fun CategoryContent(
         }
 
         CATEGORY_GALLERY_AND_FILE -> {
-            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.GalleryAndFileEditContent(
+            com.kuit.afternote.feature.afternote.presentation.author.edit.content.GalleryAndFileEditContent(
                 bottomPadding = bottomPadding,
                 params =
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.GalleryAndFileEditContentParams(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.content.GalleryAndFileEditContentParams(
                         messageState = state.messageState,
                         recipientSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
                                 afternoteEditReceivers = state.afternoteEditReceivers,
                                 callbacks =
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.model
                                         .AfternoteEditReceiverCallbacks(
                                             onAddClick = onNavigateToSelectReceiver,
                                             onItemDeleteClick = state::onAfternoteEditReceiverDelete,
@@ -450,7 +450,7 @@ private fun CategoryContent(
                                         ),
                             ),
                         processingMethodSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodSection(
                                 items = state.galleryProcessingMethods,
                                 callbacks = state.galleryProcessingCallbacks,
                             ),
@@ -459,23 +459,23 @@ private fun CategoryContent(
         }
 
         else -> {
-            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.SocialNetworkEditContent(
+            com.kuit.afternote.feature.afternote.presentation.author.edit.content.SocialNetworkEditContent(
                 bottomPadding = bottomPadding,
                 params =
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.content.SocialNetworkEditContentParams(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.content.SocialNetworkEditContentParams(
                         messageState = state.messageState,
                         accountSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AccountSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.AccountSection(
                                 idState = state.idState,
                                 passwordState = state.passwordState,
                                 selectedMethod = state.selectedProcessingMethod,
                                 onMethodSelected = state::onProcessingMethodSelected,
                             ),
                         recipientSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiverSection(
                                 afternoteEditReceivers = state.afternoteEditReceivers,
                                 callbacks =
-                                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model
+                                    com.kuit.afternote.feature.afternote.presentation.author.edit.model
                                         .AfternoteEditReceiverCallbacks(
                                             onAddClick = onNavigateToSelectReceiver,
                                             onItemDeleteClick = state::onAfternoteEditReceiverDelete,
@@ -483,7 +483,7 @@ private fun CategoryContent(
                                         ),
                             ),
                         processingMethodSection =
-                            _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodSection(
+                            com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodSection(
                                 items = state.processingMethods,
                                 callbacks = state.socialProcessingCallbacks,
                             ),

@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.receiverauth.data.repository.impl
 
 import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternote
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedListWithCount
 import com.kuit.afternote.feature.afternote.domain.repository.GetAfterNotesByAuthCodeRepository
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedListWithCount
 import com.kuit.afternote.feature.receiverauth.data.mapper.toReceivedAfternote
 import com.kuit.afternote.feature.receiverauth.data.repository.iface.ReceiverAuthRepository
 import javax.inject.Inject

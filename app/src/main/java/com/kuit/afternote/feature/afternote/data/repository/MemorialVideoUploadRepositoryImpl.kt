@@ -4,9 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import com.kuit.afternote.core.data.dto.response.requireData
+import com.kuit.afternote.feature.afternote.data.api.AfternotePresignedUrlApi
+import com.kuit.afternote.feature.afternote.data.dto.AfternotePresignedUrlRequestDto
 import com.kuit.afternote.feature.afternote.domain.repository.MemorialVideoUploadRepository
-import com.kuit.afternote.feature.user.data.api.ImageApiService
-import com.kuit.afternote.feature.user.data.dto.PresignedUrlRequestDto
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -30,7 +30,7 @@ class MemorialVideoUploadRepositoryImpl
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
-        private val imageApi: ImageApiService,
+        private val presignedUrlApi: AfternotePresignedUrlApi,
         @Named("S3Upload") private val okHttpClient: OkHttpClient,
         @Named("IoDispatcher") private val ioDispatcher: CoroutineDispatcher,
     ) : MemorialVideoUploadRepository {
@@ -39,9 +39,9 @@ class MemorialVideoUploadRepositoryImpl
                 val uri = contentUriString.toUri()
                 val extension = videoExtensionFromUri(uri)
                 val presigned =
-                    imageApi
+                    presignedUrlApi
                         .getPresignedUrl(
-                            PresignedUrlRequestDto(
+                            AfternotePresignedUrlRequestDto(
                                 directory = DIRECTORY_AFTERNOTES,
                                 extension = extension,
                             ),

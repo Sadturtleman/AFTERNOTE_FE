@@ -6,10 +6,10 @@ import com.kuit.afternote.feature.afternote.data.dto.ReceivedMindRecordExportDto
 import com.kuit.afternote.feature.afternote.data.dto.ReceivedTimeLetterExportDto
 import com.kuit.afternote.feature.afternote.data.dto.ReceivedTimeLetterMediaExportDto
 import com.kuit.afternote.feature.afternote.domain.model.DownloadAllResult
+import com.kuit.afternote.feature.afternote.domain.model.received.InboxMindRecord
+import com.kuit.afternote.feature.afternote.domain.model.received.InboxTimeLetter
+import com.kuit.afternote.feature.afternote.domain.model.received.InboxTimeLetterMedia
 import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternote
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedMindRecord
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetterMedia
 
 /**
  * [DownloadAllResult]를 JSON 직렬화용 Export DTO로 변환하는 Mapper.
@@ -26,7 +26,7 @@ object ExportReceivedMapper {
             afternotes = result.afternotes.map(::toAfternoteExportDto)
         )
 
-    private fun toTimeLetterExportDto(letter: ReceivedTimeLetter): ReceivedTimeLetterExportDto =
+    private fun toTimeLetterExportDto(letter: InboxTimeLetter): ReceivedTimeLetterExportDto =
         ReceivedTimeLetterExportDto(
             timeLetterId = letter.timeLetterId,
             timeLetterReceiverId = letter.timeLetterReceiverId,
@@ -41,14 +41,14 @@ object ExportReceivedMapper {
             isRead = letter.isRead
         )
 
-    private fun toMediaExportDto(media: ReceivedTimeLetterMedia): ReceivedTimeLetterMediaExportDto =
+    private fun toMediaExportDto(media: InboxTimeLetterMedia): ReceivedTimeLetterMediaExportDto =
         ReceivedTimeLetterMediaExportDto(
             id = media.id,
             mediaType = media.mediaType,
             mediaUrl = media.mediaUrl
         )
 
-    private fun toMindRecordExportDto(record: ReceivedMindRecord): ReceivedMindRecordExportDto =
+    private fun toMindRecordExportDto(record: InboxMindRecord): ReceivedMindRecordExportDto =
         ReceivedMindRecordExportDto(
             mindRecordId = record.mindRecordId,
             sourceType = record.sourceType,

@@ -1,11 +1,11 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
+import com.kuit.afternote.feature.afternote.domain.model.AuthorReceiverDirectoryEntry
 import com.kuit.afternote.feature.afternote.domain.model.Detail
 import com.kuit.afternote.feature.afternote.domain.model.DetailReceiver
+import com.kuit.afternote.feature.afternote.domain.port.AuthorReceiversDirectoryPort
+import com.kuit.afternote.feature.afternote.domain.port.CurrentAuthorUserIdPort
 import com.kuit.afternote.feature.afternote.domain.repository.AfternoteRepository
-import com.kuit.afternote.feature.user.domain.model.ReceiverListItem
-import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
-import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import javax.inject.Inject
 
 /**
@@ -18,14 +18,14 @@ class GetAfternoteDetailUseCase
     @Inject
     constructor(
         private val repository: AfternoteRepository,
-        private val getReceiversUseCase: GetReceiversUseCase,
-        private val getUserIdUseCase: GetUserIdUseCase,
+        private val currentAuthorUserId: CurrentAuthorUserIdPort,
+        private val authorReceiversDirectory: AuthorReceiversDirectoryPort,
     ) {
         suspend operator fun invoke(afternoteId: Long): Result<Detail> {
             val detailResult = repository.getAfternoteDetail(afternoteId = afternoteId)
             val detail = detailResult.getOrElse { return detailResult }
-            val userId = getUserIdUseCase() ?: return detailResult
-            val receiversListResult = getReceiversUseCase(userId = userId)
+            val userId = currentAuthorUserId() ?: return detailResult
+            val receiversListResult = authorReceiversDirectory(userId)
             val receiversList = receiversListResult.getOrElse { return detailResult }
             val resolvedReceivers =
                 resolveReceiverNames(
@@ -37,7 +37,7 @@ class GetAfternoteDetailUseCase
 
         private fun resolveReceiverNames(
             receivers: List<DetailReceiver>,
-            receiversList: List<ReceiverListItem>,
+            receiversList: List<AuthorReceiverDirectoryEntry>,
         ): List<DetailReceiver> =
             receivers.map { r ->
                 if (r.receiverId != null) {

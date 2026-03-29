@@ -1,10 +1,10 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.afternote.feature.afternote.domain.port.LoadMindRecordsByAuthCodePort
+import com.kuit.afternote.feature.afternote.domain.port.LoadSenderMessageByAuthCodePort
+import com.kuit.afternote.feature.afternote.domain.port.LoadTimeLettersByAuthCodePort
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfterNotesByAuthCodeUseCase
-import com.kuit.afternote.feature.receiver.domain.usecase.GetSenderMessageUseCase
-import com.kuit.afternote.feature.receiver.domain.usecase.GetMindRecordsByAuthCodeUseCase
-import com.kuit.afternote.feature.receiver.domain.usecase.GetTimeLettersByAuthCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -26,9 +26,9 @@ class ReceiverAfternoteTriggerViewModel
     @Inject
     constructor(
         private val getAfterNotesByAuthCodeUseCase: GetAfterNotesByAuthCodeUseCase,
-        private val getMindRecordsByAuthCodeUseCase: GetMindRecordsByAuthCodeUseCase,
-        private val getTimeLettersByAuthCodeUseCase: GetTimeLettersByAuthCodeUseCase,
-        private val getSenderMessageUseCase: GetSenderMessageUseCase
+        private val loadMindRecordsByAuthCode: LoadMindRecordsByAuthCodePort,
+        private val loadTimeLettersByAuthCode: LoadTimeLettersByAuthCodePort,
+        private val loadSenderMessageByAuthCode: LoadSenderMessageByAuthCodePort,
     ) : ViewModel() {
 
     private val _leaveMessage = MutableStateFlow<String?>(null)
@@ -51,9 +51,9 @@ class ReceiverAfternoteTriggerViewModel
     fun loadHomeSummary(authCode: String) {
         viewModelScope.launch {
             val afternotesDeferred = async { getAfterNotesByAuthCodeUseCase(authCode) }
-            val mindRecordsDeferred = async { getMindRecordsByAuthCodeUseCase(authCode) }
-            val timeLettersDeferred = async { getTimeLettersByAuthCodeUseCase(authCode) }
-            val messageDeferred = async { getSenderMessageUseCase(authCode) }
+            val mindRecordsDeferred = async { loadMindRecordsByAuthCode(authCode) }
+            val timeLettersDeferred = async { loadTimeLettersByAuthCode(authCode) }
+            val messageDeferred = async { loadSenderMessageByAuthCode(authCode) }
             awaitAll(
                 afternotesDeferred,
                 mindRecordsDeferred,

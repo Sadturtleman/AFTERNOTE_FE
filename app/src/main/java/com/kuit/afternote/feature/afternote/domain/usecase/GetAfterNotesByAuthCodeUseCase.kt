@@ -1,8 +1,8 @@
 package com.kuit.afternote.feature.afternote.domain.usecase
 
 import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedAfternote
+import com.kuit.afternote.feature.afternote.domain.model.received.ReceivedListWithCount
 import com.kuit.afternote.feature.afternote.domain.repository.GetAfterNotesByAuthCodeRepository
-import com.kuit.afternote.feature.receiver.domain.entity.ReceivedListWithCount
 import javax.inject.Inject
 
 /**
