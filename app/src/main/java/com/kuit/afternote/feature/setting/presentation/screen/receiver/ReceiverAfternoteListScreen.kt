@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.component.list.AfternoteListItem
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.AfternoteListItem
 import com.kuit.afternote.core.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.uimodel.AfternoteListDisplayItem
+import com.kuit.afternote.feature.afternote.presentation.shared.uimodel.AfternoteListDisplayItem
 import com.kuit.afternote.core.dummy.receiver.ReceiverDummies
 import com.kuit.afternote.ui.theme.AfternoteTheme
 import com.kuit.afternote.ui.theme.B1

@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.uimodel
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 

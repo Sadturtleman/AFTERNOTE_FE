@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.screen
-
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,9 +1,8 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel
-
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuit.afternote.feature.afternote.presentation.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.afternote.presentation.shared.uimodel.PlaylistSongDisplay
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfterNotesByAuthCodeUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailByAuthCodeUseCase
 import com.kuit.afternote.feature.afternote.presentation.receiver.uimodel.ReceiverMemorialPlaylistUiState

@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfterNotesByAuthCodeUseCase

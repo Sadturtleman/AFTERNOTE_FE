@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.screen.afternote
-
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -54,8 +53,8 @@ import com.kuit.afternote.core.component.button.ClickButton
 import com.kuit.afternote.core.component.content.MemorialGuidelineContent
 import com.kuit.afternote.core.component.content.MemorialGuidelineSlots
 import com.kuit.afternote.core.component.detail.InfoCard
-import com.kuit.afternote.feature.afternote.presentation.component.list.AlbumCover
-import com.kuit.afternote.feature.afternote.presentation.component.list.MemorialPlaylist
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.AlbumCover
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.MemorialPlaylist
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.core.component.navigation.BottomNavigationBar
 import com.kuit.afternote.core.component.navigation.TopBar

@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.navgraph
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier

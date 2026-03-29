@@ -17,7 +17,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.component.list.AlbumCover
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.AlbumCover
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.core.component.navigation.BottomNavigationBar
 import com.kuit.afternote.feature.receiver.domain.entity.ReceivedTimeLetter

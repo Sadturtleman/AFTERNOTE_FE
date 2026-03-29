@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteLightTheme
+import com.kuit.afternote.feature.afternote.presentation.author.nav.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
@@ -35,7 +35,7 @@ import com.kuit.afternote.ui.theme.Sansneo
 @Composable
 fun ReceiversCard(
     modifier: Modifier = Modifier,
-    receivers: List<com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver>,
+    receivers: List<com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver>,
 ) {
     if (receivers.isEmpty()) return
 
@@ -67,7 +67,7 @@ fun ReceiversCard(
 @Composable
 private fun ReceiverDetailItem(
     modifier: Modifier = Modifier,
-    receiver: com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver,
+    receiver: com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -120,12 +120,12 @@ private fun ReceiversCardPreview() {
         ReceiversCard(
             receivers =
                 listOf(
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver(
+                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
                         id = "1",
                         name = "황규운",
                         label = "친구",
                     ),
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver(
+                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
                         id = "2",
                         name = "김소희",
                         label = "가족",

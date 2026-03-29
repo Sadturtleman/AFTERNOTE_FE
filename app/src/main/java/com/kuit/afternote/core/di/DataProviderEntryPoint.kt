@@ -1,6 +1,6 @@
 package com.kuit.afternote.core.di
 
-import com.kuit.afternote.feature.afternote.presentation.provider.DataProviderSwitch
+import com.kuit.afternote.feature.afternote.presentation.author.edit.provider.DataProviderSwitch
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

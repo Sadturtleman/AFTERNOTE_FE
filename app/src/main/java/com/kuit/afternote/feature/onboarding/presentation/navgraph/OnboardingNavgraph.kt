@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.kuit.afternote.feature.afternote.presentation.navgraph.AfternoteRoute
+import com.kuit.afternote.feature.afternote.presentation.author.nav.navgraph.AfternoteRoute
 import com.kuit.afternote.feature.onboarding.presentation.screen.LoginScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.ProfileSettingScreen
 import com.kuit.afternote.feature.onboarding.presentation.screen.SignUpScreen

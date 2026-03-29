@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel
-
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,0 +1,13 @@
+package com.kuit.afternote.feature.afternote.presentation.author.edit.model
+import androidx.compose.runtime.Immutable
+
+/**
+ * 노래 데이터 모델
+ */
+@Immutable
+data class Song(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val albumCoverUrl: String? = null,
+)

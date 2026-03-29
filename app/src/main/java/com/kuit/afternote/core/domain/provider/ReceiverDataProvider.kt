@@ -1,7 +1,7 @@
 package com.kuit.afternote.core.domain.provider
 
 import com.kuit.afternote.core.dummy.receiver.AfternoteListItemSeed
-import com.kuit.afternote.feature.afternote.presentation.edit.model.AfternoteEditReceiver
+import com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver
 import com.kuit.afternote.feature.timeletter.presentation.uimodel.TimeLetterItem
 
 /**

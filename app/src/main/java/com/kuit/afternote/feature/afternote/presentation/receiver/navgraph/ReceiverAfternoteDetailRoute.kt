@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.navgraph
-
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,18 +16,18 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.component.list.AlbumCover
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.AlbumCover
 import com.kuit.afternote.core.component.navigation.BottomNavItem
 import com.kuit.afternote.core.component.navigation.TopBar
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.GalleryDetailCallbacks
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.GalleryDetailScreen
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.GalleryDetailState
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.MemorialGuidelineDetailCallbacks
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.MemorialGuidelineDetailScreen
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.MemorialGuidelineDetailState
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.SocialNetworkDetailContent
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.SocialNetworkDetailScreen
-import com.kuit.afternote.feature.afternote.presentation.afternotedetail.rememberAfternoteDetailState
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.GalleryDetailCallbacks
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.GalleryDetailScreen
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.GalleryDetailState
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.MemorialGuidelineDetailCallbacks
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.MemorialGuidelineDetailScreen
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.MemorialGuidelineDetailState
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.SocialNetworkDetailContent
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.SocialNetworkDetailScreen
+import com.kuit.afternote.feature.afternote.presentation.author.detail.afternotedetail.rememberAfternoteDetailState
 import com.kuit.afternote.feature.afternote.presentation.receiver.viewmodel.ReceiverAfternoteDetailViewModel
 
 /**

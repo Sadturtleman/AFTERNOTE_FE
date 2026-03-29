@@ -1,12 +1,11 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.screen.afternote
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.kuit.afternote.feature.afternote.presentation.component.list.SongPlaylistScreen
+import com.kuit.afternote.feature.afternote.presentation.shared.component.list.SongPlaylistScreen
 import com.kuit.afternote.core.component.navigation.BottomNavItem
-import com.kuit.afternote.feature.afternote.presentation.uimodel.PlaylistSongDisplay
+import com.kuit.afternote.feature.afternote.presentation.shared.uimodel.PlaylistSongDisplay
 
 @Composable
 fun MemorialPlaylistScreen(

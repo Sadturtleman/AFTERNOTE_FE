@@ -1,5 +1,4 @@
 package com.kuit.afternote.feature.afternote.presentation.receiver.component
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
