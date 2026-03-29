@@ -52,7 +52,7 @@ fun ConfirmationPopup(
                 dismissOnClickOutside = !isLoading,
             ),
     ) {
-        _root_ide_package_.com.kuit.afternote.core.component.ConfirmationPopupContent(
+        com.kuit.afternote.core.component.ConfirmationPopupContent(
             message = message,
             onDismiss = onDismiss,
             onConfirm = onConfirm,
@@ -191,7 +191,7 @@ fun ConfirmationPopupContent(
 @Composable
 private fun ConfirmationPopupPreview() {
     AfternoteTheme {
-        _root_ide_package_.com.kuit.afternote.core.component.ConfirmationPopupContent(
+        com.kuit.afternote.core.component.ConfirmationPopupContent(
             message = "인스타그램에 대한 기록을 삭제하시겠습니까?\n삭제 시, 되돌릴 수 없습니다.",
             onDismiss = {},
             onConfirm = {},
@@ -203,7 +203,7 @@ private fun ConfirmationPopupPreview() {
 @Composable
 private fun ConfirmationPopupCustomButtonsPreview() {
     AfternoteTheme {
-        _root_ide_package_.com.kuit.afternote.core.component.ConfirmationPopupContent(
+        com.kuit.afternote.core.component.ConfirmationPopupContent(
             message = "사망 프로토콜이 아직 실행되지 않았습니다.\n프로토콜을 실행하시겠습니까?",
             onDismiss = {},
             onConfirm = {},

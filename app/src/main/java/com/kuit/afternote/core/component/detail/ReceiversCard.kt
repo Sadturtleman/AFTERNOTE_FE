@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuit.afternote.R
-import com.kuit.afternote.feature.afternote.presentation.author.nav.navgraph.AfternoteLightTheme
+import com.kuit.afternote.feature.afternote.presentation.author.nav.ui.navgraph.AfternoteLightTheme
 import com.kuit.afternote.ui.theme.Black
 import com.kuit.afternote.ui.theme.Gray8
 import com.kuit.afternote.ui.theme.Gray9
@@ -120,12 +120,12 @@ private fun ReceiversCardPreview() {
         ReceiversCard(
             receivers =
                 listOf(
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
                         id = "1",
                         name = "황규운",
                         label = "친구",
                     ),
-                    _root_ide_package_.com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
+                    com.kuit.afternote.feature.afternote.presentation.author.edit.model.AfternoteEditReceiver(
                         id = "2",
                         name = "김소희",
                         label = "가족",

@@ -57,11 +57,11 @@ fun CircleCheckBox(
 private fun CircleCheckBoxPreview() {
     AfternoteTheme {
         Row {
-            _root_ide_package_.com.kuit.afternote.core.component.CircleCheckBox(
+            com.kuit.afternote.core.component.CircleCheckBox(
                 checked = true,
                 onCheckedChange = {},
             )
-            _root_ide_package_.com.kuit.afternote.core.component.CircleCheckBox(
+            com.kuit.afternote.core.component.CircleCheckBox(
                 checked = false,
                 onCheckedChange = {},
             )

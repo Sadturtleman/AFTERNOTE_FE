@@ -8,8 +8,8 @@ import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUse
 import com.kuit.afternote.feature.afternote.domain.usecase.UpdateAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialThumbnailUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.UploadMemorialVideoUseCase
-import com.kuit.afternote.feature.afternote.presentation.author.edit.RegisterAfternotePayload
-import com.kuit.afternote.feature.afternote.presentation.author.edit.AfternoteEditViewModel
+import com.kuit.afternote.feature.afternote.presentation.author.edit.model.RegisterAfternotePayload
+import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.AfternoteEditViewModel
 import com.kuit.afternote.feature.user.domain.usecase.GetReceiversUseCase
 import com.kuit.afternote.feature.user.domain.usecase.GetUserIdUseCase
 import com.kuit.afternote.util.MainCoroutineRule

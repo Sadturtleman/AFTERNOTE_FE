@@ -46,7 +46,7 @@ import com.kuit.afternote.core.component.OutlineTextField
 import com.kuit.afternote.core.component.SelectableRadioCard
 import com.kuit.afternote.core.component.navigation.TopBar
 import com.kuit.afternote.feature.afternote.presentation.author.edit.model.ProcessingMethodOption
-import com.kuit.afternote.feature.afternote.presentation.author.edit.processingmethod.OptionRadioCardContent
+import com.kuit.afternote.feature.afternote.presentation.author.edit.ui.processingmethod.OptionRadioCardContent
 import com.kuit.afternote.feature.setting.presentation.component.DatePickerDialog
 import com.kuit.afternote.feature.setting.presentation.component.SelectedDateText
 import com.kuit.afternote.feature.setting.presentation.model.DeliveryMethodOption

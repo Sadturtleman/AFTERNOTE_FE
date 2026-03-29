@@ -5,7 +5,7 @@ import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetail
 import com.kuit.afternote.feature.afternote.domain.model.AfternoteDetailReceiver
 import com.kuit.afternote.feature.afternote.domain.usecase.DeleteAfternoteUseCase
 import com.kuit.afternote.feature.afternote.domain.usecase.GetAfternoteDetailUseCase
-import com.kuit.afternote.feature.afternote.presentation.author.detail.AfternoteDetailViewModel
+import com.kuit.afternote.feature.afternote.presentation.author.detail.ui.AfternoteDetailViewModel
 import com.kuit.afternote.util.MainCoroutineRule
 import io.mockk.coEvery
 import io.mockk.mockk
